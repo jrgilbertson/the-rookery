@@ -40,8 +40,10 @@ looked" surface. GitHub Releases mirror its entries.
   A completed description history keeps the newest entry that predates every
   review submission and every substantive top-level conversation comment,
   when that entry has a body and that body states a purpose in more than one
-  line. An older entry is not the baseline. When no pre-review entry qualifies,
-  a later edit asks even when that body states a purpose. A missing description snapshot is disclosed and does not
+  line. An older entry is not the baseline. Description cases apply in order and
+  the first match wins. When no entry predates review, a later edit asks even
+  when that body states a purpose, and that later edit is not the current-description
+  baseline. A missing description snapshot is disclosed and does not
   make the current description the earliest revision. A failed read of a
   source issue on another tracker is a named gap, does not by itself cap, and does not stop option 1.
   It asks the owner when no linked issue

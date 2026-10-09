@@ -425,21 +425,29 @@ has_text "baseline: every stated purpose is compared" "$WORK/skill.flat" \
   'Keep every stated purpose in the baseline and compare each with the final diff.'
 has_text "baseline: drift is a purpose the diff no longer describes" "$WORK/skill.flat" \
   'A purpose that no longer describes that diff is intent drift in step 5.'
+has_text "baseline: the first matching case wins" "$WORK/skill.flat" \
+  'Apply the first matching case. Do not also apply a later case.'
 has_text "baseline: newest pre-review entry kept" "$WORK/skill.flat" \
-  'the baseline is the newest entry that predates every review submission and every substantive top-level conversation comment.'
+  'When the newest entry that predates every review submission and every substantive top-level conversation comment has a body, and that body states a purpose in more than one line, that entry is the baseline.'
 has_text "baseline: pre-review revision states a purpose" "$WORK/skill.flat" \
-  'Use it as provenance "pre-review revision" when that entry has a body and that body states a purpose in more than one line.'
+  'Use it as provenance "pre-review revision".'
 has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
-  'or that body states no such purpose, disclose the gap and ask for the purpose.'
+  'or its body states no purpose in more than one line, ask for the purpose.'
 has_text "baseline: a later edit asks even when it states a purpose" "$WORK/skill.flat" \
-  'When no pre-review entry qualifies, ask even when that later body states a purpose.'
+  'When no entry predates review, ask even when a later body states a purpose.'
+has_text "baseline: a later edit is not current-description provenance" "$WORK/skill.flat" \
+  'A later edit is not the baseline and is not provenance "current description".'
 has_text "baseline: an older entry is not the baseline" "$WORK/skill.flat" \
   'An older entry is not the baseline.'
 lacks_text "baseline: oldest surviving entry is not the rule" "$WORK/skill.flat" \
   'Take the oldest surviving entry'
+lacks_text "baseline: a blanket description ask does not override a later edit" "$WORK/skill.flat" \
+  'Ask the owner only when no linked issue description states a purpose and the pull request description does not state a purpose in more than one line.'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
-has_text "baseline: current description only without a usable history" "$WORK/skill.flat" \
-  'When that history cannot be read, or no surviving entry has a body, disclose the gap.'
+has_text "baseline: unreadable history uses the current description" "$WORK/skill.flat" \
+  'When that history cannot be read, disclose the gap.'
+has_text "baseline: no surviving body uses the current description" "$WORK/skill.flat" \
+  'When no surviving entry has a body, disclose the gap.'
 has_text "baseline: a missing snapshot is disclosed" "$WORK/skill.flat" \
   "When an entry's snapshot is missing, disclose that gap first."
 has_text "baseline: a missing snapshot is not the current description" "$WORK/skill.flat" \
@@ -448,8 +456,8 @@ has_text "baseline: another tracker read does not cap" "$WORK/skill.flat" \
   'A failed read is a named gap and does not by itself cap'
 has_text "baseline: a failed external read is not an option-1 stop" "$WORK/skill.flat" \
   'A failed external-tracker read already named in gather is not that stop.'
-has_text "baseline: ask when no description states a multi-line purpose" "$WORK/skill.flat" \
-  'Ask the owner only when no linked issue description states a purpose and the pull request description does not state a purpose in more than one line.'
+has_text "baseline: the ask names no candidate from the diff" "$WORK/skill.flat" \
+  'Ask for the purpose. Name no candidate from the diff.'
 has_text "baseline: a completed empty history still asks" "$WORK/skill.flat" \
   'That ask still applies when a completed read recorded no edits.'
 has_text "baseline: no edits is not an automatic move-on" "$WORK/skill.flat" \

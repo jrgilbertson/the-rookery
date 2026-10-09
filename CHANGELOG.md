@@ -389,7 +389,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `checking-pr-readiness` no longer ships `changelog-union.sh`,
   `evidence-freshness.sh`, the content-digest identity, the reviewer-cap size
-  class, or its own publisher, babysit, and merge-readiness chain.
+  class, or the separate finishing reference; Approve's publish and
+  merge-readiness steps now live in the skill itself.
   `checking-merge-readiness` no longer accepts a grade or diff file handed
   over from another gate, and folds its first-principles reference into the
   risk rubric.

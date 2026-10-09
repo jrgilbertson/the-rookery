@@ -1,7 +1,7 @@
 ---
 title: Do not split human and agent skill products
 date: 2026-08-31
-last_updated: 2026-09-11
+last_updated: 2026-10-09
 category: conventions
 module: checking-pr-readiness
 problem_type: convention
@@ -52,8 +52,9 @@ reply from whoever is talking, later `1` is Approve or Proceed, and the skill
 does not pick in the same turn.
 
 The skills encode that one process. PR readiness briefs, then waits.
-Merge readiness does the same. Identity bind lives in
-`identity-and-argv.md`. The skill never self-selects merge.
+Merge readiness does the same. Identity bind lives in each skill's own
+`SKILL.md` (it was `identity-and-argv.md` before #201). The skill never
+self-selects merge.
 
 This is the end-of-run API. The spoken brief's shape is a separate contract:
 answer first, then reasons, then only the evidence those reasons need.
@@ -138,7 +139,8 @@ the matching re-check, and a bare merge request still waits. The stub
 fixture now greps that one-process contract rather than a report-only merge
 path (`tests/checking-merge-readiness/fixtures/run-stub-checks.sh`).
 
-**Identity is not a second product.** `identity-and-argv.md` binds one
+**Identity is not a second product.** The identity bind (then
+`identity-and-argv.md`) binds one
 native subject, full head, target/base ref, and full base OID, then re-reads
 that identity immediately before option 1. The fail-closed case expects the
 one process: brief each variant with numbered live options and wait. The

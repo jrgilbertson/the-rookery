@@ -28,10 +28,10 @@ looked" surface. GitHub Releases mirror its entries.
   reviewer that receives only the pull-request identity, and its option-1
   re-check is four checks (head and base ref, review history, linked-issue
   states, host rules) instead of a 16-row table. PR readiness records one
-  surface identity and recomposes on any change, and its Approve ends by
-  invoking the PR-opening skill. Babysit and the merge-readiness review are
-  now the caller's next steps, described in `WORKFLOWS.md` and run by
-  `repo-gardener`.
+  surface identity and recomposes on any change. Its Approve invokes the
+  PR-opening skill and, once babysit reports looks merge-ready, starts merge
+  readiness, which moves itself to a fresh reviewer. Unattended runs stop
+  after publishing; `repo-gardener`'s Coordinator starts merge readiness.
 - `creating-portable-skills` follows the Agent Skills format for portable
   packages and descriptions, and delegates evaluation to pinned upstream
   `build-eval` and `ce-retune` guides. Repository package conventions stay in

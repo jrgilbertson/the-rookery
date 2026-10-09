@@ -2,7 +2,7 @@
 name: checking-merge-readiness
 description: Use when a reviewed pull request is about to be merged, including digest this PR before I merge, should I merge this, or merge this PR. Briefs merge, debug, or do not merge plus numbered live options and waits for a numbered reply. Option 1 is Proceed to merge. A bare merge request still runs this review and still waits. For opening a pull request, use checking-pr-readiness.
 license: MIT
-compatibility: Requires GitHub CLI (`gh`) with the invoking user's existing credentials, and a subagent when the invoking session shaped the change. Option 1 needs merge permission; request no new login. The fetch helper also needs `jq` and `shasum` or `sha256sum`; without them, step 2's manual fetch applies. Without `gh`, or on a non-GitHub forge, degrade to an owner-supplied description and an identity-checked local diff, which removes merge from recommendations; a high driver still returns do not merge.
+compatibility: Requires GitHub CLI (`gh`) with the invoking user's credentials; prefers a subagent when the invoking session shaped the change. Option 1 needs merge permission; request no new login. The fetch helper also needs `jq` and `shasum` or `sha256sum`; without them, step 2's manual fetch applies. Without `gh`, or on a non-GitHub forge, degrade to an owner-supplied description and an identity-checked local diff, which removes merge from recommendations; a high driver still returns do not merge.
 ---
 # Checking Merge Readiness
 
@@ -50,8 +50,9 @@ context has that involvement, dispatch this skill to one fresh, read-only
 subagent before step 1, without asking. It must start with no conversation
 history (not a fork or resumed session) and be able to run `gh`; it stays
 read-only until a reply of 1. Tell it that it is the dispatched reviewer and
-pass only the pull-request identity. Return its brief and menu unchanged, then
-end your turn. Never answer that menu yourself: forward only the owner's own
+pass only the pull-request identity and any tracker issue the owner named in
+this run, as the owner's own input. Never pass a grade or finding. Return its
+brief and menu unchanged, then end your turn. Never answer that menu yourself: forward only the owner's own
 next message, verbatim. The request that started this review is not a reply.
 The reviewer owns the fetch, grade, menu, and merge; if it cannot run the
 merge, it reports that and stops, and this context never runs it. If you are
@@ -215,8 +216,9 @@ evidence states:
    the gap and use the current description. Provenance is "current
    description". The gap is not a debug cap.
 
-A purpose counts only when it is stated in more than one line. When no source
-above states one, ask the owner for the purpose, name no candidate from the
+A linked issue states a purpose when its description says what problem to
+solve. A pull request description counts only when it states a purpose in more
+than one line. When no source above states one, ask the owner for the purpose, name no candidate from the
 diff, and grade drift only after the reply.
 
 Before calling a mismatch intent drift, accept a narrowed or changed purpose

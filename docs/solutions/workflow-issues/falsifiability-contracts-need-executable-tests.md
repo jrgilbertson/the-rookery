@@ -1,7 +1,7 @@
 ---
 title: "Ship bundled skill helpers with an executable falsifiability contract"
 date: 2026-07-31
-last_updated: 2026-08-11
+last_updated: 2026-10-09
 category: workflow-issues
 module: "skills/checking-pr-readiness, skills/checking-merge-readiness, skills/repo-gardener"
 problem_type: workflow_issue
@@ -27,6 +27,12 @@ tags: [skills, helper-scripts, falsifiability-contract, silent-pass, fixture-tes
 ---
 
 # Ship bundled skill helpers with an executable falsifiability contract
+
+> **Current state:** `changelog-union.sh` and `evidence-freshness.sh` were
+> retired in #201; their sweep classes are now judgment checks. The file and
+> line citations to them below record the original incident. The lesson still
+> governs the helpers that remain: `surface-report.sh` and
+> `skills/checking-merge-readiness/scripts/fetch-pr-history.sh`.
 
 ## Context
 

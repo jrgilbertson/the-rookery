@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
 # run-helper-checks.sh — exercises every documented output state of the
-# checking-pr-readiness surface-report helper against throwaway git fixtures.
+# checking-pr-readiness surface-report helper, and the step 1 surface identity,
+# against throwaway git fixtures.
 #
 # Each assertion checks the verdict line (line 1) and the exit code, because the
 # helper's contract is exactly that pair. Fixtures are built under a mktemp
@@ -308,6 +309,55 @@ mentions_text "surface: --base naming only a tag names the ref" \
 run "$bt" "$surface" --base no-such-ref
 exits "surface: --base resolving to no branch refused" 4
 says "surface: --base resolving to no branch reports not run" "verdict: not run"
+
+# --- Surface identity (SKILL.md step 1) --------------------------------------
+# The identity command is read from the shipped SKILL.md and run as written, so
+# these cases exercise the production text, not a copy. Each case is an edit
+# that must change the identity, plus the guarantees that it leaves the real
+# index alone and matches what a publisher's `git add -A` would commit.
+skill_md="$here/../../../skills/checking-pr-readiness/SKILL.md"
+identity_cmd=$(awk '/^```sh$/{on=1; next} /^```$/{on=0} on' "$skill_md")
+surface_id() { # surface_id <repo> — print the identity tree OID
+	(
+		cd "$1" || exit 1
+		# The SKILL.md command reads $tmp, which the shell check cannot see.
+		# shellcheck disable=SC2034
+		tmp=$(mktemp -d "$work/id.XXXXXX")
+		eval "$identity_cmd"
+	)
+}
+changes() { # changes <label> <before> <after>
+	if [ -n "$2" ] && [ "$2" != "$3" ]; then ok "$1"; else no "$1" "identity did not change"; fi
+}
+
+si=$(repo surface-identity)
+w "$si/.gitignore" "ign/"
+cm "$si" 2020-02-01T00:00:00Z ignore
+w "$si/src.txt" dirty
+a=$(surface_id "$si"); w "$si/src.txt" "dirty, then edited in place"; b=$(surface_id "$si")
+changes "identity: an in-place edit of an already-dirty file" "$a" "$b"
+w "$si/new.txt" untracked; c=$(surface_id "$si")
+changes "identity: a new untracked file" "$b" "$c"
+w "$si/ign/forced.txt" v1; git -C "$si" add -f ign/forced.txt; d=$(surface_id "$si")
+w "$si/ign/forced.txt" "v2, a longer edit"; e=$(surface_id "$si")
+changes "identity: an edit to a force-added ignored file" "$d" "$e"
+w "$si/ign/plain.txt" ignored; f=$(surface_id "$si")
+if [ "$e" = "$f" ]; then ok "identity: an ignored file that will not ship is left out"
+else no "identity: an ignored file that will not ship is left out" "identity changed"; fi
+status_before=$(git -C "$si" status --porcelain); index_before=$(git -C "$si" ls-files -s)
+surface_id "$si" >/dev/null
+if [ "$status_before" = "$(git -C "$si" status --porcelain)" ] &&
+	[ "$index_before" = "$(git -C "$si" ls-files -s)" ]; then
+	ok "identity: the real index and working tree are untouched"
+else no "identity: the real index and working tree are untouched" "status or index moved"; fi
+pub=$(mktemp -d "$work/pub.XXXXXX")
+cp "$si/.git/index" "$pub/index"
+published=$(cd "$si" && GIT_INDEX_FILE="$pub/index" git add -A && GIT_INDEX_FILE="$pub/index" git write-tree)
+if [ "$(surface_id "$si")" = "$published" ]; then ok "identity: matches what git add -A would commit"
+else no "identity: matches what git add -A would commit" "trees differ"; fi
+sn="$work/surface-identity-unborn"; mkdir -p "$sn"; git -C "$sn" init -q; w "$sn/a.txt" a
+if [ -n "$(surface_id "$sn")" ]; then ok "identity: builds on a branch with no commits"
+else no "identity: builds on a branch with no commits" "no tree OID"; fi
 
 # --- Exit pin -----------------------------------------------------------------
 # The verdict and exit code are one contract: a surface verdict always exits 0,

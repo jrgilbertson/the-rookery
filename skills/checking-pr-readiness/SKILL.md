@@ -63,18 +63,19 @@ withholds Approve.
 
 Record the surface identity in the temp directory and do not print it: the
 full head OID, the base OID, and one tree OID that covers every tracked and
-untracked path as it stands, built in a throwaway index so the real index and
-working tree are untouched:
+untracked path as it stands. Build it in a copy of the real index, so staged,
+force-added, and assume-unchanged entries match what a publisher's
+`git add -A` would commit, and the real index and working tree stay untouched:
 
 ```sh
-GIT_INDEX_FILE="$tmp/index" git read-tree HEAD &&
+cp -p "$(git rev-parse --git-path index)" "$tmp/index" 2>/dev/null || :
 GIT_INDEX_FILE="$tmp/index" git add -A &&
 GIT_INDEX_FILE="$tmp/index" git write-tree
 ```
 
 Approve and recompose compare this identity. Any difference means the
-surface changed. If the identity cannot be built, including on a branch with
-no commits, the gather is incomplete and Approve is withheld.
+surface changed. If the identity cannot be built, the gather is incomplete
+and Approve is withheld.
 
 Completion: every path in all four categories is in the captured surface
 report and the identity is recorded, or the run stopped because the working
@@ -356,10 +357,15 @@ companion.
 
 When that skill returns, compare `git rev-parse <published head>^{tree}` with
 the recorded tree OID. On a mismatch, name the differing paths and say that
-the published content is not what was approved. This gate ends there.
-Babysitting the pull request and the
-merge-readiness review are the caller's next steps, not this gate's. The
-Approve 1 never selects Proceed to merge.
+the published content is not what was approved.
+
+The publisher normally hands the pull request to `ce-babysit-pr`. When that
+babysit reports looks merge-ready or cautiously looks ready, invoke
+`checking-merge-readiness` for the pull request; it moves the review to a
+fresh reviewer itself, and its menu waits for the owner. On any other babysit
+result, or when no babysit ran, report it and stop. An unattended run stops
+after the publisher and leaves merge readiness to its caller. The Approve 1
+never selects Proceed to merge.
 
 ## Gotchas
 

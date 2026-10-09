@@ -225,19 +225,21 @@ With no such issue description, use the pull request description. **SSOT for
 edit snapshots:** where `userContentEdits` was read to exhaustion, each
 entry's `diff` is the full post-edit body, not a patch and not the pre-edit
 text. Sort by `editedAt` and take the oldest surviving entry that has a body.
-That body is the baseline, provenance "earliest revision", whether or not it
-equals the current description. Disclose which text you used. No recorded
-edits after that read means the body was never changed. When it states a
-purpose in more than one line, say the baseline is the description as first
-written.
+Use it as provenance "earliest revision" when that edit predates the first
+review submission. Disclose which text you used. When that edit is later, or
+its time cannot be compared, disclose the gap and ask for the purpose. It is
+not a debug cap. No recorded edits after that read means the body was never
+changed. When it states a purpose in more than one line, say the baseline is
+the description as first written.
 
 When that history cannot be read, or no surviving entry has a body, disclose
 the gap. It is not a debug cap. Use provenance "current description"
 when the description states a purpose in more than one line. Ask the owner only
-when no linked issue description states a purpose and the pull request description is
-empty or one line. That ask still applies when a completed read recorded no
-edits. Ask for the purpose. Name no candidate from the diff. The reply is a
-prerequisite to grading drift, not the terminal decision.
+when no linked issue description states a purpose and the pull request
+description does not state a purpose in more than one line. That ask still
+applies when a completed read recorded no edits. Ask for the purpose. Name no
+candidate from the diff. The reply is a prerequisite to grading drift, not the
+terminal decision.
 
 When the description carries an evidence pack from a pre-PR gate such as
 `checking-pr-readiness`, treat it as unverified claims: cross-check against
@@ -253,7 +255,7 @@ describes the final diff. A purpose that no longer matches is intent drift;
 more files or edge cases under the same purpose is scope growth.
 
 Completion: name the provenance (source issue, earliest revision, current
-description, or the owner's reply on an empty or one-line description).
+description, or the owner's reply when no pre-review purpose was stated).
 Unreadable edit history is a disclosed gap, not a debug cap.
 
 ### 5. Review the whole change

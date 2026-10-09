@@ -403,9 +403,9 @@ jq_is "ghost editor: the description edit still arrives" \
   '[.descriptionEdits[].editor | tostring] | join(",")' "null"
 
 echo "== J. intent baseline uses a linked issue instead of an owner reconfirmation =="
-# Pins issue 199: a stated purpose is graded from the linked issue or the
-# readable description history. The owner is asked only when both are absent
-# and the description is empty or one line. Unreadable edit history is a
+# Pins issue 199: a stated purpose is graded from the linked issue or from
+# description text known to predate review. The owner is asked when neither
+# states a purpose in more than one line. Unreadable edit history is a
 # disclosed gap, not a debug cap.
 SKILL_MD="$HERE/../../../skills/checking-merge-readiness/SKILL.md"
 FLOOR_MD="$HERE/../../../skills/checking-merge-readiness/references/fetch-floor.md"
@@ -421,12 +421,14 @@ lacks_text() { # lacks_text <label> <file> <needle>
 }
 has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "source issue".'
 has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
+has_text "baseline: earliest revision predates review" "$WORK/skill.flat" \
+  'Use it as provenance "earliest revision" when that edit predates the first review submission.'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
 has_text "baseline: current description only without a usable history" "$WORK/skill.flat" \
   'When that history cannot be read, or no surviving entry has a body, disclose the gap.'
 lacks_text "baseline: a missing snapshot does not switch the rule" "$WORK/skill.flat" 'a snapshot is missing'
-has_text "baseline: ask only when the description is empty" "$WORK/skill.flat" \
-  'Ask the owner only when no linked issue description states a purpose and the pull request description is empty or one line.'
+has_text "baseline: ask when no description states a multi-line purpose" "$WORK/skill.flat" \
+  'Ask the owner only when no linked issue description states a purpose and the pull request description does not state a purpose in more than one line.'
 has_text "baseline: a completed empty history still asks" "$WORK/skill.flat" \
   'That ask still applies when a completed read recorded no edits.'
 has_text "baseline: no edits is not an automatic move-on" "$WORK/skill.flat" \

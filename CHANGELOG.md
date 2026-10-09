@@ -36,11 +36,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `checking-merge-readiness` takes the intent baseline from a linked issue
   whose description states a purpose, then from the pull request description.
-  A completed description history keeps the oldest entry that has a body.
-  It asks the owner only when no linked issue description states a purpose and
-  the pull request description is empty or one line, including when a completed
-  read recorded no edits. Unreadable description-edit history is disclosed and
-  does not by itself cap the recommendation.
+  A completed description history keeps the oldest entry that has a body when
+  that edit predates the first review. It asks the owner when no linked issue
+  description states a purpose and the pull request description does not state
+  a purpose in more than one line, including when a completed read recorded no
+  edits, and when the only recoverable text does not predate review.
+  Unreadable description-edit history is disclosed and does not by itself cap
+  the recommendation.
 - Chief-of-staff reviews keep supplied results unverified, give the actual
   reason when source calls are excluded, and continue conditional questions
   without claiming a verified review.

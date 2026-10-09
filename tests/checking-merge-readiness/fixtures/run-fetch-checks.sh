@@ -425,7 +425,9 @@ has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earl
 has_text "baseline: earliest revision predates review and states a purpose" "$WORK/skill.flat" \
   'Use it as provenance "earliest revision" when that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more than one line.'
 has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
-  'or that body states no such purpose, disclose the gap and ask for the purpose.'
+  'or if that body states no such purpose, disclose the gap and ask for the purpose.'
+has_text "baseline: a later edit asks even when it states a purpose" "$WORK/skill.flat" \
+  'If that edit is later, even when that body states a purpose, or if its time cannot be compared, or if that body states no such purpose, disclose the gap and ask for the purpose.'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
 has_text "baseline: current description only without a usable history" "$WORK/skill.flat" \
   'When that history cannot be read, or no surviving entry has a body, disclose the gap.'

@@ -44,7 +44,7 @@ looked" surface. GitHub Releases mirror its entries.
   It asks the owner when no linked issue
   description states a purpose and the pull request description does not state
   a purpose in more than one line, including when a completed read recorded no
-  edits, and when the only recoverable text does not predate review.
+  edits, and when the only recoverable text does not predate review, even when that later body states a purpose.
   Unreadable description-edit history is disclosed and does not by itself cap
   the recommendation.
 - Chief-of-staff reviews keep supplied results unverified, give the actual

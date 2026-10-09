@@ -212,8 +212,9 @@ It is not `ce-babysit-pr`'s looks-merge-ready stop. That Compound Engineering
 report means babysit settled. Settled is not merged, and it is not this
 review. Looks merge-ready is the trigger to start this review.
 
-It always runs in a reviewer with no prior involvement; a session that
-shaped the change dispatches it to a fresh subagent. It recommends merge,
+It runs in a reviewer with no prior involvement: a session that shaped the
+change dispatches it to a fresh subagent. When no subagent can open, it
+reviews in place and its brief warns that the review was not independent. It recommends merge,
 debug, or do not merge, then waits for a numbered reply. Gather, grade, and
 readout stay read-only. Option 1 is Proceed to merge. Before merging, it
 re-checks the head and base ref, review history, linked-issue states, and host

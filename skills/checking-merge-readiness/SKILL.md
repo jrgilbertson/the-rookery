@@ -221,21 +221,23 @@ description. No new login, and no invented text. Provenance is "source issue".
 One shared purpose is the baseline. Conflicting purposes are intent drift in
 step 5. Do not ask which description the owner meant.
 
-With no such issue description, use the pull request description. No recorded
-edits means the body was never changed: say the baseline is the description
-as first written, and move on. **SSOT for edit snapshots:** where
-`userContentEdits` was read to exhaustion, each entry's `diff` is the full
-post-edit body, not a patch and not the pre-edit text. Sort by `editedAt`
-and take the oldest surviving entry that has a body. That body is the
-baseline, provenance "earliest revision", whether or not it equals the
-current description. Disclose which text you used.
+With no such issue description, use the pull request description. **SSOT for
+edit snapshots:** where `userContentEdits` was read to exhaustion, each
+entry's `diff` is the full post-edit body, not a patch and not the pre-edit
+text. Sort by `editedAt` and take the oldest surviving entry that has a body.
+That body is the baseline, provenance "earliest revision", whether or not it
+equals the current description. Disclose which text you used. No recorded
+edits after that read means the body was never changed. When it states a
+purpose in more than one line, say the baseline is the description as first
+written.
 
 When that history cannot be read, a snapshot is missing, or no entry has a
 body, disclose the gap. It is not a debug cap. Use provenance "current description"
 when the description states a purpose in more than one line. Ask the owner only
 when no linked issue supplies a description and the pull request description is
-empty or one line. Ask for the purpose. Name no candidate from the diff. The
-reply is a prerequisite to grading drift, not the terminal decision.
+empty or one line. That ask still applies when a completed read recorded no
+edits. Ask for the purpose. Name no candidate from the diff. The reply is a
+prerequisite to grading drift, not the terminal decision.
 
 When the description carries an evidence pack from a pre-PR gate such as
 `checking-pr-readiness`, treat it as unverified claims: cross-check against

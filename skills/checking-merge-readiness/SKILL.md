@@ -234,7 +234,7 @@ written.
 When that history cannot be read, a snapshot is missing, or no entry has a
 body, disclose the gap. It is not a debug cap. Use provenance "current description"
 when the description states a purpose in more than one line. Ask the owner only
-when no linked issue supplies a description and the pull request description is
+when no linked issue description states a purpose and the pull request description is
 empty or one line. That ask still applies when a completed read recorded no
 edits. Ask for the purpose. Name no candidate from the diff. The reply is a
 prerequisite to grading drift, not the terminal decision.

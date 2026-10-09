@@ -423,7 +423,7 @@ has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "
 has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
 has_text "baseline: ask only when the description is empty" "$WORK/skill.flat" \
-  'Ask the owner only when no linked issue supplies a description and the pull request description is empty or one line.'
+  'Ask the owner only when no linked issue description states a purpose and the pull request description is empty or one line.'
 has_text "baseline: a completed empty history still asks" "$WORK/skill.flat" \
   'That ask still applies when a completed read recorded no edits.'
 has_text "baseline: no edits is not an automatic move-on" "$WORK/skill.flat" \

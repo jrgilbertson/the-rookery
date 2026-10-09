@@ -38,7 +38,10 @@ looked" surface. GitHub Releases mirror its entries.
   whose description states a purpose, then from the pull request description.
   A completed description history keeps the oldest entry that has a body when
   that edit predates the first review and that body states a purpose in more
-  than one line. It asks the owner when no linked issue
+  than one line. A missing description snapshot is disclosed and does not
+  make the current description the earliest revision. A failed read of a
+  source issue on another tracker is a named gap and does not by itself cap.
+  It asks the owner when no linked issue
   description states a purpose and the pull request description does not state
   a purpose in more than one line, including when a completed read recorded no
   edits, and when the only recoverable text does not predate review.

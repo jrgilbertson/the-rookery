@@ -113,14 +113,14 @@ read-only verb set, the only forge commands the gather path runs:
   repository-local source-issue link in the description. Keep GitHub selectors
   in this repository. Also read a linked source issue on another tracker,
   including Linear, with existing credentials and no new login. A failed read
-  is a named gap; continue without inventing its text.
+  is a named gap and does not by itself cap; continue without inventing its text.
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not
   prove exhaustion and must not substitute. For step 7, record only each
   issue's native identity and state. Comments serve this initial stewardship
-  review; do not fingerprint their text. If any issue or comment page cannot be fetched completely, mark
-  issue stewardship incomplete and cap at debug. Do not list or search unrelated issues.
+  review; do not fingerprint their text. If a repository-local issue comment page cannot be fetched completely, mark
+  issue stewardship incomplete and cap at debug. A failed read on another tracker does not. Do not list or search unrelated issues.
 - GraphQL for review history (plain `gh pr view` omits thread resolution
   and description edit history). Prefer the bundled helper
   [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) when present and
@@ -224,13 +224,13 @@ step 5. Do not ask which description the owner meant.
 With no such issue description, use the pull request description. **SSOT for
 edit snapshots:** where `userContentEdits` was read to exhaustion, each
 entry's `diff` is the full post-edit body, not a patch and not the pre-edit
-text. Sort by `editedAt` and take the oldest surviving entry that has a body. Use it as
-provenance "earliest revision" when that edit predates the first review submission
-and that body states a purpose in more than one line. When that edit is later, its
-time cannot be compared, or that body states no such purpose, disclose the gap and
-ask for the purpose. It is not a debug cap. No recorded edits after that read means
-the body was never changed. When it states a purpose in more than one line, say the
-baseline is the description as first written.
+text. Sort by `editedAt`. When an entry's snapshot is missing, disclose that gap first.
+It is not a debug cap and does not make the current description the earliest revision.
+Take the oldest surviving entry that has a body. Use it as provenance "earliest revision"
+when that edit predates the first review submission and that body states a purpose in more
+than one line. When that edit is later, its time cannot be compared, or that body states
+no such purpose, disclose the gap and ask for the purpose. It is not a debug cap.
+No recorded edits after that read means the body was never changed. When it states a purpose in more than one line, say the baseline is the description as first written.
 
 When that history cannot be read, or no surviving entry has a body, disclose
 the gap. It is not a debug cap. Use provenance "current description"

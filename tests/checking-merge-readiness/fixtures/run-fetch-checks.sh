@@ -429,7 +429,12 @@ has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
 has_text "baseline: current description only without a usable history" "$WORK/skill.flat" \
   'When that history cannot be read, or no surviving entry has a body, disclose the gap.'
-lacks_text "baseline: a missing snapshot does not switch the rule" "$WORK/skill.flat" 'a snapshot is missing'
+has_text "baseline: a missing snapshot is disclosed" "$WORK/skill.flat" \
+  "When an entry's snapshot is missing, disclose that gap first."
+has_text "baseline: a missing snapshot is not the current description" "$WORK/skill.flat" \
+  'does not make the current description the earliest revision.'
+has_text "baseline: another tracker read does not cap" "$WORK/skill.flat" \
+  'A failed read is a named gap and does not by itself cap'
 has_text "baseline: ask when no description states a multi-line purpose" "$WORK/skill.flat" \
   'Ask the owner only when no linked issue description states a purpose and the pull request description does not state a purpose in more than one line.'
 has_text "baseline: a completed empty history still asks" "$WORK/skill.flat" \

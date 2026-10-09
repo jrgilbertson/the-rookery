@@ -371,6 +371,8 @@ pins "boundary: a named subject must match the checkout" \
 	"require \`git rev-parse HEAD\` to equal it"
 pins "boundary: a published tree mismatch stops before merge readiness" \
 	"and stop: do not start merge readiness"
+pins "boundary: the publisher gets the approved base and it is checked" \
+	"and the pull request's base branch with the approved target"
 pins "boundary: a withheld 1 is not Approve" "A \`1\` on a withheld row is not Approve"
 pins "boundary: the menu turn never picks" "Do not pick an option in the same turn that wrote the menu."
 

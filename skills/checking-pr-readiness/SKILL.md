@@ -355,7 +355,8 @@ or contents, local-only paths, credentials, or unnecessary personal data. Do
 not write the filled pack back to the asset or print it as a readout.
 
 Invoke the installed skill that owns opening a pull request once, with the
-pack (WORKFLOWS.md's example is `ce-commit-push-pr`). When this run is
+pack and the approved target branch as the pull request's base
+(WORKFLOWS.md's example is `ce-commit-push-pr`). When this run is
 unattended, pass that skill's non-interactive mode, such as `mode:pipeline`.
 Ordinary publication writes the pack into the pull request description. That
 skill must not re-ask the same Approve. If no such skill is installed, name
@@ -363,8 +364,9 @@ that once and stop; option 1 accepted readiness, and publishing still needs a
 companion.
 
 When that skill returns, compare `git rev-parse <published head>^{tree}` with
-the recorded tree OID. On a mismatch, name the differing paths, say that the
-published content is not what was approved, and stop: do not start merge
+the recorded tree OID, and the pull request's base branch with the approved
+target. On a mismatch, name what differs, say that the published pull request
+is not what was approved, and stop: do not start merge
 readiness, because the published head needs a fresh PR-readiness pass.
 
 An unattended run stops after the publisher and leaves babysit and merge

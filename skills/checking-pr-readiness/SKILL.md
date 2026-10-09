@@ -46,6 +46,13 @@ directory outside the target repository first; capture helper stdout there and
 do not echo the inventory into chat. Keep that directory while the run waits
 for a numbered reply and remove it when the run ends.
 
+When the caller names a branch, commit, or pull request, resolve its head OID
+through its own read (git for a branch or commit, the forge for a pull
+request) and require `git rev-parse HEAD` to equal it. On a mismatch, or when
+the named subject cannot be resolved, name it, withhold Approve, and stop
+gathering; never assess the checkout in its place. With no named subject, the
+current branch is the subject.
+
 Resolve the target branch the pull request will merge into (the remote's
 HEAD, or ask when it is ambiguous) and record its full base OID. Run
 [scripts/surface-report.sh](scripts/surface-report.sh) when it is present and
@@ -53,7 +60,7 @@ executable, with `--base <target> --full`. Otherwise gather the same four
 categories directly with git: committed on this branch against the merge base
 with the target, plus staged, unstaged, and untracked paths.
 
-List untracked paths with the same weight as tracked ones. Finishing tools
+List untracked paths with the same weight as tracked ones. Publishers
 stage them, so they ship with the change even though no diff command shows
 them by default. If the working tree is not a git repository, or git is
 unavailable, stop rather than composing a brief from a surface you could
@@ -356,8 +363,9 @@ that once and stop; option 1 accepted readiness, and publishing still needs a
 companion.
 
 When that skill returns, compare `git rev-parse <published head>^{tree}` with
-the recorded tree OID. On a mismatch, name the differing paths and say that
-the published content is not what was approved.
+the recorded tree OID. On a mismatch, name the differing paths, say that the
+published content is not what was approved, and stop: do not start merge
+readiness, because the published head needs a fresh PR-readiness pass.
 
 The publisher normally hands the pull request to `ce-babysit-pr`. When that
 babysit reports looks merge-ready or cautiously looks ready, invoke

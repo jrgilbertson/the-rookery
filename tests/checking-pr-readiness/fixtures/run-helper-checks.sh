@@ -359,6 +359,21 @@ sn="$work/surface-identity-unborn"; mkdir -p "$sn"; git -C "$sn" init -q; w "$sn
 if [ -n "$(surface_id "$sn")" ]; then ok "identity: builds on a branch with no commits"
 else no "identity: builds on a branch with no commits" "no tree OID"; fi
 
+# --- Protected boundaries in the shipped PR-readiness skill -------------------
+# One pin per approval boundary a rewrite must not drop. They fail on a silent
+# deletion; they do not prove an agent obeys the text.
+flat="$work/pr-skill.flat"
+tr '\n' ' ' <"$skill_md" | tr -s ' ' >"$flat"
+pins() { # pins <label> <needle>
+	if grep -qF -- "$2" "$flat"; then ok "$1"; else no "$1" "missing [$2]"; fi
+}
+pins "boundary: a named subject must match the checkout" \
+	"require \`git rev-parse HEAD\` to equal it"
+pins "boundary: a published tree mismatch stops before merge readiness" \
+	"and stop: do not start merge readiness"
+pins "boundary: a withheld 1 is not Approve" "A \`1\` on a withheld row is not Approve"
+pins "boundary: the menu turn never picks" "Do not pick an option in the same turn that wrote the menu."
+
 # --- Exit pin -----------------------------------------------------------------
 # The verdict and exit code are one contract: a surface verdict always exits 0,
 # and `not run` always exits 2 (usage) or 4 (hard failure). Every pair this run

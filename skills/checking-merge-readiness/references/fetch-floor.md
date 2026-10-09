@@ -10,7 +10,9 @@ a required surface during gather: name the gap and **cap at debug** (remove
 merge). On the option-1 reply, name the gap and stop. Do not grade and do not
 dispatch. Never invent missing values, skip the check, or treat partial
 success as full history. Degraded mode is not only total unavailability; thin
-payload is the same class of cap.
+payload is the same class of cap. Description edit history is not a required
+surface for this cap. Unreadable `userContentEdits`, or an edit whose snapshot
+is missing, is a disclosed gap. Step 4 names it and does not cap for it alone.
 
 The bundled helper `scripts/fetch-pr-history.sh` is the preferred transport
 for the history surfaces: one run paginates every connection to exhaustion,
@@ -36,9 +38,11 @@ governs the hand-built fetch used when the helper cannot run.
    connection — not the nested comments under threads). An objection that
    never became a line thread is still review history; threads-only can look
    fully resolved while a standing conversation objection remains.
-4. **Description edit history** (`userContentEdits`) for step 4's baseline:
-   when each edit happened, who edited, and the full post-edit body snapshot
-   GitHub exposes on that entry. Field semantics: see step 4 (SSOT).
+4. **Description edit history** (`userContentEdits`) for step 4's
+   earliest-revision path: when each edit happened, who edited, and the full
+   post-edit body snapshot GitHub exposes on that entry. Field semantics: see
+   step 4 (SSOT). When this connection cannot be read, record the gap and
+   continue. That gap is not incomplete history.
 5. **Host merge policy and live merge state** (step 3). Policy fields from the
    ordered fetch in SKILL.md step 2; live fields from `pr view --json`.
 
@@ -61,7 +65,7 @@ judge.
 | Each review submission | Stable id; author; timestamp; state; body text; **reviewed commit OID** when GitHub provides it. Missing OID ⇒ weaker round attribution, not an automatic merge cap |
 | Each review thread | Stable id; path; **resolution flag**; each comment's stable id, author, timestamp, body, and **line or diff-hunk context** when GitHub provides it; **join to a submission by review id**, not timestamp alone |
 | Each conversation comment | Stable id; author; timestamp; body |
-| Each description edit | Timestamp; editor identity; **full post-edit body snapshot**. Edits present but snapshot missing ⇒ intent unverifiable, not "use the current body". Snapshot field name and meaning: step 4 |
+| Each description edit | Timestamp; editor identity; **full post-edit body snapshot**, when the connection can be read. Unreadable history or a missing snapshot is a disclosed gap, not incomplete history and not an intent cap. Do not call the current body an earliest revision. Snapshot field name and meaning: step 4 |
 | Host policy / merge state | Conversation-resolution required (yes/no/unknown); required approving review count when known; last-push re-approval / dismiss-stale when known; live mergeable / mergeStateStatus / reviewDecision / statusCheckRollup when available. Policy unknown ⇒ named gap, never invent "rules pass" |
 
 **Null author or editor on a fetched node.** GitHub returns a null author for
@@ -71,7 +75,7 @@ edit, that null **degrades attribution for themes exactly as a missing
 reviewed-commit OID does** — the node still counts, it just cannot be
 attributed to a person. It is **not** incomplete history and never caps merge
 on its own. The one exception is the **PR author** in the identity row: that
-field anchors the intent baseline, so a null there stays a hard stop. The
+field is required identity, so a null there stays a hard stop. The
 helper follows this split — a ghost-authored review or edit exits 0 with
 `complete: true` and a null `author`/`editor`, while a null identity author
 exits 4.
@@ -118,6 +122,7 @@ fetching it.
 GraphQL on github.com via `gh api graphql` is the ship-proof history path. A
 schema error, missing connection, unknown field, or host without verified
 parity is a named gap and the degraded path — never silent half-history.
+Unavailable description-edit history stays the step 4 disclosed gap.
 
 ## Degraded path
 

@@ -402,5 +402,80 @@ jq_is "ghost author: the review still arrives, attributed to null" \
 jq_is "ghost editor: the description edit still arrives" \
   '[.descriptionEdits[].editor | tostring] | join(",")' "null"
 
+echo "== J. intent baseline uses a linked issue instead of an owner reconfirmation =="
+# Pins issue 199: a stated purpose is graded from the linked issue or from
+# description text known to predate review. The newest pre-review body is
+# that baseline only when it states a purpose in more than one line. The owner is asked
+# when neither states a purpose in more than one line. Unreadable edit
+# history is a disclosed gap, not a debug cap.
+SKILL_MD="$HERE/../../../skills/checking-merge-readiness/SKILL.md"
+FLOOR_MD="$HERE/../../../skills/checking-merge-readiness/references/fetch-floor.md"
+tr '\n' ' ' < "$SKILL_MD" | tr -s ' ' > "$WORK/skill.flat"
+tr '\n' ' ' < "$FLOOR_MD" | tr -s ' ' > "$WORK/floor.flat"
+has_text() { # has_text <label> <file> <needle>
+  if grep -qF -- "$3" "$2"; then pass "$1"
+  else fail "$1" "missing [$3]"; fi
+}
+lacks_text() { # lacks_text <label> <file> <needle>
+  if grep -qF -- "$3" "$2"; then fail "$1" "still contains [$3]"
+  else pass "$1"; fi
+}
+has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "source issue".'
+has_text "baseline: every stated purpose is compared" "$WORK/skill.flat" \
+  'Keep every stated purpose in the baseline and compare each with the final diff.'
+has_text "baseline: drift is a purpose the diff no longer describes" "$WORK/skill.flat" \
+  'A purpose that no longer describes that diff is intent drift in step 5.'
+has_text "baseline: an authorized issue comment is not stale-body drift" "$WORK/skill.flat" \
+  'Before calling that mismatch intent drift, keep a purpose an issue comment this run already read records'
+has_text "baseline: the first matching case wins" "$WORK/skill.flat" \
+  'Apply the first matching case. Do not also apply a later case.'
+has_text "baseline: newest pre-review entry kept" "$WORK/skill.flat" \
+  'When the newest entry that predates every review submission and every substantive top-level conversation comment has a body, and that body states a purpose in more than one line, that entry is the baseline.'
+has_text "baseline: pre-review revision states a purpose" "$WORK/skill.flat" \
+  'Use it as provenance "pre-review revision".'
+has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
+  'or its body states no purpose in more than one line, ask for the purpose.'
+has_text "baseline: a later edit asks even when it states a purpose" "$WORK/skill.flat" \
+  'When no entry predates review, ask even when a later body states a purpose.'
+has_text "baseline: a later edit is not current-description provenance" "$WORK/skill.flat" \
+  'A later edit is not the baseline and is not provenance "current description".'
+has_text "baseline: an older entry is not the baseline" "$WORK/skill.flat" \
+  'An older entry is not the baseline.'
+lacks_text "baseline: oldest surviving entry is not the rule" "$WORK/skill.flat" \
+  'Take the oldest surviving entry'
+lacks_text "baseline: a blanket description ask does not override a later edit" "$WORK/skill.flat" \
+  'Ask the owner only when no linked issue description states a purpose and the pull request description does not state a purpose in more than one line.'
+has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
+has_text "baseline: unreadable history uses the current description" "$WORK/skill.flat" \
+  'When that history cannot be read, disclose the gap.'
+has_text "baseline: no surviving body uses the current description" "$WORK/skill.flat" \
+  'When no surviving entry has a body, disclose the gap.'
+has_text "baseline: a description-history gap is disclosed before the baseline" "$WORK/skill.flat" \
+  "When description-edit history cannot be read, or an entry's snapshot is missing, disclose that gap before choosing a baseline."
+has_text "baseline: a missing snapshot is not the current description" "$WORK/skill.flat" \
+  'does not make the current description the earliest revision.'
+has_text "baseline: another tracker read does not cap" "$WORK/skill.flat" \
+  'A failed read is a named gap and does not by itself cap'
+has_text "baseline: a description does not authorize an external read" "$WORK/skill.flat" \
+  'only when the invoking owner has already named that tracker, workspace, and issue identity in this run. A pull request description does not authorize that read.'
+has_text "baseline: a failed external read is not an option-1 stop" "$WORK/skill.flat" \
+  'A failed external-tracker read already named in gather is not that stop.'
+has_text "baseline: the ask names no candidate from the diff" "$WORK/skill.flat" \
+  'Ask for the purpose only when the matching case says to ask. Name no candidate from the diff.'
+has_text "baseline: no edits asks when that body states no multi-line purpose" "$WORK/skill.flat" \
+  'When it states a purpose in more than one line, the baseline is the description as first written. Otherwise ask for the purpose.'
+lacks_text "baseline: a completed read does not ask on its own" "$WORK/skill.flat" \
+  'That ask still applies when a completed read recorded no edits.'
+has_text "baseline: no edits is not an automatic move-on" "$WORK/skill.flat" \
+  'No recorded edits after that read means the body was never changed.'
+has_text "baseline: unreadable edits are not a cap" "$WORK/skill.flat" \
+  'Unreadable edit history is a disclosed gap, not a debug cap.'
+lacks_text "baseline: owner confirmation is not a provenance" "$WORK/skill.flat" 'owner confirmation'
+lacks_text "baseline: owner attestation is not a provenance" "$WORK/skill.flat" 'owner attestation'
+lacks_text "baseline: unverifiable intent is not a cap" "$WORK/skill.flat" 'unverifiable intent'
+has_text "floor: an unreadable edit history is a disclosed gap" "$WORK/floor.flat" \
+  'Unreadable history or a missing snapshot is a disclosed gap'
+lacks_text "floor: a missing snapshot is not unverifiable intent" "$WORK/floor.flat" 'intent unverifiable'
+
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

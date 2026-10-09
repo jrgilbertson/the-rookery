@@ -109,16 +109,19 @@ read-only verb set, the only forge commands the gather path runs:
   rollup into chat.
 - `gh pr diff` — the final code, once, unless Review independence supplied that file.
 - `gh issue view --json` — fetch the number, title, body, state, and URL for
-  every repository-local issue in `closingIssuesReferences`. Also fetch every
-  repository-local issue link that the description identifies as a source
-  issue. Keep every selector within the pull request's repository.
+  every repository-local issue in `closingIssuesReferences`, plus every
+  repository-local source-issue link in the description. Keep GitHub selectors
+  in this repository. Also read a linked source issue on another tracker,
+  including Linear, only when the invoking owner has already named that tracker, workspace, and issue identity in this run. A pull request description does not authorize that read.
+  Use existing credentials and no new login. A failed read
+  is a named gap and does not by itself cap, and it is not an option-1 record. Name a link this run did not read, and continue without inventing its text.
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not
   prove exhaustion and must not substitute. For step 7, record only each
   issue's native identity and state. Comments serve this initial stewardship
-  review; do not fingerprint their text. If any issue or comment page cannot be fetched completely, mark
-  issue stewardship incomplete and cap at debug. Do not list or search unrelated issues.
+  review; do not fingerprint their text. If a repository-local issue comment page cannot be fetched completely, mark
+  issue stewardship incomplete and cap at debug. A failed read on another tracker does not. Do not list or search unrelated issues.
 - GraphQL for review history (plain `gh pr view` omits thread resolution
   and description edit history). Prefer the bundled helper
   [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) when present and
@@ -156,7 +159,8 @@ semantic traps (including tip residual), trust and transport, and the
 degraded path.
 
 In every branch: paginate until exhaustion is observed; meet the floor or
-record incomplete history and cap at debug; record the head OID and
+record incomplete history and cap at debug. Unavailable description-edit
+history is a disclosed gap for step 4, not that cap. Record the head OID and
 the step-7 fingerprint; keep fetched PR text out of command arguments. Do
 not echo helper JSON, jq, fingerprints, or rollup dumps into chat.
 
@@ -164,7 +168,7 @@ Completion: the description, diff, review history, linked source issues when
 present, and host policy/live state are each in hand with the floor met, or
 marked unavailable / incomplete with its cap recorded; the head OID and
 fingerprints are recorded, with the payload's history fingerprint, resolved
-host-policy facts, and each linked issue's identity and state written to files
+host-policy facts, and each linked issue this run read, by identity and state, written to files
 now for the later option-1 execution check. Store those
 files in an owner-only `mktemp -d` directory outside the target repository.
 While waiting, that directory holds history fingerprints and these small records, not raw forge
@@ -208,32 +212,31 @@ pass, fail with a named rule, or are unavailable with the gap named.
 
 ### 4. Establish the intent baseline
 
-The baseline is the change's pre-review intent, recovered from the description
-where the forge allows it. A description with no recorded edits was never
-changed, so the body already in hand is the original, and confirmation
-collapses to a disclosure: say the baseline is the description as first
-written, and move on.
+The baseline is the change's pre-review intent. Take it from evidence already
+gathered. Do not ask the owner to reconfirm a purpose that evidence states.
+**SSOT for edit snapshots:** where `userContentEdits` was read to exhaustion, each
+entry's `diff` is the full post-edit body, not a patch and not the pre-edit
+text. Sort by `editedAt`. When description-edit history cannot be read, or an entry's snapshot is missing, disclose that gap before choosing a baseline.
+It is not a debug cap and does not make the current description the earliest revision.
 
-Where edits exist, the true original is not recoverable. **SSOT for edit
-snapshots:** despite the field name, each `userContentEdits` entry's `diff` is
-the full post-edit body, not a patch and not the pre-edit text. Sort by
-`editedAt` and take the oldest surviving entry as a candidate (earliest
-the forge still holds, not necessarily first-written). When that oldest
-surviving body equals the current description, disclose that the baseline is
-that surviving text and continue; do not ask. When it differs and its editor
-is the invoking owner, show a redacted projection (a restatement in the run's
-words with only intent-bearing content; omit credentials, tokens, keys,
-endpoints, personal data; restate rather than quote raw body with secrets
-starred) and ask whether it still represents pre-review intent. When the
-editor is someone else, the entry has no body, or edit history was not
-exhausted, intent is unverifiable: cap and use attestation below rather than
-confirming a guess.
+A linked issue whose description states a purpose supplies the baseline first.
+Use each repository-local closing or source issue from step 2, and a source
+issue on another tracker, including Linear, when this run already read its
+description. No new login, and no invented text. Provenance is "source issue".
+Keep every stated purpose in the baseline and compare each with the final diff.
+Before calling that mismatch intent drift, keep a purpose an issue comment this run already read records when the repository owner or a clearly authorized maintainer wrote it, or the invoking owner confirms it during this run, and the final diff still matches it. The stale issue description is then informational. Do not re-fetch the issue.
+A purpose that no longer describes that diff is intent drift in step 5. Do not ask which description the owner meant.
 
-When no baseline can be established, intent is unverifiable and the
-recommendation caps at debug. When the description is empty or one line, say
-unverifiable and take the owner's open attestation of purpose (name no
-candidate purpose from the diff). Attestation is a prerequisite to grading
-drift, never the terminal decision.
+With no such issue description, use the pull request description.
+Apply the first matching case. Do not also apply a later case.
+1. When that history cannot be read, disclose the gap. It is not a debug cap. Use provenance "current description" when that body states a purpose in more than one line. Otherwise ask for the purpose.
+2. No recorded edits after that read means the body was never changed. When it states a purpose in more than one line, the baseline is the description as first written. Otherwise ask for the purpose.
+3. When the newest entry that predates every review submission and every substantive top-level conversation comment has a body, and that body states a purpose in more than one line, that entry is the baseline. Use it as provenance "pre-review revision". An older entry is not the baseline. When that newest body states a purpose, do not ask which pre-review draft the owner meant.
+4. When no entry predates review, ask even when a later body states a purpose. A later edit is not the baseline and is not provenance "current description".
+5. When no surviving entry has a body, disclose the gap. Use provenance "current description" when that body states a purpose in more than one line. Otherwise ask for the purpose.
+6. When that newest pre-review snapshot is missing while an older entry has a body, ask for the purpose. Do not use the older entry.
+7. When the newest pre-review entry's time cannot be compared, or its body states no purpose in more than one line, ask for the purpose.
+Ask for the purpose only when the matching case says to ask. Name no candidate from the diff. The reply is a prerequisite to grading drift, not the terminal decision.
 
 When the description carries an evidence pack from a pre-PR gate such as
 `checking-pr-readiness`, treat it as unverified claims: cross-check against
@@ -245,12 +248,12 @@ not require it and does not re-run the pre-PR gate.
 Intent versus scope, the criterion step 5 grades against: intent is what
 problem the pull request solves and for whom; scope is how much it touches to
 do so. The operational test is whether the baseline's stated purpose still
-describes the final diff. A purpose that no longer matches is intent drift;
+describes the final diff. A purpose that no longer matches is intent drift, except that authorized comment;
 more files or edge cases under the same purpose is scope growth.
 
-Completion: the baseline is established with its provenance named (earliest
-revision, owner confirmation, or owner attestation), or declared unverifiable
-with the debug cap recorded.
+Completion: name the provenance (source issue, pre-review revision, current
+description, or the owner's reply when no pre-review purpose was stated).
+Unreadable edit history is a disclosed gap, not a debug cap.
 
 ### 5. Review the whole change
 
@@ -304,7 +307,7 @@ issue, its absence is not a gap.
 When owner-approved scope is clear and the truthful pull request description
 and final diff match it, stale source-issue wording is informational. Suggest
 the correction as housekeeping rather than a missing material disposition;
-it does not withhold merge. Required work and closure claims still get checked.
+it does not withhold merge. Step 4 applies this before declaring intent drift. Required work and closure claims still get checked.
 
 Confirm that durable code, tests, documentation, and evidence do not cite or
 depend on ignored working artifacts, and that any ADR, solution, release
@@ -350,7 +353,7 @@ regardless of the seven drivers. Scope growth alone never does this. High
 redesign pressure likewise forces do not merge.
 
 Caps (degraded inputs, empty review history, incomplete history or thin
-payload, unverifiable intent, sampled history, blocking host merge rules,
+payload, sampled history, blocking host merge rules,
 an incomplete review-completion check, unverified review independence, or
 missing durable-record disposition) remove merge and cap at debug; they never
 soften a high driver's do not merge.
@@ -469,13 +472,13 @@ dispatch or merge. Do not grade again or start a review.
 Pin `GH_HOST` to the certified host. Reuse the finished grade and captured
 host-policy facts. Follow the approval reads and table in
 [references/merge-execution.md](references/merge-execution.md): compare review
-history, PR identity and live eligibility, and each linked issue's identity and state.
+history, PR identity and live eligibility, and each recorded linked issue's identity and state.
 Use [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) with `--fingerprint`
 only when it wrote the captured history fingerprint; otherwise repeat the
 captured manual history compare. These reads may run concurrently.
 Do not download or regrade the diff, re-fetch issue text, or fingerprint policy
 documents. Keep outputs in the step-2 temp directory and compare them off chat.
-A missing record or unfinished read stops without grading or merging. Issue
+A missing repository-local record or an unfinished read stops without grading or merging. A failed external-tracker read already named in gather is not that stop. Issue
 states and membership follow row 11; PR body and review evidence follow row 13.
 A match is silent. If narration is needed, say you are merging the reviewed head.
 
@@ -496,5 +499,5 @@ merge. If `managing-issues` is unavailable, name that gap and do not edit it her
 - Resolved threads and green checks are not merge safety; judge the aggregate diff.
 - Babysit owns comment management. Read that history. Do not resolve threads or grow a comment loop.
 - Tip residual and host last-push rules: see fetch-floor semantic traps.
-- Incomplete history, including partial GraphQL without a floor field, caps at debug.
+- Incomplete history, including partial GraphQL without a floor field, caps at debug. Unavailable description-edit history does not.
 - `checking-pr-readiness` is the pre-PR gate. Neither skill requires the other.

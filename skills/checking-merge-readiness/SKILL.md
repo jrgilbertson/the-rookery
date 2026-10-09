@@ -389,9 +389,8 @@ each option as a sentence, not a label then a colon.
 
 - **Proceed to merge.** Offered only on an open, non-draft pull request whose
   recommendation is merge, and only when the eligibility probe in
-  [references/merge-execution.md](references/merge-execution.md) resolves
-  queue-off and a method without a prompt. Run that probe before building the
-  menu.
+  [references/merge-execution.md](references/merge-execution.md) resolves a
+  method without a prompt. Run that probe before building the menu.
 - **Debug.** Offered on debug and on do not merge.
 - **Pull back for redesign.** Offered when the recommendation is do not
   merge.

@@ -431,6 +431,14 @@ has_text "no grade store: grades stay out of every store" "$WORK/skill.flat" \
   'write no grade into the repository, the pull request, or any other store'
 has_text "single write: the merge is pinned to the graded head" "$WORK/exec.flat" \
   'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>'
+has_text "merge queue: a queue on the base does not withhold Proceed" "$WORK/exec.flat" \
+  'A merge queue on the base does not withhold it.'
+has_text "merge queue: report what gh said about the queue" "$WORK/exec.flat" \
+  'including that it was added to the merge queue'
+# gh decides queue versus merge. The skill probes no queue state.
+if grep -qE 'mergeQueue|isMergeQueueEnabled|[Qq]ueue-off' "$EXEC_MD" "$SKILL_MD"; then
+  fail "merge queue: the skill probes no queue state" "found a queue probe or queue-off rule"
+else pass "merge queue: the skill probes no queue state"; fi
 # Flatten only the fenced command blocks, so a flag on a continuation line is
 # caught and the prose sentence that names the forbidden flags is not.
 # The backticks are literal Markdown fence delimiters.

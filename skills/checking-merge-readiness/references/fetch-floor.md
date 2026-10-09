@@ -96,7 +96,7 @@ its full floor-field JSON — satisfies this section for the history surfaces
 and identity; its `--fingerprint` mode re-emits it with no body text, so the
 re-check runs entirely outside the conversation. Fingerprint mode
 still fetches every history surface to catch edits; it reduces output, not
-network reads. Live merge eligibility uses the small PR view and queue/method
+network reads. Live merge eligibility uses the small PR view and method
 probe, not a policy or live-state byte comparison.
 
 ## Semantic traps

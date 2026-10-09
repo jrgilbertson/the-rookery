@@ -40,6 +40,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `checking-merge-readiness` offers option 1 when the base branch has a
+  GitHub merge queue. The write is the same pinned `gh pr merge`, which adds
+  the pull request to the queue there, and the report relays what gh said.
 - `checking-merge-readiness` again dispatches a fresh reviewer when the
   invoking session wrote or shaped the pull request, instead of grading it
   itself, capping at debug, and asking the owner to request that review.

@@ -6,30 +6,24 @@ The write still waits for that reply.
 
 ## Eligibility probe
 
-Offer Proceed only when the base is not merge-queue governed and a method can
-be resolved without a prompt. Withhold rather than offering and then
-refusing, including when write auth is known missing.
+Offer Proceed only when a method can be resolved without a prompt. Withhold
+rather than offering and then refusing, including when write auth is known
+missing. A merge queue on the base does not withhold it. There, `gh pr merge`
+adds the pull request to the queue and the queue sets the method.
 
-Pin `GH_HOST` to the certified host, then run this one GraphQL document with
-`-H Graphql-Features: merge_queue` (`gh pr merge` sends it). If the document
-errors, a field is missing, or the result is ambiguous, withhold.
+Pin `GH_HOST` to the certified host, then run this one GraphQL document. If
+the document errors, a field is missing, or the result is ambiguous, withhold.
 
 ```graphql
-query($owner: String!, $name: String!, $n: Int!, $base: String!) {
+query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     mergeCommitAllowed
     squashMergeAllowed
     rebaseMergeAllowed
     viewerDefaultMergeMethod
-    mergeQueue(branch: $base) { id }
-    pullRequest(number: $n) { isMergeQueueEnabled }
   }
 }
 ```
-
-**Queue-off.** `mergeQueue` is null, and `isMergeQueueEnabled` is false
-when the schema provides it. Do not treat `isInMergeQueue == false`
-alone as queue-off.
 
 **Method.** Exactly one of merge/squash/rebase allowed → that flag.
 Several allowed → `viewerDefaultMergeMethod` only when it is still in
@@ -66,8 +60,8 @@ Then stop, name what moved, and do not merge when any of these fails:
 3. **Same linked issues.** The linked-issue set and each state match. Issue
    title, body, and comment edits are not compared and never stop.
 4. **Host rules and eligibility still pass.** Apply SKILL.md step 3's host
-   merge rules, with the captured policy facts, to the live state. Queue-off
-   must still hold, and the offered method must still be allowed. GitHub may
+   merge rules, with the captured policy facts, to the live state. The
+   offered method must still be allowed. GitHub may
    not block a ruleset bypass actor, so a known failing rule stops even when
    GitHub would merge.
 
@@ -103,4 +97,5 @@ administrative bypass. Do not retry, do not invent a second write, and do not
 delete the local branch or check out the default branch.
 
 Tell the owner whether the PR is MERGED. If it is not, name what the command
-said and stop. Remove the step 2 temp directory.
+said, including that it was added to the merge queue, and stop. Remove the
+step 2 temp directory.

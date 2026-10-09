@@ -404,8 +404,8 @@ jq_is "ghost editor: the description edit still arrives" \
 
 echo "== J. intent baseline uses a linked issue instead of an owner reconfirmation =="
 # Pins issue 199: a stated purpose is graded from the linked issue or from
-# description text known to predate review. The oldest body is that baseline
-# only when it states a purpose in more than one line. The owner is asked
+# description text known to predate review. The newest pre-review body is
+# that baseline only when it states a purpose in more than one line. The owner is asked
 # when neither states a purpose in more than one line. Unreadable edit
 # history is a disclosed gap, not a debug cap.
 SKILL_MD="$HERE/../../../skills/checking-merge-readiness/SKILL.md"
@@ -425,13 +425,18 @@ has_text "baseline: every stated purpose is compared" "$WORK/skill.flat" \
   'Keep every stated purpose in the baseline and compare each with the final diff.'
 has_text "baseline: drift is a purpose the diff no longer describes" "$WORK/skill.flat" \
   'A purpose that no longer describes that diff is intent drift in step 5.'
-has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
-has_text "baseline: earliest revision predates review and states a purpose" "$WORK/skill.flat" \
-  'Use it as provenance "earliest revision" when that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more than one line.'
+has_text "baseline: newest pre-review entry kept" "$WORK/skill.flat" \
+  'the baseline is the newest entry that predates every review submission and every substantive top-level conversation comment.'
+has_text "baseline: pre-review revision states a purpose" "$WORK/skill.flat" \
+  'Use it as provenance "pre-review revision" when that entry has a body and that body states a purpose in more than one line.'
 has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
-  'or if that body states no such purpose, disclose the gap and ask for the purpose.'
+  'or that body states no such purpose, disclose the gap and ask for the purpose.'
 has_text "baseline: a later edit asks even when it states a purpose" "$WORK/skill.flat" \
-  'If that edit is later, even when that body states a purpose, or if its time cannot be compared, or if that body states no such purpose, disclose the gap and ask for the purpose.'
+  'When no pre-review entry qualifies, ask even when that later body states a purpose.'
+has_text "baseline: an older entry is not the baseline" "$WORK/skill.flat" \
+  'An older entry is not the baseline.'
+lacks_text "baseline: oldest surviving entry is not the rule" "$WORK/skill.flat" \
+  'Take the oldest surviving entry'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
 has_text "baseline: current description only without a usable history" "$WORK/skill.flat" \
   'When that history cannot be read, or no surviving entry has a body, disclose the gap.'

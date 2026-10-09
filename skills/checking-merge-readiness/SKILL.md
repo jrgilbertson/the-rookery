@@ -226,10 +226,10 @@ edit snapshots:** where `userContentEdits` was read to exhaustion, each
 entry's `diff` is the full post-edit body, not a patch and not the pre-edit
 text. Sort by `editedAt`. When an entry's snapshot is missing, disclose that gap first.
 It is not a debug cap and does not make the current description the earliest revision.
-Take the oldest surviving entry that has a body. Use it as provenance "earliest revision"
-when that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more
-than one line. If that edit is later, even when that body states a purpose, or if its time cannot be compared, or if that body states
-no such purpose, disclose the gap and ask for the purpose. It is not a debug cap.
+When edit entries exist, the baseline is the newest entry that predates every review submission and every substantive top-level conversation comment.
+Use it as provenance "pre-review revision" when that entry has a body and that body states a purpose in more than one line.
+If that entry's snapshot is missing while an older entry has a body, its time cannot be compared, or that body states no such purpose, disclose the gap and ask for the purpose.
+A later edit is not the baseline. When no pre-review entry qualifies, ask even when that later body states a purpose. An older entry is not the baseline. When that newest body states a purpose, do not ask which pre-review draft the owner meant. It is not a debug cap.
 No recorded edits after that read means the body was never changed. When it states a purpose in more than one line, say the baseline is the description as first written.
 
 When that history cannot be read, or no surviving entry has a body, disclose
@@ -254,7 +254,7 @@ do so. The operational test is whether the baseline's stated purpose still
 describes the final diff. A purpose that no longer matches is intent drift;
 more files or edge cases under the same purpose is scope growth.
 
-Completion: name the provenance (source issue, earliest revision, current
+Completion: name the provenance (source issue, pre-review revision, current
 description, or the owner's reply when no pre-review purpose was stated).
 Unreadable edit history is a disclosed gap, not a debug cap.
 

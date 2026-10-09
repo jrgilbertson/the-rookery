@@ -1,8 +1,8 @@
 # Evidence Pack Template
 
 Use this shape as a flexible writing aid, not a fixed form. Instantiate it
-in-process on the option-1 reply and pass it unpublished to the selected
-finishing path. Do not print it as a readout or write the filled pack back to
+in-process on the option-1 reply and pass it unpublished to the skill that
+opens the pull request. Do not print it as a readout or write the filled pack back to
 this file. Its top heading is `## Evidence pack` so the section nests under
 a pull request description's own headings without restructuring them.
 
@@ -17,8 +17,9 @@ follow-up — <one-sentence cause>.
 as leftover work. Do not list opening the pull request.
 
 **Coverage close:** gather completed. Every applicable check is verified, not
-applicable, or recorded without a receipt. Incomplete gather cannot recommend approve. Solution simplicity counts only when the recorded identity matches; never invent a receipt
-for it. Do not put the digest or the commit hash in this pack or the readout.
+applicable, or recorded without a receipt. Incomplete gather cannot recommend
+approve. Never invent a receipt for solution simplicity, and do not put the
+surface identity or a commit hash in this pack.
 
 **Intent:** <durable source and one-sentence outcome>. When the branch has no
 linked issue or ticket, brief, or durable repository plan: comparison

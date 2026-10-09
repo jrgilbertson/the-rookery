@@ -172,9 +172,11 @@ withholds option 1, or a gap needs the owner, the Executor stops with
 the authored commit preserved and no PR. The Coordinator never picks Stop and
 file follow-up work.
 
-After reply 1, the Executor continues into checking-pr-readiness
-finishing, which takes its Executor branch: `ce-commit-push-pr
-mode:pipeline`, then `ce-babysit-pr mode:pipeline`. Babysit repairs CI
+After reply 1, checking-pr-readiness invokes `ce-commit-push-pr
+mode:pipeline`. If that skill created or updated a pull request, its
+completion gate allows babysit, and it did not already start babysit, the
+Executor invokes `ce-babysit-pr mode:pipeline` for it; otherwise it reports
+what the publisher said and stops. Babysit repairs CI
 through `ce-debug` and answers review comments through
 `ce-resolve-pr-feedback` on its own. When babysit returns
 success, looks merge-ready, or cautiously looks ready, the Executor
@@ -185,9 +187,7 @@ result it reports that result and stops.
 
 For each PR whose Executor reported a ready babysit result, the Coordinator
 dispatches `checking-merge-readiness` to a fresh, read-only Reviewer
-with no prior involvement. That Reviewer is a new session: it grades the
-commit once and receives no temp path and no grade. Pass only the
-pull-request identity. Put its
+with no prior involvement. Pass only the pull-request identity. Put its
 recommendation (merge, debug, or do not merge) and risk drivers into the
 report. A debug or do-not-merge verdict goes into the report with its
 findings; the owner decides in the morning. Babysit is a local

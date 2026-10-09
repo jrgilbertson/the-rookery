@@ -18,7 +18,7 @@ The bundled helper `scripts/fetch-pr-history.sh` is the preferred transport
 for the history surfaces: one run paginates every connection to exhaustion,
 emits floor fields only, and produces the fingerprint below. Invoke it as
 `fetch-pr-history.sh --repo <owner/name> --pr <number>`, adding
-`--fingerprint` for the step 7 re-check. Its exit 4 is
+`--fingerprint` for the option-1 re-check. Its exit 4 is
 incomplete history, never a silent partial. Everything in this file also
 governs the hand-built fetch used when the helper cannot run.
 
@@ -44,7 +44,7 @@ governs the hand-built fetch used when the helper cannot run.
    step 4 (SSOT). When this connection cannot be read, record the gap and
    continue. That gap is not incomplete history.
 5. **Host merge policy and live merge state** (step 3). Policy fields from the
-   ordered fetch in SKILL.md step 2; live fields from `pr view --json`.
+   fetch in SKILL.md step 2; live fields from `pr view --json`.
 
 ## Completeness
 
@@ -80,7 +80,7 @@ helper follows this split — a ghost-authored review or edit exits 0 with
 `complete: true` and a null `author`/`editor`, while a null identity author
 exits 4.
 
-## Fingerprint for step 7
+## Fingerprint for the option-1 re-check
 
 Record by node id: each submission (id, author, timestamp, state, reviewed
 commit, opaque body digest — never raw PR text); each thread (id, path,
@@ -88,13 +88,13 @@ resolution) and comment (id, author, timestamp, opaque body digest); each
 conversation comment the same; each description edit (`editedAt`, editor,
 opaque post-edit body digest). Keep resolved policy facts and linked-issue
 identities and states separately; do not fingerprint policy documents or issue
-text. Without ids, step 7
+text. Without ids, option 1
 cannot compare stability: stop and do not merge.
 
 The helper's fingerprint — each node's stable id plus an opaque digest over
 its full floor-field JSON — satisfies this section for the history surfaces
 and identity; its `--fingerprint` mode re-emits it with no body text, so the
-step 7 comparison runs entirely outside the conversation. Fingerprint mode
+re-check runs entirely outside the conversation. Fingerprint mode
 still fetches every history surface to catch edits; it reduces output, not
 network reads. Live merge eligibility uses the small PR view and queue/method
 probe, not a policy or live-state byte comparison.

@@ -1,228 +1,189 @@
 # Testing with agents
 
-Fast feedback lets an agent fix a failure while the change is still in context.
-Use that advantage locally, keep merge requirements independently enforced in
-CI, and put broader validation before the point where a change reaches users.
-Each repository owns the commands and the division of work between those
-stages.
+I give agents as much freedom as possible to figure out how to do the work. I
+put checks and governance around that freedom, then turn recurring failures
+into durable safeguards instead of accumulating instructions.
 
-## How this works in practice
+I want the agent to understand the goal and have enough context to choose a
+good approach. I also want limits on what it can change and evidence that its
+work does what we intended. Instructions help it make decisions, but
+permissions and checks carry the parts that should not depend on it
+remembering a rule.
 
-The coordinator decides what needs checking and in what order. Test runners such
-as Vitest, pytest, and Playwright execute the checks. For a monorepo with
-several programming languages and separate releases, the flow can look like
-this:
+This is how I set up a repository for agent work. The same approach can help
+you set up your own, whether you are working on a small project or several
+connected applications. Start with the tools and checks you already have. Add
+something when a problem you have observed, or a limit you need to enforce,
+gives it a job.
 
-```mermaid
-flowchart TD
-    A[Agent edits code] --> B[Focused tests during development]
-    B --> C[Before push: select affected projects]
-    C --> D[Local checks and applicable full browser suites]
-    D --> E[PR: independent selected CI checks]
-    E --> F[Merge: release candidate]
-    F --> G[Release: full fresh validation]
-    G --> H[Production promotion]
+## How work moves
+
+![Six steps from defining the outcome through agent work, complete-flow verification, independent checks, delivery, and learning, with returns for failures and future improvements](docs/assets/testing-flow.svg)
+
+These six steps describe what needs to happen as the work progresses. They can
+use the same tools, and they do not require the agent to stop and ask at every
+step. Focused checks run while it works, permissions apply throughout, and a
+recurring failure can lead to an improvement before the run is finished.
+
+### Define the outcome and boundaries
+
+Before the agent starts, I describe the result I want, what it may change, and
+which actions need approval. I give it the project context and a way to check
+its work. That lets it make decisions without having to guess what a good
+result looks like. Where the environment can restrict access, I use
+permissions and sandboxing to enforce those limits.
+
+Within those limits, the agent can choose how to solve the problem and take
+ordinary reversible steps without asking me about each one. Actions outside
+its authority still need the required approval. I want the controls to protect
+the work while leaving the agent room to exercise judgment.
+
+### Let the agent work
+
+Fast feedback lets the agent correct a failure while the relevant context is
+still available. Use focused tests during development, then run the required
+checks for the affected work before handoff. For a bug, first reproduce the
+failure, then verify the fix through the same path.
+
+Give people and agents the same repository-owned commands. Native test
+runners, Git hooks, and CI should work across harnesses without depending on
+an AI lifecycle hook. Keep checkpoints cheap enough that agents use them
+regularly.
+
+### Verify the complete flow
+
+Individual components can pass their tests while the complete operation still
+fails. I want to exercise the path someone will actually use, including the
+connections between its parts. For an application, that may be a browser test
+of a user completing a task. For setup scripts, it may be an actual
+installation in a disposable environment. For documentation, it may be checks
+of the links and content. End-to-end testing means following the real
+operation far enough to establish the result; it does not always mean using a
+browser.
+
+A hook-installation investigation made this concrete. Installing hooks from a
+second worktree rewrote the first worktree's launchers. Existing tests mocked
+the installer, so they could not catch the interaction. A disposable test with
+the real installer reproduced it; a prototype with checkout-owned launchers
+preserved both checkouts' checks. The test showed why the checkouts needed
+separate launchers. An instruction to coordinate installation would have left
+the shared-state problem in place.
+
+I also keep the amount of testing proportionate to the change. The
+installation problem justified a test using the real installer because a mock
+had missed the failure. A small prose edit would not justify a new
+model-evaluation harness. The check should establish the result and protect
+the relevant limits without creating more work than the change needs.
+
+### Enforce independent checks
+
+Local feedback helps the agent correct its work. Required CI checks establish
+whether the change meets the project's merge requirements independently of the
+agent's report. Git hooks can be bypassed, so the checks required before merge
+also need to run in CI.
+
+Make failures visible. Record the failing command, revision, and relevant
+environment. An unresolved failure in a required check blocks handoff or
+delivery. Repeated retries do not make a failing result successful. Give
+repair work an owner, and obtain approval before expanding the task's scope.
+Required human approvals remain separate from a passing test result.
+
+### Deliver the verified work
+
+The checks need to cover the version that will reach users. If the product has
+separate releases, run all required release checks freshly before changing
+production. If merging deploys the product, enforce those requirements before
+merge. A PR that passes the checks selected for its change does not prove that
+every flow in the product has been tested.
+
+Each project decides which checks run locally, before merge, and before a
+release. Record any checks deliberately left until later so people know what a
+passing result establishes. Run browser tests and checks against changing
+service or database state freshly. Reusing dependency downloads can save setup
+time without replacing those executions.
+
+### Learn from the run
+
+I look back at recurring corrections, failed checks, and unnecessary
+coordination to see what should change before the next run.
+[`reviewing-ai-sessions`](skills/reviewing-ai-sessions/SKILL.md) turns session
+evidence into proposals to retain, delete, update, or create guidance and
+safeguards. It identifies completed remedies separately and leaves changes for
+approval through the workflow that owns them.
+
+Sometimes the useful change is to remove a rule or a redundant check.
+Sometimes a check that appears repetitive protects a different requirement and
+should stay. The session evidence helps distinguish those cases. I put the
+lesson in the strongest suitable place so the next run benefits from it.
+
+## Where safeguards belong
+
+![Exploded view of five safeguards: permissions and sandboxing at the foundation, then hooks, CI and tests, path-scoped rules, skills, and prose instructions](docs/assets/testing-safeguards.svg)
+
+The [Maintain durability ladder](WORKFLOWS.md#maintain) describes the homes
+for repository learning. For agent testing and governance, I start with the
+strongest suitable way to enforce the behavior:
+
+**Permissions/sandbox → hooks/CI/tests → path-scoped rule → skill → prose instruction**
+
+| Home | What it does | Its limit |
+| --- | --- | --- |
+| Permissions and sandboxing | Restrict available actions and access. | They do not establish that permitted work is correct. |
+| Hooks, CI, and tests | Check supported actions, artifacts, and delivery requirements. | They establish only the contracts and paths they exercise; local hooks can be bypassed. |
+| Path-scoped rules | Put relevant constraints where the agent encounters affected work. | The agent still has to follow them. |
+| Skills | Supply durable domain knowledge or a recurring procedure. | They guide judgment rather than mechanically enforcing it. |
+| Prose instructions | State expectations that have no stronger suitable home. | They depend on being read and followed. |
+
+Start at the left of the ladder and move right when that option cannot express
+the behavior you need. Permissions control what the agent can access or
+change; they cannot decide whether a permitted change is correct. Tests can
+check a result, but they cannot cover a path they never exercise. Rules and
+skills help the agent make decisions where those stronger controls do not fit.
+
+An architecture decision record can preserve why a safeguard exists, but it
+does not enforce the safeguard. Keep each rule in the place that owns it
+rather than copying it into every layer. Explain what that mechanism checks
+and what it leaves to the agent or the operator.
+
+## Start small; optimize when needed
+
+A useful starting setup is an explicit permission boundary, existing test
+commands that agents can run, independent CI for required merge checks, and an
+end-to-end check of the important real operation. Document the required
+approvals and what must pass before delivery. These can be existing
+mechanisms; they do not require a new coordinator or testing framework.
+
+For a larger repository, affected-project selection can reduce unnecessary
+work. Start with full suites for affected projects and their dependents, using
+existing dependency metadata and runner discovery. Declare service or database
+dependencies when the tools cannot discover them. Run broader checks when
+ownership is unknown or dependencies are unclear. If discovery fails, report
+the failure rather than success with no checks selected.
+
+Selection decides what must run. Caching decides whether a repeatable
+computation can reuse earlier evidence. Cache tasks that produce the same
+result from the same inputs only after verifying which inputs they use and
+which outputs they produce. Check that changed inputs invalidate the result
+and that generated outputs are restored. Keep a fresh-run option, and never
+let an old cache success override an unresolved failure. Add shared caches
+only when their benefit justifies their trust and maintenance costs.
+
+## Validation in this repository
+
+[`tests/README.md`](tests/README.md) documents the deterministic repository
+gate:
+
+```bash
+lefthook run pre-push --force
 ```
 
-A passing PR means all required checks selected for that change passed. It does
-not mean every test in the monorepo ran. Full release validation checks the
-broader candidate before any change to production. This division of checks
-assumes merging and deploying are separate steps. Projects that deploy on merge
-must enforce their release requirements at the merge gate.
+[`SKILLS.md`](SKILLS.md) owns skill-validation policy. Package, helper,
+repository, and installation checks establish their specific contracts; they
+do not prove a skill's behavioral quality. Behavioral evaluation starts with
+the evals plugin's `evals-start` workflow and requires an explicit scope and
+authorization for model runs. Report only the behavior actually inspected.
 
-Consider a repository with a web application, a realtime service, and shared
-database contracts:
-
-- A web change selects the web project's required suites.
-- A realtime change also selects web when web declares that dependency.
-- Ordinary documentation needs only documentation checks when no software
-  consumes it at runtime. A document consumed at runtime is an input to that
-  software.
-- Check more when ownership is unknown or dependency metadata changes. If
-  discovery fails, stop verification rather than silently selecting no checks.
-
-Selection starts with whole affected-project suites. Runners discover new tests
-by convention, so adding a test does not require a second test list. New
-projects still need configured checks. Declare service or database dependencies
-when the tooling cannot discover them. Running pytest through Nx does not itself
-let Nx discover dependencies from Python imports.
-
-Selection asks whether a project needs checking. Caching then asks whether a
-matching computation has already succeeded. An eligible task may reuse that
-result; a changed input invalidates it. Browser and stateful checks stay fresh,
-as does full release validation. A reported cache hit is prior evidence, not a
-new execution.
-
-Give agents three commands they can find: show which checks are selected without
-starting services, run those checks, and run all checks without reusing earlier
-results. The project chooses their command names. If a normal push already runs
-the selected gate, agents need not run that same gate immediately before
-pushing. They can use focused runner checks while editing, then let the push
-enforce the complete selected gate. The sections below explain the ownership and
-failure rules.
-
-## Polyglot monorepos
-
-A monorepo can give a team shared company context: code in several languages,
-schemas, prompts, documentation, and working files can move through version
-control and review together. A change that crosses these boundaries can be
-reviewed and committed as one change. That is useful when several agents work
-on the same product.
-
-This fits teams that need to review changes across those boundaries together.
-Other organizations may need separate repositories. Shared version control still
-needs explicit ownership, appropriate access controls, and ways to find context.
-A dependency graph can follow declared packages and supported imports; it does
-not understand every HTTP interaction, database contract, or document's meaning.
-Include Markdown consumed at runtime and executable documentation among the
-inputs to verification. Ordinary team prose need not trigger application tests
-once you have established that runtime software does not depend on it.
-
-These principles also fit a small single-language repository. Use the existing
-runner directly when a project graph would add little value.
-
-## One project-owned entry point
-
-Give people and agents the same commands for selected verification, full
-verification, and inspecting what will run. Keep selection and task ordering
-with one coordinator. Nx is one option for a polyglot monorepo; Vitest, pytest,
-Playwright, and other runners still execute the tests.
-
-Let package manifests, imports, runner conventions, and executable task
-configuration supply dependency and test discovery. Adding a matching test
-should not require updating a second file-to-test list. Declare the service and
-runtime dependencies needed to select test suites. Run broader checks when
-ownership is unknown, a dependency is missing or deleted, or runtime
-dependencies are unclear. If the graph cannot be read, a comparison revision is
-unavailable, or discovery fails, report the failure. Never report success
-because no checks were selected.
-
-Start with full suites for affected projects and their dependents. Use a
-runner's narrower selection while editing when useful, while keeping the
-required project checks clear. A graph gives conservative impact information; it
-does not prove that an apparently unrelated change is harmless.
-
-Put deterministic enforcement in repository commands, Git hooks, and CI so
-Grok, Claude, Codex, and other harnesses follow the same rules. The
-repository's commands work without AI lifecycle hooks. Git hooks can be
-bypassed, so required merge guarantees also need independent CI enforcement.
-
-## Local, merge, and release responsibilities
-
-| Stage | Responsibility |
-| --- | --- |
-| Editing | Run focused checks immediately, then the affected projects’ required suites and checks locally before handoff. |
-| Commit | Keep checkpoints cheap enough to use regularly. |
-| Merge | Independently enforce the repository's selected requirements in CI. A report of local success does not replace those CI checks. |
-| Release | Run full, fresh validation of the exact candidate before any change to production. |
-
-For a web product, one allocation is full browser coverage locally and at
-release, with selected unit, contract, integration, and security checks in PR
-CI. This keeps immediate feedback substantial and merge gates lighter without
-letting local results substitute for those gates. The project chooses this
-division of checks and explicitly accepts that checks deferred until release may
-find problems later.
-
-A team that releases periodically can accept finding some problems during
-broader release checks. A repository that deploys every merge needs the checks
-that protect users before that deployment. Choose the boundary from the actual
-delivery model; weekly releases and scheduled full runs are not universal
-requirements.
-
-Resolve selection before expensive task-specific setup. Reuse an install,
-generated build, or temporary service lifetime where compatible checks can share
-it safely. Give one owner responsibility for setting up, using, and shutting
-down that shared environment. A reusable workflow or composite action shares
-code, but each job may still pay the setup cost. Keep separate environments
-where database state, credentials, or isolation require them.
-
-## Cache successful computations carefully
-
-Cache tasks that produce the same result from the same inputs only after
-verifying which inputs they use and which outputs they produce. Include relevant
-source, tests, dependency and tool versions, configuration, environment values,
-and runtime-read assets. Verify that changed inputs invalidate the result and
-that required generated outputs are restored.
-
-Start with isolated local caches. Shared or remote caching is a separate choice
-with its own trust and maintenance costs. Stateful checks against changing
-external services, database integration, migration replay, and live browser
-behavior execute freshly. A cache hit is evidence of an earlier successful
-computation, not proof of a fresh run.
-
-Distinguish fresh success, cached success, intentional exclusion, failure,
-cancellation, and required work that did not run. Provide a direct cache-bypass
-command for diagnosis. An observed unresolved failure stays blocking even when
-an older successful cache entry exists. Run full release validation freshly.
-Dependency download caches may remain, but they do not replace proof that a
-clean installation works.
-
-## Handle failures without losing ownership
-
-Record the failing command, revision, and relevant environment. Keep diagnosis
-focused by running the failing check on the exact unchanged base revision under
-comparable conditions. If it fails there too, you have identified a possible
-repair. That does not prove the new change is harmless.
-
-Check whether a repair already has an owner. Propose the repair scope and owner,
-and obtain separate approval before expanding the work. Independent work can
-continue, but merge waits for repair and passing required checks on the updated
-branch. The project's policy determines when to retry or quarantine a failing
-test. An agent cannot use either to make a failing result appear successful.
-
-## Adopt through a verified cutover
-
-Compare the old and new paths during implementation on the same controlled
-revisions. Exercise new tests, new imports, deletions, shared inputs, cache
-invalidation, and injected failures. Record intentionally excluded work
-separately from missing guarantees.
-
-Measure local feedback time with and without reusable setup or caches, CI
-elapsed time and runner-minutes, setup cost, and unnecessary investigations.
-Report ordinary application changes separately from cheap documentation changes.
-Keep this comparison within implementation. Once the new path is correct and
-delivers the intended improvement, switch the entry points and remove the old
-selection and coordination code. Acceptance is based on evidence, not a trial
-period or recurring execution of both systems. An ordinary version-control
-revert provides rollback without a permanent second operating mode.
-
-## Project policy outline
-
-Use this outline in the document that already owns the project's testing policy.
-Record links and decisions rather than copying a list of tasks.
-
-- **Commands:** point to the canonical command and its selected, full, inspect,
-  and cache-bypass usage.
-- **Executable owners:** point to the coordinator and runner configuration that
-  discover projects, dependencies, tests, and cache inputs.
-- **Delivery boundary:** name what local work, merge, and release must establish,
-  including any deliberately deferred coverage.
-- **Resources:** point to the owner of temporary services, worktree isolation,
-  and concurrency limits.
-- **Failures:** point to the repair owner and the policy for known failures and
-  revalidation.
-
-For a TypeScript/Python monorepo, these pointers may lead to one graph and
-several native runners. For a small Python library, they may lead to its
-existing test command and CI configuration. Neither example needs a second
-dependency list in this document.
-
-## Skill validation in this repository
-
-[`SKILLS.md`](SKILLS.md) owns the current skill-validation policy;
-[`tests/README.md`](tests/README.md) documents the deterministic repository
-checks. Package validation, helper fixtures, repository integrity, and
-installation checks each verify their own requirements. They do not establish a
-skill's behavioral quality.
-
-Use [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) for
-portable package authoring, auditing, structural validation, and installation.
-For behavioral evaluation, start with the evals plugin's `evals-start` skill and
-follow the workflow it selects. The first skill being evaluated through this
-workflow is `creating-portable-skills`, with Claude, Codex, and Grok as the main
-hosts. The other skill packages await revalidation after the eval reset.
-
-An evaluation requires an explicit scope and authorization for model runs.
-Neither retired suites nor passing deterministic checks prove that a skill
-behaves correctly. Keep raw runs and temporary reports outside the repository,
-and report only the behavior actually inspected.
+[`RELEASING.md`](RELEASING.md) owns release-snapshot qualification. Ordinary
+installs follow rolling `main`; snapshots are historical checkpoints. Keep
+private session evidence and generated review artifacts outside this public
+repository.

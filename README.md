@@ -50,9 +50,9 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 - [**Maintain**](WORKFLOWS.md#maintain). Keep repositories healthy by turning recurring problems into durable safeguards.
 - [**Learn**](WORKFLOWS.md#learn). Turn experience into linked knowledge and new questions for Research.
 
-[Testing with agents](TESTING.md) explains project-owned verification for
-polyglot monorepos and smaller projects. Use it when choosing local, merge, and
-release checks, dependency-based selection, or cache policy across harnesses.
+[Testing with agents](TESTING.md) explains how I give agents room to work while
+permissions, end-to-end tests, and independent checks protect the result. Use it
+when setting up your own environment and deciding where safeguards belong.
 For skill validation, [SKILLS.md](SKILLS.md) distinguishes deterministic
 repository checks from behavioral evaluation through the evals plugin's
 `evals-start` workflow. `creating-portable-skills` is the first dogfood target;

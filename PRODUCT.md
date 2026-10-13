@@ -34,12 +34,12 @@ The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintai
 - The system avoids depending on one vendor, keeps the skill catalog small, and improves from use.
 - The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
 - Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.
-- Huginn and Muninn are not yet recurring characters. Test whether they help explain both the repository and one workflow before reusing them across the design.
+- Huginn and Muninn explain the repository and its workflows through their actions. Huginn brings back new findings; Muninn preserves useful lessons and returns them to the work.
 
 ## Brand Commitments
 
 - Preserve the name **The Rookery** and its corvid meaning: a place where corvids gather and return.
-- The confirmed repository-level message is **“An always-current field guide to how I build with AI.”** Supporting copy may expand it as **“Open-source tools, practical workflows, and portable skills refined through use.”**
+- The confirmed repository-level message is **“A field guide to how I build with AI.”** Supporting copy may expand it as **“Open-source tools, practical workflows, and portable skills refined through use.”**
 - Use the standardized names **Huginn** and **Muninn**, Odin's ravens associated with thought and memory. The raven story explains the name; it does not imply that the workflows learn autonomously.
 - The work should be technically clear while remaining warm, memorable, and fun.
 - Visual personality must make technical concepts easier to understand. Characters, metaphors, or motion should perform the idea rather than decorate it.

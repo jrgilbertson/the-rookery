@@ -118,7 +118,7 @@ lesson in the strongest suitable place so the next run benefits from it.
 
 ## Where safeguards belong
 
-![Exploded view of five safeguards: permissions and sandboxing at the foundation, then hooks, CI and tests, path-scoped rules, skills, and prose instructions](docs/assets/testing-safeguards.svg)
+![Muninn flies in with a learned check for the testing layer of an exploded environment, above permissions and sandboxing and beneath path-scoped rules, skills, and prose instructions](docs/assets/testing-safeguards.svg)
 
 The [Maintain durability ladder](WORKFLOWS.md#maintain) describes the homes
 for repository learning. For agent testing and governance, I start with the

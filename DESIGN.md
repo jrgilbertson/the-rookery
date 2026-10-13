@@ -77,6 +77,8 @@ Navy signals authority, cobalt shows the sequence, and blue-gray defines support
 
 The workflow banner keeps its illustration and typography in separate production layers. `docs/assets/the-rookery-workflows-banner-artwork.webp` is the regenerated text-free illustration plate with complete routes and mechanisms, and `docs/assets/the-rookery-workflows-banner.svg` adds the title in Didot and the supporting copy and labels in Baskerville Semibold. The SVG contains no corrective artwork patches. The shipped WebP is a lossless render of that editable source, so later copy changes should update the vector text layer rather than regenerate the illustration.
 
+The testing diagrams use self-contained HTML sources in `docs/assets/testing-flow.html` and `docs/assets/testing-safeguards.html`. Their matching SVGs carry the styles and real typography into the Markdown page. The safeguards view embeds the approved Muninn artwork from `docs/assets/muninn-descending-delivery.png`: he flies in to deliver a learned check to the testing layer. Keep that artwork separate from the editable labels, and update the HTML source before exporting its SVG.
+
 ## Layout
 
 Repository banners use a wide landscape canvas (1600 × 640). They depend on large silhouettes, sparse text, and generous negative space so the image retains a clear reading when GitHub scales it to the content column. Choose dimensions for future explanatory visuals based on where people will view them. Do not reuse dimensions from a removed asset format by default.

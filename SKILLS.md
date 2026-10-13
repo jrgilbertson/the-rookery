@@ -1,12 +1,11 @@
 # Skills
 
-This file is this repository's convention for writing, evaluating, and
-recording evidence for agent skills. It builds on the
-[Agent Skills standard](https://agentskills.io), with vendor guidance layered
-on top. Where sources conflict, a **Conflict:** note names the conflict and
-the choice made. The `creating-portable-skills` skill owns the portable
-authoring workflow. This host document owns repository package conventions
-and the evaluation workflow; it is not bundled with the skill.
+This file defines how this repository packages skills, evaluates them, and
+records evidence. It follows the [Agent Skills standard](https://agentskills.io)
+and adds vendor guidance. Where sources conflict, a **Conflict:** note names the
+conflict and the choice made. The `creating-portable-skills` skill owns the
+portable authoring workflow. This document owns the repository's package
+conventions and evaluation workflow. It is not bundled with the skill.
 
 ## Package format
 
@@ -45,25 +44,29 @@ tasks. Validate triggering through the evaluation workflow below.
 ## Evaluation workflow
 
 Use the evals plugin's `evals-start` skill to choose the next evaluation step,
-then follow the skill it selects. Ground cases in observed failures from local
-session logs and prior issues. Claude, Codex, and Grok are the primary hosts;
-record which host a result covers rather than treating one host's success as
-proof for all three.
+then follow the skill it selects. Build evaluation cases from failures observed
+in local session logs and prior issues. Claude, Codex, and Grok are the primary
+hosts; record which host a result covers rather than treating one host's success
+as proof for all three.
 
-`creating-portable-skills` is the first dogfood for this workflow. Its
-[bounded replacement suite](tests/creating-portable-skills/README.md) targets
-Claude and Codex with activation cases, a read-only portability audit, manual
-review, Promptfoo's native providers and provisional criterion judges.
-Stock provider assertions check final answers and skill-use observations; the
-Codex SDK's skill-path detection is heuristic, not proof of exact loading or
-complete read provenance. The audit retains its deterministic file-preservation
-check and explicit subscription criterion judges. Missing answers, provider errors
-and unavailable file snapshots do not pass. Strict capture is not collected and
-remains Unmeasured; historical incomplete runs are not reclassified. Promptfoo
-owns execution, ordinary assertions, result export and the review interface.
-Independent human calibration is still required to claim judge alignment.
-The other skill packages remain
-available and await revalidation in turn. Passing repository
+`creating-portable-skills` is the first skill being evaluated through this
+workflow. Its [bounded replacement
+suite](tests/creating-portable-skills/README.md) targets Claude and Codex with
+activation cases, a read-only portability audit, manual review, Promptfoo's
+native providers and provisional criterion judges.
+
+The providers' built-in assertions check final answers and observations of skill use. The Codex SDK
+detects skill paths heuristically. That detection does not prove which skill was
+loaded or that every required file was read. The audit retains its deterministic
+file-preservation check and explicit subscription criterion judges. Missing
+answers, provider errors, and unavailable file snapshots do not pass. Strict
+capture is not collected and remains Unmeasured. Historical incomplete runs are
+not reclassified.
+
+Promptfoo runs the evaluations, checks ordinary assertions, exports results, and
+provides the review interface. Before claiming that judges agree with human
+reviewers, independently calibrate them against human judgments. The other skill
+packages remain available and await revalidation in turn. Passing repository
 checks does not establish behavioral quality.
 
 The previous behavioral suites, benchmarks, custom runners, review server,

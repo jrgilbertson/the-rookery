@@ -8,9 +8,10 @@ A few ground rules keep this repo healthy and keep me honest as a solo maintaine
 
 - **Fixes.** Typos, broken links, incorrect instructions, and bugs in a skill's behavior.
 - **Portability improvements.** Making a skill work better across harnesses like Claude Code and Codex.
-- **Hardening.** Clearer trigger descriptions, better degradation when a capability isn't available, and tightened instructions.
+- **Hardening.** Clearer descriptions of when to use a skill, better fallback
+  behavior when a capability is unavailable, and more precise instructions.
 
-Open a PR directly for any of these. Small and focused beats large and sweeping.
+Open a focused PR directly for any of these.
 
 Please use the [bug report form](https://github.com/jrgilbertson/the-rookery/issues/new/choose) for defects. Security
 issues belong in the private process described in [SECURITY.md](SECURITY.md),
@@ -32,9 +33,17 @@ This is a personal project with no support SLA. I read issues and PRs, but respo
 
 ## The rules this repo lives by
 
-- `main` is the install source. Installs pull from the default branch, so whatever lands on `main` is instantly what people get, and it stays install-clean. Experiments live on branches.
+- `main` is the install source. Installs pull from the default branch, so merged
+  changes are immediately available to users. Keep `main` ready to install.
+  Experiments live on branches.
 - **Installation parity.** Nothing in it may depend on context that exists only on my machine. That means no absolute paths, no private repo names, and no personal-environment assumptions. Contributions follow the same rule.
-- **Every skill stands on its own.** A skill folder is the unit of install, so nothing in it may reference a file in another skill's folder — the [Agent Skills](https://agentskills.io) specification resolves paths from the skill root, and a cross-folder path breaks the moment someone installs one skill without its sibling. Share material one of two ways: cite a sibling *skill by name* and degrade gracefully when it's absent, or duplicate the material into each folder with a maintainer note naming its mirror.
+- **Every skill stands on its own.** Each skill folder installs separately.
+  Nothing in it may reference a file in another skill's folder. The
+  [Agent Skills](https://agentskills.io) specification resolves paths from the
+  skill root, so a cross-folder path breaks when someone installs only one
+  skill. To share material, cite a sibling *skill by name* and provide fallback
+  behavior when it is absent, or copy the material into each folder with a
+  maintainer note naming its mirror.
 - **The README lists every skill.** When a skill lands in `skills/`, it gets a line in the README's skills section in the same change.
 - **Release snapshots do not pin installs.** `main` is the rolling catalog;
   semantic-version releases are immutable historical checkpoints. Corrections

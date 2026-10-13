@@ -1,39 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="640" viewBox="0 0 1600 640" role="img" aria-labelledby="title description" text-rendering="geometricPrecision">
-  <title id="title">The workflows</title>
-  <desc id="description">Research through Ship form the Delivery Sequence. Maintain returns repository memory and Learn returns a better question.</desc>
-  <image width="1600" height="640" xlink:href="the-rookery-workflows-banner-artwork.webp"/>
-
-  <g fill="#042458">
-    <text x="55" y="130" font-family="Didot, 'Bodoni 72', serif" font-size="112">The workflows</text>
-  </g>
-
-  <g fill="#1768b8" font-family="Baskerville, serif" font-weight="600">
-    <text x="58" y="169" font-size="24">A five-job delivery sequence with two distinct feedback currents.</text>
-  </g>
-
-  <g font-family="Baskerville, serif" font-weight="600">
-    <g fill="#1768b8" stroke="#1768b8" stroke-width="1.6">
-      <circle cx="326" cy="216" r="13" fill="none"/>
-      <circle cx="528" cy="216" r="13" fill="none"/>
-      <circle cx="748" cy="216" r="13" fill="none"/>
-      <circle cx="973" cy="216" r="13" fill="none"/>
-      <circle cx="1203" cy="216" r="13" fill="none"/>
-    </g>
-    <g fill="#1768b8" font-size="18" text-anchor="middle">
-      <text x="326" y="222">1</text>
-      <text x="528" y="222">2</text>
-      <text x="748" y="222">3</text>
-      <text x="973" y="222">4</text>
-      <text x="1203" y="222">5</text>
-    </g>
-    <g fill="#042458" font-size="22">
-      <text x="349" y="223">Research</text>
-      <text x="551" y="223">Plan</text>
-      <text x="771" y="223">Design</text>
-      <text x="996" y="223">Build</text>
-      <text x="1226" y="223">Ship</text>
-    </g>
-    <text x="783" y="424" fill="#1768b8" font-size="22" text-anchor="middle">Maintain</text>
-    <text x="783" y="499" fill="#d87817" font-size="22" text-anchor="middle">Learn</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="640" viewBox="0 0 1600 640" role="img" aria-labelledby="the-rookery-workflows-banner-title the-rookery-workflows-banner-desc">
+  <title id="the-rookery-workflows-banner-title">The workflows</title>
+  <desc id="the-rookery-workflows-banner-desc">Research, Plan, Design, Build and Ship move work forward; Maintain improves the working system and Learn brings questions back to Research.</desc>
+  <defs>
+    <marker id="the-rookery-workflows-banner-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#0050CC" />
+    </marker>
+    <marker id="the-rookery-workflows-banner-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#DC6C36" />
+    </marker>
+  </defs>
+  <image width="1600" height="640" href="the-rookery-workflows-banner-artwork.webp" aria-hidden="true" />
+  <text x="48" y="110" fill="#042458" font-family="Didot, Georgia, serif" font-size="96">The workflows</text>
+  <text x="51" y="146" fill="#0050CC" font-family="Baskerville, Georgia, serif" font-size="22" font-weight="600" text-anchor="start">Research to shipped work, with lessons feeding back into the next run.</text>
+  <text x="400" y="182" fill="#042458" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">1  Research</text>
+  <text x="560" y="182" fill="#042458" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">2  Plan</text>
+  <text x="750" y="182" fill="#042458" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">3  Design</text>
+  <text x="1010" y="182" fill="#042458" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">4  Build</text>
+  <text x="1240" y="182" fill="#042458" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">5  Ship</text>
+  <path d="M478 174H505" fill="none" stroke="#0050CC" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#the-rookery-workflows-banner-blue)" />
+  <path d="M615 174H682" fill="none" stroke="#0050CC" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#the-rookery-workflows-banner-blue)" />
+  <path d="M818 174H948" fill="none" stroke="#0050CC" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#the-rookery-workflows-banner-blue)" />
+  <path d="M1072 174H1186" fill="none" stroke="#0050CC" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#the-rookery-workflows-banner-blue)" />
+  <path d="M700 464H665" fill="none" stroke="#0050CC" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#the-rookery-workflows-banner-blue)" />
+  <path d="M700 518H665" fill="none" stroke="#DC6C36" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#the-rookery-workflows-banner-orange)" />
+  <text x="770" y="490" fill="#0050CC" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">Maintain</text>
+  <text x="650" y="551" fill="#AD4C24" font-family="Baskerville, Georgia, serif" font-size="26" font-weight="600" text-anchor="middle">Learn</text>
 </svg>

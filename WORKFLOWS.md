@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-![Diagram of Research, Plan, Design, Build, and Ship, with Maintain and Learn feeding lessons back into the workflow](docs/assets/the-rookery-workflows-banner.webp)
+![A working bench carries Research, Plan, Design, Build, and Ship from left to right. Huginn brings a field note; Muninn tends the work. Separate Maintain and Learn paths return improvements and questions.](docs/assets/the-rookery-workflows-banner.webp)
 
 # The workflows
 

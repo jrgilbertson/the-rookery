@@ -62,9 +62,19 @@ completed remedies separately from remaining changes.
 
 ## Output and approval
 
-1. Prioritized patterns with evidence and cost.
-2. Concrete proposals: action type, target, draft text or deletion rationale,
-   proposed home, enforcement limits, and any validation needed.
+Write the review using the Minto pyramid: lead with the recommendation and
+high-leverage next steps, then group the supporting reasons and evidence.
+Include material coverage limits in the opening so an executive can stop there
+and still understand the decision.
+
+In the findings and proposal tables, start each row's takeaway with a bold
+complete sentence. Follow it with normal-weight explanation, evidence, and
+limits. The opening and bold takeaways should carry the decision; the supporting
+detail should explain it.
+
+1. A table of prioritized patterns with evidence and cost.
+2. A table of concrete proposals: action type, target, draft text or deletion
+   rationale, proposed home, enforcement limits, and any validation needed.
 3. All high-leverage remaining changes, ranked by expected impact and evidence,
    or retain/no change if existing or completed changes adequately address the
    findings.

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg class="axonometric" xmlns="http://www.w3.org/2000/svg" viewBox="-120 0 1120 800" role="img" aria-labelledby="testing-safeguards-title testing-safeguards-desc" id="testing-safeguards-root"><title id="testing-safeguards-title">The environment beneath the work</title><desc id="testing-safeguards-desc">Muninn flies in to deliver a learned check to the testing layer; five safeguards support the work throughout the run.</desc>
+<svg width="1120" height="800" class="axonometric" xmlns="http://www.w3.org/2000/svg" viewBox="-120 0 1120 800" role="img" aria-labelledby="testing-safeguards-title testing-safeguards-desc" id="testing-safeguards-root"><title id="testing-safeguards-title">The environment beneath the work</title><desc id="testing-safeguards-desc">Muninn flies in to deliver a learned check to the testing layer; five safeguards support the work throughout the run.</desc>
   <defs>
       <style>#testing-safeguards-root { color: #042458; font-family: Baskerville,Georgia,serif; }
       #testing-safeguards-root nav { display:flex;gap:24px;padding:20px 0;border-block:1px solid #596A8B }

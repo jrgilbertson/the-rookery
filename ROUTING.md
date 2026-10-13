@@ -1,6 +1,6 @@
 # Match the model to the work
 
-Choose models and effort for the work, using the tools and subscriptions available to you. [WORKFLOWS.md](WORKFLOWS.md) covers the workflows themselves.
+Choose a model and how much time it should spend thinking based on the work you need done. Use the tools and subscriptions available to you. [WORKFLOWS.md](WORKFLOWS.md) explains the workflows.
 
 ## What each role needs
 
@@ -31,30 +31,32 @@ Check how the finished interface looks and whether it's easy to use. Use compari
 | Reviewer | [Different-provider Executor](#reviewer) | — | — |
 | Design/taste | Anthropic / `claude-opus-5-5` / max | OpenAI / `gpt-6.1-sol` / max | Google / `gemini-4-argon` / high |
 
-Design/taste recommendations follow available evals and list tested efforts, though I typically run these models at their Executor or Planner effort levels.
+Design/taste choices follow published comparisons and list the tested effort settings, though I usually run the models at their Executor or Planner settings.
 
-Argon's Planner and Design/taste recommendations are provisional. Each ranked row contains at most one model from each provider; empty slots are allowed.
+Treat Argon as a tentative choice for planning and design. Each row lists at most one model from each provider. A slot can stay empty.
 
 ## Work alone, delegate, or hand off
 
-One session usually owns the work and stays accountable for completion. Add Executors when the work has independent units. Use the installed orchestration tools when those units need supervision; use a handoff when another session should take ownership.
+One session usually owns the work and makes sure it gets finished. Add Executors when parts of the work can be done separately. Use orchestration tools to supervise those agents. Hand off the work when another session should take over.
 
-To check correctness, choose the first available model in the Executor row from a different provider than the model that did the work, using its listed effort. If only one provider is available, use a separate review session. For reviews of look and feel, use the Design/taste recommendations.
+To check correctness, read the Executor row from left to right and choose the first available model from a different provider than the one that did the work. Keep that model's listed effort setting. If only one provider is available, use a separate review session. For look and feel, use the Design/taste recommendations.
 
-## Adjust effort and availability
+## Choose effort and tools
 
-Choose models for how success will be judged, then adjust for the tools and subscriptions available to you. Planning needs reasoning and decomposition; execution needs correct changes; review needs independent judgment; design needs a finished result worth using.
+Choose for the result you need. A planning model should work through decisions and break the work into clear steps. An Executor should make changes that work. A Reviewer should judge the result independently. A design model should produce an interface that looks good and is easy to use.
 
-Start with the table's effort and adjust deliberately. Higher effort needs to earn its time and usage. API benchmark costs do not predict subscription quotas. My preference is to use official provider tools with subscription authentication.
+Start with the effort setting in the table and change it when the task calls for it. More thinking should improve the result enough to justify the extra time and usage. Costs measured through an API do not tell you how much of your subscription allowance a task will use. I prefer each provider's official tools, signed in through my subscription.
 
-## Evidence and upkeep
+## Why these models
 
-- Planner: Opus high and Sol high retain a useful reasoning/cost balance. Argon high adds an alternative provider; direct planning evidence remains limited.
-- Executor: Opus medium and Sol medium balance repository quality, cost, and time. Argon's observed coding cost does not justify an unconditional fallback slot.
-- Design/taste: Opus max and Sol max reflect evaluated visual-preference configurations. Argon high has preliminary frontend evidence. Matched quality, cost, and time across effort levels remain incomplete.
+- Planner: Opus high and Sol high balance reasoning quality and cost. Argon high gives another provider to choose from. Few results directly measure how well these models plan.
+- Executor: Opus medium and Sol medium balance the quality of code changes, cost, and time. Argon's measured coding cost is too high to recommend it as a regular backup.
+- Design/taste: Published comparisons based on people's preferences tested Opus and Sol at max. Early results support Argon high for interface work. We still lack comparisons that measure quality, cost, and time at different effort settings under the same conditions.
 
-Current evidence includes [FrontierCode](https://cognition.com/frontiercode), [AA coding-agent comparisons](https://artificialanalysis.ai/agents/coding-agents/comparisons/claude-code-vs-codex), and [Arena Frontend](https://arena.ai/leaderboard/code/webdev/frontend).
+These choices draw on [FrontierCode](https://cognition.com/frontiercode), [AA coding-agent comparisons](https://artificialanalysis.ai/agents/coding-agents/comparisons/claude-code-vs-codex), and [Arena Frontend](https://arena.ai/leaderboard/code/webdev/frontend).
 
-Recheck exact releases against independent evaluations relevant to the role. Compare quality, task cost, and time; do not treat missing results as poor performance or maximum effort as automatically best.
+## Keep the table current
 
-Update the table, review date, and rationale together. The [evaluation procedure](docs/model-evaluations.md) covers sources, effort comparisons, and provisional choices.
+Check results for the exact model release and the kind of work it will do. Use independent comparisons and consider quality, cost per task, and time together. Missing results mean we don't know yet. Maximum effort is not automatically the best choice.
+
+Update the table, review date, and reasons together. The [evaluation procedure](docs/model-evaluations.md) explains which sources to use, how to compare effort settings, and how to recommend a model when the evidence is incomplete.

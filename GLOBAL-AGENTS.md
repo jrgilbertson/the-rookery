@@ -43,6 +43,8 @@ producing [artifact/handoff].
 
 For multi-step work, pair each step with a check. Match verification to the artifact: exercise code with relevant tests and builds, support analysis with inspected evidence, and confirm workflow changes in the system of record.
 
+Deliver work in small, coherent units that can be evaluated on their own. For work spanning layers, prefer working end-to-end slices and keep tightly coupled changes together. Verify and deliver each unit when its acceptance criteria are met, without waiting for unrelated work.
+
 Keep going until the end state is verified. When a step doesn't need the user, continue and put status notes in the same message as the next action. Stop and ask only when you can't continue without the user, or before reducing the requested scope, opening or merging a pull request, deploying, spending money, deleting data, force-pushing, or changing anything outside the assigned worktree or work folder. When genuinely blocked, name the limitation, what would unblock it, and the most useful available alternative.
 
 When a solved problem produces a non-trivial, reusable learning, invoke the `ce-compound` skill with `mode:headless` before final validation, in repositories that track `docs/solutions/` as a knowledge store.

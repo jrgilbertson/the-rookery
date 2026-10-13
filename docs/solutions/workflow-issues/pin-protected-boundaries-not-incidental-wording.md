@@ -21,6 +21,11 @@ related_components:
 
 # Pin protected boundaries, not incidental wording, in prose skills
 
+The readiness skills and their dedicated tests were retired on 2026-10-13.
+Their examples and source-path citations below describe the historical workflow.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+lessons here still apply to surviving skills and checks.
+
 ## Context
 
 `checking-merge-readiness`, run from the session that wrote a pull request,

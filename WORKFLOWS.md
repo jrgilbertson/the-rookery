@@ -12,7 +12,7 @@ My workflow moves through five core jobs: Research, Plan, Design, Build, and Shi
 | [Plan](#plan) | Write what to build and the guardrails execution must honor | `ce-brainstorm`, `ce-plan`, `grilling` | Objective, verifiable end state, constraints, inputs and tools, and artifact named |
 | [Design](#design) | Set a design brief and a written design system | `impeccable shape`, `impeccable audit` and `critique`, `DESIGN.md` | Design brief exists and taste is written down |
 | [Build](#build) | Build the plan in bounded slices and verify each one | `ce-work`, `lfg`, Orca worktrees | CI green, slice bounded, design held |
-| [Ship](#ship) | Review and verify the change, then merge it | `ce-simplify-code`, `ce-code-review`, `checking-pr-readiness` | A human read the work and the explanation makes sense |
+| [Ship](#ship) | Review and verify the change, then merge it | `ce-simplify-code`, `ce-code-review`, `ce-commit-push-pr`, `ce-babysit-pr` | A human read the work and the explanation makes sense |
 | [Maintain](#maintain) | Tend the repo and encode every learning where it holds | `repo-gardener`, `ce-compound`, `impeccable extract` | Learning landed on the strongest rung that holds it |
 | [Learn](#learn) | Capture learning as linked notes and name the gaps | `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Learning is in the graph and gaps are named |
 
@@ -172,9 +172,12 @@ The shipping sequence, in order:
 3. `ce-test-browser` or `ce-dogfood`. Browser verification when the change touches the UI, either a test run or hands-off dogfooding that fixes and commits as it goes.
 4. `ce-noslop` and [`humanize`](https://github.com/harshaneel/humanize) (`ai-check`) when the change includes human-facing prose. `ce-noslop` strips AI writing tells without rewriting the draft into an assumed voice; `ai-check` flags AI-sounding writing.
 5. [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) when the change includes a document whose primary consumer is an AI agent.
-6. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
+6. `ce-commit-push-pr`. Commits, pushes, and opens the pull request after the project's publishing requirements pass for the commit being sent.
+7. `ce-babysit-pr`. Handles CI failures and review feedback until its monitoring mode reaches its documented stop.
 
-I can also ask for an explanation of the change or a concept it introduced. Approving readiness opens the pull request through `ce-commit-push-pr`. Then `ce-babysit-pr` works through CI failures and review feedback, and once it reports looks merge-ready, PR readiness starts [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md), which reviews the full change in a fresh reviewer that did not build it, or warns when it could not start one. I still choose whether to merge. I write the changelog and release notes from the merged pull requests afterward.
+I can also ask for an explanation of the change or a concept it introduced. Compound Engineering owns publication and monitoring without another local readiness gate. Interactive publication normally hands off to babysit; an orchestrated ordinary `mode:pipeline` publication leaves the caller to invoke babysit explicitly. Stack publication can hand off stack-aware monitoring, which the caller preserves rather than starting a second watcher.
+
+A bounded pipeline success and an interactive looks-merge-ready report describe their own coverage; neither means merged. Ordinary PR merging stays with me. For a confirmed managed stack, an explicit `posture:stack-land` grant lets babysit use the native stack route and confirm actual landing. Repo Gardener never receives that grant. I write the changelog and release notes from the merged pull requests afterward.
 
 CI gates the merge on the project's selected requirements; [Testing with agents](TESTING.md#local-merge-and-release-responsibilities) explains how to allocate broader checks across local work and release. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 
@@ -189,7 +192,7 @@ What must be true before merge:
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
-[`repo-gardener`](skills/repo-gardener/SKILL.md) senses one repository, dispatches Executors that each ship one reviewable pull request through the installed shipping and readiness skills, and posts one morning report. Run it on a schedule by name; a human still merges.
+[`repo-gardener`](skills/repo-gardener/SKILL.md) senses one repository, dispatches Executors that each ship one reviewable pull request through the installed Compound Engineering shipping skills, and posts one morning report. Run it on a schedule by name; a human still merges.
 
 Design maintenance runs through Impeccable. `impeccable extract` finds patterns used three or more times with the same intent and standardizes them into tokens and primitives. `impeccable document` regenerates the design docs from what actually shipped, so the tools read the design language instead of guessing at it.
 

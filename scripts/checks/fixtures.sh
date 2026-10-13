@@ -6,8 +6,6 @@ cd "$repo_root"
 export PYTHONDONTWRITEBYTECODE=1
 
 runners=(
-  tests/checking-merge-readiness/fixtures/run-fetch-checks.sh
-  tests/checking-pr-readiness/fixtures/run-helper-checks.sh
   tests/creating-portable-skills/fixtures/run-signal-scan-checks.sh
   tests/creating-portable-skills/fixtures/run-eval-checks.py
   tests/managing-issues/fixtures/run-graph-checks.py

@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use only when the user explicitly invokes repo-gardener by name, including the /repo-gardener and $repo-gardener forms, or asks to run, continue, set up, or explain the repository gardening automation or the nightly gardener. Requests about maintenance, CI, repository health, trackers, maintenance lanes, or issues that do not name repo-gardener or the gardening automation belong to other skills.
 license: MIT
-compatibility: Needs git, the GitHub CLI, the installed compound-engineering skills ce-debug, ce-plan, ce-work, ce-simplify-code, ce-code-review, ce-test-browser, ce-commit-push-pr, ce-babysit-pr, and the rookery skills checking-pr-readiness and checking-merge-readiness; without write access it senses and reports only.
+compatibility: Needs git, the GitHub CLI, the installed compound-engineering skills ce-debug, ce-plan, ce-work, ce-simplify-code, ce-code-review, ce-test-browser, ce-commit-push-pr, ce-babysit-pr; without write access it senses and reports only.
 ---
 # Repo Gardener
 
@@ -14,12 +14,12 @@ skill.
 
 Sense one repository, dispatch Executors that each ship one reviewable PR,
 and post one morning report. Run as Coordinator plus Executors. As
-Coordinator, sense, select, dispatch, answer readiness menus, and report.
+Coordinator, sense, select, dispatch, and report.
 Never implement, push, or merge as Coordinator. Give each Executor one
 worktree, one branch, and one unmerged PR. Use Scouts for read-only
-evidence. Each Executor runs PR readiness on its own head. Use a fresh Reviewer to judge merge
-readiness. Keep CI as the merge gate. Leave merge to a human. Treat a
-run that authors nothing but reports as a complete run.
+evidence. Each Executor verifies its unit, publishes through Compound
+Engineering, and reports babysit's result. Keep CI as the merge gate. Leave
+merge to a human. Treat a run that authors nothing but reports as a complete run.
 
 ## Read the policy
 
@@ -36,9 +36,9 @@ Read `scans` as a list of argv lists, each
 one process run from the repository root. Read `verify` as the argv lists
 the owner approves for an Executor to verify its unit, each run from the
 worktree root; this is the exact caller-approved verification command argv
-list that `checking-pr-readiness` needs, and without it Approve is
-withheld. Read optional `report_issue` as a GitHub issue number that
-receives one report comment per run.
+list it must pass before publication. An empty list means no PR opens. Read
+optional `report_issue` as a GitHub issue number that receives one report
+comment per run.
 
 Treat a missing or unreadable file as a sense-only run. Put a proposed
 complete policy file in that report for the owner to commit. Start from
@@ -149,52 +149,36 @@ finding whose fix stays inside the allowed files, lists the rest for
 the report, and commits. It invokes `ce-test-browser mode:pipeline`.
 After the last change to the worktree, it runs every policy `verify`
 argv from the worktree root and stops the unit on any failure.
-Every unattended Executor invokes `checking-pr-readiness` normally on
-the exact head in its worktree and stops at its numbered menu.
+Before publication, the Executor confirms that every path in its branch diff
+against the assigned base, staged changes, unstaged changes, and untracked
+files stays inside the unit's allowed files and outside protected paths.
+An out-of-scope path stops that unit with its authored commit preserved and
+no PR; name the paths in the report. A failed verification stops the unit in
+the same way. The Coordinator's original unit assignment authorizes this
+bounded publication; no additional readiness menu is required.
 
-On a distinct later turn the Coordinator authorizes that Executor to reply 1
-only when the menu offered option 1, the recommendation was
-approve and proceed for that same exact head, and every path in the
-readiness working surface, committed, staged, unstaged, and untracked,
-is in the unit's allowed files. The Coordinator authorizes by sending `1` as the
-next message in that Executor's conversation.
-When the menu offered option 1 but a path in that surface is outside
-the allowed files, the Coordinator does not reply 1: the Executor stops with
-its commit preserved and no PR, and the report names the paths.
-The Executor never chooses option 1 on its own.
-The Coordinator never authorizes Proceed to merge.
+The Executor invokes `ce-commit-push-pr mode:pipeline` with publication-only
+intent, verification results, and unresolved review findings. Pass the unit's
+allowed files, protected paths, and hard rules into publication and babysit
+invocations. Neither invocation receives merge or stack-landing authority;
+any stack handoff uses `posture:stack-ready`.
+The publisher owns the project's publishing requirements and live-state checks.
+If publication fails or opens no PR, report that outcome and stop the unit.
 
-When the readiness recommendation is request changes, the Coordinator replies
-with Address remaining changes and then its do-all option. That sends
-every named Executor-owned gap back to the same Executor for one rework
-round, and readiness recomposes on the new head. If that menu still
-withholds option 1, or a gap needs the owner, the Executor stops with
-the authored commit preserved and no PR. The Coordinator never picks Stop and
-file follow-up work.
+For an ordinary pipeline publication, the Executor then invokes
+`ce-babysit-pr mode:pipeline` for the published open, non-draft PR when the
+publisher permits monitoring and no watcher already owns it. If stack
+publication already handed off babysit, preserve that bottom-PR scope and
+non-landing posture and use its result instead of starting a second watcher.
+Gardener never selects `posture:stack-land`.
 
-After reply 1, checking-pr-readiness invokes `ce-commit-push-pr
-mode:pipeline`. If that skill created or updated a pull request,
-checking-pr-readiness did not report that the published pull request is not
-what was approved, its completion gate allows babysit, and it did not already
-start babysit, the
-Executor invokes `ce-babysit-pr mode:pipeline` for it; otherwise it reports
-what the publisher said and stops. Babysit repairs CI
-through `ce-debug` and answers review comments through
-`ce-resolve-pr-feedback` on its own. When babysit returns
-success, looks merge-ready, or cautiously looks ready, the Executor
-reports the PR URL and that result to the Coordinator and stops. On any other
-result it reports that result and stops.
-
-## Judge merge readiness
-
-For each PR whose Executor reported a ready babysit result, the Coordinator
-dispatches `checking-merge-readiness` to a fresh, read-only Reviewer
-with no prior involvement. Pass only the pull-request identity. Put its
-recommendation (merge, debug, or do not merge) and risk drivers into the
-report. A debug or do-not-merge verdict goes into the report with its
-findings; the owner decides in the morning. Babysit is a local
-optimization; merge readiness is the global verdict. Do not pick any
-option on the merge-readiness menu, including Proceed to merge.
+Babysit repairs CI through `ce-debug` and addresses review comments through
+`ce-resolve-pr-feedback`. Pass every returned human decision unchanged to the
+Coordinator. Report the PR URL, CI state, babysit result, deferred findings,
+and any blocked or skipped monitoring, then stop the Executor. A bounded
+pipeline success is not proof of an interactive settle window or a merge.
+The Coordinator reports these results; it does not start another review gate
+or authorize a merge.
 
 ## Report
 
@@ -202,9 +186,10 @@ Post one plain-Markdown comment on `report_issue` when configured.
 Otherwise write the same Markdown as the run's final output. Use these
 sections in order: pull requests, scans run, areas and gaps, findings
 not authored and why, proposed policy changes. Under pull requests,
-list each URL, CI state, babysit terminal, merge-readiness verdict, its
-findings, and risk drivers. Under scans run, list each argv, exit status, and
-one-line summary. Under areas and gaps, give each of the five areas a
+list each URL, CI state, babysit result, deferred findings, and unresolved
+human decisions. Preserve the complete decision payloads the Executor returned.
+Under scans run, list each argv, exit status, and one-line summary.
+Under areas and gaps, give each of the five areas a
 one-line status and name each unavailable source. Under findings not
 authored and why, list recommendations, including bot update PRs to
 adopt, the protected-path items, and blocked units with preserved

@@ -16,6 +16,11 @@ tags: [skills, bundled-scripts, install-probe, skills-ref, executable-bits, acti
 
 # Shipping executable helpers in a markdown skill catalog
 
+The readiness skills and their dedicated tests were retired on 2026-10-13.
+Their examples and source-path citations below describe the historical workflow.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+lessons here still apply to surviving skills and checks.
+
 ## Context
 
 Until `checking-pr-readiness`, every published skill in this catalog was

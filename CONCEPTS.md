@@ -181,62 +181,6 @@ An evaluation result that was not collected or cannot be trusted, kept distinct
 from both pass and fail. An Unmeasured result never counts toward a pass rate,
 and an earlier run is not reclassified later to fill the gap.
 
-## Readiness checkpoints
-
-### Option-1 reply
-
-The next message after a readiness menu, when that message is `1` or that
-menu's spoken equivalent. After an Approve menu: `Approve`, `approve and
-proceed`. After a Proceed-to-merge menu: `Proceed to merge`, `merge it`.
-It is the only way Approve or Proceed is accepted.
-
-The turn that printed the menu cannot pick. The request that started the
-review never counts as 1. A `1` on a withheld row is not approval. In
-gardener, only the Coordinator may send that reply, and only when the menu
-offered Approve.
-
-Do not call this "later-1". That name hid the two turns: menu, then reply.
-
-### Evidence Pack
-
-A record of readiness approval after option 1. It is an actionable brief:
-the recommendation, material next work, a coverage close, and the learning
-signal, not a census of every sweep class or inspected path.
-
-The review instantiates it on the option-1 reply as silent input to the
-skill that opens the pull request, which writes it into the pull request
-description. The pack becomes durable only when written there; an in-process
-handoff alone is not persistence.
-
-### Merge Readiness Review
-
-The pre-merge review produced by `checking-merge-readiness`. It checks whether
-review is complete and merge rules pass, then examines the full pull request
-for intent drift, Risk Drivers, redesign pressure, and follow-up debt.
-
-It is not `ce-babysit-pr`'s looks-merge-ready stop. That Compound Engineering
-report means babysit settled. Settled is not merged, and it is not this
-review. Looks merge-ready is the trigger to start this review.
-
-It runs in a reviewer with no prior involvement: a session that shaped the
-change dispatches it to a fresh subagent. When no subagent can open, it
-reviews in place and its brief warns that the review was not independent. It recommends merge,
-debug, or do not merge, then waits for a numbered reply. Gather, grade, and
-readout stay read-only. Option 1 is Proceed to merge. Before merging, it
-re-checks the head and base ref, review history, linked-issue states, and host
-rules, then runs the guarded forge merge. A match is silent. A same-name base
-move with no GitHub conflict is named and is not a stopping mismatch. An edit
-to a GitHub or Linear issue title, body, or comments is not a stopping
-mismatch. Any other mismatch names what moved and stops rather than merging.
-It does not mutate the tracker. The skill does not pick option 1 in the same
-turn that wrote the menu.
-
-### Risk Driver
-
-A low, medium, or high risk the owner should weigh before merging, tied to one
-specific finding about the change or its review. A Merge Readiness Review uses
-the named risks to recommend merge, debug, or do not merge.
-
 ## Repository gardening
 
 ### Repository Maintenance Run
@@ -265,12 +209,11 @@ When the work is an issue, that issue is an Implementation Leaf.
 
 *Avoid:* Worker, child, gardener child
 
-An Executor may dispatch Scouts for evidence and runs PR readiness on
-its own head. After babysit reports a ready result (pipeline `success`,
-looks merge-ready, or cautiously looks ready), the Executor reports
-that to the Coordinator, and the Coordinator dispatches `checking-merge-readiness` to
-a fresh uninvolved Reviewer for merge readiness, passing only the
-pull-request identity.
+An Executor may dispatch Scouts for evidence. It verifies its unit, publishes
+through Compound Engineering, and runs babysit when publication has not already
+handed off monitoring. It reports the PR URL, CI state, babysit result, and
+unresolved decisions to the Coordinator. A pipeline result does not establish
+that an interactive settle window completed or that the PR merged.
 Scouts and Reviewers do not own a pull request. One Executor ships at most
 one pull request. Merge remains a later human step.
 

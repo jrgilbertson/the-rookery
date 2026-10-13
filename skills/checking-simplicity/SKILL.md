@@ -139,6 +139,6 @@ files, committing, or approving shipping.
 - Use code review for bugs, regressions, tests, and standards.
 - Use document review when the job is plan completeness or writing quality
   rather than unnecessary implementation complexity.
-- Use PR and merge readiness for shipping decisions. They may consume this
-  assessment and add their own evidence requirements, but this skill never
-  makes those decisions.
+- Use Compound Engineering publication and babysit for shipping. They honor
+  project requirements and report their own verification and review coverage;
+  this skill does not authorize publication or merge.

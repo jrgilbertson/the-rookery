@@ -23,42 +23,21 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `checking-pr-readiness` is about 40% of its former size and
-  `checking-merge-readiness` about 80%. Merge readiness always grades the
-  live head in a fresh reviewer that receives only the pull-request
-  identity, and its option-1 re-check is four checks (head and base ref,
-  review history, linked-issue states, host rules) instead of a 16-row
-  table. PR readiness records one
-  surface identity and recomposes on any change. Its Approve invokes the
-  PR-opening skill and, once babysit reports looks merge-ready, starts merge
-  readiness, which moves itself to a fresh reviewer. Unattended runs stop
-  after publishing; `repo-gardener`'s Coordinator starts merge readiness.
 - `creating-portable-skills` follows the Agent Skills format for portable
   packages and descriptions, and delegates evaluation to pinned upstream
   `build-eval` and `ce-retune` guides. Repository package conventions stay in
   `SKILLS.md` without shipping the repository's evaluation procedure in the skill.
 
+### Removed
+
+- `checking-pr-readiness` and `checking-merge-readiness`, including their
+  helpers and dedicated tests. Shipping uses Compound Engineering publication
+  and babysit directly. Repo Gardener retains its verification, allowed-file
+  boundaries, and human-only merge policy without readiness menus or a second
+  merge-review gate.
+
 ### Fixed
 
-- `checking-merge-readiness` offers option 1 when the base branch has a
-  GitHub merge queue. The write is the same pinned `gh pr merge`, which adds
-  the pull request to the queue there, and the report relays what gh said.
-- `checking-merge-readiness` again dispatches a fresh reviewer when the
-  invoking session wrote or shaped the pull request, instead of grading it
-  itself, capping at debug, and asking the owner to request that review.
-  When no subagent can be opened, it reviews in place with a warning and
-  still offers merge.
-- `checking-merge-readiness` takes the intent baseline from a linked issue
-  whose description states a purpose, then from the newest pull request
-  description written before review, then, only when edit history cannot be
-  read, from the current description with the gap disclosed. A description
-  rewritten after review never becomes the baseline. Every stated purpose stays in the baseline; drift is a
-  purpose the diff no longer fulfills. An authorized issue comment this run
-  already read replaces a stale issue description when the diff still matches
-  it. A source issue on another tracker is read only when the invoking owner
-  has already named it; a failed read is a named gap that does not cap. The
-  owner is asked for the purpose, with no candidate from the diff, only when
-  no source states one.
 - Chief-of-staff reviews keep supplied results unverified, give the actual
   reason when source calls are excluded, and continue conditional questions
   without claiming a verified review.
@@ -68,13 +47,6 @@ looked" surface. GitHub Releases mirror its entries.
   evidence and approval rules; live configured templates own drafting structure.
 - `managing-personal-crm` uses bounded supported contact lookup after an empty
   unsupported phone-string search, retaining conservative identity binding.
-- `checking-merge-readiness` keeps the Option-1 reply in the review that
-  wrote the brief. That reply re-checks the head, review history,
-  linked-issue states, and host rules, then merges or stops. It does not
-  start another review. A base that moved without a GitHub conflict is named
-  in one sentence and does not stop the merge; a new commit on the pull
-  request's own branch needs a fresh review. An edit to a GitHub or Linear
-  issue title, body, or comments leaves the review in place.
 - `route-work` Questions cards no longer present one reading of an ambiguous
   request as what the operator said. A recommendation's reason names what is
   unknown and what the answer decides. Neither the question nor its reason
@@ -240,11 +212,6 @@ looked" surface. GitHub Releases mirror its entries.
 - Routing templates now use square-bracket placeholders so Orca can open the
   routing contract in its rich Markdown editor.
 
-- `checking-pr-readiness` and `checking-merge-readiness` spoken answers
-  are the brief and numbered options only. The wait still happens; the
-  owner no longer hears a closing paragraph about the skill, its headings,
-  or why work has not started. The remaining-work follow-up uses the same
-  bound.
 - CI tool installation now runs from a shell script, avoiding actionlint
   deadlocks when local pipe buffers cannot hold the inline bootstrap code.
 - After a `checking-pr-readiness` Approve, the option-1 reply follows
@@ -270,24 +237,6 @@ looked" surface. GitHub Releases mirror its entries.
 - Ship workflow documents `ce-noslop`, `humanize`, and
   `writing-for-agents` in the finishing sequence, with credit. Merge still
   waits for a human.
-- `checking-pr-readiness` keeps one first-menu option for remaining work.
-  Picking it does not start work. The follow-up's first action does all
-  remaining items named in the brief; later actions are those items grouped
-  by similar work and ordered by impact; leave is last and ends that
-  wait. Unrun code review
-  or simplify appear there only when they drove the recommendation. Run a
-  missing step is no longer a sibling leftover-work row.
-  `checking-merge-readiness` already uses one remaining-work option
-  (Debug); Debug, redesign, and capture stay distinct action types, not
-  item slots.
-- `checking-merge-readiness` treats stale source-issue wording as
-  informational when owner-approved scope, the PR description, and delivered
-  work agree. Missing required work, incorrect closure claims, and authority
-  or verification gaps still block merge.
-- `checking-pr-readiness` treats reviewer file limits as informational.
-  Unknown or exceeded limits alone no longer block PR approval or require
-  vendor-plan research. Complete change inventory, actual required-review
-  coverage, and exact identity checks still govern readiness.
 - `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
   sweeps the day's corrections and resolves each row, applying approved
   actions with readback, before Phase 2 begins. Phase 2 plans tomorrow, coaches, records
@@ -315,46 +264,11 @@ looked" surface. GitHub Releases mirror its entries.
 - Skill test suites may retain a small number of explicitly labeled regression
   controls for load-bearing behavior that the bare and skilled variants both
   pass; those controls never count as evidence of improvement.
-- `checking-pr-readiness` now inventories solution simplicity, the
-  independent approach-level result from `checking-simplicity`, as a sixth
-  upstream step and late backstop, and `checking-merge-readiness` requires a
-  fresh whole-change reviewer before it can recommend merge.
 - A later reply of 1 on a `checking-pr-readiness` Approve menu continues into the
   installed finishing path in the same conversation. The evidence pack is
   silent pull-request-body input, not another wait. If no finishing path is
   installed, the run names that once and stops without re-asking Approve.
-- `checking-pr-readiness` and `checking-merge-readiness` keep option 1 as the
-  reserved Approve or Proceed slot. When that action cannot be taken, number
-  1 stays and names why. The remaining actions have a print order, not fixed
-  menu numbers. Live later options are numbered from 2 without gaps. Each
-  option is a natural sentence rather than a label. Show the checks lists
-  the checks this review ran. File or capture follow-up appears only when
-  the brief named leftover work to park. Request changes stays on every
-  PR-readiness menu as the numbered alternative to Approve. `ce-pov` stays
-  a merge-readiness action only on do not merge when that skill is present.
-  A typed 1 on a withheld option-1 row is not Proceed or Approve.
 
-- `checking-pr-readiness` and `checking-merge-readiness` now split gather from
-  the spoken brief. Helper inventories go to an owner-only temp directory
-  outside the target repository. The brief is an executive recommendation
-  plus numbered live options, a coverage close, and named next work instead
-  of a receipt-vouch or a per-class census. A non-terminal Show the checks
-  option lists each applicable check and its status on request. There is
-  one process: wait for a numbered reply from whoever is talking. A turn is one reply: this reply
-  writes the menu and stops; the next message is the pick. This turn ends
-  when the menu is on screen. Option 1 is Approve or Proceed. Before that
-  choice is accepted, identity is re-read, including staged, unstaged, and
-  untracked content for PR readiness.
-  Matching identity compares stay silent; a moved head or working-tree
-  content change rebuilds. A check named as next work, including code
-  review with no receipt, does not by itself withhold Approve. Spoken next
-  work is remaining owner work after the decision. On approve that is
-  opening the pull request and babysitting it, not unrun review or
-  simplify. Live options are numbered from 1, each number once. On
-  approve, Run a missing step is omitted rather than listed once per gap.
-  Reasons in the brief are about the change under review, not how the gate
-  runs. Captured as
-  `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML
@@ -391,13 +305,6 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
-- `checking-pr-readiness` no longer ships `changelog-union.sh`,
-  `evidence-freshness.sh`, the content-digest identity, the reviewer-cap size
-  class, or the separate finishing reference; Approve's publish and
-  merge-readiness steps now live in the skill itself.
-  `checking-merge-readiness` no longer accepts a grade or diff file handed
-  over from another gate, and folds its first-principles reference into the
-  risk rubric.
 - Twelve `creating-portable-skills` eval cases that asked the model to recite
   validation procedure or gave the answer in the prompt. Cases 3, 5 and 7
   remain: case 3 no longer lists the lines to audit, case 5 keeps only its

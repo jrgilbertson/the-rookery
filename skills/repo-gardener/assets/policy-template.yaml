@@ -13,7 +13,7 @@ max_pull_requests: 10
 # the repository root. Findings become candidate work. Not merge-gate CI.
 scans: []
 # Example: - ["npm", "run", "knip"]
-# Commands an Executor must pass before it asks for PR readiness, run from
+# Commands an Executor must pass before publication, run from
 # its worktree root. Use the smallest gating subset CI runs on pull
 # requests; never a watch-mode command. Empty means no pull request opens.
 verify: []

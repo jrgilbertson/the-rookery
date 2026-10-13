@@ -28,14 +28,17 @@ tags: [skills, helper-scripts, falsifiability-contract, silent-pass, fixture-tes
 
 # Ship bundled skill helpers with an executable falsifiability contract
 
-> **Current state:** `changelog-union.sh` and `evidence-freshness.sh` were
-> retired in #201; their sweep classes are now judgment checks. The file and
-> line citations to them below record the original incident. The lesson still
-> governs the helpers that remain: `surface-report.sh` and
-> `skills/checking-merge-readiness/scripts/fetch-pr-history.sh`. Citations to
-> those two helpers and to their runners point at current line numbers. The
-> 2026-08-11 recurrence's artifacts were retired too: the gardener CLI in #153
-> and `run-assessment-checks.py` in #201.
+The readiness skills and their dedicated tests were retired on 2026-10-13.
+Their examples and source-path citations below describe the historical workflow.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+lessons here still apply to surviving skills and checks.
+
+> **Historical artifacts:** `changelog-union.sh` and `evidence-freshness.sh`
+> were retired in #201. `surface-report.sh`, `fetch-pr-history.sh`, and their
+> dedicated runners were retired with the readiness skills on 2026-10-13.
+> Their file and line citations below refer to Git history. The 2026-08-11
+> recurrence's artifacts were retired too: the gardener CLI in #153 and
+> `run-assessment-checks.py` in #201.
 
 ## Context
 

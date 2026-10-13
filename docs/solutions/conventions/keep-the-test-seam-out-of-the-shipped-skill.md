@@ -38,14 +38,19 @@ tags:
 
 # Put the test seam in the environment, not in the shipped skill
 
+The readiness skills and their dedicated tests were retired on 2026-10-13.
+Their examples and source-path citations below describe the historical workflow.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+lessons here still apply to surviving skills and checks.
+
 > The harness files cited here are Git history from before #191:
 > `tests/checking-merge-readiness/fixtures/bin/gh` and its `CMR_ALLOW_MERGE`
 > gate, the battery's "forge stub" section and run log, and the
 > personal-chief-of-staff `bootstrap.sh`, `pcos-action`, and `imsg`, with the
 > expanded self-check described below (the current `run-fixture-checks.sh` is
-> a smaller runner). The live example of the convention is
+> a smaller runner). Another historical example of the convention is
 > `tests/checking-merge-readiness/fixtures/history-bin/gh`, a `PATH` stand-in
-> under `tests/` that serves `fetch-pr-history.sh`.
+> under `tests/` that served `fetch-pr-history.sh` before their retirement.
 
 ## Context
 

@@ -25,6 +25,11 @@ related_components:
 
 # Loosening a test checklist during grading removes the check
 
+The readiness skills and their dedicated tests were retired on 2026-10-13.
+Their examples and source-path citations below describe the historical workflow.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+lessons here still apply to surviving skills and checks.
+
 > The battery and run log cited here were retired in #191 and remain in Git
 > history. "Pause" is now "debug", and the recommendation mapping is in
 > `skills/checking-merge-readiness/SKILL.md` step 6.

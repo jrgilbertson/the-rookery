@@ -34,6 +34,11 @@ tags:
 
 # Do not split human and agent skill products
 
+The readiness skills and their dedicated tests were retired on 2026-10-13.
+Their examples and source-path citations below describe the historical workflow.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+lessons here still apply to surviving skills and checks.
+
 ## Context
 
 `checking-pr-readiness` and `checking-merge-readiness` used to end a run

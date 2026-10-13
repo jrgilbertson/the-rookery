@@ -18,7 +18,7 @@ colors:
 
 The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should make the technical system clear while retaining the warmth and memory of a hand-kept field guide.
 
-Every illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms make sequence, observation, and return causally legible, while one restrained orange signal marks the intervention, dispatch, or return that matters most. The exact scene may change across repository-owned explanatory visuals, but the world remains one connected system in which evidence moves forward and distinct forms of feedback make future work more useful.
+Every illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms show the order of work, where observation happens, and how feedback returns. One restrained orange signal marks the intervention, dispatch, or return that matters most. Scenes may change across repository-owned explanatory visuals. Each should show the same connected system, with evidence moving forward and distinct feedback paths improving future work.
 
 **Key Characteristics:**
 
@@ -30,7 +30,7 @@ Every illustration explains an operation. Huginn and Muninn carry, inspect, inst
 
 ## Colors
 
-The palette is a disciplined blue field system: navy holds authority, cobalt carries sequence, blue-gray builds structure, and orange is reserved for the moment that changes the state of the work.
+Navy signals authority, cobalt shows the sequence, and blue-gray defines supporting structure. Reserve orange for the moment that changes the state of the work.
 
 ### Primary
 
@@ -57,7 +57,7 @@ The palette is a disciplined blue field system: navy holds authority, cobalt car
 
 **Display Font:** Didot for the primary title in repository-owned banners.
 
-**Supporting Font:** Baskerville Semibold for subtitles and diagram labels; compact bold sans is acceptable only for dense explanatory labeling where it is demonstrably more legible.
+**Supporting Font:** Baskerville Semibold for subtitles and diagram labels; a compact bold sans-serif is acceptable only for dense explanatory labels where it is demonstrably easier to read.
 
 **Character:** Type should feel printed into a field guide, not overlaid by a product interface. The repository's Markdown body remains native to GitHub; this typography guidance applies to repository-owned visual assets.
 
@@ -79,11 +79,11 @@ The workflow banner keeps its illustration and typography in separate production
 
 ## Layout
 
-Repository banners use a wide landscape canvas (1600 × 640). They depend on large silhouettes, sparse text, and generous negative space so the image retains a clear reading when GitHub scales it to the content column. Future explanatory visuals should resolve their dimensions from their reading context rather than inherit a removed asset format.
+Repository banners use a wide landscape canvas (1600 × 640). They depend on large silhouettes, sparse text, and generous negative space so the image retains a clear reading when GitHub scales it to the content column. Choose dimensions for future explanatory visuals based on where people will view them. Do not reuse dimensions from a removed asset format by default.
 
-Banners establish hierarchy in the first glance: a clear title zone, a dominant corvid action, and a route or mechanism that crosses the remaining field. Other explanatory visuals should concentrate on one job or relationship at a time. The mechanism should be readable before the texture, and the subject should face or move into the next meaningful area of the composition.
+A banner should make its main elements clear at first glance. Give the title a clear area, make the corvid's action dominant, and place a route or mechanism across the remaining space. Other explanatory visuals should concentrate on one job or relationship at a time. The mechanism should be readable before the texture, and the subject should face or move into the next meaningful area of the composition.
 
-The approved workflow banner uses field-map composition C: a large serif title and cobalt subtitle occupy the upper-left while an unfolded diagonal map fills the field. One raven anchors Research and another descends to retrieve the verified dispatch at Ship. Research runs through Plan, Design, Build, and Ship above two quiet return ribbons, without a redundant label over the numbered delivery sequence. A solid cobalt Maintain ribbon passes through a compact repair-and-binding press, while a solid orange Learn ribbon passes through an open field notebook and feather. The ribbons deliberately abstract their detailed inputs and outcomes; the adjacent prose explains how Maintain creates repository memory and Learn returns a better question to Research. This topology is specific to the workflow explanation, not a universal template for future assets.
+The approved workflow banner uses field-map composition C: a large serif title and cobalt subtitle occupy the upper-left while an unfolded diagonal map fills the field. One raven anchors Research and another descends to retrieve the verified dispatch at Ship. Research runs through Plan, Design, Build, and Ship above two quiet return ribbons, without a redundant label over the numbered delivery sequence. A solid cobalt Maintain ribbon passes through a compact repair-and-binding press, while a solid orange Learn ribbon passes through an open field notebook and feather. The ribbons omit detailed inputs and outcomes. The adjacent prose explains how Maintain creates repository memory and Learn returns a better question to Research. This arrangement is specific to the workflow explanation, not a template for every future asset.
 
 **The Causal System Rule.** Show the five delivery jobs as an ordered sequence and each feedback process as its own path to the stages or input it changes. Never force distinct feedback loops into a false serial sequence, and never flatten the system into repeated equal containers.
 
@@ -91,13 +91,13 @@ The approved workflow banner uses field-map composition C: a large serif title a
 
 ## Elevation & Depth
 
-The system is flat by interface standards and dimensional by illustration standards. It uses no glossy card shadows, bloom, or floating UI layers. Depth comes from engraved hatching, paper folds, perspective, overlap, line-weight changes, and the contrast between dark subjects and pale field geometry.
+The illustrations show physical depth without glossy card shadows, bloom, or floating UI layers. Depth comes from engraved hatching, paper folds, perspective, overlap, line-weight changes, and the contrast between dark subjects and pale field geometry.
 
 **The Drawn Depth Rule.** Create depth with physical overlap, perspective, and line density; do not simulate it with product-UI drop shadows or glow.
 
 ## Shapes
 
-Organic corvid silhouettes break against precise field geometry. Circular route nodes, seals, apertures, calibration rings, and return loops act as recurring state markers; rectilinear jigs, gates, frames, and folded paper make each abstract job physical. Corners belong to the depicted material: cut paper may soften, wood and metal stay constructed, and no generic rounded-card radius unifies the scene.
+Organic corvid silhouettes break against precise field geometry. Circular route nodes, seals, apertures, calibration rings, and return loops repeatedly mark the state of the work. Straight-edged jigs, gates, frames, and folded paper give each abstract job a physical form. Corners follow the depicted material. Cut paper may soften; wood and metal keep constructed edges. Do not apply one generic rounded-card radius throughout the scene.
 
 **The Mechanism Has Consequence Rule.** Every aperture, gate, jig, ring, or bridge must make the stage's operation clearer; remove decorative machinery that does not change the explanation.
 
@@ -105,7 +105,7 @@ Organic corvid silhouettes break against precise field geometry. Circular route 
 
 ### Do:
 
-- **Do** give Huginn or Muninn a load-bearing action such as carrying a dispatch, operating a mechanism, inspecting a handoff, or returning a signal.
+- **Do** give Huginn or Muninn an action essential to the explanation, such as carrying a dispatch, operating a mechanism, inspecting a handoff, or returning a signal.
 - **Do** use Route Cobalt and shape or direction together, so paths remain understandable without color.
 - **Do** distinguish the Delivery Sequence, Repository Learning Loop, and Personal Learning Loop by position, labels, direction, and mechanism as well as color.
 - **Do** keep Signal Orange scarce and attach it to one meaningful intervention or return.

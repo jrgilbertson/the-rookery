@@ -28,12 +28,23 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Model recommendations allow one model per provider in each ranked row.
+  Gemini 4 Argon is a provisional Planner and Design/taste alternative;
+  Executor keeps Opus 5.5 and Sol 6.1 with no tertiary. The Design/taste
+  footnote distinguishes evaluated efforts from the maintainer's usual usage.
+
 - `creating-portable-skills` follows the Agent Skills format for portable
   packages and descriptions, and delegates evaluation to pinned upstream
   `build-eval` and `ce-retune` guides. Repository package conventions stay in
   `SKILLS.md` without shipping the repository's evaluation procedure in the skill.
 
 ### Removed
+
+- `route-work` and its bundled routing contract. `ROUTING.md` is now a
+  human-facing role playbook with model and effort recommendations; workflows
+  remain in `WORKFLOWS.md`. The model evaluation procedure lives in
+  `docs/model-evaluations.md`. Existing installations can remove `route-work`
+  and invoke their chosen workflow or orchestration tools directly.
 
 - `checking-pr-readiness` and `checking-merge-readiness`, including their
   helpers and dedicated tests. Shipping uses Compound Engineering publication

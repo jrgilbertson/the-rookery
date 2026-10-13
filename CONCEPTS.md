@@ -2,9 +2,9 @@
 
 Shared domain vocabulary for this project, including entities, named processes,
 and statuses with a project-specific meaning. Prefer an established industry
-term or a plain description. Add a project term only when it carries a precise
-contract used in more than one place or names persisted compatibility data. Do
-not capitalize ordinary workflow phrases merely to turn them into concepts.
+term or a plain description. Add a project term only when it names a precise
+requirement used in more than one place or stored data needed for compatibility.
+Do not capitalize ordinary workflow phrases merely to turn them into concepts.
 This is a glossary, not a specification or catch-all.
 
 ## Personal workflows
@@ -50,17 +50,17 @@ start a full CRM catch-up.
 
 ### Administrative Sweep
 
-A sweep of canonical records, run during a wind-down or weekly review, that
-proposes exactly one independently approvable action for every record the
-evidence shows is now wrong or needs a decision, including overdue,
-follow-up-due, and at-risk tasks. Upcoming tasks, due tomorrow in Wind-down
-or anywhere in the coming week in Weekly, ordinarily feed the plan instead;
-the sweep proposes an action for one only when that plan cannot hold it.
-Wind-down runs the sweep as its first phase and applies and reads back approved
-actions before coaching or journal drafting begins.
-Weekly runs the sweep while reconstructing the week and carries its rows into
-the single review bundle presented at the end of the run. It lists nothing
-that is healthy and never creates a second task list.
+A check of canonical records during a wind-down or weekly review. It proposes
+exactly one action that can be approved separately for every record the evidence
+shows is wrong or needs a decision. This includes overdue, follow-up-due, and
+at-risk tasks. Upcoming tasks normally feed the plan instead: tasks due tomorrow
+in Wind-down or in the coming week in Weekly. The sweep proposes an action for
+an upcoming task only when the plan cannot accommodate it. Wind-down runs the
+sweep as its first phase and applies and reads back approved actions before
+coaching or journal drafting begins. Weekly runs the sweep while reconstructing
+the week and carries its rows into the single review bundle presented at the end
+of the run. It lists nothing that is healthy and never creates a second task
+list.
 
 ### Frontier Round
 
@@ -96,18 +96,19 @@ understanding rather than the repository's safeguards and procedures.
 ### Owning Workflow
 
 The one existing workflow responsible for resolving a request's current
-uncertainty or producing its requested durable effect. A route assessment names
-exactly one first owner from the work itself rather than its carrier. Later
-workflows remain conditional handoffs and do not share current ownership.
+uncertainty or producing the lasting result it asks for. A route assessment
+names exactly one first owner based on the work requested, rather than how the
+request arrived. Later workflows take over only if needed and do not share
+current ownership.
 
 ## Issue management
 
 ### Canonical Tracker
 
-The one issue system authorized to own and receive mutations for a repository.
-A cross-tracker request may reach its canonical record only through one exact
-provider-native link; otherwise Managing Issues asks for the canonical issue or
-stops. An issue in another tracker is not a second write target.
+The one issue system authorized to own a repository's issues and receive changes
+to them. A cross-tracker request may reach its canonical record only through one
+exact provider-native link; otherwise Managing Issues asks for the canonical
+issue or stops. An issue in another tracker is not a second write target.
 
 ### Owned Issue Graph
 
@@ -138,8 +139,8 @@ and outside the Ready Frontier.
 
 The implementation leaves in an Owned Issue Graph whose Issue Readiness Posture
 is `ready` and whose current native blockers and declared prerequisites are
-satisfied. It is derived from a fresh canonical read for a
-handoff and is never stored as a parallel work state.
+satisfied. It is determined from a fresh read of the canonical tracker before a
+handoff. It is never stored as a separate record of work status.
 
 ## Shipping and verification
 
@@ -169,11 +170,10 @@ itself public-bound, regardless of its current hosting visibility.
 
 ### Release Snapshot
 
-An immutable semantic-version tag and GitHub Release that identify one
-validated state of the Published Catalog. It is a historical checkpoint and
-release-notes surface, not an installation pin: ordinary installs continue to
-follow `main`, and a correction receives a new release tag instead of moving an
-existing one.
+An immutable semantic-version tag and GitHub Release that identify one validated
+state of the Published Catalog. It is a historical checkpoint with release
+notes, not an installation pin: ordinary installs continue to follow `main`, and
+a correction receives a new release tag instead of moving an existing one.
 
 ### Unmeasured
 
@@ -212,10 +212,10 @@ When the work is an issue, that issue is an Implementation Leaf.
 An Executor may dispatch Scouts for evidence. It verifies its unit, publishes
 through Compound Engineering, and runs babysit when publication has not already
 handed off monitoring. It reports the PR URL, CI state, babysit result, and
-unresolved decisions to the Coordinator. A pipeline result does not establish
-that an interactive settle window completed or that the PR merged.
-Scouts and Reviewers do not own a pull request. One Executor ships at most
-one pull request. Merge remains a later human step.
+unresolved decisions to the Coordinator. A pipeline result does not prove that
+the interactive monitoring period completed or that the PR merged. Scouts and
+Reviewers do not own a pull request. One Executor ships at most one pull
+request. Merge remains a later human step.
 
 ### Gardening Tracker
 
@@ -227,14 +227,13 @@ markers. Native pull requests remain authoritative for authored work.
 
 ### STORM Research
 
-Deep, source-backed investigation that establishes a baseline, dispatches
-independent research lenses, preserves their disagreements, and synthesizes the
-result for the requested purpose. It asks questions about facts, assumptions,
-constraints, mechanisms, system relationships, change over time, and
-downstream effects without requiring a separate named question type. It may
-inform a decision, but unlike
-`ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
-research record as the primary result.
+A deep, source-backed investigation that establishes what is already known,
+assigns independent research perspectives, preserves their disagreements, and
+combines the findings for the requested purpose. It asks questions about facts,
+assumptions, constraints, mechanisms, system relationships, change over time,
+and downstream effects without requiring a separate named question type. It may
+inform a decision, but unlike `ce-pov`'s compact, project-grounded verdict it
+preserves a multi-perspective research record as the primary result.
 
 ## Instruction and workflow contracts
 
@@ -254,11 +253,10 @@ live references.
 
 ### Delete Test
 
-The instruction-economy check asks one question for every line: would the agent
-get this wrong without it? A line that restates default model behavior fails and
-is cut whole. The test decides only whether to keep the line. The separate
-operationalize-the-qualifier check handles words that survive but still steer
-unpredictably. The skill review checklist names this check No-ops.
+This check asks one question for every line: would the agent get this wrong
+without it? A line that restates default model behavior fails and is cut whole.
+The test decides only whether to keep the line. The separate operationalize-the-qualifier check makes remaining vague qualifiers specific enough to guide the
+agent consistently. The skill review checklist names this check No-ops.
 
 ### System-Owned Invariant
 
@@ -279,8 +277,8 @@ decision, with training, validation, and fresh queries kept distinct.
 
 - "Parent" and "child" in gardener talk meant Coordinator and Executor. Those
   words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles. The shared `ROUTING.md` names are Coordinator, Executor,
-  and Reviewer; Scout is no longer a routing profile.
-- `ROUTING.md` uses Coordinator and Executor for its own roles. Its coordinator
-  is the session that receives a kickoff and may do the work itself; a gardener
-  Coordinator never implements. The words are shared, the roles are not.
+  gardener roles. `ROUTING.md` describes Planner, Executor,
+  Reviewer, and Design/taste as model profiles, not a separate routing process.
+- A session coordinating ordinary work may also implement it; a gardener
+  Coordinator never implements. Shared role names do not imply identical
+  responsibilities across workflows.

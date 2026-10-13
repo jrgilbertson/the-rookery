@@ -15,6 +15,12 @@ tags: [route-work, routing-contract, instruction-prose, exceptions, behavioral-e
 
 # Key contract exceptions on facts the model already decided
 
+
+`route-work` was retired on 2026-10-13. Its examples below describe the historical
+workflow. Current model guidance lives in [ROUTING.md](../../../ROUTING.md);
+workflow selection lives in [WORKFLOWS.md](../../../WORKFLOWS.md). The general
+lessons still apply to maintained workflow instructions.
+
 ## Context
 
 Issue #162 changed `route-work` so that a route that says nothing about

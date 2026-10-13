@@ -4,7 +4,7 @@
 
 # The Rookery
 
-An always-current field guide to how I build with AI. It connects a practical workflow for research, planning, design, implementation, shipping, maintenance, and learning with the skills I use to run it. A skill is a portable set of instructions an agent loads when a task calls for it.
+An always-current field guide to how I build with AI. It connects a practical workflow for research, planning, design, implementation, shipping, maintenance, and learning with the skills I use to run it.
 
 A rookery is where corvids gather to nest. This one is named for Odin's ravens, Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
@@ -68,7 +68,6 @@ the other skill packages await revalidation after the eval reset.
 - [repo-gardener](skills/repo-gardener/SKILL.md). Sense one repository, dispatch Executors that each ship one reviewable pull request through the installed Compound Engineering shipping skills, and post one morning report. Run it on a schedule by name; a human still merges.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
 - [reviewing-ai-sessions](skills/reviewing-ai-sessions/SKILL.md). Review recent AI sessions for recurring friction and propose evidence-backed changes to skills, rules, and enforcement. Use it to prune guidance and identify improvements; changes require approval of specific items.
-- [route-work](skills/route-work/SKILL.md). Select the first workflow, work pattern, and roster of roles, models, and effort for one kickoff without starting a downstream workflow. Use it when explicitly routing new work or deciding whether a proven in-flight owner should continue.
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
 
 ## My other projects

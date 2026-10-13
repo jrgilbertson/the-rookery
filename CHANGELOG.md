@@ -28,6 +28,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The testing guide explains how to give agents room to work while end-to-end
+  verification, independent checks, and durable safeguards protect the result.
+- The README uses the tagline “A field guide to how I build with AI.” New
+  illustrations introduce Huginn and Muninn and show the five workflow jobs
+  with separate maintenance and learning returns.
+
 - Model recommendations allow one model per provider in each ranked row.
   Gemini 4 Argon is a provisional Planner and Design/taste alternative;
   Executor keeps Opus 5.5 and Sol 6.1 with no tertiary. The Design/taste

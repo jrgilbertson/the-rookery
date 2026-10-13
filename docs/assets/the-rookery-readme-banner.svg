@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1600" height="640" viewBox="0 0 1600 640" role="img" aria-labelledby="title description" text-rendering="geometricPrecision">
+  <title id="title">The Rookery</title>
+  <desc id="description">A field guide to how I build with AI. Huginn returns with a field dispatch to a blueprint workspace.</desc>
+  <image width="1600" height="640" xlink:href="the-rookery-readme-banner-artwork.webp"/>
+  <text x="64" y="260" fill="#042458" font-family="Didot, 'Bodoni 72', serif" font-size="128">The Rookery</text>
+  <text x="78" y="338" fill="#0050CC" font-family="Baskerville, serif" font-weight="600" font-size="36">A field guide to how I build with AI.</text>
+</svg>

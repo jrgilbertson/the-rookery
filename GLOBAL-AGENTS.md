@@ -63,7 +63,7 @@ After any restart, compaction, or model switch, read `tasks.md` and the end of `
 
 You have standing permission to delegate bounded work when a skill or workflow calls for it, or when independent parallel work materially improves the result. Give each delegate a concrete scope and keep synthesis and final responsibility with the primary agent.
 
-When you change code that enforces authorization, approval, or a destructive-action guard, have a fresh-context agent try a concrete sequence that breaks it. Self-review does not satisfy this check.
+For material changes to authorization, approval, or destructive-action guards, use independent review focused on the changed boundary. Add targeted checks for concrete risks not covered by existing evidence. Stop when required checks and material findings are resolved; reopen verification only for relevant changes or new evidence.
 
 ## Keep working artifacts transient
 

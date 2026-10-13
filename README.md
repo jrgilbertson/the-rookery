@@ -8,6 +8,8 @@ An always-current field guide to how I build with AI. It connects a practical wo
 
 A rookery is where corvids gather to nest. This one is named for Odin's ravens, Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
+![Huginn brings one more field note while Muninn makes room in an overflowing notebook. Huginn is thought; Muninn is memory.](docs/assets/huginn-and-muninn.svg)
+
 ## Guiding principles
 
 1. **Works across tools.** Skills should not depend on one agent or harness.

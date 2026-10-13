@@ -81,6 +81,8 @@ The testing diagrams use self-contained HTML sources in `docs/assets/testing-flo
 
 ## Layout
 
+The README introduces Huginn and Muninn with the overflowing-notebook scene in `docs/assets/huginn-and-muninn.svg`. Huginn brings one more field note while Muninn makes room for it. The SVG embeds `docs/assets/huginn-and-muninn-artwork.png` and keeps their names, roles, and caption as editable Baskerville text. Update the vector text for copy changes and preserve the separate artwork plate.
+
 Repository banners use a wide landscape canvas (1600 × 640). They depend on large silhouettes, sparse text, and generous negative space so the image retains a clear reading when GitHub scales it to the content column. Choose dimensions for future explanatory visuals based on where people will view them. Do not reuse dimensions from a removed asset format by default.
 
 A banner should make its main elements clear at first glance. Give the title a clear area, make the corvid's action dominant, and place a route or mechanism across the remaining space. Other explanatory visuals should concentrate on one job or relationship at a time. The mechanism should be readable before the texture, and the subject should face or move into the next meaningful area of the composition.

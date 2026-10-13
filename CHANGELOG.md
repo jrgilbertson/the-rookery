@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `reviewing-ai-sessions` reviews recent session history for recurring friction
+  and proposes evidence-backed changes to guidance and enforcement. Maintain
+  includes the review, with approval required before applying specific proposals.
+
 - `GLOBAL-AGENTS.md` publishes the maintainer's global agent guidance, the
   file every agent reads before a repository's own `AGENTS.md`. The local file
   stays the source of truth: `scripts/sync-global-agents.sh` copies it one way

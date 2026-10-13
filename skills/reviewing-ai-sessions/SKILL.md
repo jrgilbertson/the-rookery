@@ -71,7 +71,7 @@ and still understand the decision.
 
 Use Markdown with two sections:
 
-1. **Recommendations:** present all high-leverage options, ranked by expected
+1. **Recommendations:** present all evidence-backed options, ranked by expected
    impact and evidence, including retain/no change where appropriate. Start
    each numbered brief with a bold complete sentence naming the recommended
    action, rather than a status label. Follow with normal-weight support: the

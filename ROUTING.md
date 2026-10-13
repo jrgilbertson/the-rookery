@@ -6,19 +6,19 @@ Choose models and effort for the work, using the tools and subscriptions availab
 
 ### Planner
 
-Settle scope, dependencies, and acceptance criteria. The session planning the work can also coordinate it; Planner names a model profile, not an extra agent.
+Decide what needs to be done, what it depends on, and how we'll know it's finished. The agent that writes the plan can also organize the work.
 
 ### Executor
 
-Implement or debug work against concrete checks. Balanced effort is the starting point; more thinking needs a workload-specific reason.
+Make the changes or find and fix the problem. Use tests and other checks to show that the result works.
 
 ### Reviewer
 
-Judge the result against the criteria in a fresh context. For correctness review, use the first available Executor model from a different provider than the implementer, keeping its Executor effort. If only one provider is available, use a fresh review context. Taste-led review follows the Design/taste recommendations.
+Check whether the work meets the agreed requirements. Review it in a separate session, without relying on the discussion that produced it.
 
 ### Design/taste
 
-Judge the finished interface. Visual-preference evidence informs the choice; inspect the actual result rather than assuming higher effort improves it.
+Check how the finished interface looks and whether it's easy to use. Use comparisons based on people's preferences to help choose a model. More thinking time does not automatically produce a better design.
 
 ## Model recommendations
 
@@ -38,6 +38,8 @@ Argon's Planner and Design/taste recommendations are provisional. Each ranked ro
 ## Work alone, delegate, or hand off
 
 One session usually owns the work and stays accountable for completion. Add Executors when the work has independent units. Use the installed orchestration tools when those units need supervision; use a handoff when another session should take ownership.
+
+To check correctness, choose the first available model in the Executor row from a different provider than the model that did the work, using its listed effort. If only one provider is available, use a separate review session. For reviews of look and feel, use the Design/taste recommendations.
 
 ## Adjust effort and availability
 

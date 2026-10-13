@@ -175,7 +175,7 @@ I can also ask the agent to explain the change or a concept it introduced. Compo
 
 A successful bounded pipeline run and an interactive report that the PR looks ready to merge describe only what they checked. Neither means the PR was merged. I merge ordinary PRs myself. For a confirmed managed stack, an explicit `posture:stack-land` grant lets babysit use the native stack route and confirm it landed. Repo Gardener never gets that grant. Afterward, I write the changelog and release notes from the merged PRs.
 
-CI blocks merge until the project's selected requirements pass. [Testing with agents](TESTING.md#local-merge-and-release-responsibilities) explains how to divide broader checks between local work and release. GitHub can enforce a PR for every change, resolved review comments before merge, and no direct pushes to main, including by administrators. Each of those protections must be turned on.
+CI blocks merge until the project's selected requirements pass. [Testing with agents](TESTING.md#deliver-the-verified-work) explains how to divide broader checks between local work and release. GitHub can enforce a PR for every change, resolved review comments before merge, and no direct pushes to main, including by administrators. Each of those protections must be turned on.
 
 Before merge:
 

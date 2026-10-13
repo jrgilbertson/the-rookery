@@ -8,6 +8,25 @@ justified. Adding a profile is a separate maintainer decision. Choices are quali
 not an automatic ranking. This procedure maintains the recommendations in
 [ROUTING.md](../ROUTING.md); it does not choose or start a workflow.
 
+## When to revisit the current choices
+
+Reviewed 2026-10-13. Use these conditions to reconsider the current table;
+new results may confirm a choice rather than change it.
+
+- **Planner:** Revisit Opus high, Sol high, and the tentative Argon high slot
+  when exact-release planning or repository-comprehension comparisons become
+  available. Direct plan-quality results would test the current reliance on
+  indirect reasoning and coding evidence. Compare cost and time where measured.
+- **Executor:** Revisit Opus medium and Sol medium when matched, fallback-free
+  effort runs clarify their quality, cost, and time. Reconsider the empty third
+  slot when another provider offers a credible substitute at a reasonable
+  task cost; new Argon coding results could change the current cost objection.
+- **Design/taste:** Revisit Opus max and Sol max when matched visual-preference
+  comparisons measure lower efforts alongside cost and time. Revisit tentative
+  Argon high when independent exact-release interface comparisons corroborate
+  or challenge its early results. Missing economics remain unknown; these
+  choices are not proven economic optima.
+
 ## Gather
 
 Start with affected roles, current selections, candidates, and explicit

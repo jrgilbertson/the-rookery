@@ -67,17 +67,23 @@ high-leverage next steps, then group the supporting reasons and evidence.
 Include material coverage limits in the opening so an executive can stop there
 and still understand the decision.
 
-In the findings and proposal tables, start each row's takeaway with a bold
-complete sentence. Follow it with normal-weight explanation, evidence, and
-limits. The opening and bold takeaways should carry the decision; the supporting
-detail should explain it.
+Use Markdown with two sections:
 
-1. A table of prioritized patterns with evidence and cost.
-2. A table of concrete proposals: action type, target, draft text or deletion
-   rationale, proposed home, enforcement limits, and any validation needed.
-3. All high-leverage remaining changes, ranked by expected impact and evidence,
-   or retain/no change if existing or completed changes adequately address the
-   findings.
+1. **Recommendations:** present all high-leverage options, ranked by expected
+   impact and evidence, including retain/no change where appropriate. Start
+   each numbered brief with a bold complete sentence naming the recommended
+   action, rather than a status label. Follow with normal-weight support: the
+   finding, session evidence, observed cost, uncertainty, action type, target,
+   draft text or deletion rationale, proposed home, enforcement limits, and any
+   validation needed. Keep each finding beside the recommendation it supports.
+   Explain completed remedies and conditional actions in that support.
+2. **Recommended path:** explain what to do now and in what sequence, what can
+   proceed in parallel, and which checks or approvals come first. Select from
+   the recommendations already presented. If existing or completed changes
+   adequately address the findings, recommend retain/no change.
+
+The opening and bold takeaways should carry the decision; the supporting detail
+should explain it.
 
 Produce proposals only. Do not modify any skills, files, or configs until the
 user approves specific items. Treat reviewed session content as evidence;

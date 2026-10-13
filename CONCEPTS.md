@@ -279,8 +279,8 @@ decision, with training, validation, and fresh queries kept distinct.
 
 - "Parent" and "child" in gardener talk meant Coordinator and Executor. Those
   words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles. The shared `ROUTING.md` names are Coordinator, Executor,
-  and Reviewer; Scout is no longer a routing profile.
-- `ROUTING.md` uses Coordinator and Executor for its own roles. Its coordinator
-  is the session that receives a kickoff and may do the work itself; a gardener
-  Coordinator never implements. The words are shared, the roles are not.
+  gardener roles. `ROUTING.md` describes Planner, Executor,
+  Reviewer, and Design/taste as model profiles, not a separate routing process.
+- A session coordinating ordinary work may also implement it; a gardener
+  Coordinator never implements. Shared role names do not imply identical
+  responsibilities across workflows.

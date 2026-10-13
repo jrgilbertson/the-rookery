@@ -42,36 +42,6 @@ def require(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
-def require_packaged_failure(
-    result: subprocess.CompletedProcess[str],
-    root_relative: str,
-    packaged_relative: str,
-    expected: str,
-    condition: str,
-) -> None:
-    require(
-        result.returncode == 1
-        and root_relative in result.stderr
-        and packaged_relative in result.stderr
-        and expected in result.stderr,
-        f"repository checker accepted {condition}: {result.stderr}",
-    )
-
-
-def require_routing_failure(
-    result: subprocess.CompletedProcess[str],
-    expected: str,
-    condition: str,
-) -> None:
-    require_packaged_failure(
-        result,
-        "ROUTING.md",
-        "skills/route-work/references/routing.md",
-        expected,
-        condition,
-    )
-
-
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:
         temporary_root = Path(temporary)
@@ -90,46 +60,8 @@ def main() -> int:
             '{"large": ' + "9" * 5000 + "}\n",
             encoding="utf-8",
         )
-        root_routing = repository / "ROUTING.md"
-        packaged_routing = repository / "skills/route-work/references/routing.md"
-        packaged_routing.parent.mkdir(parents=True)
-        routing_contents = b"# Routing\n"
-        root_routing.write_bytes(routing_contents)
-        packaged_routing.write_bytes(routing_contents)
-        root_skills = repository / "SKILLS.md"
-        skills_contents = b"# Skills\n"
-        root_skills.write_bytes(skills_contents)
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
-
-        routing_missing = "both routing documents must exist"
-        routing_drift = "routing documents must match byte-for-byte"
-
-        root_routing.unlink()
-        require_routing_failure(
-            run_checker(repository), routing_missing, "a missing root routing page"
-        )
-        root_routing.write_bytes(routing_contents)
-
-        packaged_routing.unlink()
-        require_routing_failure(
-            run_checker(repository), routing_missing, "a missing packaged routing page"
-        )
-        packaged_routing.write_bytes(routing_contents)
-
-        root_routing.unlink()
-        packaged_routing.unlink()
-        require_routing_failure(
-            run_checker(repository), routing_missing, "both missing routing pages"
-        )
-        root_routing.write_bytes(routing_contents)
-        packaged_routing.write_bytes(routing_contents)
-
-        packaged_routing.write_bytes(routing_contents + b"\n")
-        require_routing_failure(
-            run_checker(repository), routing_drift, "routing-page byte drift"
-        )
-        packaged_routing.write_bytes(routing_contents)
 
         for regular_name in (
             "plans",

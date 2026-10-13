@@ -21,6 +21,12 @@ tags:
 
 # Defer to the gates a routed workflow already owns
 
+
+`route-work` was retired on 2026-10-13. Its examples below describe the historical
+workflow. Current model guidance lives in [ROUTING.md](../../../ROUTING.md);
+workflow selection lives in [WORKFLOWS.md](../../../WORKFLOWS.md). The general
+lessons still apply to maintained workflow instructions.
+
 ## Context
 
 `route-work` renders one card that starts work in a development framework:

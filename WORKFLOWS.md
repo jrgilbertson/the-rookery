@@ -16,10 +16,10 @@ My workflow moves through five core jobs: Research, Plan, Design, Build, and Shi
 | [Maintain](#maintain) | Tend the repo and encode every learning where it holds | `repo-gardener`, `ce-compound`, `impeccable extract` | Learning landed on the strongest rung that holds it |
 | [Learn](#learn) | Capture learning as linked notes and name the gaps | `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Learning is in the graph and gaps are named |
 
-[Routing work](ROUTING.md) documents how I select the first workflow, the
-coordinator, the pattern, and the roster of roles with models and effort without
-starting a downstream workflow. I use it when explicitly routing new work or
-deciding whether a proven in-flight owner should continue.
+Before starting work, I choose the tools available to me, who owns the result,
+and which models and effort fit the task. [Model and effort guidance](ROUTING.md)
+covers planning, execution, review, and design; the workflow sections below
+explain where I start.
 
 ## Foundations
 
@@ -138,7 +138,7 @@ I choose models by how success will be judged. For work with objective checks, I
 
 `ce-work` from Compound Engineering moves through the plan one unit at a time so I can inspect the work as it lands. `lfg`, also from Compound Engineering, runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
-Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Every route has a coordinator, and most runs start as a single owner. The routing contract owns the pattern and model recommendations. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat.
+Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. One session usually owns the work. I add Executors for independent units and use the installed orchestration tools when those units need supervision. A handoff transfers ownership to another session. [Model and effort guidance](ROUTING.md) helps me choose models for the work and an independent Reviewer where practical.
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 

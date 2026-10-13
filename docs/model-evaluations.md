@@ -3,18 +3,19 @@
 On a maintainer's update request, recommend model slots for Planner, Executor,
 and Design/taste. Retain Reviewer as the selection rule, not a separate ranking.
 Update only the requested profiles. Each ranked row may contain at most one
-model per provider; leave a slot empty when no suitable alternative is justified. Adding a profile is a separate maintainer
-decision. Choices are qualitative judgments informed by quantitative inputs,
-not an automatic ranking. This procedure stays outside runtime: route-work
-reads the table at kickoff.
+model per provider; leave a slot empty when no suitable alternative is
+justified. Adding a profile is a separate maintainer decision. Choices are qualitative judgments informed by quantitative inputs,
+not an automatic ranking. This procedure maintains the recommendations in
+[ROUTING.md](../ROUTING.md); it does not choose or start a workflow.
 
-### Gather
+## Gather
 
 Start with affected roles, current selections, candidates, and explicit
 maintainer constraints. All supported efforts, including max, are eligible
 unless the maintainer excludes them. Use third-party evaluations rather than
 provider launch claims or direct model trials. Product defaults, account access,
-and CLI availability are outside this analysis; runtime handles availability.
+and CLI availability are outside this analysis; the user chooses available
+tools when starting work.
 Consult provider documentation only to resolve ambiguous identifiers or settings.
 
 **Release coverage.** Treat each release independently: evidence for a
@@ -83,7 +84,7 @@ they could change the decision. Match findings to the evaluated version and
 harness rather than inheriting an older verdict. Audits inform source
 suitability, not extra ranking votes or a requirement for admission.
 
-### Compare
+## Compare
 
 Use the same benchmark version, scoring rule, and comparable harness conditions
 for each comparison. Keep quality, cost, and available latency visible together.
@@ -145,7 +146,7 @@ Explain conflicting boards rather than automatically taking higher effort.
 Use no fixed point gap, quality floor, statistical gate, or marginal-cost
 threshold.
 
-### Recommend
+## Recommend
 
 Propose Primary, Secondary, and Tertiary provider/model/effort slots for each
 affected role. Show before-to-after choices and a short reason for each change
@@ -174,6 +175,5 @@ choices they inform.
 
 Repeated runs may confirm existing choices; change them only when evidence or
 constraints justify it. Apply only when authorized: update the root table,
-review date, and affected rationale, then copy the document byte-for-byte to
-the bundled reference. Preserve runtime routing, subscription authentication,
-availability fallback, and operator-approved effort escalation.
+review date, and affected rationale together. Keep provider diversity,
+subscription-billing preferences, and evidence gaps explicit.

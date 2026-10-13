@@ -188,6 +188,12 @@ Before merge:
 
 Repositories and systems need care over time. Maintenance runs throughout the work, not only after merge.
 
+[`reviewing-ai-sessions`](skills/reviewing-ai-sessions/SKILL.md) reviews recent AI
+sessions for recurring friction and guidance that has stopped earning its cost.
+It proposes deletion, updates, or new guidance, placing each change where it can
+hold. Run it for a weekly review or a shorter interval after a difficult run;
+approve specific proposals before applying them through the appropriate workflow.
+
 [`repo-gardener`](skills/repo-gardener/SKILL.md) checks one repository, sends Executors to ship one reviewable PR each through the installed Compound Engineering shipping skills, and posts one morning report. Run it on a schedule by name. A human still merges.
 
 Impeccable handles design maintenance. `impeccable extract` finds patterns used three or more times for the same purpose and turns them into shared design values and reusable building blocks. `impeccable document` rebuilds the design documentation from what shipped, so the tools can read the design rules rather than guess.

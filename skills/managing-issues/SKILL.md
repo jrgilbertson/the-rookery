@@ -190,16 +190,31 @@ state that the provider path preserves each field as structured data; an Orca
 command uses a structured argument vector and sends multiline body content
 through stdin so the content remains literal.
 
-Every non-empty batch requires one direct operator approval of the complete
-visible batch. Any new target, field, ordering, content, or side effect needs
-a fresh complete preview and approval. Never truncate a batch or hide tracker
-content that affects it. Every non-empty batch preview must end with exactly
-`Do you approve this exact N-effect batch?`, replacing `N` with the displayed
-effect count. An empty batch requires no approval. The request to prepare a
-batch is not approval to apply it.
+Every non-empty batch needs operator authorization. For routine reversible
+status changes or comments recording an already-agreed decision, an existing
+explicit instruction to apply that bookkeeping is sufficient when it binds the
+canonical target, issues, intended result, and relevant conditions. Name that
+instruction beside the complete preview and proceed without asking again only
+when every effect fits it and governing policy permits it. Approval of the
+underlying work or decision alone does not authorize a tracker write.
+
+Include predictable provider automation, such as automatic cycle assignment,
+in the preview and readback. It is covered by the same authorization only when
+it is a known consequence of the authorized action and does not materially
+change the agreed result. An unexpected or materially different effect stops
+the batch under step 4; do not silently accept or repair it.
+
+For any effect outside that narrow authorization, show a fresh complete preview
+and obtain direct approval. This includes changes to scope, relationships,
+security-sensitive information, or destructive effects. Setup and recovery
+retain their separate approval requirements. Never truncate a batch or hide
+tracker content that affects it. When approval is missing, end the preview with
+exactly `Do you approve this exact N-effect batch?`, replacing `N` with the
+displayed effect count. An empty batch requires no approval. A request to
+prepare a batch is not approval to apply it.
 
 Completion: every intended effect has one exact visible interpretation and the
-complete batch has a direct approval decision.
+complete batch is covered by explicit operator authorization.
 
 ## 4. Revalidate, apply once, and read back
 

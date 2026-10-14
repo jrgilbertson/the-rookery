@@ -28,6 +28,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-issues` honors existing explicit authorization for routine reversible
+  status and decision bookkeeping, including predictable provider automation,
+  while retaining complete previews, readback, and approval for expanded scope.
+
 - The testing guide explains how to give agents room to work while end-to-end
   verification, independent checks, and durable safeguards protect the result.
 - The README uses the tagline “A field guide to how I build with AI.” New

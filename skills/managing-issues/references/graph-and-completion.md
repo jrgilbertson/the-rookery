@@ -111,10 +111,11 @@ readback, then show any lifecycle change in a separate batch with separate
 approval.
 
 Before a lifecycle preview, list every cascade the provider reports as an
-intended effect, including changes to a parent or child. Read back each reported
-effect that the provider exposes. Do not inspect, predict, repair, or block on
-effects the provider does not report; Managing Issues writes only the canonical
-tracker. Never use a closing keyword as completion authority.
+intended effect, including changes to a parent or child, and any known automatic
+metadata change. Apply the shared authorization rule to the complete result.
+Read back each reported effect that the provider exposes. Do not inspect,
+predict, repair, or block on effects the provider does not report; Managing
+Issues writes only the canonical tracker. Never use a closing keyword as completion authority.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
 Ready Frontier, exact effect outcomes, and Verification evidence or gaps. Do

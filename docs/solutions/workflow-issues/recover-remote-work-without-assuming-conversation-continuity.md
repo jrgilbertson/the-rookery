@@ -91,9 +91,14 @@ its scoped assignment.
 
 Owner-confirmed cleanup also removed eligible archived worktrees while retaining
 uncertain, dirty, active, and evidence-bearing resources. These were recovery and
-cleanup outcomes, not proof that routing had been repaired. The client quit was
-canceled after a running-process warning, so this investigation did not test
-recovery across an actual client restart.
+cleanup outcomes, not proof that routing had been repaired. An initial client
+quit was canceled after a running-process warning. The operator later reported
+an update restart: the client then reported 1.4.224 and a new runtime, while the
+remote server still reported 1.4.223 and its previous runtime. A fresh inventory
+rediscovered the isolated agent and setup panes, but the Dispatch still reported
+a readiness timeout and changed identity. Several connected local terminals
+were marked orphaned. These observations support resource preservation, not a
+claim that conversation continuity, supervised execution, or routing recovered.
 
 ## Related
 

@@ -11,336 +11,108 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-15
+
+This Release Snapshot records the catalog at one validated state. Ordinary
+installs continue to follow rolling `main`. Before `1.0.0`, skill interfaces
+and workflows may change between releases.
+
 ### Added
 
-- `reviewing-ai-sessions` reviews recent session history for recurring friction
-  and leads with recommendations supported by findings and evidence, followed
-  by a recommended execution path. Maintain includes the review, with approval
-  required before applying specific proposals.
-
-- `GLOBAL-AGENTS.md` publishes the maintainer's global agent guidance, the
-  file every agent reads before a repository's own `AGENTS.md`. The local file
-  stays the source of truth: `scripts/sync-global-agents.sh` copies it one way
-  into the repository, and a pre-push check fails when the committed copy is
-  stale. The check runs only in a clone that opts in with
-  `git config rookery.globalAgentsSource`. `WORKFLOWS.md` explains its role
-  under Foundations.
+- `checking-simplicity` assesses safe ways to simplify a design, plan, codebase,
+  or in-progress approach through one independent, read-only reviewer. It also
+  handles explicit mid-build simplicity checks and proposed durable machinery
+  that is not justified by the current need.
+- `reviewing-ai-sessions` reviews session history for recurring friction and
+  proposes evidence-backed changes to skills, rules, and enforcement. Maintain
+  includes the review; applying specific proposals requires approval.
+- `GLOBAL-AGENTS.md` publishes the maintainer's global guidance. The one-way
+  sync script and opt-in pre-push freshness check keep it aligned with the
+  configured local source.
+- `SKILLS.md` defines repository package conventions and the evaluation workflow.
+  A bounded `creating-portable-skills` suite uses stock Promptfoo providers for
+  activation and a read-only portability audit in Claude and Codex. Subjective
+  judgments remain provisional; strict capture and human calibration remain
+  Unmeasured, and other packages await revalidation.
+- `TESTING.md` explains project-owned verification, agent permissions,
+  end-to-end checks, independent review, cache boundaries, and durable safeguards.
+  New README and workflow illustrations introduce Huginn and Muninn and show
+  delivery, maintenance, and learning.
 
 ### Changed
 
-- `managing-issues` honors existing explicit authorization for routine reversible
-  status and decision bookkeeping, including predictable provider automation,
-  while retaining complete previews, readback, and approval for expanded scope.
-
-- The testing guide explains how to give agents room to work while end-to-end
-  verification, independent checks, and durable safeguards protect the result.
-- The README uses the tagline “A field guide to how I build with AI.” New
-  illustrations introduce Huginn and Muninn and show the five workflow jobs
-  with separate maintenance and learning returns.
-
-- Model recommendations allow one model per provider in each ranked row.
-  Gemini 4 Argon is a provisional Planner and Design/taste alternative;
-  Executor keeps Opus 5.5 and Sol 6.1 with no tertiary. The Design/taste
-  footnote distinguishes evaluated efforts from the maintainer's usual usage.
-
-- `creating-portable-skills` follows the Agent Skills format for portable
-  packages and descriptions, and delegates evaluation to pinned upstream
-  `build-eval` and `ce-retune` guides. Repository package conventions stay in
-  `SKILLS.md` without shipping the repository's evaluation procedure in the skill.
-
-### Removed
-
-- `route-work` and its bundled routing contract. `ROUTING.md` is now a
-  human-facing role playbook with model and effort recommendations; workflows
-  remain in `WORKFLOWS.md`. The model evaluation procedure lives in
-  `docs/model-evaluations.md`. Existing installations can remove `route-work`
-  and invoke their chosen workflow or orchestration tools directly.
-
-- `checking-pr-readiness` and `checking-merge-readiness`, including their
-  helpers and dedicated tests. Shipping uses Compound Engineering publication
-  and babysit directly. Repo Gardener retains its verification, allowed-file
-  boundaries, and human-only merge policy without readiness menus or a second
-  merge-review gate.
+- `managing-issues` uses one canonical GitHub or Linear tracker for issue
+  updates, parent and blocker relationships, readiness, and completion.
+  First-use setup recommends an exclusive Linear readiness group and GitHub
+  prefixed labels; existing configurations are not migrated. Explicit prior
+  approval can cover routine reversible bookkeeping and predictable provider
+  automation, while complete previews, readback, and approval for expanded
+  scope remain required.
+- `personal-chief-of-staff` provides guided source setup and a fictional starter
+  map through host file tools. Version 3 maps roles to sources with optional
+  harness access overrides; existing version 1 and 2 restrictions remain until
+  an approved upgrade. Source examples distinguish templates, completed reviews,
+  meeting evidence, approved notes, contact lookup, and durable records.
+- Chief-of-staff wind-down separates approved corrections from tomorrow's
+  planning and journal drafting. Daily and weekly reviews reconcile overdue,
+  waiting, carried-over, and conflicting commitments; upcoming work feeds the
+  plan. Coaching uses bounded Frontier Rounds, and Source Access Audits give
+  concise coverage and claim limits.
+- `creating-portable-skills` follows the Agent Skills format and delegates
+  evaluation and corpus retuning to pinned upstream `build-eval` and `ce-retune`
+  guides. Repository conventions remain in `SKILLS.md`. The review checklist
+  and bundled signal scan support portable guidance without importing host
+  procedure; required independent judgments cannot be supplied by the author.
+- Repo Gardener uses a short policy with `protected_paths`, `max_pull_requests`,
+  `scans`, `verify`, and optional `report_issue`. It senses one repository and
+  dispatches bounded Executors through Compound Engineering publication and
+  babysit; humans merge. Missing policy yields sense-only operation and an
+  interactive setup proposal, with a later approval required before writing.
+- Public X reads in CRM and chief-of-staff prefer Grok CLI when it provides the
+  required capability and accept user-confirmed handles. A configured read-only
+  API remains an alternative within the caller's limits.
+- `ROUTING.md` is a human-facing role playbook; `WORKFLOWS.md` owns the workflow
+  walkthroughs and `docs/model-evaluations.md` owns model-evaluation procedure.
+  Ranked rows offer at most one model per provider. Gemini 4 Argon is provisional
+  for Planner and Design/taste; Executor retains Opus 5.5 and Sol 6.1 without a
+  tertiary. Evaluated effort and the maintainer's usual usage stay distinct.
+- Working plans, brainstorms, raw dogfood notes, and point-in-time reports stay
+  ignored. Durable outcomes belong in code, canonical docs, issues, ADRs, or
+  maintained solutions. CI tool bootstrapping runs from a script to avoid an
+  actionlint/ShellCheck pipe-buffer deadlock.
 
 ### Fixed
 
-- Chief-of-staff reviews keep supplied results unverified, give the actual
-  reason when source calls are excluded, and continue conditional questions
-  without claiming a verified review.
-- `personal-chief-of-staff` completes relationship judgment, task and inbox
-  reconciliation, action dispositions, and calendar decisions before reporting
-  review completion. Waiting-on-others and repeated carryovers use existing
-  evidence and approval rules; live configured templates own drafting structure.
-- `managing-personal-crm` uses bounded supported contact lookup after an empty
-  unsupported phone-string search, retaining conservative identity binding.
-- `route-work` Questions cards no longer present one reading of an ambiguous
-  request as what the operator said. A recommendation's reason names what is
-  unknown and what the answer decides. Neither the question nor its reason
-  predicts what an inspection will show or names an artifact the operator did
-  not supply.
-
-- The `creating-portable-skills` review checklist's Sediment item leaves a
-  sentence that describes current domain facts standing, even when it uses a
-  change word.
-- The `creating-portable-skills` signal scan detects attached pressure markers
-  such as `Do this!!`, preserves whole-word matching for textual pressure
-  signals, and counts each matching line once.
-- The `creating-portable-skills` signal scan returns an error when it cannot
-  read an input file or traverse references, instead of reporting a successful
-  scan with incomplete results. Matches and completed scans without matches
-  still succeed.
-
-### Added
-
-- A bounded `creating-portable-skills` evaluation suite covers activation and
-  a read-only portability audit in Claude and Codex. Manual Claude trace review
-  and automated Codex capture checks keep incomplete evidence Unmeasured.
-  Native synchronous CodeMode exec graphs use explicit cell, child-call and
-  payload identities, including concurrent children; unsupported graphs remain
-  Unmeasured. Subjective judges remain provisional
-  until independent human calibration.
-
-- Chief-of-staff source examples distinguish templates, completed reviews,
-  meeting evidence, approved notes, contact lookup, and durable relationship
-  records. Thin review prompts can supply a source map; meeting review accepts
-  that map while retaining standalone configuration and its existing workflow.
-
-- `personal-chief-of-staff` includes a fictional source-map starter and guided
-  setup and source management through host file tools, without a Python/POSIX
-  runtime helper. Version 3 maps roles to sources with optional harness access
-  overrides; workflows own retrieval rules. Existing version 1 and 2 maps
-  retain their restrictions until an approved upgrade. Connection maintenance
-  remains with the harness.
-
-- `SKILLS.md` states the repository's package conventions and evaluation
-  workflow. Behavioral evaluation now starts with the evals plugin's
-  `evals-start`; `creating-portable-skills` is the first dogfood target, and
-  the other packages await revalidation.
-- `TESTING.md` explains project-owned verification for polyglot monorepos and
-  smaller projects, with local, merge, and release responsibilities, conservative
-  selection, cache boundaries, and an embedded policy outline. README and
-  workflow links make the guide discoverable.
-
-- `WORKFLOWS.md` opens with a summary table of the seven jobs, each with its
-  goal, key tools, and the condition to move on, so the loop can be read from
-  one screen before the full sections.
-- Added `route-work`, which returns one Route, Resume, or Questions card for an
-  explicit routing request. Route cards select the first workflow, size a
-  roster of roles, models, and effort for the expected run, and provide a
-  standalone kickoff that preserves supplied authority. A public routing
-  contract owns the behavior, with an exact parity check for its packaged
-  reference.
-- Added `checking-simplicity`, a read-only assessment that finds safe
-  simplification opportunities in named technical areas, questions, proposed
-  or existing designs, plans, code-level approaches, and in-build decisions.
-  The assessment runs in one dispatched subagent that did not author or
-  implement the subject. Lifecycle and Git hooks remain deliberately absent.
-
-### Changed
-
-- Retired the legacy behavioral cases, trigger lists, run logs, committed
-  benchmarks, custom eval schema checks, review server, cost tools, and
-  eval-only simulators. Prior committed evidence remains in Git history.
-  Skill packages and deterministic shipped-helper checks are retained.
-
-- `route-work` refreshes model and effort recommendations for Sol 6.1 and
-  Sonnet 5.5. Model-table maintenance compares role-relevant quality, cost,
-  and latency, with a separate evidence rule for design and taste.
-- `route-work` derives correctness reviewers from the Executor row, preferring
-  a different provider from the actual implementer without increasing effort.
-  Critic, Researcher, and Scout profiles are removed. Planning and coordination
-  remain combined, while supplied implementation boundaries stay explicit.
-
-- `creating-portable-skills` and `SKILLS.md` give each rule one owner and
-  define the terms an agent had to guess at, such as the changed arm, a
-  target, and the ship rule. The run archive nests one directory per target,
-  a regression control may enter to guard a named contract, and the
-  canonical-package rule is checked even when the reference validator passes.
-
-- `creating-portable-skills` never lets the author stand in for a required
-  independent grader or reviewer, not even with provisional grades. A change
-  whose required independent grade or review is unverified does not ship.
-
-- `creating-portable-skills` reviews can open with a bundled signal scan that
-  finds pressure language, thinking scaffolds, output clamps, history
-  phrasing, pinned model names, and similar mechanical signals, and names the
-  checklist item that judges each hit. The checklist makes its sediment check
-  runnable, tests that hardcoded facts point to a source of truth, asks of
-  each line whether the model could already know it, and keeps advice that
-  rests on one vendor's model out of the portable rules. An agent auditing a
-  skill it did not write counts as an independent reviewer; the validator step
-  names the reference `skills-ref validate` command, and an install smoke check
-  that cannot run needs the user's decision before the change completes.
-
-- `route-work` model recommendations now use the September 21–22 releases:
-  Claude Opus 5.5, GPT-6 Sol and Astra, and Grok 4.7, with rows that list only
-  the models that earn a place. A maintainer section in `ROUTING.md` records
-  how rows are ordered by cost of pass and how effort is chosen.
-
-- `route-work` replaces the Lead with a coordinator: the session the kickoff
-  is pasted into, running on the profile the model table names for its
-  starting workflow. The Lead profile becomes a Planner profile. Routes start
-  as Single owner, and Coordinator + Executors applies only when supplied
-  evidence establishes independent units. `repo-gardener`, PR readiness, and
-  CONCEPTS use Coordinator for the seat once called Lead.
-
-- `route-work` cards leave worker dispatch, scheduling, isolation, commits,
-  pull requests, code review, and movement between phases to the starting
-  workflow. Pasting the kickoff is the operator's approval to start. Kickoffs
-  name each seat's model and effort and carry the operator's stated grants,
-  limits, and conditions unchanged, adding no other authority. A separate
-  Reviewer joins only when the operator asks, or when acceptance criteria exist
-  for a run that does not implement through `ce-work`.
-
-- `route-work` now predicts that a run reaches implementation when nothing
-  says otherwise and sizes the roster for it, so operators no longer reply
-  "size to include implementation" before using the card. Why labels the
-  prediction and says the coordinator can adjust the roster. A run limited to
-  planning, one with implementation withheld, and a `managing-issues` or
-  `grill-with-docs` start keep their earlier end. The prediction grants
-  nothing.
-
-- `route-work` kickoffs that select supervised orchestration now say "Orca
-  orchestration" in those words and tell the coordinator to use Orca's
-  `orchestration` skill when it is installed, so the receiving session
-  invokes that skill. Cards still carry no Orca commands.
-
-- `route-work` no longer adds occupancy copy to Route cards; the old status
-  noun `Active ownership unverified` is gone. A named worktree or pull request
-  without a proven phase owner still routes normally and is not a bounded
-  piece. Resume and inspect-only routing are unchanged.
-
-- Repo Gardener is rewritten as one short skill for unattended runs. It
-  starts only when named, by the skill name or a plain request to run,
-  continue, set up, or explain the repository gardening automation or the
-  nightly gardener, reads a small
-  `.agents/repo-gardener.yaml` (protected paths, `max_pull_requests`,
-  approved scans, approved `verify` argv, optional report issue), runs
-  the approved scans, senses five areas, and
-  dispatches Executors that ship one PR each through `ce-debug` when
-  needed, `ce-plan`, `ce-work`, `ce-simplify-code`, `ce-code-review`,
-  `ce-test-browser`, `checking-pr-readiness`, `ce-commit-push-pr`, and
-  `ce-babysit-pr`, with
-  `checking-merge-readiness` giving the final verdict in one plain
-  morning report. Role names match `ROUTING.md`: Coordinator, Executor,
-  Scout, Reviewer. An owner invoking the skill without a policy file gets
-  first-use setup that writes the file after the owner approves it in a
-  later reply.
-
-- Public X reads in personal CRM and chief-of-staff prefer Grok CLI when it
-  provides the required public X read capability and accept user-confirmed
-  handles without authenticated X identity discovery. Otherwise a configured
-  read-only API remains available when the caller permits its cost; existing
-  read and recovery limits remain.
-- Route kickoffs now require official provider CLIs with subscription
-  authentication and report a blocker instead of using API-key billing.
-
-- Routing templates now use square-bracket placeholders so Orca can open the
-  routing contract in its rich Markdown editor.
-
-- CI tool installation now runs from a shell script, avoiding actionlint
-  deadlocks when local pipe buffers cannot hold the inline bootstrap code.
-- After a `checking-pr-readiness` Approve, the option-1 reply follows
-  `references/finishing.md`, which invokes the installed PR-opening skill
-  once. An Executor is a run already executing the Executor contract; that
-  file branches on that fact. An Executor uses `mode:pipeline` on the
-  publisher, then `ce-babysit-pr mode:pipeline`. A non-Executor uses the
-  default publisher. Title and body follow Compound Engineering. After
-  babysit looks merge-ready, cautiously looks ready, or pipeline `success`,
-  a non-Executor run starts `checking-merge-readiness` in a fresh Reviewer
-  that owns the merge menu wait; an Executor reports to the Coordinator,
-  which starts that Reviewer.
-  Approve 1 does not merge. The Coordinator authorizes an Executor's reply 1
-  only when every changed path is inside the unit's allowed files.
-  There is no gardener-only publisher.
-- `checking-simplicity` now treats "check for simplicity as well" and
-  unsolicited mid-build durable machinery as first-class triggers, instead of
-  waiting for an explicit simplify request.
-- `creating-portable-skills` also covers edits to an existing skill's
-  `SKILL.md`, evals, graders, and trigger queries. Gotchas now keep host-repo
-  rules out of portable skills and require evals and cases to shrink with the
-  skill's intent.
-- Ship workflow documents `ce-noslop`, `humanize`, and
-  `writing-for-agents` in the finishing sequence, with credit. Merge still
-  waits for a human.
-- `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
-  sweeps the day's corrections and resolves each row, applying approved
-  actions with readback, before Phase 2 begins. Phase 2 plans tomorrow, coaches, records
-  commitments, and drafts the journal from the state Phase 1 left behind, so
-  the journal describes the sources as they now stand. A scheduled run stops
-  at the Phase 1 bundle and ends Paused with nothing applied.
-- `personal-chief-of-staff` wind-down and weekly reviews now sweep the task
-  source. An open task due on or before the closing day, past its follow-up date,
-  at risk against the remaining capacity, or holding a due date
-  that precedes its own earliest-begin date becomes one approvable row with a
-  proposed resolution. Zero rows is a valid result, and an unreachable task
-  workflow reports the rows Manual rather than stalling the review. Upcoming
-  tasks enter tomorrow's plan or the whole coming week's plan, including its
-  first and last days; they need correction rows only when capacity cannot
-  hold them. Capacity checks start on the first planning day or the task's
-  later earliest-begin date. Due-date conflicts qualify even before either date
-  has passed.
-- `personal-chief-of-staff` coaching follow-ups now arrive as a Frontier Round:
-  a numbered plain-chat batch of at most five independent questions, each with
-  a recommended answer, ordered by how much the answer would change the
-  recommendation. Dependent questions wait for a later round. Weekly asks one
-  round rather than two, Quarterly presents its dispositions the same way, and
-  a supported coaching claim names the pattern, its cost, the recommended
-  boundary, the smallest intervention, and the evidence that would settle it.
-- Skill test suites may retain a small number of explicitly labeled regression
-  controls for load-bearing behavior that the bare and skilled variants both
-  pass; those controls never count as evidence of improvement.
-- A later reply of 1 on a `checking-pr-readiness` Approve menu continues into the
-  installed finishing path in the same conversation. The evidence pack is
-  silent pull-request-body input, not another wait. If no finishing path is
-  installed, the run names that once and stops without re-asking Approve.
-
-- `personal-chief-of-staff` Source Access Audits are now a short paragraph:
-  coverage first, then every relevant role and how the read finished, with a
-  "so" clause only when a result limits a claim. No table and no HTML
-  details. Successful reads may share a sentence.
-- Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
-  kicks off one forge merge after the existing fingerprint and host-policy
-  re-check, using the repository's default merge method. A cold "merge this
-  PR" activates the skill but still requires that menu choice.
-- `managing-personal-crm` can recover one bounded public X read after a
-  sandbox network or session-state denial only with fresh host approval and
-  enforced read-only capabilities. It rejects private-derived query scope,
-  keeps turn exhaustion final, and preserves Partial coverage when X is
-  unavailable.
-- README and `WORKFLOWS.md` now describe the catalog as a portable skill
-  set inside a personal loop: `repo-gardener` listings stay two sentences,
-  Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`
-  and grilling match their current upstream contracts, and
-  `creating-portable-skills`, `personal-chief-of-staff`, `reviewing-meetings`,
-  and `managing-personal-crm` appear in the walkthrough.
-- `managing-issues` first-use now recommends a Linear exclusive readiness group
-  (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
-  GitHub prefixed flats. The config schema is unchanged. Already-configured
-  repos are not migrated.
-- Working plans, brainstorms, raw dogfood notes, and point-in-time reports now
-  stay as ignored worktree artifacts. PR readiness rejects tracked or durably
-  cited transient material, and merge readiness verifies issue stewardship
-  against the final delivered scope without requiring a completion diary.
-- `managing-issues` now handles authenticated GitHub and Linear creates, updates,
-  relationships, readiness, and completion through one canonical tracker.
-  First-use setup records only the provider, target, and metadata vocabulary.
-  Cross-tracker requests require one exact provider-native link, and the skill
-  writes only the canonical tracker. Linear uses connected MCP tools when
-  available and keeps Orca as an explicit session choice.
+- Chief-of-staff reviews keep supplied results unverified, explain excluded
+  source calls, and finish relationship judgment, task and inbox reconciliation,
+  action dispositions, and calendar decisions before claiming completion.
+- CRM uses bounded supported contact lookup after an empty unsupported phone
+  search without weakening identity binding. Public X sandbox recovery requires
+  fresh host approval and unchanged public query scope; turn exhaustion remains
+  final, and unavailable reads retain Partial coverage.
+- The portable-skill signal scan detects attached pressure markers, preserves
+  whole-word text matching, and counts each matching line once. Unreadable
+  inputs or reference traversal failures return errors instead of incomplete
+  successful scans. The checklist keeps factual domain sentences even when
+  they contain change words.
 
 ### Removed
 
-- Twelve `creating-portable-skills` eval cases that asked the model to recite
-  validation procedure or gave the answer in the prompt. Cases 3, 5 and 7
-  remain: case 3 no longer lists the lines to audit, case 5 keeps only its
-  real renderer run, and case 7 no longer offers refusal in its last line.
-  Earlier benchmarks keep their original grades.
-- Repo Gardener's managed-run machinery: the two-record tracker protocol
-  and its scripts, caller-only mode, liveness reconciliation, revision
-  check points, per-area mutation grants, the declared-audit sandbox, and
-  the separate Executor contract. Existing `.agents/repo-gardener.yaml`
-  files need the new keys. `maximum_workers` is now `max_pull_requests`.
+- `checking-pr-readiness` and `checking-merge-readiness`, their helpers, and
+  dedicated tests. Use Compound Engineering publication and babysit directly;
+  Repo Gardener preserves verification, allowed-file boundaries, and human merge.
+- `route-work`, introduced and retired between snapshots, and its bundled routing
+  contract. Use `ROUTING.md` and invoke the chosen workflow or orchestration tools
+  directly. For these three retired skills, interactive `npx skills update`
+  detects upstream removals and offers to remove tracked local installations.
+  Manually installed copies require separate removal.
+- Repo Gardener's managed-run protocol, tracker records, scripts, and separate
+  Executor contract. Existing `.agents/repo-gardener.yaml` files need the new
+  policy keys; `maximum_workers` becomes `max_pull_requests`.
+- Legacy behavioral suites, trigger lists, benchmarks, custom eval runners,
+  schema checks, review server, cost tools, and simulators. Historical evidence
+  remains in Git, but does not validate the replacement suite. Deterministic
+  shipped-helper checks and safe synthetic fixtures remain.
 
 ## [0.2.0] - 2026-08-14
 

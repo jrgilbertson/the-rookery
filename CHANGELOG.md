@@ -11,6 +11,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `GLOBAL-AGENTS.md` matches the maintainer's current global guidance.
+  Non-trivial work names a verifiable end state without a completion
+  template. Long work uses the workflow's durable task state, and scratch
+  work stays disposable. The published copy no longer specifies a work-folder
+  checklist, a headless `ce-compound` pass, or a version-control section.
+  Stop and ask before reducing scope, merging, deploying, spending money,
+  or force-pushing.
+
 ## [0.3.0] - 2026-10-15
 
 This Release Snapshot records the catalog at one validated state. Ordinary

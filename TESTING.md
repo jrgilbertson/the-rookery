@@ -106,15 +106,27 @@ time without replacing those executions.
 
 I look back at recurring corrections, failed checks, and unnecessary
 coordination to see what should change before the next run.
-[`reviewing-ai-sessions`](skills/reviewing-ai-sessions/SKILL.md) turns session
-evidence into proposals to retain, delete, update, or create guidance and
-safeguards. It identifies completed remedies separately and leaves changes for
-approval through the workflow that owns them.
+The [Sessions audit automation](automations/sessions-audit.md) reviews recent
+AI sessions and recommends changes backed by session evidence. It considers
+code, tests, tooling, and controls alongside skills and instructions, then
+returns proposals for approval.
 
 Sometimes the useful change is to remove a rule or a redundant check.
 Sometimes a check that appears repetitive protects a different requirement and
 should stay. The session evidence helps distinguish those cases. I put the
 lesson in the strongest suitable place so the next run benefits from it.
+
+### Review tests and CI on a schedule
+
+The [Test audit automation](automations/test-audit.md) asks `ce-simplify-code`
+to review the tests and recommend improvements. [Optimize CI](automations/optimize-ci.md)
+asks `ce-optimize` to review continuous integration. I schedule these in Orca
+and review their recommendations before choosing what to change.
+
+These reviews help identify work to do. They do not establish that a particular
+change passes its required checks; those checks still run against the version
+being delivered. The [automation guide](automations/README.md) contains the
+prompts, schedules, and setup instructions.
 
 ## Where safeguards belong
 

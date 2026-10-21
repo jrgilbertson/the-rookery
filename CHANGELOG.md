@@ -11,6 +11,18 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Added
+
+- An automation catalog with prompts, schedules, prerequisites, and Orca setup
+  instructions for session, test, CI, codebase design, and coding standards
+  reviews. README, workflow, testing, product, and contribution guidance now
+  explain how scheduled reviews fit into the working system.
+
+### Removed
+
+- `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
+  review prompt directly.
+
 ### Changed
 
 - Managing Issues fixture checks distinguish provider adapter behavior from

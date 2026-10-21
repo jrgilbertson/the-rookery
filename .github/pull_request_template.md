@@ -4,7 +4,7 @@
 
 ## Checklist
 
-- [ ] This is a fix, portability improvement, or hardening of existing content (new skills start as a [proposal issue](https://github.com/jrgilbertson/the-rookery/issues/new/choose), see CONTRIBUTING)
+- [ ] This is a fix, portability improvement, hardening, or automation contribution described in CONTRIBUTING (new skills start as a [proposal issue](https://github.com/jrgilbertson/the-rookery/issues/new/choose), see CONTRIBUTING)
 - [ ] Nothing added depends on context that only exists on my machine (no absolute paths and no private names, per the same-door rule)
 - [ ] `main` stays install-clean: this change is complete, not a work-in-progress
 - [ ] I updated affected documentation and the changelog, or neither needs a change

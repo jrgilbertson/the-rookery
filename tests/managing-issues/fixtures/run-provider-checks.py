@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise Managing Issues provider/config lifecycle contracts."""
+"""Check published contracts, config integration, and provider adapters."""
 
 from __future__ import annotations
 
@@ -171,7 +171,7 @@ def github_happy(root: Path, base: dict[str, str]) -> None:
 
 
 def github_edge_and_error(root: Path, base: dict[str, str]) -> None:
-    env, state_path, log = github_env(root, base, "github-edge")
+    env, state_path, _ = github_env(root, base, "github-edge")
     unauthenticated = json.loads(state_path.read_text(encoding="utf-8"))
     unauthenticated["authAccounts"] = []
     state_path.write_text(json.dumps(unauthenticated, indent=2) + "\n", encoding="utf-8")
@@ -180,8 +180,7 @@ def github_edge_and_error(root: Path, base: dict[str, str]) -> None:
     except CheckFailure as error:
         require("active account" in str(error), "GitHub auth failure stopped for wrong reason")
     else:
-        raise CheckFailure("GitHub authentication failure unexpectedly enabled writes")
-    require(not positions(log_entries(log), ["issue", "create"]), "GitHub auth failure allowed executable write")
+        raise CheckFailure("GitHub authentication failure unexpectedly accepted")
     del unauthenticated["authAccounts"]
     state_path.write_text(json.dumps(unauthenticated, indent=2) + "\n", encoding="utf-8")
     try:
@@ -189,7 +188,7 @@ def github_edge_and_error(root: Path, base: dict[str, str]) -> None:
     except CheckFailure as error:
         require("not writable" in str(error), "GitHub permission failure stopped for wrong reason")
     else:
-        raise CheckFailure("GitHub read-only repository unexpectedly enabled writes")
+        raise CheckFailure("GitHub read-only repository unexpectedly accepted as writable")
     snapshot = state_path.read_bytes()
     try:
         github_read(env, "https://github.com/foreign/project/issues/1")
@@ -205,19 +204,18 @@ def github_edge_and_error(root: Path, base: dict[str, str]) -> None:
     state_path.write_text(json.dumps(drifted, indent=2) + "\n", encoding="utf-8")
     current = github_read(env, "1")
     require(current["labels"] != approved["labels"], "GitHub concurrent drift was not visible")
-    require(not positions(log_entries(log), ["issue", "edit"]), "GitHub drift allowed a write")
 
     rejected_env, rejected_state, rejected_log = github_env(root, base, "github-rejected", MI_GITHUB_REJECTED_CREATE="1")
     github_auth_and_target(rejected_env)
     failed(run(["gh", "issue", "create", "-R", GH_TARGET, "--title", "Rejected", "--body-file", "-"], rejected_env, stdin="body"), "create rejected before persistence", "GitHub rejection")
     require(json.loads(rejected_state.read_text())["next_issue"] == 3, "GitHub rejected create persisted")
-    require(len(positions(log_entries(rejected_log), ["issue", "create"])) == 1 and not positions(log_entries(rejected_log), ["issue", "edit"]), "GitHub rejection did not stop later effects")
+    require(len(positions(log_entries(rejected_log), ["issue", "create"])) == 1, "GitHub adapter did not log rejected create")
 
     unknown_env, unknown_state, unknown_log = github_env(root, base, "github-indeterminate", MI_GITHUB_INDETERMINATE_CREATE="1")
     github_auth_and_target(unknown_env)
     failed(run(["gh", "issue", "create", "-R", GH_TARGET, "--title", "Unconfirmed", "--body-file", "-"], unknown_env, stdin="body"), "indeterminate", "GitHub indeterminate create")
     require(json.loads(unknown_state.read_text())["next_issue"] == 4, "GitHub indeterminate seam did not persist uncertainty")
-    require(len(positions(log_entries(unknown_log), ["issue", "create"])) == 1 and not positions(log_entries(unknown_log), ["issue", "edit"]), "GitHub indeterminate create retried or ran later effect")
+    require(len(positions(log_entries(unknown_log), ["issue", "create"])) == 1, "GitHub adapter did not log indeterminate create")
 
     readback_env, readback_state, readback_log = github_env(root, base, "github-update-readback-failed", MI_GITHUB_FAIL_READ_AFTER_WRITE="1")
     github_read(readback_env, "1")
@@ -343,25 +341,23 @@ def linear_edge_and_error(root: Path, base: dict[str, str]) -> None:
         require_duplicate_labels_rejected(root, base, name, argv, stdin=stdin)
 
     for scenario, fragment in (("absent", "unknown command"), ("incompatible", "incompatible")):
-        env, _, log = linear_env(root, base, f"linear-guide-{scenario}", MI_LINEAR_GUIDE_SCENARIO=scenario)
+        env, _, _ = linear_env(root, base, f"linear-guide-{scenario}", MI_LINEAR_GUIDE_SCENARIO=scenario)
         try:
             load_linear_guide(env)
         except (CheckFailure, json.JSONDecodeError) as error:
             require(fragment in str(error).lower(), f"Linear {scenario} guide stopped for wrong reason")
         else:
-            raise CheckFailure(f"Linear {scenario} guide unexpectedly enabled writes")
-        require(not positions(log_entries(log), ["linear", "create"]), f"Linear {scenario} guide allowed executable write")
+            raise CheckFailure(f"Linear {scenario} guide unexpectedly accepted")
 
-    auth_env, _, auth_log = linear_env(root, base, "linear-auth-failed", MI_LINEAR_AUTH_SCENARIO="failed")
+    auth_env, _, _ = linear_env(root, base, "linear-auth-failed", MI_LINEAR_AUTH_SCENARIO="failed")
     try:
         load_linear_guide(auth_env)
     except CheckFailure as error:
         require("authentication unavailable" in str(error).lower(), "Linear auth failure stopped for wrong reason")
     else:
-        raise CheckFailure("Linear authentication failure unexpectedly enabled writes")
-    require(not positions(log_entries(auth_log), ["linear", "create"]), "Linear authentication failure allowed executable write")
+        raise CheckFailure("Linear authentication failure unexpectedly accepted")
 
-    mismatch_env, mismatch_state, mismatch_log = linear_env(root, base, "linear-mismatch", MI_LINEAR_TARGET_SCENARIO="wrong-team")
+    mismatch_env, mismatch_state, _ = linear_env(root, base, "linear-mismatch", MI_LINEAR_TARGET_SCENARIO="wrong-team")
     load_linear_guide(mismatch_env)
     try:
         linear_read(mismatch_env, "ENG-1")
@@ -369,27 +365,28 @@ def linear_edge_and_error(root: Path, base: dict[str, str]) -> None:
         require("team matchback" in str(error), "Linear target mismatch failed for wrong reason")
     else:
         raise CheckFailure("Linear target mismatch unexpectedly resolved")
-    require(json.loads(mismatch_state.read_text())["fixtureWriteCount"] == 0 and not positions(log_entries(mismatch_log), ["linear", "save-issue"]), "Linear mismatch wrote state")
+    require(json.loads(mismatch_state.read_text())["fixtureWriteCount"] == 0, "Linear adapter read changed fixture state")
 
-    drift_env, drift_state, drift_log = linear_env(root, base, "linear-drift")
+    drift_env, drift_state, _ = linear_env(root, base, "linear-drift")
     load_linear_guide(drift_env)
     approved = linear_read(drift_env, "ENG-1")
     external = json.loads(drift_state.read_text())
     external["issues"]["ENG-1"]["labels"].append({"id": "label-fix", "name": "Fix"})
     drift_state.write_text(json.dumps(external, indent=2) + "\n", encoding="utf-8")
     current = linear_read(drift_env, "ENG-1")
-    require(current["labels"] != approved["labels"] and not positions(log_entries(drift_log), ["linear", "label", "set"]), "Linear whole-set drift allowed overwrite")
+    require(current["labels"] != approved["labels"], "Linear concurrent drift was not visible")
 
     rejected_env, rejected_state, rejected_log = linear_env(root, base, "linear-rejected", MI_LINEAR_REJECTED_CREATE="1")
     load_linear_guide(rejected_env)
     failed(run(["orca", "linear", "create", "--title", "Rejected", "--body-file", "-", "--team", LINEAR_TEAM, "--workspace", LINEAR_WORKSPACE, "--json"], rejected_env, stdin="body"), "rejected before persistence", "Linear rejected create")
-    require(json.loads(rejected_state.read_text())["fixtureWriteCount"] == 0 and len(positions(log_entries(rejected_log), ["linear", "create"])) == 1 and not positions(log_entries(rejected_log), ["linear", "priority", "set"]), "Linear rejection did not stop batch")
+    require(json.loads(rejected_state.read_text())["fixtureWriteCount"] == 0, "Linear rejected create persisted")
+    require(len(positions(log_entries(rejected_log), ["linear", "create"])) == 1, "Linear adapter did not log rejected create")
 
     unknown_env, unknown_state, unknown_log = linear_env(root, base, "linear-indeterminate", MI_LINEAR_INDETERMINATE_CREATE="1")
     load_linear_guide(unknown_env)
     failed(run(["orca", "linear", "create", "--title", "Unconfirmed", "--body-file", "-", "--team", LINEAR_TEAM, "--write-id", "write-unknown-1", "--workspace", LINEAR_WORKSPACE, "--json"], unknown_env, stdin="body"), "linear_write_unconfirmed", "Linear indeterminate create")
     require(json.loads(unknown_state.read_text())["fixtureWriteCount"] == 1, "Linear indeterminate seam did not persist uncertainty")
-    require(len(positions(log_entries(unknown_log), ["linear", "create"])) == 1 and not positions(log_entries(unknown_log), ["linear", "priority", "set"]), "Linear indeterminate create retried or ran later effect")
+    require(len(positions(log_entries(unknown_log), ["linear", "create"])) == 1, "Linear adapter did not log indeterminate create")
 
     readback_env, readback_state, readback_log = linear_env(root, base, "linear-update-readback-failed", MI_LINEAR_FAIL_READ_AFTER_WRITE="1")
     load_linear_guide(readback_env)
@@ -514,7 +511,7 @@ def main() -> int:
         linear_happy(root, base)
         linear_edge_and_error(root, base)
         config_and_route_integration(root, base)
-    print("PASS: managing-issues provider checks (happy, edge, error, integration)")
+    print("PASS: managing-issues provider adapters, text contracts, and config integration")
     return 0
 
 

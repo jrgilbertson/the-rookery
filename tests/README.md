@@ -7,6 +7,8 @@ history. New behavioral evaluation follows [SKILLS.md](../SKILLS.md#evaluation-w
 The [Creating Portable Skills suite](creating-portable-skills/README.md) defines
 bounded cases and deterministic checks. Report native host behavior separately
 from repository checks and provisional subjective judgments.
+The [Managing Issues checks](managing-issues/README.md) distinguish adapter
+self-tests from the graph and lifecycle behavioral case definitions.
 
 Run the complete repository gate:
 
@@ -17,8 +19,9 @@ lefthook run pre-push --force
 The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
-exercise the shipped signal scan, issue configuration,
-provider and graph, and personal-chief-of-staff source-map schema. The
+exercise the shipped signal scan and issue configuration helper, synthetic
+issue provider adapters, published text contracts, and the
+personal-chief-of-staff source-map schema. The
 repository-integrity tests also exercise malformed packages and unsafe paths.
 
 Each fixture runner creates disposable state and requires no model calls.

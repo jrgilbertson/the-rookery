@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Managing Issues fixture checks distinguish provider adapter behavior from
+  agent decisions. Graph and lifecycle expectations are retained as behavioral
+  case definitions awaiting native-host evaluation; incidental prose changes
+  no longer fail graph checks.
 - `GLOBAL-AGENTS.md` matches the maintainer's current global guidance.
   Non-trivial work names a verifiable end state without a completion
   template. Long work uses the workflow's durable task state, and scratch

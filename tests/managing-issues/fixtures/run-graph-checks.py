@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise the managing-issues graph contract and provider seams."""
+"""Check published graph contracts and synthetic provider adapter behavior."""
 
 from __future__ import annotations
 
@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -26,15 +25,6 @@ LINEAR_REFERENCE = REPO_ROOT / "skills/managing-issues/references/linear.md"
 WORKSPACE = "workspace-fixture"
 GH_REPOSITORY = "github.com/example/project"
 GH_BOUNDARY_REPOSITORY = "github.com/example/dependency"
-READINESS = {
-    "needs-discovery": "readiness:discovery",
-    "needs-planning": "readiness:planning",
-    "ready": "readiness:ready",
-}
-EFFECT_OUTCOMES = frozenset(
-    {"applied", "already_satisfied", "failed", "indeterminate", "unapplied"}
-)
-PROCESSED_EFFECT_OUTCOMES = EFFECT_OUTCOMES - {"unapplied"}
 
 
 class CheckFailure(Exception):
@@ -77,412 +67,6 @@ def log_entries(path: Path) -> list[dict[str, Any]]:
         for line in path.read_text(encoding="utf-8").splitlines()
         if line
     ]
-
-
-def heading(body: str, name: str) -> str | None:
-    lines = body.splitlines()
-    wanted = f"## {name}".casefold()
-    for index, line in enumerate(lines):
-        if line.strip().casefold() != wanted:
-            continue
-        value: list[str] = []
-        for candidate in lines[index + 1 :]:
-            if candidate.startswith("## "):
-                break
-            value.append(candidate)
-        rendered = "\n".join(value).strip()
-        return rendered or None
-    return None
-
-
-def derive_readiness(
-    body: str,
-    *,
-    decomposition_settled: bool = True,
-    metadata_settled: bool = True,
-    graph_settled: bool = True,
-) -> str:
-    if not heading(body, "Problem"):
-        return "needs-discovery"
-    if (
-        not heading(body, "Scope")
-        or not heading(body, "Verification")
-        or not decomposition_settled
-        or not metadata_settled
-        or not graph_settled
-    ):
-        return "needs-planning"
-    return "ready"
-
-
-def intended_readiness_labels(labels: set[str], posture: str) -> set[str]:
-    require(posture in READINESS, f"unknown readiness posture: {posture}")
-    return (labels - set(READINESS.values())) | {READINESS[posture]}
-
-
-@dataclass(frozen=True)
-class Node:
-    key: str
-    body: str
-    state: str = "open"
-    children: tuple[str, ...] = ()
-    blockers: tuple[str, ...] = ()
-    estimate: int | None = None
-
-
-def ready_frontier(nodes: dict[str, Node]) -> list[str]:
-    return sorted(
-        node.key
-        for node in nodes.values()
-        if node.state == "open"
-        and not node.children
-        and derive_readiness(node.body) == "ready"
-        and all(nodes.get(blocker, Node(blocker, "")).state in {"completed", "canceled"} for blocker in node.blockers)
-    )
-
-
-def require_estimate_shape(nodes: dict[str, Node]) -> None:
-    for node in nodes.values():
-        require(
-            not node.children or node.estimate is None,
-            f"node with children has estimate: {node.key}",
-        )
-
-
-def coverage(
-    pages: list[dict[str, Any]], *, accessible_boundary: bool = True, cap: int = 250
-) -> tuple[str, list[str], str | None]:
-    visited: set[str] = {"root"}
-    seen_cursors: set[str] = set()
-    for page in pages:
-        for identity in page["identities"]:
-            visited.add(identity)
-            if len(visited) >= cap and page["has_more"]:
-                return "partial", sorted(visited), "node limit reached before exhaustion"
-        if not accessible_boundary:
-            return "partial", sorted(visited), "required one-hop blocker inaccessible"
-        if not page["has_more"]:
-            return "complete", sorted(visited), None
-        cursor = page.get("next_cursor")
-        if not cursor or cursor in seen_cursors:
-            return "partial", sorted(visited), "empty or repeated cursor"
-        seen_cursors.add(cursor)
-    return "partial", sorted(visited), "page sequence ended before exhaustion"
-
-
-def graph_preview(
-    provider: str,
-    capabilities: set[str],
-    effects: list[dict[str, str]],
-) -> list[dict[str, str]]:
-    required = {effect["capability"] for effect in effects}
-    if not required <= capabilities:
-        return []
-    require(
-        all(effect["kind"] == "node" for effect in effects[: sum(e["kind"] == "node" for e in effects)]),
-        f"{provider} graph does not place nodes before edges",
-    )
-    return effects
-
-
-def graph_execution(
-    provider: str,
-    capabilities: set[str],
-    *,
-    node_outcome: str = "applied",
-) -> list[str]:
-    events = [f"{provider}:capability-preflight"]
-    if not {"create", "parent"} <= capabilities:
-        return events
-    events.append(f"{provider}:node-write")
-    if node_outcome != "applied":
-        events.append(f"{provider}:node-{node_outcome}")
-        return events
-    events.extend(
-        [
-            f"{provider}:node-readback",
-            f"{provider}:edge-preflight",
-            f"{provider}:edge-write",
-            f"{provider}:endpoint-readbacks",
-        ]
-    )
-    return events
-
-
-def execute_batch(
-    effects: list[str], outcomes: dict[str, str]
-) -> list[tuple[str, str]]:
-    result: list[tuple[str, str]] = []
-    stopped = False
-    for effect in effects:
-        if stopped:
-            result.append((effect, "unapplied"))
-            continue
-        outcome = outcomes[effect]
-        require(
-            outcome in PROCESSED_EFFECT_OUTCOMES,
-            f"unknown effect result: {outcome}",
-        )
-        result.append((effect, outcome))
-        stopped = outcome in {"failed", "indeterminate"}
-    return result
-
-
-def canonical_identity_from_native_link(
-    canonical: str,
-    provider_links: list[tuple[str, str]],
-    selector: str,
-) -> str | None:
-    if canonical == "github":
-        matches = [github for github, linear in provider_links if selector in {github, linear}]
-    else:
-        matches = [linear for github, linear in provider_links if selector in {github, linear}]
-    return matches[0] if len(matches) == 1 else None
-
-
-def canonical_write_from_provider_link(
-    canonical: str,
-    selector_provider: str,
-    provider_links: list[tuple[str, str]],
-    selector: str,
-) -> list[str]:
-    if selector_provider == canonical:
-        return [f"write:{canonical}:{selector}"]
-    target = canonical_identity_from_native_link(canonical, provider_links, selector)
-    return [] if target is None else [f"write:{canonical}:{target}"]
-
-
-def completion_gaps(
-    verification: tuple[str, ...], evidence: set[str]
-) -> list[str]:
-    return [criterion for criterion in verification if criterion not in evidence]
-
-
-def lifecycle_preview(cascades_reported_by_provider: tuple[str, ...]) -> list[str]:
-    cascades = tuple(f"provider cascade: {cascade}" for cascade in cascades_reported_by_provider)
-    return ["canonical lifecycle change", *cascades]
-
-
-def semantic_checks() -> None:
-    complete = """## Problem
-Users cannot save.
-## Scope
-Fix save and add a regression test.
-## Verification
-- The regression test passes.
-"""
-    missing_problem = """## Scope
-Investigate the affected path.
-## Verification
-- The failure is reproduced.
-"""
-    missing_verification = """## Problem
-Users cannot save.
-## Scope
-Fix the save path.
-"""
-    require(derive_readiness(complete) == "ready", "complete issue was not ready")
-    require(derive_readiness(missing_problem) == "needs-discovery", "missing Problem was not discovery")
-    require(derive_readiness(missing_verification) == "needs-planning", "missing Verification was not planning")
-    require(
-        derive_readiness(complete, metadata_settled=False) == "needs-planning",
-        "unresolved required metadata was incorrectly ready",
-    )
-    require(
-        derive_readiness(complete, graph_settled=False) == "needs-planning",
-        "unresolved native graph position was incorrectly ready",
-    )
-
-    corrected = intended_readiness_labels(
-        {"bug", READINESS["needs-planning"]}, derive_readiness(complete)
-    )
-    require(
-        corrected == {"bug", READINESS["ready"]},
-        "stale planning label overrode derived ready posture",
-    )
-    corrected = intended_readiness_labels(
-        {READINESS["ready"]}, derive_readiness(missing_verification)
-    )
-    require(
-        corrected == {READINESS["needs-planning"]},
-        "stale ready label overrode derived planning posture",
-    )
-
-    nodes = {
-        "P": Node("P", complete, children=("A", "S")),
-        "A": Node("A", complete, estimate=2),
-        "S": Node("S", complete, children=("B", "C")),
-        "B": Node("B", complete, estimate=3),
-        "C": Node("C", complete, blockers=("A",), estimate=1),
-    }
-    require_estimate_shape(nodes)
-    require(ready_frontier(nodes) == ["A", "B"], "Ready Frontier differs")
-    require(
-        ready_frontier({"solo": Node("solo", complete, estimate=1)}) == ["solo"],
-        "standalone leaf acquired graph ceremony",
-    )
-
-    status, identities, gap = coverage(
-        [
-            {"identities": ["A", "B"], "has_more": True, "next_cursor": "c2"},
-            {"identities": ["C"], "has_more": True, "next_cursor": "c2"},
-        ]
-    )
-    require(status == "partial" and gap == "empty or repeated cursor", "repeated cursor was not partial")
-    status, _, gap = coverage(
-        [{"identities": ["A"], "has_more": False}], accessible_boundary=False
-    )
-    require(status == "partial" and "blocker" in (gap or ""), "missing boundary was not partial")
-    status, identities, gap = coverage(
-        [{"identities": [f"N-{index}" for index in range(249)], "has_more": True, "next_cursor": "more"}]
-    )
-    require(status == "partial" and len(identities) == 250 and "limit" in (gap or ""), "node cap was not partial")
-
-    effects = [
-        {"kind": "node", "capability": "create", "name": "parent"},
-        {"kind": "node", "capability": "create", "name": "leaf"},
-        {"kind": "edge", "capability": "parent", "name": "attach"},
-        {"kind": "edge", "capability": "blocked-by", "name": "block"},
-    ]
-    for provider in ("github", "linear"):
-        require(
-            graph_preview(provider, {"create", "parent", "blocked-by"}, effects) == effects,
-            f"{provider} supported graph did not preview",
-        )
-        require(
-            graph_preview(provider, {"create", "parent"}, effects) == [],
-            f"{provider} unsupported capability allowed a partial graph preview",
-        )
-        events = graph_execution(provider, {"create", "parent"})
-        require(
-            events.index(f"{provider}:node-readback")
-            < events.index(f"{provider}:edge-write"),
-            f"{provider} edge preceded exact node readback",
-        )
-        require(
-            graph_execution(provider, {"create"})
-            == [f"{provider}:capability-preflight"],
-            f"{provider} unsupported edge capability allowed a node write",
-        )
-        require(
-            f"{provider}:edge-write"
-            not in graph_execution(
-                provider, {"create", "parent"}, node_outcome="indeterminate"
-            ),
-            f"{provider} indeterminate node received an edge",
-        )
-
-    applied_then_failed = execute_batch(
-        ["parent", "leaf", "attach", "independent-edge"],
-        {
-            "parent": "applied",
-            "leaf": "applied",
-            "attach": "failed",
-            "independent-edge": "applied",
-        },
-    )
-    require(
-        applied_then_failed[-2:] == [("attach", "failed"), ("independent-edge", "unapplied")],
-        "failed effect did not stop independent later effect",
-    )
-    indeterminate = execute_batch(
-        ["create", "edge", "update"],
-        {"create": "indeterminate", "edge": "applied", "update": "applied"},
-    )
-    require(
-        indeterminate == [("create", "indeterminate"), ("edge", "unapplied"), ("update", "unapplied")],
-        "indeterminate create did not stop all later effects",
-    )
-    require(
-        execute_batch(
-            ["create", "attach", "independent-edge"],
-            {
-                "create": "applied",
-                "attach": "indeterminate",
-                "independent-edge": "applied",
-            },
-        )
-        == [
-            ("create", "applied"),
-            ("attach", "indeterminate"),
-            ("independent-edge", "unapplied"),
-        ],
-        "indeterminate edge did not stop independent later effect",
-    )
-    already_satisfied = execute_batch(
-        ["existing-edge", "next-effect"],
-        {"existing-edge": "already_satisfied", "next-effect": "applied"},
-    )
-    require(
-        already_satisfied == [
-            ("existing-edge", "already_satisfied"),
-            ("next-effect", "applied"),
-        ],
-        "already_satisfied effect did not retain the shared lifecycle outcome",
-    )
-    try:
-        execute_batch(["legacy-effect"], {"legacy-effect": "succeeded"})
-    except CheckFailure:
-        pass
-    else:
-        require(False, "stale succeeded effect outcome was accepted")
-
-    provider_links = [("example/project#11", "ENG-11")]
-    require(
-        canonical_write_from_provider_link("github", "linear", provider_links, "ENG-11")
-        == ["write:github:example/project#11"],
-        "Linear-to-GitHub route differs",
-    )
-    require(
-        canonical_write_from_provider_link("linear", "github", provider_links, "example/project#11")
-        == ["write:linear:ENG-11"],
-        "GitHub-to-Linear route differs",
-    )
-    require(
-        canonical_write_from_provider_link("github", "linear", [], "ENG-11") == [],
-        "missing provider-native linkage allowed a cross-tracker write",
-    )
-    require(
-        canonical_write_from_provider_link(
-            "linear",
-            "github",
-            [("example/project#11", "ENG-11"), ("example/project#11", "ENG-12")],
-            "example/project#11",
-        )
-        == [],
-        "ambiguous provider-native linkage allowed a cross-tracker write",
-    )
-    require(
-        canonical_write_from_provider_link("github", "github", [], "example/project#11")
-        == ["write:github:example/project#11"],
-        "canonical selector was incorrectly blocked by a missing cross-tracker link",
-    )
-    latest_verification = ("children are completed", "support confirms outcome")
-    require(
-        completion_gaps(latest_verification, {"children are completed"})
-        == ["support confirms outcome"],
-        "closed children incorrectly proved parent outcome",
-    )
-    require(
-        execute_batch(
-            ["edit-verification", "complete-parent"],
-            {"edit-verification": "indeterminate", "complete-parent": "applied"},
-        )[-1]
-        == ("complete-parent", "unapplied"),
-        "Verification edit and lifecycle change were combined after an unresolved readback",
-    )
-    require(
-        lifecycle_preview(("complete linked child",))
-        == [
-            "canonical lifecycle change",
-            "provider cascade: complete linked child",
-        ],
-        "provider-reported lifecycle cascades were not explicit effects",
-    )
-    require(
-        lifecycle_preview(()) == ["canonical lifecycle change"],
-        "unknown external behavior blocked the canonical lifecycle effect",
-    )
 
 
 def github_command_checks(root: Path, base_env: dict[str, str]) -> None:
@@ -625,14 +209,6 @@ def github_command_checks(root: Path, base_env: dict[str, str]) -> None:
         and boundary["stateReason"] == "COMPLETED",
         "GitHub boundary state or exact identity matchback differs",
     )
-    status, identities, gap = coverage(
-        [{"identities": [boundary["url"]], "has_more": False}],
-        accessible_boundary=True,
-    )
-    require(
-        status == "complete" and boundary_url in identities and gap is None,
-        "GitHub resolved cross-repository blocker did not complete coverage",
-    )
 
     normal_page_argv = [
         "gh",
@@ -753,32 +329,25 @@ def linear_command_checks(root: Path, base_env: dict[str, str]) -> None:
     )
     require(issue["ok"] is True, "Linear relation read RPC failed")
 
-    # The fixture guide deliberately does not specify graph mutation syntax.
-    # Capability preflight therefore stops before any node or edge write.
-    entries = log_entries(log)
-    for prefix in (
-        ("linear", "create"),
-        ("linear", "save-issue"),
-        ("linear", "relation"),
-    ):
-        require(
-            all(tuple(entry["argv"][: len(prefix)]) != prefix for entry in entries),
-            "unsupported Linear graph capability allowed a write",
-        )
-    require(state.read_text(encoding="utf-8") == original, "Linear capability probe changed state")
+    require(
+        state.read_text(encoding="utf-8") == original,
+        "Linear adapter reads changed fixture state",
+    )
 
 
 def published_contract_checks() -> None:
     text = REFERENCE.read_text(encoding="utf-8")
     skill = SKILL.read_text(encoding="utf-8")
     required = (
-        "shallowest useful",
         "capabilities before showing an executable graph preview",
         "nodes before relationships",
         "latest complete canonical readback",
         "never use a stored readiness representation as evidence",
         "exactly one",
         "Ready Frontier",
+        "needs-discovery",
+        "needs-planning",
+        "`ready`",
         "no estimate",
         "shared lifecycle's first-stop rule",
         "applied",
@@ -802,11 +371,8 @@ def published_contract_checks() -> None:
     normalized_skill = " ".join(skill.split()).casefold()
     for fragment in (
         "independently deliverable",
-        "vertical outcomes",
-        "what can be demonstrated",
         "preferences and convenient ordering",
         "expand–migrate–contract",
-        "compact decomposition check",
     ):
         require(
             fragment.casefold() in normalized_skill,
@@ -866,7 +432,6 @@ def main() -> int:
         PROVIDER / "linear-graph.json",
     ):
         require(required.is_file(), f"missing U3 artifact: {required.relative_to(REPO_ROOT)}")
-    semantic_checks()
     published_contract_checks()
 
     with tempfile.TemporaryDirectory(prefix="managing-issues-graph-") as temporary:
@@ -876,7 +441,7 @@ def main() -> int:
         github_command_checks(root, env)
         linear_command_checks(root, env)
 
-    print("PASS: managing-issues graph contract")
+    print("PASS: managing-issues graph text contracts and provider adapters")
     return 0
 
 

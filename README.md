@@ -4,7 +4,7 @@
 
 # The Rookery
 
-A field guide to how I build with AI. It connects a practical workflow for research, planning, design, implementation, shipping, maintenance, and learning with the skills I use to run it.
+A field guide to how I build with AI. It connects a practical workflow for research, planning, design, implementation, shipping, maintenance, and learning with the skills and scheduled automations I use to run it.
 
 A rookery is where corvids gather to nest. This one is named for Odin's ravens, Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
@@ -69,8 +69,20 @@ the other skill packages await revalidation after the eval reset.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
 - [repo-gardener](skills/repo-gardener/SKILL.md). Sense one repository, dispatch Executors that each ship one reviewable pull request through the installed Compound Engineering shipping skills, and post one morning report. Run it on a schedule by name; a human still merges.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
-- [reviewing-ai-sessions](skills/reviewing-ai-sessions/SKILL.md). Review recent AI sessions for recurring friction and propose evidence-backed changes to skills, rules, and enforcement. Use it to prune guidance and identify improvements; changes require approval of specific items.
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
+
+## The automations
+
+I run recurring reviews in Orca to find improvements in my development work.
+The [automation catalog](automations/README.md) contains copyable prompts,
+schedules, prerequisites, and setup instructions. Configure these jobs in Orca
+separately from installing skills.
+
+- [Sessions audit](automations/sessions-audit.md). Review recent AI sessions for recurring friction and improvements to code, tools, and guidance.
+- [Test audit](automations/test-audit.md). Review the tests and recommend improvements.
+- [Optimize CI](automations/optimize-ci.md). Review continuous integration and recommend improvements.
+- [Weekly codebase design](automations/weekly-codebase-design.md). Review codebase design and recommend improvements.
+- [Coding standards audit](automations/coding-standards-audit.md). Review adopted coding guidance against repository evidence and current primary sources.
 
 ## My other projects
 

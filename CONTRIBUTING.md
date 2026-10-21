@@ -27,6 +27,18 @@ New skills start as an issue, not a PR.
 
 There is no merge promise. A great skill might still not fit here, and that is not a judgment on the skill. I'm happy to link out to good work either way.
 
+## Sharing automations
+
+The [automation catalog](automations/README.md) holds recurring review prompts
+and schedules. Each definition states its purpose, cadence, and required skills
+or source access. Include setup instructions when they differ from the folder
+guide. Keep local paths, account identifiers, repository bindings, and run
+history out of published definitions.
+
+Automations may invoke installed skills. Keep the procedure in the skill when
+it already owns that behavior, and use the automation to supply the scheduled
+request.
+
 ## What to expect from me
 
 This is a personal project with no support SLA. I read issues and PRs, but response times vary with life and work. Kindness in both directions is assumed. See the [Code of Conduct](CODE_OF_CONDUCT.md).

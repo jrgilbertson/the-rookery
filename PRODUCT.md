@@ -10,7 +10,7 @@ web
 
 Jason is the primary operator and maintainer. He uses The Rookery as the public, always-current home for how he builds with AI and improves that system over time.
 
-The primary visitor audience is people encountering the work through social media, practitioners, and people who use AI and want to understand, install, or adapt the workflows and skills.
+The primary visitor audience is people encountering the work through social media, practitioners, and people who use AI and want to understand, install, or adapt the workflows, skills, and scheduled automations.
 
 ## Product Purpose
 
@@ -20,11 +20,11 @@ Success means a visitor can quickly understand the system, follow a workflow, an
 
 ## Positioning
 
-The Rookery collects the open-source tools, workflows, and skills Jason actually uses. It credits existing work, connects it into one cross-agent workflow, and adds a skill only when daily use exposes a recurring gap. The repository changes as that judgment changes.
+The Rookery collects the open-source tools, workflows, skills, and scheduled automations Jason actually uses. It credits existing work, connects it into one cross-agent workflow, and adds a skill only when daily use exposes a recurring gap. The repository changes as that judgment changes.
 
 ## Operating Context
 
-The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its five core jobs and two feedback loops, `CONCEPTS.md` defines project-specific language, and the `skills/` catalog contains the executable instructions.
+The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its five core jobs and two feedback loops, `CONCEPTS.md` defines project-specific language, the `skills/` catalog contains the executable instructions, and `automations/` holds recurring review prompts with schedules and setup instructions.
 
 The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintain and Learn are the two feedback loops. Visual explanations are most valuable where process, handoffs, loops, or system relationships would otherwise become text-heavy.
 
@@ -32,6 +32,7 @@ The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintai
 
 - Skills install individually and should remain useful across Claude Code, Codex, Cursor, Gemini CLI, and other compatible tools.
 - The system avoids depending on one vendor, keeps the skill catalog small, and improves from use.
+- Automation definitions are reusable prompts and schedules configured manually in Orca. Local repository bindings, account identifiers, and run history stay in the scheduler.
 - The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
 - Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.
 - Huginn and Muninn explain the repository and its workflows through their actions. Huginn brings back new findings; Muninn preserves useful lessons and returns them to the work.

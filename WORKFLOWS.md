@@ -6,7 +6,7 @@
 
 My workflow has five main jobs: Research, Plan, Design, Build, and Ship. Maintain turns recurring problems into tests, rules, and documented lessons. Learn turns experience into linked notes and new research questions. Both feed back into the work.
 
-Each section explains what I do, which tools I use, and when I'm ready to move on. The Rookery skills install separately. I use them alongside Compound Engineering, Impeccable, and Orca.
+Each section explains what I do, which tools I use, and when I'm ready to move on. The Rookery skills install separately. I use them alongside Compound Engineering, Impeccable, and Orca. I also use [scheduled automations](automations/README.md) to review the work at regular intervals.
 
 | Job | Goal | Key tools | Move on when |
 |---|---|---|---|
@@ -188,11 +188,17 @@ Before merge:
 
 Repositories and systems need care over time. Maintenance runs throughout the work, not only after merge.
 
-[`reviewing-ai-sessions`](skills/reviewing-ai-sessions/SKILL.md) reviews recent AI
-sessions for recurring friction and guidance that has stopped earning its cost.
-It proposes deletion, updates, or new guidance, placing each change where it can
-hold. Run it for a weekly review or a shorter interval after a difficult run;
-approve specific proposals before applying them through the appropriate workflow.
+I schedule recurring reviews in Orca. [Sessions audit](automations/sessions-audit.md)
+looks at recent AI sessions for repeated corrections, excessive coordination,
+and guidance that conflicts or duplicates other mechanisms. It proposes changes
+to code, tests, tools, and instructions, backed by session evidence. I review
+and approve specific changes before applying them through the workflow that
+owns the work.
+
+Other [automations](automations/README.md) review tests, CI, codebase design,
+and coding standards. Their prompts and schedules live separately from skills:
+a scheduled prompt can invoke an existing skill or describe a review directly.
+I copy them into Orca and choose the target repository, agent, and schedule there.
 
 [`repo-gardener`](skills/repo-gardener/SKILL.md) checks one repository, sends Executors to ship one reviewable PR each through the installed Compound Engineering shipping skills, and posts one morning report. Run it on a schedule by name. A human still merges.
 

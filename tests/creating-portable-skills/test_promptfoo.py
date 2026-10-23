@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('suite', ROOT / 'promptfoo_suite.py')
@@ -51,6 +52,28 @@ class PromptfooChecks(unittest.TestCase):
                 copied = target / case['id'] / 'workspace/.agents/skills/creating-portable-skills'
                 self.assertEqual(suite.manifest(copied), suite.manifest(suite.REPO / 'skills/creating-portable-skills'))
             self.assertTrue((target / 'codex-home/auth.json').is_symlink())
+
+    def test_preparation_rejects_public_destinations(self):
+        with tempfile.TemporaryDirectory() as storage:
+            root = Path(storage)
+            creator = self.prepare(root)
+            repository = root / 'repository'
+            shutil.copytree(suite.REPO / 'skills/creating-portable-skills',
+                            repository / 'skills/creating-portable-skills')
+            alias = root / 'repository-link'
+            alias.symlink_to(repository, target_is_directory=True)
+            for command in ('prepare', 'prepare_judges'):
+                for destination in (repository, repository / command, alias / command):
+                    with self.subTest(command=command, destination=destination):
+                        args = argparse.Namespace(
+                            host='claude', destination=str(destination),
+                            creator_config=str(creator / 'CPS-AUD-001/promptfooconfig.json'),
+                            candidate_results=None)
+                        with patch.object(suite, 'REPO', repository.resolve()):
+                            with self.assertRaisesRegex(ValueError, 'outside the public repository'):
+                                getattr(suite, command)(args)
+                        if destination != repository:
+                            self.assertFalse(destination.exists())
 
     def test_audit_file_assertion_checks_real_fixture_bytes(self):
         with tempfile.TemporaryDirectory() as storage:
@@ -159,6 +182,15 @@ class PromptfooChecks(unittest.TestCase):
             results = root / 'results.json'
             suite.save(results, {'results': {'results': [row]}})
             self.assertEqual(suite.extract_judge(results), verdicts)
+            for raw in ({'finalResponse': 'Different answer', 'items': []},
+                        {'items': []}, {'finalResponse': output},
+                        {'finalResponse': output, 'items': {}}):
+                with self.subTest(raw=raw):
+                    row['response']['raw'] = json.dumps(raw)
+                    suite.save(results, {'results': {'results': [row]}})
+                    with self.assertRaisesRegex(ValueError, 'SDK final answer unavailable or mismatched'):
+                        suite.extract_judge(results)
+            row['response']['raw'] = json.dumps({'finalResponse': output, 'items': []})
             row['response']['error'] = 'Quota exhausted'
             suite.save(results, {'results': {'results': [row]}})
             with self.assertRaises(ValueError):

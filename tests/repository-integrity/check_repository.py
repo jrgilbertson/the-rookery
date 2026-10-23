@@ -63,6 +63,22 @@ def main() -> int:
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
 
+        invalid_text = repository / "invalid-text.txt"
+        for contents, diagnostic in (
+            ("missing newline", "missing final newline"),
+            ("trailing space \n", "trailing whitespace"),
+            ("trailing tab\t\n", "trailing whitespace"),
+        ):
+            invalid_text.write_text(contents, encoding="utf-8")
+            result = run_checker(repository)
+            require(
+                result.returncode == 1
+                and "invalid-text.txt:" in result.stderr
+                and diagnostic in result.stderr,
+                f"text check did not reject {contents!r}: {result.stderr}",
+            )
+        invalid_text.unlink()
+
         for regular_name in (
             "plans",
             "docs/plans",

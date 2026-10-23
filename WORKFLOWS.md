@@ -152,6 +152,7 @@ During a build, I use:
 Before moving to Ship:
 
 - **The required checks pass.** Run the selected CI and local checks, including browser checks for interface changes when the project requires them. Tests exercise the code that will ship, not a stand-in.
+- **Setup and automation work has operational evidence.** Follow the [complete-flow verification guidance](TESTING.md#verify-the-complete-flow); carry any pending activation action into the handoff.
 - **The work stayed within its limits.** Each agent built its assigned part. Changes in scope went back through Plan.
 - **The design was followed.** Interface work matches the design system and brief.
 

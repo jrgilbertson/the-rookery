@@ -61,6 +61,15 @@ of the links and content. End-to-end testing means following the real
 operation far enough to establish the result; it does not always mean using a
 browser.
 
+For setup and automation work, make the first implementation slice exercise
+the actual starting state, required hosted configuration, one successful
+operation, and a repeat operation before expanding the implementation. For
+example, database synchronization needs to handle the existing schema during
+initial setup or recovery, then apply a later migration through the normal
+workflow. Put repeatable checks in the consuming repository's normal test or
+workflow commands. If activation awaits approval, track the exact remaining
+action in the owning task and report the operational outcome as pending.
+
 A hook-installation investigation made this concrete. Installing hooks from a
 second worktree rewrote the first worktree's launchers. Existing tests mocked
 the installer, so they could not catch the interaction. A disposable test with

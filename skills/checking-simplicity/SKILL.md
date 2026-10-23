@@ -102,8 +102,7 @@ missing and ask for it, including the existing mechanism being compared when
 that is the gap. Asking is not settling: ask even when the user has said the
 decision stays open.
 
-Every question, including a yes or no question, offers four options with one
-marked recommended. For a decision, recommend the smallest safe option the
+For a decision, recommend the smallest safe option the
 evidence supports. For missing evidence, recommend the smallest set that
 completes the decision frame: the stated goal, the behavior and constraints
 that must be preserved, the actual callers, and the relevant current code.

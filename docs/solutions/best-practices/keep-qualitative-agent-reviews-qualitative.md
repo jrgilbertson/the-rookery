@@ -1,7 +1,7 @@
 ---
 title: Keep qualitative agent reviews qualitative
 date: 2026-08-28
-last_updated: 2026-10-09
+last_updated: 2026-10-23
 category: best-practices
 module: skill-instruction-review
 problem_type: best_practice
@@ -75,8 +75,7 @@ consumer or protected boundary needs.
 When safe reductions and unresolved user decisions coexist, lead with the
 unconditional reductions. After the necessity test, ask the smallest batch of
 independent questions that change the remaining shape, defer dependents, and
-keep dependent reductions conditional. Each question includes four options
-and one recommended answer, including when the gap is missing evidence.
+keep dependent reductions conditional.
 Do not withhold known reductions or silently answer the product question.
 
 Preserve precision that serves an observed boundary. For example, activation

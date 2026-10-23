@@ -99,17 +99,20 @@ class SourceMapSchemaChecks(unittest.TestCase):
             validate(self.v2)
 
     def test_v1_rejects_extensions_and_unknown_versions(self):
-        for version in (1, 4, True, "2"):
+        for version in (1, 4, "2"):
             with self.subTest(version=version):
                 data = copy.deepcopy(self.v2)
                 data["version"] = version
                 with self.assertRaises(ValueError):
                     validate(data)
+        with self.assertRaises(ValueError):
+            validate({"version": True, "roles": {}})
 
     def test_legacy_field_constraints(self):
         for key, value in (("locator", " "), ("query", "second selector"),
                            ("condition", "conditional"), ("modes", ["weekly"]),
-                           ("modes", ["weekly", "weekly"]), ("area", "")):
+                           ("modes", ["wind-down", "weekly", "quarterly", "weekly"]),
+                           ("area", "")):
             with self.subTest(key=key, value=value):
                 data = copy.deepcopy(self.v2)
                 data["roles"]["strategy"][0][key] = value

@@ -107,8 +107,10 @@ class PromptfooChecks(unittest.TestCase):
             root = Path(storage)
             target = self.prepare(root)
             candidate = root / 'candidate.json'
-            suite.save(candidate, {'results': {'results': [{'response': {'output': 'Audit response'},
-                                                            'gradingResult': {'pass': True}}]}})
+            suite.save(candidate, {'results': {'results': [{
+                'testCase': {'metadata': {'setup': str(target / 'CPS-AUD-001/setup.json')}},
+                'response': {'output': 'Audit response'}, 'gradingResult': {'pass': True},
+                'metadata': {'portableSkills': {'C3': {'result': 'Pass'}}}}]}})
             suite.prepare_judges(argparse.Namespace(
                 destination=str(root / 'judges'), creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
                 candidate_results=str(candidate)))
@@ -119,18 +121,47 @@ class PromptfooChecks(unittest.TestCase):
                 self.assertEqual(config['providers'][0]['config']['maxRetries'], 0)
                 self.assertEqual(config['tests'][0]['assert'], [{'type': 'is-json'}])
 
+    def test_actual_judges_require_one_audit_result_with_passing_c3(self):
+        with tempfile.TemporaryDirectory() as storage:
+            root = Path(storage)
+            target = self.prepare(root)
+            candidate = root / 'candidate.json'
+
+            def result(case, c3):
+                row = {'testCase': {'metadata': {'setup': str(target / case / 'setup.json')}},
+                       'response': {'output': case + ' response'}, 'gradingResult': {'pass': True}}
+                if c3 is not None:
+                    row['metadata'] = {'portableSkills': {'C3': {'result': c3}}}
+                return row
+
+            cases = {'activation result': [result('CPS-ACT-001', 'Fail')],
+                     'missing C3': [result('CPS-AUD-001', None)],
+                     'failing C3': [result('CPS-AUD-001', 'Fail')],
+                     'two audit results': [result('CPS-AUD-001', 'Pass'), result('CPS-AUD-001', 'Pass')],
+                     'audit beside activation': [result('CPS-ACT-001', 'Pass'), result('CPS-AUD-001', 'Fail')]}
+            for index, (name, rows) in enumerate(cases.items()):
+                with self.subTest(name):
+                    suite.save(candidate, {'results': {'results': rows}})
+                    with self.assertRaisesRegex(ValueError, 'CPS-AUD-001|C3'):
+                        suite.prepare_judges(argparse.Namespace(
+                            destination=str(root / ('judges-' + str(index))),
+                            creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
+                            candidate_results=str(candidate)))
+                    self.assertFalse((root / ('judges-' + str(index)) / 'C1.json').exists())
+
     def test_actual_judges_reject_unavailable_or_failed_ordinary_checks(self):
         with tempfile.TemporaryDirectory() as storage:
             root = Path(storage)
             target = self.prepare(root)
             candidate = root / 'candidate.json'
-            rows = [[], [{}], [{'response': None}],
-                    [{'response': {'output': 'Audit response'}}],
-                    [{'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
+            audit = {'testCase': {'metadata': {'setup': str(target / 'CPS-AUD-001/setup.json')}}}
+            rows = [[], [{**audit}], [{**audit, 'response': None}],
+                    [{**audit, 'response': {'output': 'Audit response'}}],
+                    [{**audit, 'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
                       'metadata': {'portableSkills': {'C3': {'result': 'Pass'}}}}],
-                    [{'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
+                    [{**audit, 'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
                       'metadata': {'portableSkills': {'C3': {'result': 'Fail'}}}}],
-                    [{'response': {'output': 'Audit response'}, 'gradingResult': {'pass': 'true'}}]]
+                    [{**audit, 'response': {'output': 'Audit response'}, 'gradingResult': {'pass': 'true'}}]]
             payloads = [{'results': {'results': results}} for results in rows] + [{}, {'results': {}}]
             for index, payload in enumerate(payloads):
                 with self.subTest(payload=payload):

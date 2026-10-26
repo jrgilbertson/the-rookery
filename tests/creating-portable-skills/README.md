@@ -108,7 +108,9 @@ python3 tests/creating-portable-skills/promptfoo_suite.py extract-judge \
 ```
 
 A creator error, missing answer or non-passing ordinary checks prevents judge
-preparation for the actual audit. Extraction
+preparation for the actual audit. The results must hold exactly one
+`CPS-AUD-001` row, identified by its setup record, with an explicit passing C3
+result; another case's output or a missing or failing C3 is rejected. Extraction
 checks the SDK final answer, candidate inventory, binary verdicts and critiques.
 Only execute actual audit judgments after its ordinary checks, including C3,
 pass. Results remain provisional. Synthetic challenge agreement does not prove

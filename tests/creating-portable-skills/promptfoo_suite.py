@@ -142,6 +142,11 @@ def export(path):
     return rows
 
 
+def case_of(row):
+    setup_path = ((row.get('testCase') or {}).get('metadata') or {}).get('setup')
+    return json.loads(Path(setup_path).read_text()).get('case') if setup_path else None
+
+
 def prepare_judges(args):
     target = private(args.destination)
     target.mkdir(parents=True, exist_ok=False)
@@ -152,13 +157,18 @@ def prepare_judges(args):
     candidate = None
     if args.candidate_results:
         rows = json.loads(Path(args.candidate_results).read_text()).get('results', {}).get('results', [])
-        row = rows[0] if rows else {}
+        audits = [row for row in rows if case_of(row) == 'CPS-AUD-001']
+        if len(audits) != 1:
+            raise ValueError('Expected exactly one CPS-AUD-001 creator result, found ' + str(len(audits)))
+        row = audits[0]
         response = row.get('response') or {}
         candidate = response.get('output')
         if row.get('error') or response.get('error') or not isinstance(candidate, str) or not candidate.strip():
             raise ValueError('Creator unavailable or missing final answer')
         if (row.get('gradingResult') or {}).get('pass') is not True:
             raise ValueError('Creator ordinary checks, including C3, did not pass')
+        if ((row.get('metadata') or {}).get('portableSkills') or {}).get('C3', {}).get('result') != 'Pass':
+            raise ValueError('Creator C3 preservation evidence missing or not passing')
     context = {name: (ROOT / 'fixtures/vendor-guidance' / name).read_text()
                for name in ('vendor-guide.md', 'summarizing-notes/SKILL.md')}
     for criterion in ('C1', 'C2', 'C4'):

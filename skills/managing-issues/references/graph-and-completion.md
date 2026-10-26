@@ -115,7 +115,9 @@ intended effect, including changes to a parent or child, and any known automatic
 metadata change. Apply the shared authorization rule to the complete result.
 Read back each reported effect that the provider exposes. Do not inspect,
 predict, repair, or block on effects the provider does not report; Managing
-Issues writes only the canonical tracker. Never use a closing keyword as completion authority.
+Issues writes only the canonical tracker. Reading a canonical issue's own
+relationships is ordinary readback, not inspection of an unreported effect.
+Never use a closing keyword as completion authority.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
 Ready Frontier, exact effect outcomes, and Verification evidence or gaps. Do

@@ -140,7 +140,8 @@ identity tied to that attempt; read it back and require exact workspace, team,
 identifier, and URL matchback. In that readback, explicitly request the created
 issue's relationships; a default issue read may omit them. Relationships the
 readback does not return are unknown, as for any missing requested section:
-stop before the next effect and report them as unconfirmed. An unapproved
+the create stays `applied` and later effects are `unapplied`; stop before the
+next effect and report the relationships as unconfirmed. An unapproved
 relationship follows the provider-automation rule in `SKILL.md`. Managing
 Issues applies every effect once:
 even if an Orca guide or MCP client offers a retry for an unconfirmed write, an

@@ -41,6 +41,12 @@ looked" surface. GitHub Releases mirror its entries.
   Stop and ask before reducing scope, merging, deploying, spending money,
   or force-pushing.
 
+### Fixed
+
+- Managing Issues reads back a new Linear issue's relationships. A
+  relationship Linear adds on its own, which nobody approved, stops the batch
+  before the next write and comes with a removal preview awaiting approval.
+
 ## [0.3.0] - 2026-10-15
 
 This Release Snapshot records the catalog at one validated state. Ordinary

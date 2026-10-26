@@ -50,6 +50,13 @@ runners, Git hooks, and CI should work across harnesses without depending on
 an AI lifecycle hook. Keep checkpoints cheap enough that agents use them
 regularly.
 
+Use those repository-owned commands as completion evidence. They may refresh
+dependencies or generated output that a direct compiler or test-runner call
+skips, so a raw call can fail on stale state or pass against the wrong one.
+Direct calls remain useful for diagnosis. When you filter a check's output,
+keep the check's own exit status: in a shell pipeline such as `check | tail`,
+the pipeline reports `tail`'s status unless `pipefail` is set.
+
 ### Verify the complete flow
 
 Individual components can pass their tests while the complete operation still

@@ -28,6 +28,8 @@ looked" surface. GitHub Releases mirror its entries.
 - Setup and automation guidance calls for initial setup or recovery and repeat
   operation checks in the first implementation slice, with pending activation
   tracked explicitly.
+- Testing guidance names the repository-owned commands as completion evidence
+  and asks filtered check output to keep the check's own exit status.
 - Checking Simplicity no longer requires four options for every question.
 - Managing Issues fixture checks distinguish provider adapter behavior from
   agent decisions. Graph and lifecycle expectations are retained as behavioral

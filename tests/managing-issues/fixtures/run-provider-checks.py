@@ -21,6 +21,7 @@ SKILL_DIR = REPO_ROOT / "skills" / "managing-issues"
 SKILL = SKILL_DIR / "SKILL.md"
 GITHUB_REF = SKILL_DIR / "references" / "github.md"
 LINEAR_REF = SKILL_DIR / "references" / "linear.md"
+GRAPH_REF = SKILL_DIR / "references" / "graph-and-completion.md"
 CONFIG_CHECK = SKILL_DIR / "scripts" / "config_check.py"
 GH_TARGET = "github.com/example/project"
 GH_REPOSITORY_URL = "https://github.com/example/project"
@@ -458,6 +459,18 @@ def published_contract() -> None:
     require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")
     require("Never permanently delete an issue" in compact_skill, "reversible lifecycle contract differs")
     require("stop all later effects, including independent effects" in skill, "batch stop contract differs")
+    require(
+        "relationship on a newly created issue that the approved batch did not include" in compact_skill
+        and "complete preview of the effect that removes the relationship" in compact_skill
+        and "The create stays `applied`; stop before the next effect, mark later effects `unapplied`" in compact_skill
+        and "it needs fresh approval like any other effect" in compact_skill,
+        "unexpected create relationship contract differs",
+    )
+    compact_graph = " ".join(GRAPH_REF.read_text(encoding="utf-8").split())
+    require(
+        "relationships is ordinary readback, not inspection of an unreported effect" in compact_graph,
+        "create relationship readback conflicts with cascade rule",
+    )
     require("accepted non-create effect" in skill and "readback fails, is partial, or mismatches the approved result" in skill, "non-create readback contract differs")
     require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
     require(
@@ -493,6 +506,10 @@ def published_contract() -> None:
         "manual cleanup",
         "create_issue_label",
         "list_issue_labels",
+        "the provider may add relationships on its own",
+        "explicitly request the created issue's relationships",
+        "Relationships the readback does not return are unknown",
+        "the create stays `applied` and later effects are `unapplied`",
     ):
         require(phrase in compact_linear, f"Linear transport contract omits {phrase}")
 

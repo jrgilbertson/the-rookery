@@ -133,10 +133,16 @@ before writing and show the exact resulting set in the preview; any drift stops
 the batch.
 
 A create may set approved node metadata atomically when the selected transport
-supports it, but cannot attach graph edges. Supply a unique write identity when
-the transport supports one. Accept the response only when it returns an exact
-issue identity tied to that attempt; read it back and require exact workspace,
-team, identifier, and URL matchback. Managing Issues applies every effect once:
+supports it. Managing Issues attaches no graph edges at create, but the provider
+may add relationships on its own. Supply a unique write identity when the
+transport supports one. Accept the response only when it returns an exact issue
+identity tied to that attempt; read it back and require exact workspace, team,
+identifier, and URL matchback. In that readback, explicitly request the created
+issue's relationships; a default issue read may omit them. Relationships the
+readback does not return are unknown, as for any missing requested section:
+stop before the next effect and report them as unconfirmed. An unapproved
+relationship follows the provider-automation rule in `SKILL.md`. Managing
+Issues applies every effect once:
 even if an Orca guide or MCP client offers a retry for an unconfirmed write, an
 unconfirmed Managing Issues create is `indeterminate` and is never retried or
 similarity-matched.

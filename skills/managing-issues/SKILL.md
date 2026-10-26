@@ -202,7 +202,12 @@ Include predictable provider automation, such as automatic cycle assignment,
 in the preview and readback. It is covered by the same authorization only when
 it is a known consequence of the authorized action and does not materially
 change the agreed result. An unexpected or materially different effect stops
-the batch under step 4; do not silently accept or repair it.
+the batch under step 4; do not silently accept or repair it. A relationship on
+a newly created issue that the approved batch did not include is such an
+effect. The create stays `applied`; stop before the next effect, mark later
+effects `unapplied`, and report what was observed without guessing why the
+provider added it. Include a complete preview of the effect that removes the
+relationship; it needs fresh approval like any other effect.
 
 For any effect outside that narrow authorization, show a fresh complete preview
 and obtain direct approval. This includes changes to scope, relationships,

@@ -458,6 +458,11 @@ def published_contract() -> None:
     require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")
     require("Never permanently delete an issue" in compact_skill, "reversible lifecycle contract differs")
     require("stop all later effects, including independent effects" in skill, "batch stop contract differs")
+    require(
+        "relationship on a newly created issue that the approved batch did not include" in compact_skill
+        and "complete preview of the effect that removes the relationship" in compact_skill,
+        "unexpected create relationship contract differs",
+    )
     require("accepted non-create effect" in skill and "readback fails, is partial, or mismatches the approved result" in skill, "non-create readback contract differs")
     require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
     require(
@@ -493,6 +498,8 @@ def published_contract() -> None:
         "manual cleanup",
         "create_issue_label",
         "list_issue_labels",
+        "the provider may add relationships on its own",
+        "explicitly request the created issue's relationships",
     ):
         require(phrase in compact_linear, f"Linear transport contract omits {phrase}")
 

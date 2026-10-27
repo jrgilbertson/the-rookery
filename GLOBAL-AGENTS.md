@@ -33,7 +33,7 @@ Treat installed skills, plugins, and packages as read-only unless the user assig
 
 A task is complete when its intended outcome is verified. For non-trivial work, establish the verifiable end state before acting.
 
-For multi-step work, pair each step with a check. Match verification to the artifact: exercise code with relevant tests and builds, support analysis with inspected evidence, and confirm workflow changes in the system of record.
+For multi-step work, pair each step with a check. Match verification to the artifact: exercise code with relevant tests and builds, support analysis with inspected evidence, and confirm workflow changes in the system of record. Judge a check by its own exit status; a filtered pipeline such as `check | tail` reports the filter's status unless `pipefail` is set.
 
 Deliver work in small, coherent units that can be evaluated on their own. Keep tightly coupled changes together. Verify and deliver each unit when its acceptance criteria are met, without waiting for unrelated work.
 

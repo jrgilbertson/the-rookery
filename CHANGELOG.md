@@ -42,6 +42,9 @@ looked" surface. GitHub Releases mirror its entries.
   checklist, a headless `ce-compound` pass, or a version-control section.
   Stop and ask before reducing scope, merging, deploying, spending money,
   or force-pushing.
+- `GLOBAL-AGENTS.md` asks agents to judge a check by its own exit status,
+  since a filtered pipeline such as `check | tail` reports the filter's status
+  unless `pipefail` is set.
 
 ### Fixed
 

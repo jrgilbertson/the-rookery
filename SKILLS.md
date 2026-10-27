@@ -88,3 +88,11 @@ deterministic tests of shipped helpers. See [TESTING.md](TESTING.md) and
 [tests/README.md](tests/README.md) for the check commands and fixture boundaries.
 Behavioral evaluation follows the workflow above; it is separate from these
 code and package checks.
+
+## Retiring a skill
+
+Retire a skill in one pull request. Remove its package and dedicated tests,
+record the removal in the changelog, and mark each `docs/solutions/` learning
+about it as historical, naming what replaced it. In the same change, close or
+re-scope its open issues so the tracker offers no work against a skill that no
+longer exists.

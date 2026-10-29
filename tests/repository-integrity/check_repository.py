@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import sys
@@ -34,12 +35,80 @@ def run_checker(repository: Path) -> subprocess.CompletedProcess[str]:
         capture_output=True,
         text=True,
         check=False,
+        timeout=10,
     )
 
 
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise AssertionError(message)
+
+
+def check_link_scanning(repository: Path) -> None:
+    document = repository / "syntax.markdown"
+    document.write_text(
+        '![image](target.md)\n[outer[inner](target.md)\n[](target.md)\n'
+        '[empty]()\n[multiline\nlabel](target.md)\n'
+        '[titled](<target.md> "title")\n[root](/target.md#anchor)\n'
+        '[encoded](%74arget.md?query#anchor)\n'
+        '[reference]: target.md\n', encoding="utf-8",
+    )
+    valid = run_checker(repository)
+    require(valid.returncode == 0, f"link syntax changed: {valid.stderr}")
+    document.write_text("[empty]()\n![outer[inner](missing.md)\n", encoding="utf-8")
+    broken = run_checker(repository)
+    require(broken.returncode == 1 and "syntax.markdown:2: broken relative link: missing.md" in broken.stderr,
+            f"link offset or nested-label behavior changed: {broken.stderr}")
+    document.unlink()
+
+    malformed = repository / "malformed.md"
+    for text in ("[" * 500_000, "[x](" * 125_000):
+        malformed.write_text(text + "\n", encoding="utf-8")
+        try:
+            result = run_checker(repository)
+        except subprocess.TimeoutExpired as exc:
+            raise AssertionError("malformed Markdown link scanning exceeded 10 seconds") from exc
+        require(result.returncode == 0, f"malformed Markdown failed: {result.stderr}")
+    malformed.write_text("[" * 500_000 + "\n[valid](target.md)\n", encoding="utf-8")
+    require(run_checker(repository).returncode == 0, "malformed prefix hid a valid link")
+    malformed.unlink()
+
+
+def check_yaml_arguments(repository: Path, temporary_root: Path) -> None:
+    # Only workflow discovery is unrelated to this disposable YAML fixture.
+    tools = temporary_root / "lint-tools"
+    tools.mkdir()
+    actionlint = tools / "actionlint"
+    actionlint.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    actionlint.chmod(0o755)
+    environment = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"])
+    ruby_fixture = repository / "ordinary.rb"
+    ruby_fixture.write_text("# Syntax fixture\n", encoding="utf-8")
+    marker = repository / "yaml-executed"
+    payload = repository / "-eFile.write('yaml-executed','ran');#.yaml"
+    payload.write_text("key: value\n", encoding="utf-8")
+    subprocess.run(["git", "add", "--", payload.name], cwd=repository, check=True)
+
+    def lint() -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["bash", "scripts/checks/lint.sh"], cwd=repository,
+            env=environment, capture_output=True, text=True, check=False,
+        )
+
+    valid = lint()
+    require(not marker.exists(), "lint executed a YAML filename as Ruby source")
+    require(valid.returncode == 0, f"valid leading-dash YAML failed: {valid.stderr}")
+    payload.write_text("key: [\n", encoding="utf-8")
+    invalid = lint()
+    require(invalid.returncode != 0, "invalid leading-dash YAML was not parsed")
+    subprocess.run(["git", "rm", "--cached", "--force", "--", payload.name],
+                   cwd=repository, check=True, capture_output=True)
+    payload.unlink()
+    ordinary = repository / "ordinary.yaml"
+    ordinary.write_text("key: value\n", encoding="utf-8")
+    require(lint().returncode == 0, "ordinary YAML failed")
+    ordinary.unlink()
+    ruby_fixture.unlink()
 
 
 def main() -> int:
@@ -62,6 +131,7 @@ def main() -> int:
         )
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
+        check_link_scanning(repository)
 
         invalid_text = repository / "invalid-text.txt"
         for contents, diagnostic in (
@@ -261,6 +331,7 @@ def main() -> int:
 
         lint = repository / "scripts/checks/lint.sh"
         shutil.copy2(LINT, lint)
+        check_yaml_arguments(repository, temporary_root)
         outside_shell = temporary_root / "outside.sh"
         outside_shell.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
         (repository / "linked.sh").symlink_to(outside_shell)

@@ -2,9 +2,11 @@
 import argparse
 import importlib.util
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -30,6 +32,9 @@ class PromptfooChecks(unittest.TestCase):
             target = self.prepare(Path(storage))
             self.assertEqual(len(suite.cases()), 5)
             for case in suite.cases():
+                setup = target / case['id'] / 'setup.json'
+                self.assertEqual(suite.load_setup(setup)['case'], case['id'])
+                self.assertLess(setup.stat().st_size, 1024 * 1024)
                 config = json.loads((target / case['id'] / 'promptfooconfig.json').read_text())
                 provider = config['providers'][0]
                 self.assertEqual(provider['id'], 'openai:codex-sdk')
@@ -231,6 +236,87 @@ class PromptfooChecks(unittest.TestCase):
                 suite.prepare_judges(argparse.Namespace(
                     destination=str(root / 'judges'), creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
                     candidate_results=str(results)))
+
+
+class SetupReferenceChecks(unittest.TestCase):
+    def setUp(self):
+        self.storage = tempfile.TemporaryDirectory()
+        self.addCleanup(self.storage.cleanup)
+        self.root = Path(self.storage.name)
+        self.setup = self.root / 'setup.json'
+        self.results = self.root / 'results.json'
+        self.row = {'testCase': {'metadata': {'setup': str(self.setup)}}}
+        suite.save(self.results, {'results': {'results': [self.row]}})
+
+    def consumers(self):
+        return (lambda: suite.export(self.results), lambda: suite.case_of(self.row))
+
+    def test_setup_byte_limit(self):
+        # The setup contract is one MiB of bytes, including JSON whitespace.
+        limit = 1024 * 1024
+        for text in ('{"case": "CPS-AUD-001"}', '{"case": "CPS-AUD-001", "label": "é"}'):
+            payload = text.encode('utf-8')
+            self.setup.write_bytes(payload + b' ' * (limit - len(payload)))
+            self.assertEqual(suite.export(self.results)[0]['case'], 'CPS-AUD-001')
+            self.assertEqual(suite.case_of(self.row), 'CPS-AUD-001')
+            # Even invalid UTF-8 beyond the cap must fail on size before decoding.
+            for extra in (b' ', b'\xff'):
+                self.setup.write_bytes(payload + b' ' * (limit - len(payload)) + extra)
+                for consume in self.consumers():
+                    with self.subTest(text=text, extra=extra, consume=consume):
+                        with self.assertRaisesRegex(ValueError, 'exceeds.*1048576'):
+                            consume()
+
+    def test_setup_special_files_rejected_without_blocking(self):
+        fifo = self.root / 'setup.fifo'
+        os.mkfifo(fifo)
+        config = self.root / 'creator.json'
+        suite.save(config, {'providers': [{'id': 'offline', 'config': {}}]})
+        # /dev/null exercises device rejection without risking unbounded allocation
+        # if the regular-file guard regresses; the unwritten FIFO catches blocking opens.
+        for index, setup in enumerate((fifo, Path('/dev/null'))):
+            self.row['testCase']['metadata']['setup'] = str(setup)
+            suite.save(self.results, {'results': {'results': [self.row]}})
+            commands = [
+                ['export', str(self.results)],
+                ['prepare-judges', str(config), str(self.root / ('judges-' + str(index))),
+                 '--candidate-results', str(self.results)],
+            ]
+            for command in commands:
+                with self.subTest(setup=setup, command=command[0]):
+                    call = subprocess.run([sys.executable, str(ROOT / 'promptfoo_suite.py'), *command],
+                                          capture_output=True, text=True, timeout=3)
+                    self.assertNotEqual(call.returncode, 0)
+                    self.assertIn('Setup reference must be a regular file', call.stderr)
+                    self.assertFalse(any(self.root.rglob('C1.json')))
+
+    def test_invalid_setup_references_fail(self):
+        for payload in (b'broken', b'\xff', b'[]', b'null', b'42'):
+            self.setup.write_bytes(payload)
+            for consume in self.consumers():
+                with self.subTest(payload=payload, consume=consume):
+                    with self.assertRaises(ValueError):
+                        consume()
+        self.setup.unlink()
+        for consume in self.consumers():
+            with self.assertRaises(FileNotFoundError):
+                consume()
+        self.setup.mkdir()
+        for consume in self.consumers():
+            with self.assertRaisesRegex(ValueError, 'regular file'):
+                consume()
+        self.setup.rmdir()
+        self.setup.write_text('{}')
+        with patch.object(suite.os, 'open', side_effect=PermissionError('denied')):
+            for consume in self.consumers():
+                with self.assertRaises(PermissionError):
+                    consume()
+
+    def test_absent_setup_metadata_stays_unknown(self):
+        for row in ({}, {'testCase': {'metadata': {}}}):
+            suite.save(self.results, {'results': {'results': [row]}})
+            self.assertIsNone(suite.export(self.results)[0]['case'])
+            self.assertIsNone(suite.case_of(row))
 
 
 if __name__ == '__main__':

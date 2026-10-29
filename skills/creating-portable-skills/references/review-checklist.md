@@ -59,6 +59,9 @@ in an artifact or observed state, not only an executor's declaration.
   sentence describing a current domain fact stands, including wording such as
   "the customer no longer exists." Historical evidence records remain records.
 - Sprawl: the package's job fits one sentence without joining independent jobs.
+- Opaque prose: a reader new to the task can follow each instruction on first
+  read. Restate internal classifications and security jargon in plain words, or
+  remove them when they add nothing.
 - Unsupported facts: command flags, versions, paths, and interface claims have
   a source of truth or were verified. Changing data has one source where possible.
 

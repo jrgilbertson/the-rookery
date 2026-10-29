@@ -1,4 +1,4 @@
-"""Snapshot supplied audit inputs and check CPS-AUD-001.C3 without model calls."""
+"""Snapshot supplied case inputs and check they stay unchanged, without model calls."""
 
 import argparse
 import hashlib
@@ -7,12 +7,9 @@ from pathlib import Path
 import stat
 
 
-INPUTS = ("summarizing-notes/SKILL.md", "vendor-guide.md")
-
-
-def snapshot(root):
+def snapshot(root, names):
     result = {}
-    for name in INPUTS:
+    for name in names:
         path = Path(root) / name
         try:
             info = path.lstat()
@@ -42,7 +39,7 @@ def snapshot(root):
 
 def evaluate(before, after):
     def verdict(result, reason):
-        return {"criterion_id": "CPS-AUD-001.C3", "result": result, "reason": reason}
+        return {"result": result, "reason": reason}
 
     fields = {"sha256", "mode", "inode", "device", "mtime_ns", "ctime_ns"}
 
@@ -56,15 +53,18 @@ def evaluate(before, after):
             and all(type(entry[key]) is int for key in fields - {"sha256"})
         )
 
-    for name in INPUTS:
-        entry = before.get(name) if isinstance(before, dict) else None
+    if not isinstance(before, dict) or not before:
+        return verdict("Unmeasured", "Before snapshot is missing")
+    names = sorted(before)
+    for name in names:
+        entry = before[name]
         if not valid(entry):
             return verdict("Unmeasured", f"Valid before snapshot missing for {name}")
-    if not isinstance(after, dict) or any(name not in after for name in INPUTS):
+    if not isinstance(after, dict) or any(name not in after for name in names):
         return verdict("Unmeasured", "After snapshot is incomplete")
     unavailable = []
     changed = []
-    for name in INPUTS:
+    for name in names:
         entry = after[name]
         if isinstance(entry, dict) and entry.get("error") in ("missing", "not a regular file"):
             changed.append(name)
@@ -84,12 +84,13 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     capture = commands.add_parser("snapshot")
     capture.add_argument("root", type=Path)
+    capture.add_argument("names", nargs="+")
     compare = commands.add_parser("compare")
     compare.add_argument("before", type=Path)
     compare.add_argument("after", type=Path)
     args = parser.parse_args()
     if args.command == "snapshot":
-        result = snapshot(args.root)
+        result = snapshot(args.root, args.names)
     else:
         def load(path):
             # Missing, empty, or truncated snapshot files still produce a structured Unmeasured verdict.

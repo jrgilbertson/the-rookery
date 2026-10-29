@@ -44,30 +44,26 @@ tasks. Validate triggering through the evaluation workflow below.
 ## Evaluation workflow
 
 Use the evals plugin's `evals-start` skill to choose the next evaluation step,
-then follow the skill it selects. Build evaluation cases from failures observed
-in local session logs and prior issues. Claude, Codex, and Grok are the primary
-hosts; record which host a result covers rather than treating one host's success
-as proof for all three.
+then follow the skill it selects. Start with error analysis: build a case only
+from a specific failure observed in real use, such as local session logs and
+prior issues, and only when it persists after fixing the skill's instructions.
+Prefer a code check to a model judge, and retire a case that stops catching
+anything. [Hamel Husain's evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
+explains the reasoning. Claude, Codex, and Grok are the primary hosts; record
+which host a result covers rather than treating one host's success as proof
+for all three.
 
-`creating-portable-skills` is the first skill being evaluated through this
-workflow. Its [bounded replacement
-suite](tests/creating-portable-skills/README.md) targets Claude and Codex with
-activation cases, a read-only portability audit, manual review, Promptfoo's
-native providers and provisional criterion judges.
-
-The providers' built-in assertions check final answers and observations of skill use. The Codex SDK
-detects skill paths heuristically. That detection does not prove which skill was
-loaded or that every required file was read. The audit retains its deterministic
-file-preservation check and explicit subscription criterion judges. Missing
-answers, provider errors, and unavailable file snapshots do not pass. Strict
-capture is not collected and remains Unmeasured. Historical incomplete runs are
-not reclassified.
-
-Promptfoo runs the evaluations, checks ordinary assertions, exports results, and
-provides the review interface. Before claiming that judges agree with human
-reviewers, independently calibrate them against human judgments. The other skill
-packages remain available and await revalidation in turn. Passing repository
-checks does not establish behavioral quality.
+The [`creating-portable-skills` harness](tests/creating-portable-skills/README.md)
+prepares one case at a time for Claude and Codex through Promptfoo's native
+providers. It has no committed cases. The providers' built-in assertions check
+final answers and observations of skill use. The Codex SDK detects skill paths
+heuristically. That detection does not prove which skill was loaded or that
+every required file was read. An optional deterministic check confirms that
+supplied input files stay unchanged. Missing answers, provider errors, and
+unavailable file snapshots do not pass. Strict capture is not collected and
+remains Unmeasured. Before claiming that a model judge agrees with human
+reviewers, independently calibrate it against human judgments. Passing
+repository checks does not establish behavioral quality.
 
 The previous behavioral suites, benchmarks, custom runners, review server,
 cost tools, and eval schemas have been retired. Committed versions remain

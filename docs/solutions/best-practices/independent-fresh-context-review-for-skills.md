@@ -171,24 +171,21 @@ adding a deterministic check that rejects create-with-edge before state
 changes, rerunning the affected behavior from a new exact install, regrading it
 independently, and repeating native activation probes.
 The source edit did not make the earlier work useless; it narrowed what that
-work could still prove. The append-only record preserves both the failed review
-and the corrected qualification (`tests/managing-issues/log.md`).
+work could still prove. The append-only record preserved both the failed review
+and the corrected qualification.
 
 The same qualification exposed a narrower stopped-batch evidence error. A
 provider fixture invoked one indeterminate create and then asserted that no
-later edit appeared in its command log
-(`tests/managing-issues/fixtures/run-provider-checks.py:214`). That can detect an
+later edit appeared in its command log. That can detect an
 unexpected command from the fixture interaction, but it cannot prove an agent
 declined a separately approved later effect because the harness never offered
 one. In this branch, the corrected evidence keeps provider facts in the
 deterministic runner, uses a small transition model that actually iterates
-across later effects
-(`tests/managing-issues/fixtures/run-graph-checks.py:198`), and grades the real
-agent decision with a fresh-context case that supplies three ordered effects
-and requires the third to remain `unapplied`
-(`tests/managing-issues/cases/partial-mutation-and-global-stop.md:8`). The
-retained run record limits its claim to that focused case
-(`tests/managing-issues/log.md:111`).
+across later effects, and grades the real agent decision with a fresh-context
+case that supplies three ordered effects and requires the third to remain
+`unapplied`. The retained run record limits its claim to that focused case.
+The run log, provider fixtures, and transition model cited here have since been
+retired; their committed versions remain in Git history.
 
 A personal-chief-of-staff case exposed a vacuous pass at an action boundary.
 Its first prompt correctly authorized no journal write, but the test and log

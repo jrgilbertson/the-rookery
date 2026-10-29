@@ -20,8 +20,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- Repository-specific GitHub issue forms and the pull request template, so
+  issues and pull requests can use freeform bodies.
 - `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
   review prompt directly.
+- The speculative `creating-portable-skills` eval cases and model judges. The
+  Promptfoo harness stays and prepares one case at a time; `SKILLS.md` now asks
+  for error analysis of real use before writing a case.
 
 ### Changed
 
@@ -35,10 +40,12 @@ looked" surface. GitHub Releases mirror its entries.
 - Testing guidance names the repository-owned commands as completion evidence
   and asks filtered check output to keep the check's own exit status.
 - Checking Simplicity no longer requires four options for every question.
-- Managing Issues fixture checks distinguish provider adapter behavior from
-  agent decisions. Graph and lifecycle expectations are retained as behavioral
-  case definitions awaiting native-host evaluation; incidental prose changes
-  no longer fail graph checks.
+- Creating Portable Skills reviews flag opaque prose: instructions a new reader
+  cannot follow, internal classifications, and security jargon.
+- Managing Issues fixture checks no longer carry synthetic provider adapters
+  that only tested themselves. Graph and lifecycle expectations are retained as
+  behavioral case definitions awaiting native-host evaluation; incidental prose
+  changes no longer fail graph checks.
 - `GLOBAL-AGENTS.md` matches the maintainer's current global guidance.
   Non-trivial work names a verifiable end state without a completion
   template. Long work uses the workflow's durable task state, and scratch
@@ -49,11 +56,18 @@ looked" surface. GitHub Releases mirror its entries.
 - `GLOBAL-AGENTS.md` asks agents to judge a check by its own exit status,
   since a filtered pipeline such as `check | tail` reports the filter's status
   unless `pipefail` is set.
+- `GLOBAL-AGENTS.md` lets active browser testing make paid model calls on
+  non-production keys without asking. Automated test suites still mock the
+  model, and evals, batch model runs, and production work still need approval.
 - `SKILLS.md` lists what retiring a skill includes, including closing or
   re-scoping its open issues in the same change.
 
 ### Fixed
 
+- Repository verification bounds malformed inline-link scanning and treats YAML
+  filenames as data. Guidance synchronization replaces destination symlinks
+  safely, skill scans preserve pathname boundaries, and evaluation imports
+  reject nonregular or oversized setup records.
 - Managing Issues reads back a new Linear issue's relationships. A
   relationship Linear adds on its own, which nobody approved, stops the batch
   before the next write and comes with a removal preview awaiting approval.

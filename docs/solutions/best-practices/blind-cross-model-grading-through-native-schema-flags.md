@@ -293,9 +293,8 @@ enter the packet.
   which skill copy loaded in a target run.
 - `docs/solutions/workflow-issues/loosening-a-checklist-during-grading-removes-the-check.md`:
   fix a bad item in its own commit, never mid-grading.
-- `docs/decisions/promptfoo-for-portable-skill-evaluations.md` and
-  `extract_judge` in `tests/creating-portable-skills/promptfoo_suite.py`: the
-  current suite runs criterion judges through Promptfoo native providers and
-  applies these validation rules. An unavailable or errored judge yields no
-  verdict, and the verdict count, candidate ids, and result values must match
-  the candidates.
+- `docs/decisions/promptfoo-for-portable-skill-evaluations.md`: the current
+  harness runs cases through Promptfoo native providers. Its retired criterion
+  judges applied these validation rules (`extract_judge` in Git history): an
+  unavailable or errored judge yields no verdict, and the verdict count,
+  candidate ids, and result values must match the candidates.

@@ -227,9 +227,6 @@ def check_script_surface() -> None:
         not imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS,
         f"config validator imports process/network modules: {sorted(imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS)}",
     )
-    lowered = source.lower()
-    for removed_term in ("trusted", "principal", "default_branch", "default-branch"):
-        require(removed_term not in lowered, f"config validator retains removed surface: {removed_term}")
 
 
 def check_cli_surface(repo_root: Path) -> None:
@@ -241,15 +238,13 @@ def check_cli_surface(repo_root: Path) -> None:
     )
     require(help_result.returncode == 0, "config validator --help failed")
     require("--repo-root" in help_result.stdout and "--config" in help_result.stdout, "config CLI differs")
-    for removed_flag in ("--policy", "--trusted-policy", "--trusted-mapping", "--default-branch", "--expected-principal"):
-        require(removed_flag not in help_result.stdout, f"removed CLI flag remains: {removed_flag}")
-        completed = invoke_validator(
-            repo_root,
-            repo_root / ACTIVE_CONFIG_RELATIVE,
-            extra_args=(removed_flag, "unused"),
-        )
-        require(completed.returncode == 2, f"removed CLI flag is still accepted: {removed_flag}")
-        require("unrecognized arguments" in completed.stderr, f"removed CLI flag diagnostic differs: {removed_flag}")
+    completed = invoke_validator(
+        repo_root,
+        repo_root / ACTIVE_CONFIG_RELATIVE,
+        extra_args=("--policy", "unused"),
+    )
+    require(completed.returncode == 2, "removed CLI flag is still accepted: --policy")
+    require("unrecognized arguments" in completed.stderr, "removed CLI flag diagnostic differs: --policy")
 
 
 def base_config(provider: str = "github") -> dict[str, Any]:

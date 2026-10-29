@@ -20,5 +20,5 @@ Then look for what the tests fail to protect. List the repository's material hig
 
 Report every risk without inspected evidence as a gap or unknown. Treat line coverage, test count, and pass rate as diagnostic signals, never as proof that a behavior is protected. For each gap, recommend the cheapest test layer that still exercises the real boundary.
 
-Return a small, prioritized set of recommendations for approval, and state which surfaces you did not assess. Never leave a deliberate break in the working tree. Do not modify repository files or publish issues or PRs without approval.
+Return a small, prioritized set of recommendations for approval, and state which surfaces you did not assess. Apart from a temporary break you revert to falsify a test, do not modify repository files, and do not publish issues or PRs without approval.
 ```

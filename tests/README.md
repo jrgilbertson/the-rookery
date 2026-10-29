@@ -21,8 +21,11 @@ The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
 exercise the shipped signal scan and issue configuration helper, published
-text contracts, and the personal-chief-of-staff source-map schema. The
-repository-integrity tests also exercise malformed packages and unsafe paths.
+text contracts, and the personal-chief-of-staff source-map schema.
+`source-map-schema.py` is a test-only mirror of the schema section in
+[source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md);
+change both together. The repository-integrity tests also exercise malformed
+packages and unsafe paths.
 
 Each fixture runner creates disposable state and requires no model calls.
 Retain synthetic fixture inputs that these tests consume. Add a runner to the

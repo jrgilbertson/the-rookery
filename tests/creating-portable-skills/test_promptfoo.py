@@ -49,8 +49,11 @@ class PromptfooChecks(unittest.TestCase):
                                'metric': 'skill-use-observation'}, assertions)
                 self.assertTrue(any(a['type'] == 'regex' for a in assertions))
                 self.assertFalse(any('assertCapture' in a.get('value', '') for a in assertions))
+                copied = target / case['id'] / 'workspace/.agents/skills/creating-portable-skills'
+                source_sha256 = suite.manifest(suite.REPO / 'skills/creating-portable-skills')
+                self.assertEqual(suite.manifest(copied), source_sha256)
                 setup = json.loads((target / case['id'] / 'setup.json').read_text())
-                self.assertEqual(setup['package_sha256'], suite.manifest(suite.REPO / 'skills/creating-portable-skills'))
+                self.assertEqual(setup['package_sha256'], source_sha256)
                 self.assertEqual(setup['input_sha256'], suite.digest(case['input'].encode()))
             self.assertTrue((target / 'codex-home/auth.json').is_symlink())
 

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CHECKER = ROOT / "scripts/checks/repository.py"
 LINT = ROOT / "scripts/checks/lint.sh"
 FIXTURES = ROOT / "scripts/checks/fixtures.sh"
+SYNC = ROOT / "scripts/sync-global-agents.sh"
 
 FIXTURE_RUNNERS = (
     "tests/creating-portable-skills/fixtures/run-signal-scan-checks.sh",
@@ -111,9 +113,86 @@ def check_yaml_arguments(repository: Path, temporary_root: Path) -> None:
     ruby_fixture.unlink()
 
 
+def check_guidance_copy(temporary_root: Path) -> None:
+    repository = temporary_root / "guidance-repository"
+    script = repository / "scripts/sync-global-agents.sh"
+    script.parent.mkdir(parents=True)
+    shutil.copy2(SYNC, script)
+    subprocess.run(["git", "init", "-q", repository], check=True)
+
+    def sync(*arguments, env=None):
+        return subprocess.run(["bash", "scripts/sync-global-agents.sh", *arguments],
+                              cwd=repository, env=env, capture_output=True, text=True, timeout=10)
+
+    require(sync("--check").returncode == 0, "unconfigured freshness check failed")
+    source = temporary_root / "guidance-source.md"
+    source.write_text("# Synthetic guidance\n", encoding="utf-8")
+    subprocess.run(["git", "config", "rookery.globalAgentsSource", str(source)],
+                   cwd=repository, check=True)
+    outside = temporary_root / "guidance-outside.md"
+    outside.write_text("outside sentinel\n", encoding="utf-8")
+    destination = repository / "GLOBAL-AGENTS.md"
+    destination.symlink_to(outside)
+    copied = sync()
+    require(outside.read_text() == "outside sentinel\n", "guidance copy overwrote a symlink target")
+    require(copied.returncode == 0 and not destination.is_symlink(),
+            f"guidance copy did not replace symlink entry: {copied.stderr}")
+    for target in (temporary_root / "missing-guidance.md", temporary_root):
+        destination.unlink()
+        destination.symlink_to(target)
+        require(sync().returncode == 0 and not destination.is_symlink(),
+                "guidance copy did not replace dangling or directory symlink")
+    require(not list(temporary_root.glob(".GLOBAL-AGENTS.*")), "copy wrote into outside directory")
+    destination.unlink()
+    destination.mkdir()
+    require(sync().returncode != 0 and not list(destination.iterdir()),
+            "guidance copy wrote into a destination directory")
+    destination.rmdir()
+
+    marker = repository / "module-executed"
+    (repository / "tempfile.py").write_text(
+        "from pathlib import Path\nPath('module-executed').touch()\nraise RuntimeError('planted module')\n",
+        encoding="utf-8",
+    )
+    require(sync().returncode == 0 and not marker.exists(), "guidance copy imported checkout code")
+    require(destination.read_bytes() == source.read_bytes(), "guidance bytes changed")
+    require(destination.stat().st_mode & 0o777 == 0o644, "guidance mode is not 0644")
+    destination.write_text("old guidance\n", encoding="utf-8")
+    require(sync().returncode == 0 and destination.read_bytes() == source.read_bytes(),
+            "regular destination was not replaced")
+
+    tools = temporary_root / "sync-tools"
+    tools.mkdir()
+    wrapper = tools / "python3"
+    wrapper.write_text(
+        "#!/bin/sh\nmv " + shlex.quote(str(source)) + " " + shlex.quote(str(source) + ".saved") +
+        "\nmkdir " + shlex.quote(str(source)) + "\nexec " + shlex.quote(sys.executable) + ' "$@"\n',
+        encoding="utf-8",
+    )
+    wrapper.chmod(0o755)
+    environment = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"])
+    original = destination.read_bytes()
+    require(sync(env=environment).returncode != 0 and destination.read_bytes() == original,
+            "failed guidance copy changed destination")
+    require(not list(repository.glob(".GLOBAL-AGENTS.*")), "failed copy left temporary file")
+    source.rmdir()
+    Path(str(source) + ".saved").replace(source)
+    source.unlink()
+    require(sync().returncode != 0 and destination.read_bytes() == original,
+            "missing source changed destination")
+    source.write_bytes(original)
+    subprocess.run(["git", "add", "GLOBAL-AGENTS.md"], cwd=repository, check=True)
+    subprocess.run(["git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                    "commit", "-qm", "Synthetic guidance"], cwd=repository, check=True)
+    require(sync("--check").returncode == 0, "fresh committed guidance was rejected")
+    source.write_text("updated guidance\n", encoding="utf-8")
+    require(sync("--check").returncode != 0, "stale committed guidance was accepted")
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:
         temporary_root = Path(temporary)
+        check_guidance_copy(temporary_root)
         repository = temporary_root / "repository"
         checker = repository / "scripts/checks/repository.py"
         checker.parent.mkdir(parents=True)

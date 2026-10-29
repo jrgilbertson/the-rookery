@@ -30,7 +30,7 @@ The workflows need three things:
 
 My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them through a single `@~/.codex/AGENTS.md` line in `~/.claude/CLAUDE.md`, so Codex and Claude Code follow the same rules.
 
-[GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. The local file remains the source of truth, and `scripts/sync-global-agents.sh` copies it here. A pre-push check catches a committed copy that has fallen behind. That check runs only in a clone configured with `git config rookery.globalAgentsSource`; contributors do not run it.
+[GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. The local file remains the source of truth, and `scripts/sync-global-agents.sh` copies it here. Copy mode requires Python 3 and atomically replaces the repository file, including destination symlinks, without opening their targets. A pre-push check catches a committed copy that has fallen behind. That check runs only in a clone configured with `git config rookery.globalAgentsSource`; contributors do not run it.
 
 The skills work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I use [Orca](https://github.com/stablyai/orca) to run several agent tools side by side in one project.
 

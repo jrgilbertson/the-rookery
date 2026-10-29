@@ -13,7 +13,7 @@ A few ground rules keep this repo healthy and keep me honest as a solo maintaine
 
 Open a focused PR directly for any of these.
 
-Please use the [bug report form](https://github.com/jrgilbertson/the-rookery/issues/new/choose) for defects. Security
+Please open an [issue](https://github.com/jrgilbertson/the-rookery/issues/new) for defects. Security
 issues belong in the private process described in [SECURITY.md](SECURITY.md),
 not in a public issue.
 
@@ -21,7 +21,7 @@ not in a public issue.
 
 New skills start as an issue, not a PR.
 
-1. Open a [skill proposal issue](https://github.com/jrgilbertson/the-rookery/issues/new/choose) describing what the skill does and which harnesses you've tested it in.
+1. Open a [skill proposal issue](https://github.com/jrgilbertson/the-rookery/issues/new) describing what the skill does and which harnesses you've tested it in.
 2. We talk about it.
 3. If it fits, we figure out the path in.
 

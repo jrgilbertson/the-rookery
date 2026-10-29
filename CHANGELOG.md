@@ -25,6 +25,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Model routing explains cost per pass and effort gains, separates evaluation
+  sources from role selection, and distinguishes calculation inputs from
+  supporting evidence. Current recommendations record subscription and access
+  overrides and identify provisional Planner choices.
 - Setup and automation guidance calls for initial setup or recovery and repeat
   operation checks in the first implementation slice, with pending activation
   tracked explicitly.

@@ -87,7 +87,19 @@ def main() -> int:
         if symlinked.returncode != 1 or "must not be a symlink" not in symlinked.stderr:
             raise AssertionError("symlinked skill package did not fail the catalog door")
 
-    print("PASS: catalog door rejects malformed and symlinked skill packages")
+        (skill_directory / "SKILL.md").unlink()
+        (skill_directory / "skill.md").write_text(valid_skill, encoding="utf-8")
+        miscased = subprocess.run(
+            ["ruby", "scripts/checks/skill_packages.rb", "skills/example-skill"],
+            cwd=repository,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if miscased.returncode != 1 or "entry filename must be exactly SKILL.md" not in miscased.stderr:
+            raise AssertionError("miscased skill entry filename did not fail the package check")
+
+    print("PASS: catalog door rejects malformed, symlinked, and miscased skill packages")
     return 0
 
 

@@ -22,6 +22,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
   review prompt directly.
+- The speculative `creating-portable-skills` eval cases and model judges. The
+  Promptfoo harness stays and prepares one case at a time; `SKILLS.md` now asks
+  for error analysis of real use before writing a case.
 
 ### Changed
 

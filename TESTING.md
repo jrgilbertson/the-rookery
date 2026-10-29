@@ -135,7 +135,8 @@ lesson in the strongest suitable place so the next run benefits from it.
 ### Review tests and CI on a schedule
 
 The [Test audit automation](automations/test-audit.md) asks `ce-simplify-code`
-to review the tests and recommend improvements. [Optimize CI](automations/optimize-ci.md)
+to review the tests, then maps high-risk behaviors to the evidence that
+protects them and reports gaps. [Optimize CI](automations/optimize-ci.md)
 asks `ce-optimize` to review continuous integration. I schedule these in Orca
 and review their recommendations before choosing what to change.
 

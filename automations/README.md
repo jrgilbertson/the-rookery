@@ -7,7 +7,7 @@ repository.
 | Automation | Purpose | Cadence |
 |---|---|---|
 | [Sessions audit](sessions-audit.md) | Find improvements from recent AI sessions | Daily at 03:00 |
-| [Test audit](test-audit.md) | Review tests and recommend improvements | Thursday at 09:00 |
+| [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 09:00 |
 | [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 |
 | [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 09:00 |
 | [Coding standards audit](coding-standards-audit.md) | Keep adopted coding guidance current and useful | Saturday at 07:00 |

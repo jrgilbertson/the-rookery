@@ -13,29 +13,57 @@ set -e
 
 [ "$#" -gt 0 ] || { echo "usage: $0 <skill-directory>..." >&2; exit 2; }
 
-list=""
+directories=""
 for dir in "$@"; do
-	dir=${dir%/}
+	case "$dir" in
+		*'
+'*) echo 'signal-scan: newline in pathname is not supported' >&2; exit 2 ;;
+		/*) ;;
+		*) dir=./$dir ;;
+	esac
+	# Keep pwd's final newline until the sentinel is removed, so command
+	# substitution cannot silently trim newlines belonging to the root itself.
+	dir=$(CDPATH='' cd -P "$dir" && pwd -P && printf '.')
+	dir=${dir%.}
+	dir=${dir%?}
+	case "$dir" in
+		*'
+'*) echo 'signal-scan: newline in pathname is not supported' >&2; exit 2 ;;
+	esac
+	[ ! -L "$dir/SKILL.md" ] && [ ! -L "$dir/references" ] || {
+		echo "signal-scan: symbolic-link package entry is not allowed: $dir" >&2
+		exit 2
+	}
 	[ -f "$dir/SKILL.md" ] || { echo "no SKILL.md in $dir" >&2; exit 2; }
-	list="$list$dir/SKILL.md
+	directories="$directories$dir
 "
-	if [ -d "$dir/references" ]; then
-		references=$(find "$dir/references" -type f -name '*.md')
-		list="$list$(printf '%s\n' "$references" | LC_ALL=C sort)
-"
-	fi
 done
 
-# Run grep per file; status 1 means no matches, while other failures abort.
+# Only validated, newline-free package roots use line records. Discovered files
+# stay in argument arrays. Batched -exec makes a child error fail find itself.
 each_file() {
-	printf '%s' "$list" | while IFS= read -r file; do
-		[ -n "$file" ] || continue
-		if "$@" "$file"; then
-			:
-		else
-			status=$?
-			[ "$status" -eq 1 ] || exit "$status"
+	flags=$1 pattern=$2
+	printf '%s' "$directories" | while IFS= read -r dir; do
+		set -- "$dir/SKILL.md"
+		if [ -d "$dir/references" ]; then
+			set -- "$@" "$dir/references"
 		fi
+		find "$@" -type f -name '*.md' -exec sh -c '
+			flags=$1 pattern=$2
+			shift 2
+			for file do
+				case "$file" in
+					*"
+"*) echo "signal-scan: newline in pathname is not supported" >&2; exit 2 ;;
+				esac
+				if grep -nH"$flags"E -e "$pattern" -- "$file"; then
+					:
+				else
+					status=$?
+					[ "$status" -eq 1 ] || exit "$status"
+				fi
+			done
+		' signal-scan "$flags" "$pattern" {} + || exit
 	done
 }
 
@@ -46,7 +74,7 @@ report() { # report <signal> <checklist item> <hits>
 }
 
 scan() { # scan <signal> <checklist item> <grep flags> <pattern>
-	hits=$(each_file grep -nH"$3"E -e "$4")
+	hits=$(each_file "$3" "$4")
 	report "$1" "$2" "$hits"
 }
 

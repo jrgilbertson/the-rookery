@@ -9,6 +9,9 @@ correction. Mark unrelated items not applicable.
 
 Where a shell is available, run [scripts/signal-scan.sh](../scripts/signal-scan.sh)
 on the package. It reads `SKILL.md` and `references/`; inspect `assets/` directly.
+The scanner rejects newline-bearing paths and symlinked `SKILL.md` or
+`references` entries. It skips descendant symlinks instead of reading their
+targets outside the package.
 A hit is a candidate, not a verdict. Judge it against the item's purpose and
 record why a retained hit stands.
 
@@ -59,6 +62,9 @@ in an artifact or observed state, not only an executor's declaration.
   sentence describing a current domain fact stands, including wording such as
   "the customer no longer exists." Historical evidence records remain records.
 - Sprawl: the package's job fits one sentence without joining independent jobs.
+- Opaque prose: a reader new to the task can follow each instruction on first
+  read. Restate internal classifications and security jargon in plain words, or
+  remove them when they add nothing.
 - Unsupported facts: command flags, versions, paths, and interface claims have
   a source of truth or were verified. Changing data has one source where possible.
 

@@ -116,6 +116,80 @@ fails "no arguments should exit non-zero" quiet sh "$scan"
 # chmod 000 cannot reliably make a file unreadable. The production scan runs.
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
+
+# A newline must not turn one discovered pathname into an outside-file operand.
+package="$scratch/package"
+mkdir -p "$package/references"
+printf '# Synthetic skill\n' >"$package/SKILL.md"
+printf 'MUST OUTSIDE_SENTINEL\n' >"$scratch/outside.md"
+printf 'Ordinary reference\n' >"$package/references/first.md"
+injected="$package/references/first.md"$'\n'"$scratch/outside.md"
+mkdir -p "$(dirname "$injected")"
+printf 'Ordinary nested reference\n' >"$injected"
+sh "$scan" "$package" >"$scratch/newline.out" 2>"$scratch/newline.err"
+newline_code=$?
+holds "newline path must fail, got $newline_code" [ "$newline_code" -ne 0 ]
+fails "newline path disclosed outside content" has "$(cat "$scratch/newline.out")" 'OUTSIDE_SENTINEL'
+holds "newline path diagnostic missing" has "$(cat "$scratch/newline.err")" 'newline in pathname'
+
+# Package names are operands, including a leading dash and shell metacharacters.
+# shellcheck disable=SC2016 # Shell syntax is deliberately part of the pathname.
+odd_package='-package with spaces;$(touch marker)'
+mkdir -p "$scratch/$odd_package/references"
+printf '# Synthetic skill\n' >"$scratch/$odd_package/SKILL.md"
+printf 'MUST inspect this reference\n' >"$scratch/$odd_package/references/- odd;name.md"
+odd_output=$(cd "$scratch" && sh "$scan" "$odd_package")
+odd_code=$?
+holds "unusual package name must scan, got $odd_code" [ "$odd_code" -eq 0 ]
+expect_count unusual "$odd_output" "pressure language" 1
+holds "package name executed shell text" test ! -e "$scratch/marker"
+
+newline_package="$scratch/package"$'\n'"name"
+mkdir "$newline_package"
+printf '# Synthetic skill\n' >"$newline_package/SKILL.md"
+sh "$scan" "$newline_package" >"$scratch/package-newline.out" 2>"$scratch/package-newline.err"
+newline_package_code=$?
+holds "newline package must fail, got $newline_package_code" [ "$newline_package_code" -ne 0 ]
+holds "newline package diagnostic missing" has "$(cat "$scratch/package-newline.err")" 'newline in pathname'
+
+trailing_newline_package="$scratch/trailing-newline"$'\n'
+mkdir "$trailing_newline_package"
+printf '# Synthetic skill\n' >"$trailing_newline_package/SKILL.md"
+ln -s "$trailing_newline_package" "$scratch/package-alias"
+sh "$scan" "$scratch/package-alias" >"$scratch/alias.out" 2>"$scratch/alias.err"
+alias_code=$?
+holds "newline canonical package must fail" [ "$alias_code" -ne 0 ]
+holds "newline canonical package diagnostic missing" has "$(cat "$scratch/alias.err")" 'newline in pathname'
+
+# Direct entry-point symlinks cannot establish an outside read boundary.
+linked_package="$scratch/linked-package"
+mkdir "$linked_package"
+ln -s "$scratch/outside.md" "$linked_package/SKILL.md"
+sh "$scan" "$linked_package" >"$scratch/skill-link.out" 2>"$scratch/skill-link.err"
+skill_link_code=$?
+holds "symlinked SKILL.md must fail" [ "$skill_link_code" -ne 0 ]
+fails "symlinked SKILL.md disclosed outside content" has "$(cat "$scratch/skill-link.out")" 'OUTSIDE_SENTINEL'
+rm "$linked_package/SKILL.md"
+printf '# Synthetic skill\n' >"$linked_package/SKILL.md"
+mkdir "$scratch/outside-references"
+cp "$scratch/outside.md" "$scratch/outside-references/notes.md"
+ln -s "$scratch/outside-references" "$linked_package/references"
+sh "$scan" "$linked_package" >"$scratch/reference-link.out" 2>"$scratch/reference-link.err"
+reference_link_code=$?
+holds "symlinked reference directory must fail" [ "$reference_link_code" -ne 0 ]
+fails "symlinked references disclosed outside content" has "$(cat "$scratch/reference-link.out")" 'OUTSIDE_SENTINEL'
+rm "$linked_package/references"
+mkdir "$linked_package/references"
+ln -s "$scratch/outside.md" "$linked_package/references/linked.md"
+ln -s "$scratch/outside-references" "$linked_package/references/linked-directory"
+descendant_output=$(sh "$scan" "$linked_package")
+descendant_code=$?
+holds "descendant symlinks should be skipped" [ "$descendant_code" -eq 0 ]
+fails "descendant symlink disclosed outside content" has "$descendant_output" 'OUTSIDE_SENTINEL'
+
+combined=$(sh "$scan" "$fixtures/clean" "$fixtures/planted")
+expect_count combined "$combined" "pressure language" 1
+
 real_grep=$(command -v grep)
 real_find=$(command -v find)
 mkdir "$scratch/grep-bin" "$scratch/find-bin"

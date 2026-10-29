@@ -37,7 +37,29 @@ case "${1:-}" in
       echo "global-agents: source not found: $source_file" >&2
       exit 1
     fi
-    cp "$source_file" GLOBAL-AGENTS.md
+    python3 -I - "$source_file" <<'PYTHON'
+import os
+import shutil
+import stat
+import sys
+import tempfile
+
+try:
+    if stat.S_ISDIR(os.lstat("GLOBAL-AGENTS.md").st_mode):
+        raise IsADirectoryError("GLOBAL-AGENTS.md is a directory")
+except FileNotFoundError:
+    pass
+
+descriptor, temporary = tempfile.mkstemp(prefix=".GLOBAL-AGENTS.", dir=".")
+try:
+    with os.fdopen(descriptor, "wb") as destination, open(sys.argv[1], "rb") as source:
+        shutil.copyfileobj(source, destination)
+        os.fchmod(destination.fileno(), 0o644)
+    os.replace(temporary, "GLOBAL-AGENTS.md")
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+PYTHON
     echo "global-agents: copied $source_file to GLOBAL-AGENTS.md"
     ;;
   *)

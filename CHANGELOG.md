@@ -31,6 +31,8 @@ looked" surface. GitHub Releases mirror its entries.
 - Testing guidance names the repository-owned commands as completion evidence
   and asks filtered check output to keep the check's own exit status.
 - Checking Simplicity no longer requires four options for every question.
+- Creating Portable Skills reviews flag opaque prose: instructions a new reader
+  cannot follow, internal classifications, and security jargon.
 - Managing Issues fixture checks no longer carry synthetic provider adapters
   that only tested themselves. Graph and lifecycle expectations are retained as
   behavioral case definitions awaiting native-host evaluation; incidental prose
@@ -53,6 +55,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Repository verification bounds malformed inline-link scanning and treats YAML
+  filenames as data. Guidance synchronization replaces destination symlinks
+  safely, skill scans preserve pathname boundaries, and evaluation imports
+  reject nonregular or oversized setup records.
 - Managing Issues reads back a new Linear issue's relationships. A
   relationship Linear adds on its own, which nobody approved, stops the batch
   before the next write and comes with a removal preview awaiting approval.

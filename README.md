@@ -79,7 +79,7 @@ schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
 - [Sessions audit](automations/sessions-audit.md). Review recent AI sessions for recurring friction and improvements to code, tools, and guidance.
-- [Test audit](automations/test-audit.md). Review the tests and recommend improvements.
+- [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.
 - [Optimize CI](automations/optimize-ci.md). Review continuous integration and recommend improvements.
 - [Weekly codebase design](automations/weekly-codebase-design.md). Review codebase design and recommend improvements.
 - [Coding standards audit](automations/coding-standards-audit.md). Review adopted coding guidance against repository evidence and current primary sources.

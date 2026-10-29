@@ -62,7 +62,11 @@ class PromptfooChecks(unittest.TestCase):
             self.assertTrue(any(a['type'] == 'regex' for a in assertions))
             self.assertEqual(config['extensions'], [])
             copied = directory / 'workspace/.agents/skills/creating-portable-skills'
-            self.assertEqual(suite.manifest(copied), suite.manifest(suite.REPO / 'skills/creating-portable-skills'))
+            source_sha256 = suite.manifest(suite.REPO / 'skills/creating-portable-skills')
+            self.assertEqual(suite.manifest(copied), source_sha256)
+            setup = json.loads(setup.read_text())
+            self.assertEqual(setup['package_sha256'], source_sha256)
+            self.assertEqual(setup['input_sha256'], suite.digest(config['prompts'][0].encode()))
             self.assertTrue((directory.parent / 'codex-home/auth.json').is_symlink())
 
     def test_near_miss_and_fixture_options(self):

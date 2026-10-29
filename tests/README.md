@@ -7,8 +7,9 @@ history. New behavioral evaluation follows [SKILLS.md](../SKILLS.md#evaluation-w
 The [Creating Portable Skills harness](creating-portable-skills/README.md)
 prepares one case at a time, written from errors found in real use. Report
 native host behavior separately from repository checks.
-The [Managing Issues checks](managing-issues/README.md) distinguish adapter
-self-tests from the graph and lifecycle behavioral case definitions.
+The [Managing Issues checks](managing-issues/README.md) distinguish deterministic
+text and configuration checks from the graph and lifecycle behavioral case
+definitions.
 
 Run the complete repository gate:
 
@@ -19,10 +20,12 @@ lefthook run pre-push --force
 The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
-exercise the shipped signal scan and issue configuration helper, synthetic
-issue provider adapters, published text contracts, and the
-personal-chief-of-staff source-map schema. The
-repository-integrity tests also exercise malformed packages and unsafe paths.
+exercise the shipped signal scan and issue configuration helper, published
+text contracts, and the personal-chief-of-staff source-map schema.
+`source-map-schema.py` is a test-only mirror of the schema section in
+[source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md);
+change both together. The repository-integrity tests also exercise malformed
+packages and unsafe paths.
 
 Each fixture runner creates disposable state and requires no model calls.
 Retain synthetic fixture inputs that these tests consume. Add a runner to the

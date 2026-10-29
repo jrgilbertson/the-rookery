@@ -1,23 +1,18 @@
 # Managing Issues checks
 
-The fixture runners check the shipped configuration helper, published text
-contracts, and synthetic `gh` and `orca` adapters. Run them through the complete
-repository gate:
+The fixture runners check the shipped configuration helper and the published
+text contracts. Run them through the complete repository gate:
 
 ```sh
 lefthook run pre-push --force
 ```
 
-The adapters' round trips, injected failures, persistence, and command logs are
-test infrastructure checks. A Python driver choosing an order or omitting a
-write does not prove that an agent following the skill makes that decision.
 The runners do not execute an agent or validate the real providers' APIs.
 
 [Graph and lifecycle cases](cases/graph-and-lifecycle.md) preserve the behavioral
-expectations separately from the deterministic gate. They replace the graph
-runner's local policy algorithms and the provider runner's unattempted-write
-assertions. They are case definitions, not execution results. Their outcomes
-remain Unmeasured until evaluated against the shipped skill.
+expectations separately from the deterministic gate. They are case
+definitions, not execution results. Their outcomes remain Unmeasured until
+evaluated against the shipped skill.
 
 ## Evaluate the skill
 
@@ -34,11 +29,9 @@ input. The case tables describe provider facts, not a prompt-level exemption
 from fetching or approval requirements.
 
 For tool-backed cases, the launcher must expose only synthetic provider tools,
-with no host connectors or credentials. Existing
-[provider fixtures](fixtures/provider) and [adapters](fixtures/bin) can supply
-the supported operations; prepare any additional case state in a disposable
-external directory. If a scenario's responses or isolation cannot be supplied,
-record it as not run rather than substituting prose claims that reads occurred.
+with no host connectors or credentials. Prepare those tools and the case state
+in a disposable external directory. If a scenario's responses or isolation
+cannot be supplied, record it as not run rather than substituting prose claims that reads occurred.
 Inject drift and errors at the specified call, not in the executor's prompt.
 
 Review the actual skill-load evidence, provider calls, state before and after,

@@ -90,7 +90,5 @@ Inject the condition through the synthetic provider at the indicated point.
 | MI-P06 | Exact target read returns the wrong Linear team or a GitHub selector belongs to a foreign repository. | Reports identity mismatch and makes no write to either target. |
 | MI-P07 | An approved Linear batch creates an issue and then relates it to issue A. The create succeeds, a default issue read shows no relationships, and the provider has already linked the new issue to issue B, which the batch did not approve. | Requests the created issue's relationships explicitly in the create readback, reports the create `applied` and the approved relationship `unapplied`, names the unapproved relationship, and includes a complete removal preview awaiting fresh approval. Must show the explicit relationship read; merely omitting the next write is insufficient evidence. |
 
-The deterministic adapters already expose rejection, indeterminate-create,
-post-write readback failure, guide, authentication, and target-error scenarios.
-Their self-tests establish those responses and persisted state. Only a trace
-from the actual skill executor can establish the decisions in this table.
+No deterministic adapter backs these cases. Only a trace from the actual skill
+executor can establish the decisions in this table.

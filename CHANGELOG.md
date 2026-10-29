@@ -20,6 +20,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- Repository-specific GitHub issue forms and the pull request template, so
+  issues and pull requests can use freeform bodies.
 - `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
   review prompt directly.
 - The speculative `creating-portable-skills` eval cases and model judges. The

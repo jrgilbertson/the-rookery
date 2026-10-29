@@ -7,6 +7,7 @@ import json
 import re
 import subprocess
 import sys
+from bisect import bisect_left
 from itertools import chain
 from pathlib import Path
 from urllib.parse import unquote
@@ -42,7 +43,6 @@ TRANSIENT_PATHS = (
     ":(top)docs/reports/**",
     ":(top)docs/pulse-reports/**",
 )
-MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
     re.MULTILINE,
@@ -140,14 +140,38 @@ def link_target(raw_target: str) -> str:
     return target.split(maxsplit=1)[0]
 
 
+def inline_links(text: str):
+    """Yield the existing inline-link grammar without rescanning failed suffixes."""
+    position = 0
+    while True:
+        opening = text.find("[", position)
+        if opening < 0:
+            return
+        closing = text.find("]", opening + 1)
+        if closing < 0:
+            return
+        if text[closing + 1 : closing + 2] == "(":
+            end = text.find(")", closing + 2)
+            if end < 0:
+                return
+            if end > closing + 2:
+                start = opening - 1 if opening > position and text[opening - 1] == "!" else opening
+                yield start, text[closing + 2 : end]
+                position = end + 1
+                continue
+        # All opening brackets before this closing bracket share its failed suffix.
+        position = closing + 1
+
+
 def check_links(path: Path, text: str, errors: list[str]) -> None:
     if path.suffix.lower() not in {".md", ".markdown"}:
         return
-    for match in chain(
-        MARKDOWN_LINK.finditer(text),
-        MARKDOWN_REFERENCE.finditer(text),
+    newlines = [offset for offset, character in enumerate(text) if character == "\n"]
+    for start, raw_target in chain(
+        inline_links(text),
+        ((match.start(), match.group(1)) for match in MARKDOWN_REFERENCE.finditer(text)),
     ):
-        target = link_target(match.group(1))
+        target = link_target(raw_target)
         if not target or target.startswith(("#", "http://", "https://", "mailto:")):
             continue
         target = unquote(target.split("#", 1)[0].split("?", 1)[0])
@@ -159,11 +183,11 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
         try:
             resolved.relative_to(ROOT)
         except ValueError:
-            line = text.count("\n", 0, match.start()) + 1
+            line = bisect_left(newlines, start) + 1
             errors.append(f"{path.relative_to(ROOT)}:{line}: relative link leaves repository: {target}")
             continue
         if not resolved.exists():
-            line = text.count("\n", 0, match.start()) + 1
+            line = bisect_left(newlines, start) + 1
             errors.append(f"{path.relative_to(ROOT)}:{line}: broken relative link: {target}")
 
 

@@ -2,15 +2,18 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import shutil
+import stat
 import sys
 
 from evaluate_read_only import snapshot, evaluate
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT.parents[1]
+MAX_SETUP_BYTES = 1024 * 1024
 
 
 def digest(data):
@@ -129,12 +132,29 @@ def prepare(args):
     print(directory)
 
 
+def load_setup(path):
+    descriptor = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOCTTY)
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise ValueError('Setup reference must be a regular file: ' + str(path))
+        with os.fdopen(descriptor, 'rb', closefd=False) as stream:
+            data = stream.read(MAX_SETUP_BYTES + 1)
+    finally:
+        os.close(descriptor)
+    if len(data) > MAX_SETUP_BYTES:
+        raise ValueError('Setup reference exceeds ' + str(MAX_SETUP_BYTES) + ' bytes: ' + str(path))
+    setup = json.loads(data.decode('utf-8'))
+    if not isinstance(setup, dict):
+        raise ValueError('Setup reference must contain a JSON object: ' + str(path))
+    return setup
+
+
 def export(path):
     data = json.loads(Path(path).read_text())
     rows = []
     for row in data['results']['results']:
         setup_path = row.get('testCase', {}).get('metadata', {}).get('setup')
-        setup = json.loads(Path(setup_path).read_text()) if setup_path else {}
+        setup = load_setup(setup_path) if setup_path else {}
         observed = row.get('metadata', {}).get('portableSkills', {})
         behavior = 'Unmeasured'
         if (not row.get('error') and not row.get('response', {}).get('error') and row.get('gradingResult')

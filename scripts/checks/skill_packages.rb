@@ -14,6 +14,9 @@ end
 skill_directory = ARGV.fetch(0) { abort "usage: skill_packages.rb <skill-directory>" }
 skill_path = File.join(skill_directory, "SKILL.md")
 begin
+  unless Dir.children(skill_directory).include?("SKILL.md")
+    fail_check(skill_path, "entry filename must be exactly SKILL.md")
+  end
   lines = File.readlines(skill_path, encoding: "UTF-8")
   fail_check(skill_path, "missing opening frontmatter delimiter") unless lines.first&.match?(/\A---\s*\z/)
 

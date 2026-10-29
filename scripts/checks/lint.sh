@@ -98,7 +98,7 @@ for task_file in "${ruby_files[@]}"; do
 done
 
 if ((${#yaml_files[@]})); then
-  ruby -e 'require "yaml"; ARGV.each { |path| YAML.parse_file(path) }' "${yaml_files[@]}"
+  ruby -e 'require "yaml"; ARGV.each { |path| YAML.parse_file(path) }' -- "${yaml_files[@]}"
 fi
 
 actionlint

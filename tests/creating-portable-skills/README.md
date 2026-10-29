@@ -88,6 +88,12 @@ With `--fixtures`, a real assertion uses the file comparator in
 execution; modified or replaced inputs fail. Missing snapshots remain Unmeasured
 and do not pass.
 
+Imported result metadata may reference setup records only as regular UTF-8 JSON
+objects of at most 1 MiB (1,048,576 bytes). Export rejects devices, FIFOs,
+invalid objects, and oversized setup records before using them. Setup paths
+remain local references; this limit does not apply to the full Promptfoo result
+artifact. Missing setup metadata retains the unknown-case result.
+
 Promptfoo owns execution, assertions and JSON exports. The report keeps ordinary
 check results, skill-use observations and input preservation separate. Strict
 capture is not collected and remains Unmeasured. Subscription cost is unknown;

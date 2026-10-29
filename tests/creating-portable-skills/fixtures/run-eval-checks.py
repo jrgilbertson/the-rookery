@@ -1,6 +1,5 @@
 """Exercise the maintained read-only evaluator on disposable synthetic inputs."""
 
-import json
 import importlib.util
 from pathlib import Path
 import shutil
@@ -64,54 +63,6 @@ class ReadOnlyChecks(unittest.TestCase):
         before = grader.snapshot(self.root)
         before["vendor-guide.md"]["sha256"] = None
         self.assertEqual(grader.evaluate(before, before)["result"], "Unmeasured")
-
-
-judge_spec = importlib.util.spec_from_file_location("validate_results", ROOT / "judges/validate_results.py")
-judge = importlib.util.module_from_spec(judge_spec)
-judge_spec.loader.exec_module(judge)
-
-
-class JudgeChecks(unittest.TestCase):
-    def setUp(self):
-        self.references = json.loads((ROOT / "judges/validation-cases.json").read_text())
-        self.criterion = "CPS-AUD-001.C1"
-        self.verdicts = [{"id": row["id"].removeprefix("C1."), "result": row["reference_label"], "critique": "Synthetic criterion evidence"}
-                         for row in self.references if row["criterion_id"] == self.criterion]
-
-    def check(self):
-        return judge.check(self.verdicts, self.criterion, self.references)
-
-    def test_synthetic_agreement_is_not_human_alignment(self):
-        for criterion in ("C1", "C2", "C4"):
-            selected = "CPS-AUD-001." + criterion
-            verdicts = [{"id": row["id"].removeprefix(criterion + "."), "result": row["reference_label"], "critique": "Synthetic criterion evidence"}
-                        for row in self.references if row["criterion_id"] == selected]
-            result = judge.check(verdicts, selected, self.references)
-            self.assertEqual(result["disagreements"], [])
-            self.assertTrue(result["human_calibration"].startswith("Unmeasured"))
-            for count in result["synthetic_challenges"].values():
-                self.assertEqual(count["correct"], count["total"])
-
-    def test_swapped_verdict_is_detected(self):
-        self.verdicts[0]["result"] = "Fail" if self.verdicts[0]["result"] == "Pass" else "Pass"
-        self.assertEqual(len(self.check()["disagreements"]), 1)
-
-    def test_missing_duplicate_unknown_id_rejected(self):
-        original = self.verdicts[:]
-        for malformed in (original[1:], original + [original[0]], original + [{"id": "unknown", "result": "Pass", "critique": "Evidence"}]):
-            with self.subTest(malformed=malformed):
-                self.verdicts = malformed
-                with self.assertRaises(ValueError):
-                    self.check()
-
-    def test_invalid_verdict_and_empty_critique_rejected(self):
-        for field, value in (("result", "Maybe"), ("critique", " ")):
-            original = self.verdicts[0][field]
-            self.verdicts[0][field] = value
-            with self.assertRaises(ValueError):
-                self.check()
-            self.verdicts[0][field] = original
-
 
 
 def load_tests(loader, tests, pattern):

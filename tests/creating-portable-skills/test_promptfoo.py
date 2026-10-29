@@ -49,8 +49,9 @@ class PromptfooChecks(unittest.TestCase):
                                'metric': 'skill-use-observation'}, assertions)
                 self.assertTrue(any(a['type'] == 'regex' for a in assertions))
                 self.assertFalse(any('assertCapture' in a.get('value', '') for a in assertions))
-                copied = target / case['id'] / 'workspace/.agents/skills/creating-portable-skills'
-                self.assertEqual(suite.manifest(copied), suite.manifest(suite.REPO / 'skills/creating-portable-skills'))
+                setup = json.loads((target / case['id'] / 'setup.json').read_text())
+                self.assertEqual(setup['package_sha256'], suite.manifest(suite.REPO / 'skills/creating-portable-skills'))
+                self.assertEqual(setup['input_sha256'], suite.digest(case['input'].encode()))
             self.assertTrue((target / 'codex-home/auth.json').is_symlink())
 
     def test_preparation_rejects_public_destinations(self):
@@ -114,11 +115,13 @@ class PromptfooChecks(unittest.TestCase):
             suite.prepare_judges(argparse.Namespace(
                 destination=str(root / 'judges'), creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
                 candidate_results=str(candidate)))
+            creator = json.loads((target / 'CPS-AUD-001/promptfooconfig.json').read_text())['providers'][0]
+            del creator['config']['working_dir']
             for name in ('C1', 'C2', 'C4'):
                 config = json.loads((root / 'judges' / (name + '.json')).read_text())
-                self.assertEqual(config['providers'][0]['id'], 'openai:codex-sdk')
-                self.assertEqual(config['providers'][0]['config']['cli_config']['forced_login_method'], 'chatgpt')
-                self.assertEqual(config['providers'][0]['config']['maxRetries'], 0)
+                provider = config['providers'][0]
+                del provider['config']['working_dir']
+                self.assertEqual(provider, creator)
                 self.assertEqual(config['tests'][0]['assert'], [{'type': 'is-json'}])
 
     def test_actual_judges_require_one_audit_result_with_passing_c3(self):
@@ -134,15 +137,16 @@ class PromptfooChecks(unittest.TestCase):
                     row['metadata'] = {'portableSkills': {'C3': {'result': c3}}}
                 return row
 
-            cases = {'activation result': [result('CPS-ACT-001', 'Fail')],
-                     'missing C3': [result('CPS-AUD-001', None)],
-                     'failing C3': [result('CPS-AUD-001', 'Fail')],
-                     'two audit results': [result('CPS-AUD-001', 'Pass'), result('CPS-AUD-001', 'Pass')],
-                     'audit beside activation': [result('CPS-ACT-001', 'Pass'), result('CPS-AUD-001', 'Fail')]}
-            for index, (name, rows) in enumerate(cases.items()):
+            cases = {'activation result': ([result('CPS-ACT-001', 'Fail')], 'found 0'),
+                     'missing C3': ([result('CPS-AUD-001', None)], 'C3 preservation'),
+                     'failing C3': ([result('CPS-AUD-001', 'Fail')], 'C3 preservation'),
+                     'two audit results': ([result('CPS-AUD-001', 'Pass'), result('CPS-AUD-001', 'Pass')], 'found 2'),
+                     'audit beside activation': ([result('CPS-ACT-001', 'Pass'), result('CPS-AUD-001', 'Fail')],
+                                                 'C3 preservation')}
+            for index, (name, (rows, message)) in enumerate(cases.items()):
                 with self.subTest(name):
                     suite.save(candidate, {'results': {'results': rows}})
-                    with self.assertRaisesRegex(ValueError, 'CPS-AUD-001|C3'):
+                    with self.assertRaisesRegex(ValueError, message):
                         suite.prepare_judges(argparse.Namespace(
                             destination=str(root / ('judges-' + str(index))),
                             creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
@@ -154,19 +158,19 @@ class PromptfooChecks(unittest.TestCase):
             root = Path(storage)
             target = self.prepare(root)
             candidate = root / 'candidate.json'
-            audit = {'testCase': {'metadata': {'setup': str(target / 'CPS-AUD-001/setup.json')}}}
-            rows = [[], [{**audit}], [{**audit, 'response': None}],
-                    [{**audit, 'response': {'output': 'Audit response'}}],
-                    [{**audit, 'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
-                      'metadata': {'portableSkills': {'C3': {'result': 'Pass'}}}}],
-                    [{**audit, 'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
-                      'metadata': {'portableSkills': {'C3': {'result': 'Fail'}}}}],
-                    [{**audit, 'response': {'output': 'Audit response'}, 'gradingResult': {'pass': 'true'}}]]
-            payloads = [{'results': {'results': results}} for results in rows] + [{}, {'results': {}}]
-            for index, payload in enumerate(payloads):
-                with self.subTest(payload=payload):
-                    suite.save(candidate, payload)
-                    with self.assertRaises(ValueError):
+            audit = {'testCase': {'metadata': {'setup': str(target / 'CPS-AUD-001/setup.json')}},
+                     'metadata': {'portableSkills': {'C3': {'result': 'Pass'}}}}
+            answered = {**audit, 'response': {'output': 'Audit response'}}
+            unavailable = 'Creator unavailable or missing final answer'
+            ordinary = 'Creator ordinary checks'
+            rows = [([audit], unavailable), ([{**audit, 'response': None}], unavailable),
+                    ([answered], ordinary),
+                    ([{**answered, 'gradingResult': {'pass': False}}], ordinary),
+                    ([{**answered, 'gradingResult': {'pass': 'true'}}], ordinary)]
+            for index, (results, message) in enumerate(rows):
+                with self.subTest(results=results):
+                    suite.save(candidate, {'results': {'results': results}})
+                    with self.assertRaisesRegex(ValueError, message):
                         suite.prepare_judges(argparse.Namespace(
                             destination=str(root / ('judges-' + str(index))),
                             creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),

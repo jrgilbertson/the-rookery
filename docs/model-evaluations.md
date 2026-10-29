@@ -35,8 +35,9 @@ using the [source checks](#check-each-source).
 
 Use the same benchmark version, scoring rule, and comparable harness conditions
 for each comparison. Keep quality, cost, and available completion time visible together.
-Use primary sources for the calculations and secondary sources to check task
-fit and challenge the choices. Compare conclusions rather than averaging
+Prefer primary sources for calculations. Use secondary sources to check task
+fit and challenge the choices; use them for a calculation only when they
+publish the required matched inputs. Compare conclusions rather than averaging
 incompatible scores or assigning numeric weights to sources.
 Count overlapping aggregates, components, and republished results once.
 

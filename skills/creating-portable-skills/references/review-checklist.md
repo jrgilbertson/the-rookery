@@ -9,6 +9,9 @@ correction. Mark unrelated items not applicable.
 
 Where a shell is available, run [scripts/signal-scan.sh](../scripts/signal-scan.sh)
 on the package. It reads `SKILL.md` and `references/`; inspect `assets/` directly.
+The scanner rejects newline-bearing paths and symlinked `SKILL.md` or
+`references` entries. It skips descendant symlinks instead of reading their
+targets outside the package.
 A hit is a candidate, not a verdict. Judge it against the item's purpose and
 record why a retained hit stands.
 

@@ -55,6 +55,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Repository verification bounds malformed inline-link scanning and treats YAML
+  filenames as data. Guidance synchronization replaces destination symlinks
+  safely, skill scans preserve pathname boundaries, and evaluation imports
+  reject nonregular or oversized setup records.
 - Managing Issues reads back a new Linear issue's relationships. A
   relationship Linear adds on its own, which nobody approved, stops the batch
   before the next write and comes with a removal preview awaiting approval.

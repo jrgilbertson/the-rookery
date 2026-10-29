@@ -32,8 +32,12 @@ def published_contract() -> None:
     compact_skill = " ".join(skill.split())
     compact_linear = " ".join(linear.split())
     require(len(skill.splitlines()) < 500, "SKILL.md exceeds portable line budget")
-    for phrase in ("Shape", "Analyze", "Preview", "approval", "Revalidate", "apply", "read back", "unapplied"):
-        require(phrase.lower() in skill.lower(), f"shared lifecycle omits {phrase}")
+    for phrase in (
+        "Approval of the underlying work or decision alone does not authorize a tracker write",
+        "reread every material field and relationship that determined the approved result",
+        "stop the entire batch for a fresh read, preview, and approval",
+    ):
+        require(phrase in compact_skill, f"shared lifecycle omits {phrase}")
     for phrase in (
         "config-template-github.json",
         "config-template-linear.json",
@@ -66,7 +70,11 @@ def published_contract() -> None:
         "create relationship readback conflicts with cascade rule",
     )
     require("accepted non-create effect" in skill and "readback fails, is partial, or mismatches the approved result" in skill, "non-create readback contract differs")
-    require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
+    for phrase in (
+        "Implementation plans, worktrees, pull requests, and delivery orchestration belong to the workflows that consume those issues",
+        "Do not create or recommend a worktree, branch, implementation plan, worker assignment, pull request, retry schedule, or execution handoff",
+    ):
+        require(phrase in compact_skill, f"issue-only handoff boundary omits {phrase}")
     require(
         "Linear recommends an exclusive readiness group" in compact_skill,
         "setup recommendation rationale differs",

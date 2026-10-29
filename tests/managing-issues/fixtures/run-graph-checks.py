@@ -49,6 +49,7 @@ def published_contract_checks() -> None:
         "separate batch",
         "list every cascade the provider reports as an intended effect",
         "Do not inspect, predict, repair, or block on effects the provider does not report",
+        "Do not add implementation recommendations or persist an execution handoff",
     )
     normalized = " ".join(text.split()).casefold()
     for fragment in required:
@@ -73,15 +74,8 @@ def published_contract_checks() -> None:
         "trusted evidence",
         "authority, policy",
         "Release A treats every Linear topology mutation as `manual`",
-        "worktree",
-        "branch",
-        "pull request",
-        "worker",
-        "model",
-        "schedule",
         "orca linear relation",
         "gh issue edit CHILD",
-        "succeeded",
     )
     for fragment in forbidden:
         require(

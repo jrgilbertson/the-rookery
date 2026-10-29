@@ -45,6 +45,9 @@ looked" surface. GitHub Releases mirror its entries.
 - `GLOBAL-AGENTS.md` asks agents to judge a check by its own exit status,
   since a filtered pipeline such as `check | tail` reports the filter's status
   unless `pipefail` is set.
+- `GLOBAL-AGENTS.md` lets active browser testing make paid model calls on
+  non-production keys without asking. Automated test suites still mock the
+  model, and evals, batch model runs, and production work still need approval.
 - `SKILLS.md` lists what retiring a skill includes, including closing or
   re-scoping its open issues in the same change.
 

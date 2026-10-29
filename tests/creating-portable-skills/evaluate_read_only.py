@@ -93,7 +93,6 @@ def main():
         result = snapshot(args.root, args.names)
     else:
         def load(path):
-            # Missing, empty, or truncated snapshot files still produce a structured Unmeasured verdict.
             try:
                 return json.loads(path.read_text())
             except (OSError, ValueError, RecursionError):

@@ -81,6 +81,33 @@ class PromptfooChecks(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'CPS-TEST-002.INPUT'):
                 suite.read_case(case)
 
+    def test_unsafe_case_ids_are_rejected(self):
+        with tempfile.TemporaryDirectory() as storage:
+            case = Path(storage) / 'case.md'
+            for case_id in ('../escape', '/tmp/escape', 'cps-lower'):
+                with self.subTest(case_id=case_id):
+                    case.write_text('# ' + case_id + ' — Unsafe\n\n## ' + case_id + '.INPUT\n\nInput.\n')
+                    with self.assertRaisesRegex(ValueError, 'Case ID'):
+                        suite.read_case(case)
+
+    def test_fixtures_cannot_replace_skill_or_use_links(self):
+        with tempfile.TemporaryDirectory() as storage:
+            root = Path(storage)
+            fixtures = self.fixtures(root)
+            shadow = fixtures / '.agents/skills/creating-portable-skills'
+            shadow.mkdir(parents=True)
+            (shadow / 'SKILL.md').write_text('Replacement instructions\n')
+            with self.assertRaisesRegex(ValueError, 'skill'):
+                self.prepare(root, fixtures=fixtures, destination=root / 'shadowed')
+            shutil.rmtree(fixtures / '.agents')
+            (fixtures / 'linked').symlink_to(fixtures / 'skill', target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, 'symlink'):
+                self.prepare(root, fixtures=fixtures, destination=root / 'linked')
+            empty = root / 'empty-fixtures'
+            empty.mkdir()
+            with self.assertRaisesRegex(ValueError, 'no files'):
+                self.prepare(root, fixtures=empty, destination=root / 'empty')
+
     def test_preparation_rejects_public_destinations(self):
         with tempfile.TemporaryDirectory() as storage:
             root = Path(storage)
@@ -126,25 +153,25 @@ class PromptfooChecks(unittest.TestCase):
             root = Path(storage)
             setup = root / 'setup.json'
             suite.save(setup, {'case': 'CPS-TEST-001', 'host': 'codex', 'inputs': []})
-            legacy = {'testCase': {'metadata': {'setup': str(setup)}},
+            base = {'testCase': {'metadata': {'setup': str(setup)}},
                       'response': {'output': 'Final answer'}, 'gradingResult': {'pass': False},
                       'metadata': {'portableSkills': {'capture': {'result': 'Unmeasured'}}}}
             results = root / 'results.json'
-            suite.save(results, {'results': {'results': [legacy]}})
+            suite.save(results, {'results': {'results': [base]}})
             self.assertEqual(suite.export(results)[0]['behavior'], 'Unmeasured')
             for passed in (True, False):
-                row = dict(legacy, metadata={}, gradingResult={'pass': passed})
+                row = dict(base, metadata={}, gradingResult={'pass': passed})
                 suite.save(results, {'results': {'results': [row]}})
                 self.assertEqual(suite.export(results)[0]['behavior'], 'Pass' if passed else 'Fail')
                 row['response'] = {'output': 'Final answer', 'error': 'Quota exhausted'}
                 suite.save(results, {'results': {'results': [row]}})
                 self.assertEqual(suite.export(results)[0]['behavior'], 'Unmeasured')
             for overrides in ({'error': 'Provider unavailable'}, {'gradingResult': None}):
-                row = dict(legacy, metadata={}, **overrides)
+                row = dict(base, metadata={}, **overrides)
                 suite.save(results, {'results': {'results': [row]}})
                 self.assertEqual(suite.export(results)[0]['behavior'], 'Unmeasured')
             suite.save(setup, {'case': 'CPS-TEST-001', 'host': 'codex', 'inputs': ['notes.md']})
-            row = dict(legacy, metadata={'portableSkills': {'preservation': {'result': 'Fail'}}},
+            row = dict(base, metadata={'portableSkills': {'preservation': {'result': 'Fail'}}},
                        gradingResult={'pass': False})
             suite.save(results, {'results': {'results': [row]}})
             exported = suite.export(results)[0]

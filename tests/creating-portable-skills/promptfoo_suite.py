@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import sys
 
@@ -19,6 +20,8 @@ def digest(data):
 def read_case(path):
     text = Path(path).read_text()
     case_id = text.split()[1]
+    if not re.fullmatch(r'[A-Z0-9]+(?:-[A-Z0-9]+)*', case_id):
+        raise ValueError('Case ID must be uppercase letters, digits and hyphens: ' + case_id)
     marker = '## ' + case_id + '.INPUT\n\n'
     if marker not in text:
         raise ValueError('Case file needs a "' + marker.strip() + '" paragraph')
@@ -61,16 +64,24 @@ def prepare(args):
     workspace.mkdir(parents=True)
     discovery = '.agents' if args.host == 'codex' else '.claude'
     package = workspace / discovery / 'skills/creating-portable-skills'
-    shutil.copytree(REPO / 'skills/creating-portable-skills', package)
     inputs = []
     if args.fixtures:
         fixtures = Path(args.fixtures)
-        inputs = sorted(str(path.relative_to(fixtures)) for path in fixtures.rglob('*') if path.is_file())
+        entries = list(fixtures.rglob('*'))
+        if any(path.is_symlink() for path in entries):
+            raise ValueError('Fixtures must not contain symlinks')
+        inputs = sorted(str(path.relative_to(fixtures)) for path in entries if path.is_file())
+        if not inputs:
+            raise ValueError('Fixtures directory has no files: ' + str(fixtures))
         shutil.copytree(fixtures, workspace, dirs_exist_ok=True)
+    if package.exists():
+        raise ValueError('Fixtures must not replace the tested skill at ' + str(package.relative_to(workspace)))
+    shutil.copytree(REPO / 'skills/creating-portable-skills', package)
+    package_sha256 = manifest(package)
     setup = {'case': case['id'], 'host': args.host, 'workspace': str(workspace),
              'body_path': str(package / 'SKILL.md'),
-             'body_sha256': digest((package / 'SKILL.md').read_bytes()),
-             'package_sha256': manifest(package), 'input_sha256': digest(case['input'].encode()),
+             'body_sha256': package_sha256['SKILL.md'],
+             'package_sha256': package_sha256, 'input_sha256': digest(case['input'].encode()),
              'ordinary_discovery': discovery + '/skills/creating-portable-skills',
              'evaluation': 'standard Promptfoo assertions; skill-use is heuristic',
              'model_effort': 'native defaults from approved config; no provider override',
@@ -164,7 +175,7 @@ def main():
         setup_path = Path(request['setup'])
         setup = json.loads(setup_path.read_text())
         if request['hook'] == 'beforeEach':
-            setup['before'] = snapshot(setup['workspace'], setup['inputs']) if setup['inputs'] else None
+            setup['before'] = snapshot(setup['workspace'], setup['inputs'])
             save(setup_path, setup)
             result = {}
         else:

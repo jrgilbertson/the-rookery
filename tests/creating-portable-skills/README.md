@@ -30,7 +30,9 @@ npm install --prefix "$eval_tools" @anthropic-ai/claude-agent-sdk@0.3.263
 
 python3 tests/creating-portable-skills/promptfoo_suite.py prepare codex "$case_file" "$eval_root" \
   --native-config "$approved_native_toml" --codex-bin "$native_codex" \
-  --auth-store "$approved_auth_json" [--fixtures "$fixture_dir"] [--expect-no-skill-use]
+  --auth-store "$approved_auth_json"
+# Optional: add --fixtures "$fixture_dir" to supply inputs checked unchanged,
+# and --expect-no-skill-use for a near-miss case.
 # Optional separate host; do not run without its own allowance:
 python3 tests/creating-portable-skills/promptfoo_suite.py prepare claude "$case_file" "$claude_eval_root"
 ```

@@ -31,6 +31,8 @@ looked" surface. GitHub Releases mirror its entries.
 - Testing guidance names the repository-owned commands as completion evidence
   and asks filtered check output to keep the check's own exit status.
 - Checking Simplicity no longer requires four options for every question.
+- Creating Portable Skills reviews flag opaque prose: instructions a new reader
+  cannot follow, internal classifications, and security jargon.
 - Managing Issues fixture checks distinguish provider adapter behavior from
   agent decisions. Graph and lifecycle expectations are retained as behavioral
   case definitions awaiting native-host evaluation; incidental prose changes

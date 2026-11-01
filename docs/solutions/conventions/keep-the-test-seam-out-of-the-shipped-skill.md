@@ -47,8 +47,9 @@ lessons here still apply to surviving skills and checks.
 > `tests/checking-merge-readiness/fixtures/bin/gh` and its `CMR_ALLOW_MERGE`
 > gate, the battery's "forge stub" section and run log, and the
 > personal-chief-of-staff `bootstrap.sh`, `pcos-action`, and `imsg`, with the
-> expanded self-check described below (the current `run-fixture-checks.sh` is
-> a smaller runner). Another historical example of the convention is
+> expanded self-check described below (`run-fixture-checks.sh` has since been
+> replaced by `run-sample-checks.py`, which checks only the shipped sample).
+> Another historical example of the convention is
 > `tests/checking-merge-readiness/fixtures/history-bin/gh`, a `PATH` stand-in
 > under `tests/` that served `fetch-pr-history.sh` before their retirement.
 

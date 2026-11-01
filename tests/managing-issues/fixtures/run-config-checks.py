@@ -482,6 +482,20 @@ def main() -> int:
         duplicate_linear_label = base_config("linear")
         duplicate_linear_label["mappings"]["labels"] = {"ready": "label-readiness-ready"}
         expect_invalid(duplicate_linear_label, repo_root, "Linear label label-readiness-ready is mapped more than once")
+        duplicate_priority = base_config("linear")
+        duplicate_priority["mappings"]["priority"] = {"high": "high", "urgent": "high"}
+        expect_invalid(duplicate_priority, repo_root, "mappings.priority: provider value high is mapped more than once")
+
+        for label in ("Bug,Feature", 'Bug"'):
+            csv_label = base_config()
+            csv_label["mappings"]["labels"] = {"bug": label}
+            expect_invalid(csv_label, repo_root, "mappings.labels.bug cannot contain GitHub label CSV syntax")
+        control_value = base_config()
+        control_value["mappings"]["labels"] = {"bug": "Bug\u0007"}
+        expect_invalid(control_value, repo_root, "mappings.labels.bug contains control characters")
+        too_many = base_config()
+        too_many["mappings"]["labels"] = {f"label-{index}": f"Label {index}" for index in range(65)}
+        expect_invalid(too_many, repo_root, "mappings.labels exceeds 64 entries")
 
         expect_not_configured(repo_root)
         active_config = install_active_config(repo_root, github)

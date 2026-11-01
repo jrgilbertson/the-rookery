@@ -122,10 +122,10 @@ time without replacing those executions.
 
 I look back at recurring corrections, failed checks, and unnecessary
 coordination to see what should change before the next run.
-The [Sessions audit automation](automations/sessions-audit.md) reviews recent
-AI sessions and recommends changes backed by session evidence. It considers
-code, tests, tooling, and controls alongside skills and instructions, then
-returns proposals for approval.
+The [Sessions audit automations](automations/sessions-audit.md) use `retro` to
+review recent AI sessions on each host alongside the repository's skills,
+workflows, guidance, and configuration. They recommend changes to the coding
+environment based on the session evidence.
 
 Sometimes the useful change is to remove a rule or a redundant check.
 Sometimes a check that appears repetitive protects a different requirement and

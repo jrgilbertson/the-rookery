@@ -42,6 +42,7 @@ TRANSIENT_PATHS = (
     ":(top)docs/dogfood-reports/**",
     ":(top)docs/reports/**",
     ":(top)docs/pulse-reports/**",
+    ":(top)outputs/**",
 )
 MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",

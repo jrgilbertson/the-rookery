@@ -61,6 +61,8 @@ looked" surface. GitHub Releases mirror its entries.
   model, and evals, batch model runs, and production work still need approval.
 - `SKILLS.md` lists what retiring a skill includes, including closing or
   re-scoping its open issues in the same change.
+- Personal Chief of Staff fixture checks validate the shipped source-map
+  sample directly instead of a test-only copy of the schema.
 
 ### Fixed
 
@@ -71,6 +73,12 @@ looked" surface. GitHub Releases mirror its entries.
 - Managing Issues reads back a new Linear issue's relationships. A
   relationship Linear adds on its own, which nobody approved, stops the batch
   before the next write and comes with a removal preview awaiting approval.
+- Repository verification rejects tracked files under the root `outputs/`
+  directory, which may hold private generated artifacts.
+- Repository tests now fail when the issue-configuration label, duplicate,
+  control-character, or size guards are removed, when the README skill list
+  or a skill name drifts from `skills/`, or when a test runner is missing from
+  the fixture roster.
 
 ## [0.3.0] - 2026-10-15
 

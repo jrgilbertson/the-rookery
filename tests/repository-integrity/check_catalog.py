@@ -45,6 +45,20 @@ def main() -> int:
         if valid.returncode != 0:
             raise AssertionError(f"valid package failed: {valid.stderr}")
 
+        readme = repository / "README.md"
+        readme_contents = readme.read_text(encoding="utf-8")
+        readme.write_text("# No skills listed\n", encoding="utf-8")
+        unlisted = run_catalog(repository)
+        if unlisted.returncode != 1 or "README skill list does not match skills/" not in unlisted.stderr:
+            raise AssertionError("unlisted skill package did not fail the catalog door")
+        readme.write_text(readme_contents, encoding="utf-8")
+
+        renamed_skill = valid_skill.replace("name: example-skill", "name: other-skill")
+        (skill_directory / "SKILL.md").write_text(renamed_skill, encoding="utf-8")
+        renamed = run_catalog(repository)
+        if renamed.returncode != 1 or "does not match directory" not in renamed.stderr:
+            raise AssertionError("skill name that differs from its directory passed the catalog door")
+
         malformed_skill = valid_skill.replace("description:", "owner: synthetic\ndescription:")
         (skill_directory / "SKILL.md").write_text(malformed_skill, encoding="utf-8")
         malformed = run_catalog(repository)
@@ -99,7 +113,7 @@ def main() -> int:
         if miscased.returncode != 1 or "entry filename must be exactly SKILL.md" not in miscased.stderr:
             raise AssertionError("miscased skill entry filename did not fail the package check")
 
-    print("PASS: catalog door rejects malformed, symlinked, and miscased skill packages")
+    print("PASS: catalog door rejects unlisted, misnamed, malformed, symlinked, and miscased skill packages")
     return 0
 
 

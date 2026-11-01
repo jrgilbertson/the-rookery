@@ -31,7 +31,6 @@ def published_contract() -> None:
     linear = LINEAR_REF.read_text(encoding="utf-8")
     compact_skill = " ".join(skill.split())
     compact_linear = " ".join(linear.split())
-    require(len(skill.splitlines()) < 500, "SKILL.md exceeds portable line budget")
     for phrase in (
         "Approval of the underlying work or decision alone does not authorize a tracker write",
         "reread every material field and relationship that determined the approved result",

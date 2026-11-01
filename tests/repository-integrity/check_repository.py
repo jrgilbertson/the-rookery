@@ -24,7 +24,7 @@ FIXTURE_RUNNERS = (
     "tests/managing-issues/fixtures/run-graph-checks.py",
     "tests/managing-issues/fixtures/run-config-checks.py",
     "tests/managing-issues/fixtures/run-provider-checks.py",
-    "tests/personal-chief-of-staff/fixtures/run-fixture-checks.sh",
+    "tests/personal-chief-of-staff/fixtures/run-sample-checks.py",
     "tests/repository-integrity/check_catalog.py",
     "tests/repository-integrity/check_repository.py",
 )
@@ -236,6 +236,7 @@ def main() -> int:
             "docs/dogfood-reports",
             "docs/reports",
             "docs/pulse-reports",
+            "outputs",
         ):
             regular_path = repository / regular_name
             regular_path.parent.mkdir(parents=True, exist_ok=True)
@@ -262,6 +263,7 @@ def main() -> int:
             "docs/dogfood-reports/force-added.md",
             "docs/reports/force-added.md",
             "docs/pulse-reports/force-added.md",
+            "outputs/force-added.md",
         ):
             transient_path = repository / transient_name
             transient_path.parent.mkdir(parents=True, exist_ok=True)
@@ -481,6 +483,26 @@ def main() -> int:
             and not marker.exists(),
             "fixture check did not reject the symbolic-link runner before execution: "
             f"{fixture_result.stderr}",
+        )
+
+        first_runner = fixture_repository / FIXTURE_RUNNERS[0]
+        first_runner.unlink()
+        first_runner.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
+        unlisted_runner = fixture_repository / "tests/unlisted/run-unlisted.sh"
+        unlisted_runner.parent.mkdir(parents=True)
+        unlisted_runner.write_text(f"#!/usr/bin/env bash\nprintf ran >{marker}\n", encoding="utf-8")
+        unlisted_result = subprocess.run(
+            ["bash", "scripts/checks/fixtures.sh"],
+            cwd=fixture_repository,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        require(
+            unlisted_result.returncode != 0
+            and "fixtures: explicit roster does not match discovered runners" in unlisted_result.stderr
+            and not marker.exists(),
+            f"fixture check accepted a runner missing from its roster: {unlisted_result.stderr}",
         )
 
     print(

@@ -190,9 +190,9 @@ Before merge:
 Repositories and systems need care over time. Maintenance runs throughout the work, not only after merge.
 
 I schedule recurring reviews in Orca. [Sessions audit](automations/sessions-audit.md)
-looks at recent AI sessions for repeated corrections, excessive coordination,
-and guidance that conflicts or duplicates other mechanisms. It proposes changes
-to code, tests, tools, and instructions, backed by session evidence. I review
+uses `retro` to review the past 24 hours of AI sessions alongside The Rookery's
+skills, workflows, guidance, and configuration. Separate local and remote jobs
+review sessions on their respective hosts. I review
 and approve specific changes before applying them through the workflow that
 owns the work.
 

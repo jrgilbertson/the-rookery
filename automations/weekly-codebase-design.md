@@ -2,8 +2,8 @@
 
 Review the codebase design and recommend improvements.
 
-- **Cadence:** Saturday at 09:00.
-- **Timezone:** America/Los_Angeles.
+- **Cadence:** Saturday at 05:00.
+- **Timezone:** America/Chicago.
 - **Requires:** Matt Pocock's [`codebase-design` skill](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design) and access to the target repository.
 
 Before scheduling, install the skill for the agent selected in Orca. Follow the

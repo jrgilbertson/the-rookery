@@ -6,6 +6,11 @@ Review continuous integration and recommend improvements.
 - **Timezone:** America/Los_Angeles.
 - **Requires:** The Compound Engineering `ce-optimize` skill and access to the target repository's CI configuration.
 
+The installed `ce-optimize` workflow builds measurement scaffolding before its
+experiment approval gate. This prompt requests recommendations but does not
+explicitly restrict that setup work. For a read-only audit, state that limit
+when adapting the prompt.
+
 ## Prompt
 
 ```text

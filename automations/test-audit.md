@@ -2,8 +2,8 @@
 
 Review the repository's tests, find gaps in what they protect, and recommend improvements.
 
-- **Cadence:** Thursday at 09:00.
-- **Timezone:** America/Los_Angeles.
+- **Cadence:** Thursday at 23:00.
+- **Timezone:** America/Chicago.
 - **Requires:** The Compound Engineering `ce-simplify-code` skill and access to the target repository.
 
 ## Prompt

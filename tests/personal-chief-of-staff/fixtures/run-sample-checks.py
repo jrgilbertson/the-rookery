@@ -2,10 +2,14 @@
 """Check the shipped source-map sample against the documented version 3 shape."""
 
 import json
+import re
 import sys
 from pathlib import Path
 
 SAMPLE = Path(__file__).resolve().parents[3] / "skills/personal-chief-of-staff/assets/sources.example.json"
+REQUIRED_FIELDS = {"area", "source", "interface", "identity"}
+OPTIONAL_FIELDS = {"locator", "query", "window", "filter", "gap_effect", "access_overrides"}
+OVERRIDE_SHAPES = ({"interface", "identity", "locator"}, {"interface", "identity", "query"})
 
 
 def require(condition, message):
@@ -23,6 +27,15 @@ def nonempty_text(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+def check_overrides(role, overrides):
+    require(isinstance(overrides, dict) and overrides, f"{role}: access_overrides must be a nonempty object")
+    for harness, access in overrides.items():
+        require(re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*", harness) is not None, f"{role}: invalid harness key {harness}")
+        require(isinstance(access, dict) and set(access) in OVERRIDE_SHAPES
+                and all(nonempty_text(value) for value in access.values()),
+                f"{role}: {harness} override needs interface, identity, and one locator or query")
+
+
 def main():
     sample = json.loads(SAMPLE.read_text(encoding="utf-8"), object_pairs_hook=reject_duplicates)
     require(set(sample) == {"version", "roles"} and sample["version"] == 3, "sample is not a version 3 map")
@@ -30,12 +43,16 @@ def main():
     require({"strategy", "learning", "tasks", "templates", "meetings"} <= roles.keys(), "sample lacks a core role")
     entries = []
     for role, bindings in roles.items():
+        require(re.fullmatch(r"[a-z][a-z0-9_]*", role) is not None, f"{role}: invalid role key")
         require(isinstance(bindings, list) and bindings, f"{role}: expected a nonempty binding list")
         for entry in bindings:
-            for field in ("area", "source", "interface", "identity"):
-                require(nonempty_text(entry.get(field)), f"{role}: {field} must be nonempty text")
+            require(isinstance(entry, dict) and REQUIRED_FIELDS <= entry.keys() <= REQUIRED_FIELDS | OPTIONAL_FIELDS,
+                    f"{role}: invalid binding fields")
             require(("locator" in entry) != ("query" in entry), f"{role}: specify one locator or query")
-            require(not {"condition", "modes"} & entry.keys(), f"{role}: version 3 has no workflow fields")
+            for field in entry.keys() - {"access_overrides"}:
+                require(nonempty_text(entry[field]), f"{role}: {field} must be nonempty text")
+            if "access_overrides" in entry:
+                check_overrides(role, entry["access_overrides"])
             entries.append(entry)
 
     require({entry["area"] for entry in entries} == {

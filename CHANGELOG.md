@@ -15,6 +15,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 - Repository text checks reject concrete local home-directory paths, with
   file-scoped exceptions for reviewed portable setup examples.
+- `coordinating-work`, an optional Orca-first skill for collaboration setup and
+  revive, with editable approval, task-scoped PR workers, and recovery of
+  context, communication, and supervision through existing native workflows.
 - An automation catalog with prompts, schedules, prerequisites, and Orca setup
   instructions for session, test, CI, codebase design, and coding standards
   reviews. README, workflow, testing, product, and contribution guidance now
@@ -36,6 +39,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 - Managing Issues explicitly checks a newly created Linear issue's parent,
   direct children, and other relationships before continuing an approved batch.
+- Creating Portable Skills follows error analysis before building behavioral
+  evals. New skills do not require an invented corpus or grader as a delivery
+  gate; concrete eval work retains input/grading approval and execution limits.
 - Model routing explains cost per pass and effort gains, separates evaluation
   sources from role selection, and distinguishes calculation inputs from
   supporting evidence. Current recommendations record subscription and access

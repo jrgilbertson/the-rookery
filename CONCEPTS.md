@@ -229,4 +229,4 @@ A Trigger Contract treats a skill's description as the activation API the
 harness shows when deciding whether to load the skill. Should-trigger
 phrasings must load it, and near-misses must not. A listing proxy judges the
 name and description alone. Native activation observes the harness's load
-decision, with training, validation, and fresh queries kept distinct.
+decision. Metadata-only observations do not prove which instructions loaded.

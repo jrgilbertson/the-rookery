@@ -70,10 +70,8 @@ Use this approach for native telemetry omissions with an output-bearing terminal
 result. It does not establish a new creator execution, admit an old incomplete
 capture, or prove arbitrary shell reads. Command support is a separate check:
 the historical parser accepted one literal cat read and could not establish
-compound-command provenance. The current skill suite uses stock Promptfoo SDK
-assertions and no strict capture gate or upstream fork. Its skill-use observations
-do not establish this stronger proof. Historical unsupported captures remain
-Unmeasured.
+compound-command provenance. A skill-use observation alone does not establish
+this stronger proof. Historical unsupported captures remain Unmeasured.
 
 ## Related
 

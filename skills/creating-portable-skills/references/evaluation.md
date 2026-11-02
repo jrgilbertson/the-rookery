@@ -1,53 +1,50 @@
 # Evaluation Workflows
 
-Use maintained upstream guidance rather than a package-specific eval procedure.
-Existing user approval and host requirements govern spending and side effects.
+Follow the host's evaluation policy and existing authorization. A new package
+alone does not require evaluation infrastructure or a behavioral suite.
 
-## Decide whether an eval is warranted
+## Decide what needs measurement
 
-Review real use and fix clear instruction gaps before investing in evaluators.
-Follow the host's evaluation policy: target observed failures that persist and
-justify repeated measurement. New skill authoring alone is not a reason to
-generate cases, prescribe a case count, or make input/grader approval a delivery
-gate. Keep structural, helper, and applicable authorized smoke checks separate
-from claims about behavioral quality; unexercised behavior stays unverified.
+Start with observed system behavior and error analysis. Fix clear instruction
+gaps first; invest in recurring evaluators when the failure and expected value
+of repeated checking justify the cost. Prefer deterministic checks for rules
+that code can assess. Use a model judge for a concrete failure requiring
+judgment, and validate it against independent human labels before trusting it.
 
-Synthetic inputs can preserve privacy when reproducing a real failure, or
-support an explicitly requested discovery exercise when real traces are scarce.
-They do not establish how often a failure occurs or justify a standing suite
-on their own. [Hamel Husain and Shreya Shankar's evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
-explains error analysis, eval-driven development, and when evaluator investment
-is worthwhile.
+Targeted synthetic inputs can support discovery when real traces are scarce
+or exercise rare known failures. Run them through the actual system and review
+what happened; synthetic data does not establish real-world prevalence. A
+precise known constraint can justify an early check. Retain regression checks
+that remain useful after a fix, and reduce or retire checks that no longer
+provide enough signal for their cost.
+[Hamel Husain and Shreya Shankar's evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
+explains these tradeoffs.
 
-## Build or repair an eval
+## Use the maintained workflow
 
-Once a concrete evaluation need is established, use `/claude-api build-eval` in
-Claude Code with `claude-api` available. Otherwise read and follow the same
-guide using the host's tools. The companion skill does not need to be installed.
+Use the [evals plugin](https://github.com/ai-evals-course/evals-skills)'s
+[`evals-start`](https://github.com/ai-evals-course/evals-skills/blob/main/skills/evals-start/SKILL.md)
+skill to choose the next step, then follow the targeted skill it selects. If
+the evaluation job is already known, load that targeted skill directly. Let the selected workflow choose current tools
+and a runner when needed; neither a specific vendor nor a runner is required
+by this package. Reuse relevant existing evidence and checks.
 
-Pinned source: [`build-eval`](https://github.com/anthropics/skills/blob/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4/skills/claude-api/shared/evals/build-eval.md),
-from `anthropics/skills` at `8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4`.
-Its required [`eval-audit`](https://github.com/anthropics/skills/blob/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4/skills/claude-api/shared/evals/eval-audit.md)
-and linked resources live at the same revision. Read the guides and their
-required resources before using the workflow; this pointer is not a substitute
-for their input and grader sign-offs.
+Install the skills using the upstream README's installation instructions, or
+read `evals-start` and the selected skill directly from that source repository.
 
-These are Anthropic-authored guides. Keep the user's executor and host tools;
-their Claude API examples do not require migrating a skill or its harness to
-Anthropic. Use the host's question mechanism when `AskUserQuestion` is absent.
-Keep working artifacts in the host's approved private or temporary location.
+If the needed skill or guidance is unavailable, report the limitation and
+leave the affected measurement unverified. Package authoring and structural
+checks can continue independently.
 
-If the guide cannot be reached, preserve the prepared package and identify
-evaluation as not run. Do not invent a replacement procedure or report a pass.
+## Preserve authority and evidence
 
-## Improve measured behavior
+Obtain approval of actual evaluation inputs and the grading method before
+using them. That approval is separate from authorization for model calls or
+other side effects. Preserve the host's execution, private-storage, budget,
+independent-review, and release requirements.
 
-For improvement against an established eval, the same upstream revision provides
-[`hillclimb`](https://github.com/anthropics/skills/blob/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4/skills/claude-api/shared/evals/eval-hillclimb.md).
-Use it when the user authorizes that optimization work.
-
-For a skill corpus that degrades after a model upgrade, recommend Compound
-Engineering's [`ce-retune` guide](https://github.com/EveryInc/compound-engineering-plugin/blob/9af474a70e7f2a844338519ad9e92aafbd92d4fb/docs/guides/ce-retune.md)
-and [`skill`](https://github.com/EveryInc/compound-engineering-plugin/blob/9af474a70e7f2a844338519ad9e92aafbd92d4fb/skills/ce-retune/SKILL.md).
-It is user-invoked and requires an archive, a build selector, and a repeatable
-task. A factual update to a model table does not itself require corpus retuning.
+Distinguish package validation, installation identity, actual skill loading,
+input preservation, and successful task behavior. Report only what the
+observed evidence supports. An answer, a tool-use observation, or a successful
+runner exit alone does not establish task quality. Keep expectations and
+grader-only material out of the executor's access.

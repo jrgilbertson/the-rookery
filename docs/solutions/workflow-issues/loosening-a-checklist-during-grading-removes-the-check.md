@@ -240,7 +240,7 @@ in the run log).
   states the general rule this case instantiates. A check that cannot fail is
   not a check, whether the hole came from a self-matching grep or from an item
   widened to fit the run in front of you.
-- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md)
-  covers why the loosening survives. The context that authored the checklist is
-  the context deciding whether a failing item was wrong, and it will reach for
-  the reading that keeps grading moving.
+- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
+  keeps author inspection distinct from required independent judgments. The
+  context that authored a checklist can favor the reading that keeps grading
+  moving when deciding whether a failing item was wrong.

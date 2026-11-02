@@ -147,7 +147,6 @@ cc66ee8):
   identity and native model-harness evidence.
 - Issue jrgilbertson/the-rookery#13 is the frontier-model retune that surfaced
   the same-name collision.
-- `tests/creating-portable-skills/README.md` describes the current Promptfoo
-  suite. Its skill-use assertion is a native trigger observation, not load
-  provenance, so the identity checks above still apply when a run must prove
-  which copy loaded.
+- [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow)
+  owns current evaluation routing. The identity checks above apply when a run
+  must prove which copy loaded.

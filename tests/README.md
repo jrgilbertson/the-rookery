@@ -1,12 +1,12 @@
 # Repository tests
 
 This directory holds deterministic tests of shipped skill helpers and the
-repository checks. The legacy behavioral cases, trigger lists, run logs, and
-simulator adapters have been retired. Their committed versions remain in Git
-history. New behavioral evaluation follows [SKILLS.md](../SKILLS.md#evaluation-workflow).
-The [Creating Portable Skills harness](creating-portable-skills/README.md)
-prepares one case at a time, written from errors found in real use. Report
-native host behavior separately from repository checks.
+repository checks. Behavioral evaluation follows
+[SKILLS.md](../SKILLS.md#evaluation-workflow) through the evals plugin's
+`evals-start` routing. The
+[Creating Portable Skills checks](creating-portable-skills/README.md) exercise
+its shipped signal scanner. Report native host behavior separately from
+repository checks.
 The [Managing Issues checks](managing-issues/README.md) distinguish deterministic
 text and configuration checks from the graph and lifecycle behavioral case
 definitions.

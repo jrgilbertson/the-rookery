@@ -43,38 +43,39 @@ tasks. Validate triggering through the evaluation workflow below.
 
 ## Evaluation workflow
 
-Use the evals plugin's `evals-start` skill to choose the next evaluation step,
-then follow the skill it selects. Start with error analysis: build a case only
-from a specific failure observed in real use, such as local session logs and
-prior issues, and only when it persists after fixing the skill's instructions.
-Prefer a code check to a model judge, and retire a case that stops catching
-anything. [Hamel Husain's evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
-explains the reasoning. Claude, Codex, and Grok are the primary hosts; record
-which host a result covers rather than treating one host's success as proof
-for all three.
+Use the [evals plugin](https://github.com/ai-evals-course/evals-skills)'s
+`evals-start` skill to choose the next evaluation step, then follow the targeted
+skill it selects. When the specific evaluation job is already known, use that
+targeted skill directly. Choose a runner for the actual need through that
+workflow; this repository does not prescribe one.
 
-The [`creating-portable-skills` harness](tests/creating-portable-skills/README.md)
-prepares one case at a time for Claude and Codex through Promptfoo's native
-providers. It has no committed cases. The providers' built-in assertions check
-final answers and observations of skill use. The Codex SDK detects skill paths
-heuristically. That detection does not prove which skill was loaded or that
-every required file was read. An optional deterministic check confirms that
-supplied input files stay unchanged. Missing answers, provider errors, and
-unavailable file snapshots do not pass. Strict capture is not collected and
-remains Unmeasured. Before claiming that a model judge agrees with human
-reviewers, independently calibrate it against human judgments. Passing
-repository checks does not establish behavioral quality.
+Start with error analysis of observed system behavior and fix clear instruction
+gaps first. A new skill does not require a corpus, grader, fixed case count, or
+evaluation sign-off merely to be delivered. Invest in recurring evaluators when
+a failure's consequence and likelihood of recurrence justify their cost.
+Prefer a code check to a model judge.
 
-The previous behavioral suites, benchmarks, custom runners, review server,
-cost tools, and eval schemas have been retired. Committed versions remain
-available in Git history. This repository no longer prescribes their formats
-or requires their tooling. Follow the selected evaluation skill when designing
-cases, collecting human feedback, and validating evaluators. Do not treat the
-retired suite's scores as validation of a replacement suite.
+When real traces are scarce, bounded synthetic discovery can reveal failures
+by exercising the actual system. Synthetic examples can also target a rare
+known failure; they do not establish its prevalence in real use. A precise
+known constraint may justify a check before failure discovery. Keep useful
+regression checks after a fix, and reduce or retire checks that no longer
+provide enough signal for their cost.
+[Hamel Husain and Shreya Shankar's evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
+explains these tradeoffs.
+
+Record the exact skill revision, host, provider, inputs, and behavior observed
+for each claim. Installation, native skill loading, input preservation, and
+successful task completion are separate claims. Missing outputs, provider
+errors, and unavailable observations remain unverified. Before trusting a
+model judge, validate it against independent human judgments. Package checks
+and apparent skill use do not establish behavioral quality.
 
 Keep private logs, generated review pages, and raw run artifacts outside this
 public repository. Any fixtures committed here must be synthetic and safe to
-publish. Use the user's approved execution and budget limits before paid runs.
+publish. Input and grading approval required by the selected workflow is
+separate from authorization for model calls or other side effects. Use the
+user's approved execution and budget limits before paid runs.
 
 ## Repository checks
 

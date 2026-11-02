@@ -286,15 +286,10 @@ enter the packet.
 
 ## Related
 
-- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`:
-  who may grade and what counts as evidence. This doc covers running and
-  validating the grader.
+- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity):
+  direct artifact inspection and host-owned independent judgments. This doc
+  covers running and validating the grader.
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md`: proving
   which skill copy loaded in a target run.
 - `docs/solutions/workflow-issues/loosening-a-checklist-during-grading-removes-the-check.md`:
   fix a bad item in its own commit, never mid-grading.
-- `docs/decisions/promptfoo-for-portable-skill-evaluations.md`: the current
-  harness runs cases through Promptfoo native providers. Its retired criterion
-  judges applied these validation rules (`extract_judge` in Git history): an
-  unavailable or errored judge yields no verdict, and the verdict count,
-  candidate ids, and result values must match the candidates.

@@ -57,8 +57,8 @@ permissions, end-to-end tests, and independent checks protect the result. Use it
 when setting up your own environment and deciding where safeguards belong.
 For skill validation, [SKILLS.md](SKILLS.md) distinguishes deterministic
 repository checks from behavioral evaluation through the evals plugin's
-`evals-start` workflow. `creating-portable-skills` is the first dogfood target;
-the other skill packages await revalidation after the eval reset.
+`evals-start` workflow. Choose behavioral checks and a runner when a concrete
+evaluation need warrants them.
 
 ## The skills
 

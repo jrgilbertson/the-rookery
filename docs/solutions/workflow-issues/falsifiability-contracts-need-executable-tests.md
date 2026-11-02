@@ -409,10 +409,9 @@ assertion passing (`0 failed`).
 - `docs/solutions/workflow-issues/verify-disposition-claims-before-landing-a-prune.md`
   shows the same failure shape in prose claims: assertions that pass because
   nothing forces them to be checked against the actual artifact.
-- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`
-  covers the review-independence half of the same lesson. This learning adds
-  that for an executable artifact, independence must include execution, not
-  only fresh context.
+- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
+  owns direct artifact inspection and required independent judgments. This
+  learning adds that verification of an executable artifact includes execution.
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` makes the
   parallel point for skill bodies: a run is evidence only when the artifact
   under test is the one that actually executed.

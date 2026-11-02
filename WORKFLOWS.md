@@ -138,6 +138,8 @@ I choose models based on how I'll judge the result. For work I can check objecti
 
 Compound Engineering handles planning, execution, review, and saving lessons inside each worktree. One session usually owns the work. I add Executors when parts can be worked on separately and use orchestration tools to supervise them. A handoff lets another session take over. [Model and effort guidance](ROUTING.md) helps me choose models and an independent Reviewer where practical.
 
+For continuing Orca collaboration, [`coordinating-work`](skills/coordinating-work/SKILL.md) helps establish or adopt the arrangement and revive it after account or session interruptions. Setup and revive each use one editable proposal. Ordinary coordination follows existing authority, with task-scoped PR workers and ongoing roles kept while useful; CE and Orca retain execution and lifecycle mechanics.
+
 Tests, linters, CI checks, and the design system help enforce quality before a change ships. Written instructions still depend on being read and followed. Maintain explains where to put each kind of rule.
 
 [Testing with agents](TESTING.md) covers repositories with several languages and projects, as well as smaller ones. It explains which checks belong in local work, at merge, and at release. The project owns check selection and caching across agent tools.

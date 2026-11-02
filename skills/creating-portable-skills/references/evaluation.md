@@ -3,11 +3,27 @@
 Use maintained upstream guidance rather than a package-specific eval procedure.
 Existing user approval and host requirements govern spending and side effects.
 
+## Decide whether an eval is warranted
+
+Review real use and fix clear instruction gaps before investing in evaluators.
+Follow the host's evaluation policy: target observed failures that persist and
+justify repeated measurement. New skill authoring alone is not a reason to
+generate cases, prescribe a case count, or make input/grader approval a delivery
+gate. Keep structural, helper, and applicable authorized smoke checks separate
+from claims about behavioral quality; unexercised behavior stays unverified.
+
+Synthetic inputs can preserve privacy when reproducing a real failure, or
+support an explicitly requested discovery exercise when real traces are scarce.
+They do not establish how often a failure occurs or justify a standing suite
+on their own. [Hamel Husain and Shreya Shankar's evals FAQ](https://hamel.dev/blog/posts/evals-faq/)
+explains error analysis, eval-driven development, and when evaluator investment
+is worthwhile.
+
 ## Build or repair an eval
 
-In Claude Code with `claude-api` available, use `/claude-api build-eval` for the
-skill's authoring or consumer flow. When that command is unavailable, read and follow the same guide using the
-host's tools. The companion skill does not need to be installed.
+Once a concrete evaluation need is established, use `/claude-api build-eval` in
+Claude Code with `claude-api` available. Otherwise read and follow the same
+guide using the host's tools. The companion skill does not need to be installed.
 
 Pinned source: [`build-eval`](https://github.com/anthropics/skills/blob/8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4/skills/claude-api/shared/evals/build-eval.md),
 from `anthropics/skills` at `8a1541c4a3ffa5a20a5a91de0dcf3f0bab1d1ef4`.

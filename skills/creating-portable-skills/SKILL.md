@@ -7,8 +7,8 @@ license: MIT
 # Creating Portable Skills
 
 Produce an installable package that does the user's reusable job and follows the
-[Agent Skills specification](https://agentskills.io/specification), with useful
-evaluation cases and a grading method built through the upstream workflow.
+[Agent Skills specification](https://agentskills.io/specification). Add behavioral
+evals when observed failures warrant them under the host's evaluation policy.
 
 For a read-only audit, apply [references/review-checklist.md](references/review-checklist.md)
 and return prioritized findings with file evidence and a verdict. For authorized
@@ -46,15 +46,20 @@ match, body, and local resource links directly, and record the limitation. Exerc
 bundled helpers with realistic inputs in disposable storage outside the host
 project; preserve existing inputs and outputs.
 
-For new skills and behavior changes, read and follow the pinned upstream
-`build-eval` guide in [references/evaluation.md](references/evaluation.md). Reuse
-existing cases, runner, and grader when they still measure the intended outcome.
-Before delivering a new skill, include the user-approved eval inputs and grading
-method; these are part of the package's delivery, even when execution is not
-authorized. If a sign-off or required guide is unavailable, report that missing
-step. The host owns execution, storage, budget, and release requirements.
-Preserve its required independent judgments and approvals; missing evidence
-stays unverified.
+Start behavioral evaluation with error analysis of real use and the host's
+evaluation policy. Fix clear instruction gaps first; add cases for consequential
+failures that persist and are worth checking repeatedly. A new skill does not
+by itself require a corpus, grader, or evaluation sign-off before delivery.
+Package checks, helper tests, and applicable authorized smoke checks still run;
+report behavior that has not been exercised as unverified.
+
+When building or repairing a warranted eval, read and follow
+[references/evaluation.md](references/evaluation.md), including the pinned upstream
+guide. Reuse relevant cases, runner, and grader. Obtain approval of the actual
+inputs and grading method before using them, separately from authorization for
+model runs or other side effects. If that eval's required guide or sign-off is
+unavailable, report the missing step without claiming it passed. Preserve the
+host's independent review, execution, storage, budget, and release requirements.
 
 Retuning a corpus after a model upgrade is a separate measurement workflow.
 [references/evaluation.md](references/evaluation.md) points to `ce-retune` and

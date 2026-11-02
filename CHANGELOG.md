@@ -31,17 +31,22 @@ looked" surface. GitHub Releases mirror its entries.
   issues and pull requests can use freeform bodies.
 - `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
   review prompt directly.
-- The speculative `creating-portable-skills` eval cases and model judges. The
-  Promptfoo harness stays and prepares one case at a time; `SKILLS.md` now asks
-  for error analysis of real use before writing a case.
+- The custom `creating-portable-skills` evaluation harness, exporter, dedicated
+  tests, and runner-specific instructions, along with the speculative cases
+  and judges. Behavioral evaluation uses the evals plugin's `evals-start`
+  routing and selects a runner when needed.
 
 ### Changed
 
+- Evaluation policy allows targeted synthetic discovery, precise-constraint
+  checks, and useful regression coverage while keeping evaluator investment
+  proportional to observed failures and cost. New skill delivery does not
+  require an invented corpus, grader, or case count. Concrete eval work retains
+  input/grading approval and execution limits.
+- Repository agent guidance points skill changes to the package and evaluation
+  policy, and directs implementation and debugging to relevant prior solutions.
 - Managing Issues explicitly checks a newly created Linear issue's parent,
   direct children, and other relationships before continuing an approved batch.
-- Creating Portable Skills follows error analysis before building behavioral
-  evals. New skills do not require an invented corpus or grader as a delivery
-  gate; concrete eval work retains input/grading approval and execution limits.
 - Model routing explains cost per pass and effort gains, separates evaluation
   sources from role selection, and distinguishes calculation inputs from
   supporting evidence. Current recommendations record subscription and access

@@ -46,25 +46,20 @@ match, body, and local resource links directly, and record the limitation. Exerc
 bundled helpers with realistic inputs in disposable storage outside the host
 project; preserve existing inputs and outputs.
 
-Start behavioral evaluation with error analysis of real use and the host's
-evaluation policy. Fix clear instruction gaps first; add cases for consequential
-failures that persist and are worth checking repeatedly. A new skill does not
-by itself require a corpus, grader, or evaluation sign-off before delivery.
-Package checks, helper tests, and applicable authorized smoke checks still run;
-report behavior that has not been exercised as unverified.
+Start behavioral evaluation with error analysis of actual use and the host's
+policy. Fix clear instruction gaps first. A new skill does not by itself
+require a corpus, grader, fixed case count, or evaluation sign-off before
+delivery. Package checks, helper tests, and applicable authorized smoke checks
+still run; report behavior that has not been exercised as unverified.
 
-When building or repairing a warranted eval, read and follow
-[references/evaluation.md](references/evaluation.md), including the pinned upstream
-guide. Reuse relevant cases, runner, and grader. Obtain approval of the actual
-inputs and grading method before using them, separately from authorization for
-model runs or other side effects. If that eval's required guide or sign-off is
-unavailable, report the missing step without claiming it passed. Preserve the
-host's independent review, execution, storage, budget, and release requirements.
-
-Retuning a corpus after a model upgrade is a separate measurement workflow.
-[references/evaluation.md](references/evaluation.md) points to `ce-retune` and
-explains when it applies. Updating factual model recommendations alone is an
-ordinary revision.
+When evaluation is warranted, follow
+[references/evaluation.md](references/evaluation.md). Use the evals plugin's
+`evals-start` entry point, or its targeted skill when the evaluation job is
+already known. Let that workflow select current guidance and a runner suited
+to the need. Reuse relevant cases and checks. Obtain approval of the actual
+inputs and grading method before using them, separately from authorization
+for model calls or other side effects. Preserve the host's independent review,
+storage, budget, and release requirements; missing evidence stays unverified.
 
 ## Deliver
 
@@ -78,6 +73,6 @@ runtime instructions. Follow the host's release and installation process.
 ## Sources
 
 The [Agent Skills specification](https://agentskills.io/specification) owns the
-package format. Evaluation uses Anthropic's maintained guides; corpus retuning
-uses Compound Engineering's `ce-retune`. Their pinned sources and availability
-requirements are in [references/evaluation.md](references/evaluation.md).
+package format. The evals plugin owns evaluation routing and its targeted
+workflows; [references/evaluation.md](references/evaluation.md) describes their
+use and the host's authority boundaries.

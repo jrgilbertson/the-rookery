@@ -3,7 +3,7 @@ title: "Define the abstract qualifiers that the delete test misses"
 category: best-practices
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-10-09
+last_updated: 2026-11-02
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -15,7 +15,6 @@ applies_when:
   - "A checkpoint skill must stop owning an unchanged subject after a verified clean result"
 symptoms:
   - "A qualifier passes the delete test (removing it changes behavior) yet remains undefined, so each model interprets it differently"
-  - "A gate probe caught the word \"borderline\" undefined in the authoring workflow's then-current step 8, despite passing the standard delete test"
   - "A fresh trigger judge activates a large research workflow for a targeted official-documentation lookup"
   - "A subjectless request loads a review skill before its body routes the work back to planning"
 root_cause: inadequate_documentation
@@ -57,14 +56,7 @@ The same defect can make a positive skill description over-trigger. A skill
 description is an activation API, not a summary of every desirable quality the
 skill can produce. Words such as "deep" and "source-backed" also describe
 smaller tasks, so they do not distinguish a full multi-perspective research
-briefing from one authoritative lookup. The listing-level trigger judge still
-said that a request to find an API rate limit in official documentation and
-cite the page would activate Storm Research.
-The near-miss regression contract for that query lives in
-`tests/storm-research/triggers.md` (retired in #191; Git history at be1c655) (API rate-limit near
-miss). The run log records the failed first correction and the later 17/17
-result (`tests/storm-research/log.md` (retired in #191; Git history at be1c655) trigger-suite
-lines for the review-fix description).
+briefing from one authoritative lookup.
 
 ## Guidance
 
@@ -75,9 +67,8 @@ Run the operationalize-the-qualifier check as its own named pass, separate from 
 3. Fix each undefined qualifier with one of three shapes, or add it to the fix list:
    - **Concrete behavior.** Replace or back the adjective with the action it stands for ("punchier" becomes "cut every sentence over 20 words; lead each paragraph with its claim").
    - **Checkable criterion.** State a condition the agent can verify ("thorough" becomes "every public function has at least one test exercising a failure path").
-   - **Enumerated options.** Constrain the judgment to a closed set
-     ("borderline" becomes "require a plain yes or no; an unsure or hedged
-     first response is borderline and gets two additional runs").
+   - **Enumerated options.** Constrain the judgment to a closed set, such as
+     keep, revise, or remove for an instruction's review disposition.
 
 The checklist item that encodes this lives under Instruction economy in `skills/creating-portable-skills/references/review-checklist.md`:
 
@@ -95,10 +86,6 @@ checkable criterion:
 3. Add a directly confusable near miss that shares attractive surface words
    but asks for a smaller artifact, such as one cited official-documentation
    lookup.
-4. Re-run the complete Trigger Contract in fresh contexts through the
-   [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
-   A new negative case does not excuse regressions on the existing positives
-   or near misses.
 
 Prefer one categorical deliverable boundary over a growing exclusion list. The
 boundary states what must be present; the near misses demonstrate important
@@ -108,7 +95,7 @@ describes evidence comparison or decision support
 (`skills/storm-research/SKILL.md:3`).
 
 Some skills are selected by workflow state and subject, not only by requested
-deliverable. Test those descriptions as a three-sided routing contract:
+deliverable. Define three routing boundaries for those descriptions:
 
 1. **Entry.** Name either the explicit assessment request or the narrow
    workflow transition that makes the skill relevant. `checking-simplicity`
@@ -121,21 +108,16 @@ deliverable. Test those descriptions as a three-sided routing contract:
    subject and an eligible transition, or belong to adjacent workflows. Broad
    words such as “simplify” do not turn prescribed implementation, settled-code
    cleanup, or general brainstorming into this assessment
-   (`tests/checking-simplicity/triggers.md` (retired in #191; Git history at be1c655)).
+   (`skills/checking-simplicity/SKILL.md:3`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
    next planner or executor (`skills/checking-simplicity/SKILL.md:3`).
 
-Freeze the prior description, run the prior and revised metadata in separate
-fresh contexts, and keep the full positive and near-miss matrix on every run
-([CONCEPTS.md "Trigger Contract"](../../../CONCEPTS.md#trigger-contract)).
-Then install the exact candidate beside its adjacent skills in a disposable
-project. Inspect the native trace for the first
-`SKILL.md` loaded. If the wrong skill loads and its body later routes away, the
-activation still failed; the body repaired a metadata error after paying its
-cost (session history). Keep this native evidence separate from the trigger
-suite, which remains a listing proxy
-([CONCEPTS.md "Trigger Contract"](../../../CONCEPTS.md#trigger-contract)).
+When a description change needs evaluation, follow the
+[SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
+Distinguish a listing-level routing judgment from evidence that a native
+harness loaded the intended skill. If the wrong skill loads and its body later
+routes away, that correction does not establish correct initial activation.
 
 ## Why This Matters
 
@@ -152,24 +134,19 @@ against this repository before adoption.
 In activation metadata, an undefined qualifier can also route a bounded lookup
 into a slower, costlier workflow and take work away from a better-matched tool.
 A deliverable is categorical enough to test: the request asks for the
-qualifying artifact or it does not. The resulting trigger-suite pass remains a
-listing proxy, not proof that every native harness will activate correctly
-([CONCEPTS.md "Trigger Contract"](../../../CONCEPTS.md#trigger-contract)).
+qualifying artifact or it does not. A listing-level judgment alone does not
+prove that every native harness will activate correctly.
 
 A workflow-state skill needs one more boundary: completion. Without an explicit
 exit, a clean review can select itself again and loop instead of handing the
-unchanged subject forward. In the simplicity-checkpoint baseline, adding one
-subjectless reuse near miss and one post-clean-result continuation near miss
-exposed two failures; the revised description passed all 22 declared trigger cases
-(`tests/checking-simplicity/log.md:54-55` (retired in #191; Git history at be1c655)).
-The matched suite proves only those queries. Native load-path evidence is still required.
+unchanged subject forward.
 
 ## When to Apply
 
 - Reviewing or auditing any agent instructions: skills, prompts, CLAUDE.md files, subagent task briefs.
 - Running the skill-review checklist in `skills/creating-portable-skills/references/review-checklist.md`.
 - Writing new instructions that reach for an adjective to describe output quality. Define it at write time rather than deferring to review.
-- Gate-probing a revised skill, where the check applies to the skill's own text, not just the skills it reviews (see the borderline example below, caught exactly this way).
+- Reviewing a skill that itself reviews instructions; apply the qualifier check to its own text too.
 - Writing a positive skill description for an expensive workflow whose methods or qualities overlap with routine requests.
 - A near miss shares the same sources or subject matter but asks for a materially smaller deliverable.
 - A review or checkpoint has a clean terminal state after which another
@@ -189,24 +166,6 @@ A probe ran the checklist's Instruction economy group against a toy instruction 
 definition and became fix-list entries (session probe record, "Skill-engineering
 adoption pass").
 
-### The borderline fix (the check catching its own host skill)
-
-Same day, a gate probe applied this lens to the adopting skill's then-current step 8 and caught "borderline" undefined. A 50/50 trigger judgment could pass by luck, with nothing forcing a re-sample.
-
-**Before.** The retained run summary says the probe caught "borderline"
-undefined. The exact prior draft was not preserved.
-
-**After, at the time of the probe.** The listing-judgment protocol required a
-plain `yes` or `no`. An initial `unsure` or hedged response counted as
-borderline and triggered two additional runs. That protocol defined the
-qualifier by an observable retry rule rather than leaving it to judgment.
-The repository's current evaluation workflow lives in
-[`SKILLS.md`](../../../SKILLS.md#evaluation-workflow).
-
-This example shows the enumerated-options fix shape and demonstrates that the
-check catches failures the delete test had already blessed (session probe
-record, "Owner review pass").
-
 ### The source-backed activation fix (quality, then deliverable)
 
 **Before.** A research skill description treated broad qualities such as
@@ -217,8 +176,8 @@ API-rate-limit lookup plausibly qualify for a full five-lens investigation.
 full research briefing, a STORM-style investigation, or an evidence review
 across multiple independent perspectives. Evidence comparison and decision
 support remain capabilities in the second sentence, not alternate trigger
-branches (`skills/storm-research/SKILL.md:3`). The directly confusable lookup
-stays in the near-miss set (`tests/storm-research/triggers.md:27` (retired in #191; Git history at be1c655)).
+branches (`skills/storm-research/SKILL.md:3`). A single cited lookup remains
+outside that deliverable boundary.
 
 This is the checkable-criterion fix shape applied to activation. It does not
 mean every skill needs the same words; it means the positive description should
@@ -238,21 +197,13 @@ inspectable evidence; formal requirements and a separate artifact are optional.
 It retains one automatic backstop for durable machinery ungrounded in the
 stated need, keeps ordinary planning and brainstorming with their adjacent
 owners, and routes an unchanged clean result onward
-(`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract tests
-both the broader entry and the adjacent-owner exclusions
-(`tests/checking-simplicity/triggers.md` (retired in #191; Git history at be1c655)).
-
-The frozen comparison moved from 20/22 to 22/22
-(`tests/checking-simplicity/log.md:54-55` (retired in #191; Git history at be1c655)).
-Native smoke checks then verify the stronger claim: the intended adjacent owner, rather than the checker, is the
-first skill whose instructions load. A later correction cannot turn an initial
-wrong load into a passing activation trace.
+(`skills/checking-simplicity/SKILL.md:3`). The description makes both entry and
+completion observable instead of relying on broad quality words.
 
 ## Related
 
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
   separate fresh-context and exact loaded-copy checks needed for trustworthy
   cross-harness skill evidence.
-- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`
-  explains why semantic trigger changes are judged outside the authoring
-  context and why their evidence claims remain bounded.
+- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
+  owns the current artifact-inspection and bounded-claim guidance.

@@ -146,6 +146,6 @@ observable:
 ## Related
 
 - [Operationalize abstract qualifiers in instruction review](operationalize-abstract-qualifiers-in-instruction-review.md)
-- [Use independent contexts for skill grading and review](independent-fresh-context-review-for-skills.md)
+- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
 - [Answer-first natural prose for owner-facing skill readouts](answer-first-natural-prose-for-owner-facing-skill-readouts.md)
 - [Stop only the work a missing fact blocks](../workflow-issues/stop-only-the-work-a-missing-fact-blocks.md)

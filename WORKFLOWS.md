@@ -217,7 +217,7 @@ Choose where to keep a lesson based on how it can prevent the mistake. A test ru
 | Decision record | An architecture decision record with the choice, alternatives, and reasons | Keeps the explanation available to anyone who knows to look |
 | Written instruction | A README line, code comment, or instructions file | Depends entirely on being read and followed |
 
-When a lesson belongs in a skill, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits the package and checks its structure and installation. It sends evaluation to `build-eval` and tuning to `ce-retune`. Use it when a recurring gap needs a portable skill rather than a one-time instruction. [`SKILLS.md`](SKILLS.md) defines this repository's evaluation and evidence rules.
+When a lesson belongs in a skill, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits the package and checks its structure and installation. It routes evaluation through `evals-start` or the appropriate targeted skill. Use it when a recurring gap needs a portable skill rather than a one-time instruction. [`SKILLS.md`](SKILLS.md) defines this repository's evaluation and evidence rules.
 
 A bug I can reproduce becomes a regression test. A convention becomes a lint rule. Lessons that fit none of the stronger options become written instructions. That is often the right choice for something we cannot automate yet.
 

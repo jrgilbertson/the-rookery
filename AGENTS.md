@@ -34,10 +34,11 @@ copy of the plan is unnecessary.
 
 ## Documented solutions and vocabulary
 
-`docs/solutions/` holds documented solutions to past problems, covering bugs,
-best practices, and workflow learnings, organized by category with YAML
-frontmatter (`module`, `tags`, `problem_type`). Relevant when implementing or
-debugging in an area a learning already covers.
+Before changing a skill package, read [SKILLS.md](SKILLS.md) for this
+repository's package, evaluation, and evidence requirements.
+
+When implementing or debugging, search `docs/solutions/` for relevant prior
+solutions and read matches.
 
 `CONCEPTS.md` holds the shared vocabulary for this project: the entities,
 named processes, and status concepts that carry a specific meaning here.

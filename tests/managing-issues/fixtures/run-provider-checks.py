@@ -108,9 +108,15 @@ def published_contract() -> None:
         "create_issue_label",
         "list_issue_labels",
         "the provider may add relationships on its own",
-        "explicitly request the created issue's relationships",
-        "Relationships the readback does not return are unknown",
+        "explicitly request the created issue's parent, direct children, and other relationships",
+        "`includeRelations` covers blocking, related, and duplicate links",
+        "does not establish parent or child coverage",
+        "Require an explicit parent value",
+        "an exhaustive direct-child collection",
+        "a separate provider-native read and all pages when needed",
+        "Missing or partial parent, direct-child, or other relationship readback is unknown",
         "the create stays `applied` and later effects are `unapplied`",
+        "An unapproved parent, child, or other relationship follows the provider-automation rule",
     ):
         require(phrase in compact_linear, f"Linear transport contract omits {phrase}")
 

@@ -13,6 +13,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Repository text checks reject concrete local home-directory paths, with
+  file-scoped exceptions for reviewed portable setup examples.
 - An automation catalog with prompts, schedules, prerequisites, and Orca setup
   instructions for session, test, CI, codebase design, and coding standards
   reviews. README, workflow, testing, product, and contribution guidance now
@@ -20,6 +22,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `repo-gardener`; recurring repository reviews now use Orca automations, and
+  approved changes use the existing Compound Engineering workflow.
 - Repository-specific GitHub issue forms and the pull request template, so
   issues and pull requests can use freeform bodies.
 - `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
@@ -30,6 +34,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Managing Issues explicitly checks a newly created Linear issue's parent,
+  direct children, and other relationships before continuing an approved batch.
 - Model routing explains cost per pass and effort gains, separates evaluation
   sources from role selection, and distinguishes calculation inputs from
   supporting evidence. Current recommendations record subscription and access

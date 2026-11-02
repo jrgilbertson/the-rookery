@@ -16,6 +16,11 @@ tags: [concepts-glossary, plain-language, vocabulary-governance, schema-compatib
 
 # Keep project glossaries concrete and contract-driven
 
+Repo Gardener was retired on 2026-11-02. Its vocabulary example below is
+historical. Recurring reviews now use [Orca automations](../../../automations/README.md);
+approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.md#build).
+The glossary guidance still applies.
+
 ## Context
 
 `CONCEPTS.md` had accumulated ordinary workflow steps, internal metaphors, and
@@ -87,9 +92,8 @@ improves comprehension without breaking interoperability.
 Keep terms with stable shared meaning.
 [Installation Parity](../../../CONCEPTS.md#installation-parity) names the
 repository's visitor-equivalent installation invariant.
-[Repository Maintenance Run](../../../CONCEPTS.md#repository-maintenance-run)
-names one unattended pass of
-[`repo-gardener`](../../../skills/repo-gardener/SKILL.md).
+The former `Repository Maintenance Run` entry named one unattended pass of
+`repo-gardener`; it was removed with that skill.
 
 Remove or demote names that merely label steps. In this cleanup, `Global Pass`,
 `Process Residual`, and `Targeted Sweep` stopped being standalone concepts. The

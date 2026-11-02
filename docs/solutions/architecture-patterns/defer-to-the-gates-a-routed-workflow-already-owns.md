@@ -27,6 +27,10 @@ workflow. Current model guidance lives in [ROUTING.md](../../../ROUTING.md);
 workflow selection lives in [WORKFLOWS.md](../../../WORKFLOWS.md). The general
 lessons still apply to maintained workflow instructions.
 
+The related Repo Gardener example is also historical: that skill was retired on
+2026-11-02. Recurring reviews now use [Orca automations](../../../automations/README.md);
+approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.md#build).
+
 ## Context
 
 `route-work` renders one card that starts work in a development framework:

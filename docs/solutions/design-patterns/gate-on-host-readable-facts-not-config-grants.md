@@ -10,6 +10,11 @@ tags: [repo-gardener, policy, permissions, simplicity]
 
 # Gate on host-readable facts, not config grants
 
+Repo Gardener was retired on 2026-11-02. Its policy example below is historical.
+Recurring reviews now use [Orca automations](../../../automations/README.md);
+approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.md#build).
+The general lesson still applies to maintained workflows.
+
 ## Problem
 
 A durable policy file grew optional keys that restated facts the host could

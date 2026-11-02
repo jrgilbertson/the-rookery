@@ -29,7 +29,10 @@ tags: [skills, helper-scripts, falsifiability-contract, silent-pass, fixture-tes
 # Ship bundled skill helpers with an executable falsifiability contract
 
 The readiness skills and their dedicated tests were retired on 2026-10-13.
-Their examples and source-path citations below describe the historical workflow.
+Repo Gardener was retired on 2026-11-02. Their examples and source-path citations
+below describe the historical workflow. Recurring reviews now use
+[Orca automations](../../../automations/README.md); approved changes follow the
+[Compound Engineering workflow](../../../WORKFLOWS.md#build).
 Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 

@@ -48,6 +48,26 @@ MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
     re.MULTILINE,
 )
+HOME_PATH = re.compile(
+    r"(?<![\w./\\-])(?:(?i:file://)?/(?:Users|home)/[\w.@-]+|"
+    r"(?i:[A-Z]:[/\\]+Users[/\\]+)[\w.@-]+|~/[\w.@-]+)"
+    r"(?:[/\\][^\s<>\"'`|,;:!?()\[\]{}]*)?"
+)
+# Reviewed portable setup examples, scoped to their owning file and exact path.
+# Split the home prefix so the allowlist itself contains no local-path literals.
+HOME_PATH_EXAMPLES = {
+    "WORKFLOWS.md": {"~" + "/.codex/AGENTS.md", "~" + "/.claude/CLAUDE.md"},
+    "scripts/sync-global-agents.sh": {"~" + "/.codex/AGENTS.md"},
+    "docs/solutions/best-practices/blind-cross-model-grading-through-native-schema-flags.md": {
+        "~" + "/.grok/auth.json",
+    },
+    "docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md": {
+        "~" + "/.claude/skills/", "~" + "/.agents/skills/",
+    },
+    "skills/personal-chief-of-staff/references/source-bindings.md": {
+        "~" + "/.config/the-rookery/personal-chief-of-staff/sources.json",
+    },
+}
 
 
 def candidate_files() -> list[Path]:
@@ -106,11 +126,15 @@ def readable_text(path: Path) -> str | None:
 
 def check_text(path: Path, text: str, errors: list[str]) -> None:
     relative = path.relative_to(ROOT)
+    home_path_examples = HOME_PATH_EXAMPLES.get(relative.as_posix(), ())
     if text and not text.endswith("\n"):
         errors.append(f"{relative}: missing final newline")
     for number, line in enumerate(text.splitlines(), start=1):
         if line.endswith((" ", "\t")):
             errors.append(f"{relative}:{number}: trailing whitespace")
+        for match in HOME_PATH.finditer(line):
+            if match.group() not in home_path_examples:
+                errors.append(f"{relative}:{number}: local home-directory path is not allowed")
 
 
 def reject_json_constant(value: str) -> None:

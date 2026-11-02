@@ -19,6 +19,11 @@ tags:
 
 # Share query-scoped inventories with truthful coverage
 
+Repo Gardener was retired on 2026-11-02. Its examples below are historical.
+Recurring reviews now use [Orca automations](../../../automations/README.md);
+approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.md#build).
+The query and coverage guidance still applies to maintained workflows.
+
 ## Historical context
 
 A Corvly dogfood run stopped its open-issue census at four pages of 100 with
@@ -34,15 +39,15 @@ known. Raising the cap without owning the list once would also let three
 issue-facing lanes each page Linear or GitHub to completion.
 
 That repair required whole-population completion and fixed body-read floors.
-The current workflow replaces those obligations with bounded, filtered
+A later gardener revision replaced those obligations with bounded, filtered
 discovery. The reusable lesson is to share source reads and describe their
 coverage accurately, not to enumerate every backlog before useful work.
 
 ## Reusable guidance
 
-Repo Gardener no longer runs censuses or Gardening Tracker record reads;
-its Sense section reads each source with what the host can reach and
-names gaps.
+Before retirement, Repo Gardener no longer ran censuses or Gardening Tracker
+record reads; its Sense section read each source with what the host could reach
+and named gaps.
 The lesson below applies to any skill that shares paginated provider
 reads.
 A Census describes one stated query and window. Record its filters, returned
@@ -50,10 +55,10 @@ counts, pagination or search limits, and inspected coverage. Reuse results
 and body reads across areas when queries overlap.
 
 Start discovery with the provider's supported ready or open filters and the
-narrowest query that serves the decision. Repo Gardener, for example, reads
+narrowest query that serves the decision. Repo Gardener, for example, read
 ready-state issues through the managing-issues config, else
-`gh issue list --state open --limit 500`, and reports that limit when the
-returned count reaches it. Triage uses its own relevant query.
+`gh issue list --state open --limit 500`, and reported that limit when the
+returned count reached it. Triage used its own relevant query.
 
 Fetch further pages when they serve that decision, and state any remaining
 coverage limit. A completed filtered query proves only its own population and
@@ -78,6 +83,6 @@ claiming query completion or backlog exhaustion.
 ## Related
 
 - Historical motivation: pull request 69 on `jrgilbertson/the-rookery`
-- [Repo Gardener](../../../skills/repo-gardener/SKILL.md)
+- [Current Orca automations](../../../automations/README.md)
 - [Stop only the work a missing fact blocks](stop-only-the-work-a-missing-fact-blocks.md)
 - [Cross-harness dogfood testing](../best-practices/cross-harness-dogfood-testing.md)

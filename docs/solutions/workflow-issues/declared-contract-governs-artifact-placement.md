@@ -16,6 +16,11 @@ tags:
 
 # The repo's declared contract governs artifact placement, not its current visibility
 
+Repo Gardener was retired on 2026-11-02. Its examples below are historical.
+Recurring reviews now use [Orca automations](../../../automations/README.md);
+approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.md#build).
+The repository's artifact-placement contract still applies.
+
 ## Context
 
 During review of the repo-gardener sensing-floors change, a recall-reference
@@ -82,5 +87,5 @@ history.
 ## Related
 
 - [Reuse the shipping pipeline instead of a managed-run protocol](../architecture-patterns/reuse-the-shipping-pipeline-instead-of-a-managed-run-protocol.md)
-  — Repo Gardener's current report goes only to its `report_issue` comment or
-  the run's final output, never to repository source.
+  — Repo Gardener's historical report went only to its `report_issue` comment
+  or the run's final output, never to repository source.

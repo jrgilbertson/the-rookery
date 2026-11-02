@@ -17,7 +17,10 @@ supersedes: [make-skill-safe-stops-local-and-observable.md]
 # Stop only the work a missing fact blocks
 
 The readiness skills and their dedicated tests were retired on 2026-10-13.
-Their examples and source-path citations below describe the historical workflow.
+Repo Gardener was retired on 2026-11-02. Their examples and source-path citations
+below describe the historical workflow. Recurring reviews now use
+[Orca automations](../../../automations/README.md); approved changes follow the
+[Compound Engineering workflow](../../../WORKFLOWS.md#build).
 Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 
@@ -59,7 +62,7 @@ A named gap in prose keeps progress and tells the reader what to fix.
 
 ## Examples
 
-`skills/repo-gardener/SKILL.md` states the rule directly:
+The historical `skills/repo-gardener/SKILL.md` stated the rule directly:
 
 - Lines 94 to 95: "Do not stop the whole pass because one source is
   unavailable. Name the gap and continue." Each of the five areas still gets
@@ -69,7 +72,7 @@ A named gap in prose keeps progress and tells the reader what to fix.
 - Lines 21 to 22: "Treat a run that authors nothing but reports as a complete
   run."
 
-The readiness skills follow the same rule. In
+The readiness skills followed the same rule. In
 `skills/checking-merge-readiness/SKILL.md` lines 110 to 111, a failed read of
 another tracker "is a named gap that does not cap." In
 `skills/checking-pr-readiness/SKILL.md` lines 165 to 168, a missing companion

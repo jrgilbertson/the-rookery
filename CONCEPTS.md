@@ -181,48 +181,6 @@ An evaluation result that was not collected or cannot be trusted, kept distinct
 from both pass and fail. An Unmeasured result never counts toward a pass rate,
 and an earlier run is not reclassified later to fill the gap.
 
-## Repository gardening
-
-### Repository Maintenance Run
-
-One unattended `repo-gardener` pass that senses one repository, dispatches
-Executors, and reports. CI remains the merge gate. A report with no
-Executor is a complete run.
-
-### Coordinator
-
-The agent of a Repository Maintenance Run that senses, decides, assigns
-Executors, and produces the morning summary. It does not implement, push, or
-merge.
-
-*Avoid:* Orchestrator, parent, gardener parent
-
-A run has one Coordinator. The overnight pattern is Coordinator + Executors.
-The Coordinator selects a non-overlapping set of pull-request-sized units, then starts
-Executors in parallel up to that run's ceiling.
-
-### Executor
-
-An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. It owns that work through an unmerged pull request it authors.
-When the work is an issue, that issue is an Implementation Leaf.
-
-*Avoid:* Worker, child, gardener child
-
-An Executor may dispatch Scouts for evidence. It verifies its unit, publishes
-through Compound Engineering, and runs babysit when publication has not already
-handed off monitoring. It reports the PR URL, CI state, babysit result, and
-unresolved decisions to the Coordinator. A pipeline result does not prove that
-the interactive monitoring period completed or that the PR merged. Scouts and
-Reviewers do not own a pull request. One Executor ships at most one pull
-request. Merge remains a later human step.
-
-### Gardening Tracker
-
-The optional GitHub issue (`report_issue`) that receives one plain report
-comment per Repository Maintenance Run. It holds no managed records or
-markers. Native pull requests remain authoritative for authored work.
-
 ## Research synthesis
 
 ### STORM Research
@@ -272,13 +230,3 @@ harness shows when deciding whether to load the skill. Should-trigger
 phrasings must load it, and near-misses must not. A listing proxy judges the
 name and description alone. Native activation observes the harness's load
 decision, with training, validation, and fresh queries kept distinct.
-
-## Flagged ambiguities
-
-- "Parent" and "child" in gardener talk meant Coordinator and Executor. Those
-  words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles. `ROUTING.md` describes Planner, Executor,
-  Reviewer, and Design/taste as model profiles, not a separate routing process.
-- A session coordinating ordinary work may also implement it; a gardener
-  Coordinator never implements. Shared role names do not imply identical
-  responsibilities across workflows.

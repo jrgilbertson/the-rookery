@@ -4,7 +4,7 @@ Find user actions that shipped without analytics tracking, and tracked events th
 
 - **Cadence:** Monday at 06:00.
 - **Timezone:** America/Chicago.
-- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill installed for the agent, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. Issue creation reads the [`managing-issues`](../skills/managing-issues/SKILL.md) configuration file for the team, labels, and readiness.
+- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill installed for the agent, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. Issue creation reads the [`managing-issues`](../skills/managing-issues/SKILL.md) configuration file for the team, labels, and readiness, but skips that skill's per-batch approval: the job runs unattended and files issues on its own. Run it once read-only and review what it would file before enabling it.
 
 Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only private names and paths swapped out.
 

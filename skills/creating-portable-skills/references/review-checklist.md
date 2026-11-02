@@ -40,6 +40,14 @@ resources have a read-trigger and resolve inside the package. Long references
 have headings or another way to find the needed material. Completion is visible
 in an artifact or observed state, not only an executor's declaration.
 
+For outputs that help someone make a decision, follow the Minto Pyramid
+Principle: lead with the conclusion and recommended action, then group the
+distinct reasons that collectively justify it, with supporting evidence beside
+each claim. State relevant constraints and the next action before any required
+receipt metadata. Keep straightforward outcomes brief; expand when exceptions
+or recovery details affect the decision. Apply this as presentation guidance,
+preserving existing exact formats and authority boundaries.
+
 ## Instruction economy
 
 - No-ops: every instruction protects a constraint, resolves an observed failure,

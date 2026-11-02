@@ -22,11 +22,15 @@ explains these tradeoffs.
 
 ## Use the maintained workflow
 
-Use the evals plugin's `evals-start` skill to choose the next step, then follow
-the targeted skill it selects. If the evaluation job is already known, load
-that targeted skill directly. Let the selected workflow choose current tools
+Use the [evals plugin](https://github.com/ai-evals-course/evals-skills)'s
+[`evals-start`](https://github.com/ai-evals-course/evals-skills/blob/main/skills/evals-start/SKILL.md)
+skill to choose the next step, then follow the targeted skill it selects. If
+the evaluation job is already known, load that targeted skill directly. Let the selected workflow choose current tools
 and a runner when needed; neither a specific vendor nor a runner is required
 by this package. Reuse relevant existing evidence and checks.
+
+Install the skills using the upstream README's installation instructions, or
+read `evals-start` and the selected skill directly from that source repository.
 
 If the needed skill or guidance is unavailable, report the limitation and
 leave the affected measurement unverified. Package authoring and structural

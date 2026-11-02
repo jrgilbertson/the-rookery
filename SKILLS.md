@@ -43,10 +43,11 @@ tasks. Validate triggering through the evaluation workflow below.
 
 ## Evaluation workflow
 
-Use the evals plugin's `evals-start` skill to choose the next evaluation step,
-then follow the targeted skill it selects. When the specific evaluation job is
-already known, use that targeted skill directly. Choose a runner for the actual
-need through that workflow; this repository does not prescribe one.
+Use the [evals plugin](https://github.com/ai-evals-course/evals-skills)'s
+`evals-start` skill to choose the next evaluation step, then follow the targeted
+skill it selects. When the specific evaluation job is already known, use that
+targeted skill directly. Choose a runner for the actual need through that
+workflow; this repository does not prescribe one.
 
 Start with error analysis of observed system behavior and fix clear instruction
 gaps first. A new skill does not require a corpus, grader, fixed case count, or

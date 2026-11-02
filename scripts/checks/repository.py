@@ -49,7 +49,7 @@ MARKDOWN_REFERENCE = re.compile(
     re.MULTILINE,
 )
 HOME_PATH = re.compile(
-    r"(?<![\w./\\-])(?:(?i:file://)?/(?:Users|home)/[\w.@-]+|"
+    r"(?<![\w./\\-])(?:(?i:file://(?:localhost)?)?/(?:Users|home)/[\w.@-]+|"
     r"(?i:[A-Z]:[/\\]+Users[/\\]+)[\w.@-]+|~/[\w.@-]+)"
     r"(?:[/\\][^\s<>\"'`|,;:!?()\[\]{}]*)?"
 )

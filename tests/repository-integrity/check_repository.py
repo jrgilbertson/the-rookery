@@ -57,6 +57,7 @@ def check_home_paths(repository: Path) -> None:
     document.write_text(
         "/usr/local/bin\n/opt/homebrew/bin\nrelative/home/project\n"
         "https://example.invalid/home/project\n"
+        "http://localhost/home/project\nhttps://localhost/Users/project\n"
         "/Users/" + "<user>/project\n/home/" + "{user}/project\n"
         "/Users/" + "$USER/project\n/home/" + "${USER}/project\n"
         "C:" + "\\Users\\%USERNAME%\\project\n"
@@ -76,6 +77,7 @@ def check_home_paths(repository: Path) -> None:
         "c:" + "\\uSeRs\\fixture-account\\project",
         "C:" + "\\\\Users\\\\fixture-account\\\\project",
         "file://" + macos, "file://" + linux,
+        "file://localhost" + macos, "file://localhost" + linux,
         "C:" + "/users/fixture-account/project",
         "c:" + "/uSeRs/fixture-account/project",
         approved,

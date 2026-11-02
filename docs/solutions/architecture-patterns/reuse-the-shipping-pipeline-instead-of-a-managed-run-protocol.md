@@ -21,7 +21,10 @@ tags:
 # Reuse the shipping pipeline instead of a managed-run protocol
 
 The readiness skills and their dedicated tests were retired on 2026-10-13.
-Their examples and source-path citations below describe the historical workflow.
+Repo Gardener was retired on 2026-11-02. Their examples and source-path citations
+below describe the historical workflow. Recurring reviews now use
+[Orca automations](../../../automations/README.md); approved changes follow the
+[Compound Engineering workflow](../../../WORKFLOWS.md#build).
 Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 
@@ -45,7 +48,7 @@ every unit. Weeks of scheduled nights produced no work and no clear reason.
 ## Guidance
 
 Treat pull requests and the morning report as the product, and let the
-installed skills own the gates they already own. The rewritten skill is one
+installed skills own the gates they already own. The rewritten skill was one
 file of about 1,800 words plus a policy template:
 
 - The policy file carries only what the host cannot know on its own:
@@ -106,4 +109,4 @@ it is the owner's morning work at merge readiness.
 
 - [Keep qualitative agent reviews qualitative](../best-practices/keep-qualitative-agent-reviews-qualitative.md)
 - [Gate on host-readable facts, not config grants](../design-patterns/gate-on-host-readable-facts-not-config-grants.md)
-- [Repo Gardener](../../../skills/repo-gardener/SKILL.md)
+- [Current Orca automations](../../../automations/README.md)

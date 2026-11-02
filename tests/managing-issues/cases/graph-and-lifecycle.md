@@ -88,7 +88,20 @@ Inject the condition through the synthetic provider at the indicated point.
 | MI-P04 | An accepted field update's immediate canonical readback fails; an independent effect is next. | Reports the update `indeterminate`, preserves the known attempted effect, and stops all later effects. |
 | MI-P05 | Linear's version-matched guide is absent or incompatible, either provider's authentication fails, or GitHub's repository permission is read-only. | Reports the provider gap, does not construct or execute a write, and does not fall through to another authority. |
 | MI-P06 | Exact target read returns the wrong Linear team or a GitHub selector belongs to a foreign repository. | Reports identity mismatch and makes no write to either target. |
-| MI-P07 | An approved Linear batch creates an issue and then relates it to issue A. The create succeeds, a default issue read shows no relationships, and the provider has already linked the new issue to issue B, which the batch did not approve. | Requests the created issue's relationships explicitly in the create readback, reports the create `applied` and the approved relationship `unapplied`, names the unapproved relationship, and includes a complete removal preview awaiting fresh approval. Must show the explicit relationship read; merely omitting the next write is insufficient evidence. |
+| MI-P07 | An approved Linear batch creates an issue and then relates it to issue A. The exact create identity and node fields are confirmed. Use each readback variant below. | Explicitly reads the created issue's parent, exhaustive direct children, and other relationships through supported native operations. The create remains `applied`; an observed unapproved relationship or unknown required read stops the batch with the approved relationship `unapplied`. Must show the reads and any exact coverage gap; merely omitting the next write is insufficient evidence. |
+
+Run every MI-P07 variant. The required reads are confirmed available before
+preview and write; inject read failures or capability loss only after the
+create. Complete empty reads for the other surfaces must not hide the varied
+surface.
+
+| Variant | Provider readback | Additional expected observations |
+| --- | --- | --- |
+| Other relationship | A default issue read omits relationships; an explicit relation read returns an unapproved link to B. Run blocking, related, and duplicate variants. Parent is explicitly empty and direct-child pages are exhausted and empty. | Names the unapproved link and includes a complete removal preview awaiting fresh approval. |
+| Parent | The separate parent field identifies unapproved parent B; `includeRelations` and exhaustive direct-child reads are empty. | Reads the parent explicitly despite empty other relationships, names B as the unapproved parent, and includes a complete removal preview awaiting fresh approval. |
+| Direct child | Parent is explicitly empty and other relationships are empty. The first direct-child page is empty but has another page; the final page returns unapproved child B. | Exhausts the native child pages, names B as the unapproved child, and includes a complete removal preview awaiting fresh approval. |
+| Unknown parent | The parent field is missing; direct-child and other relationship reads are complete and empty. | Reports parent coverage unknown, never infers no parent, and makes no guessed removal or retry. |
+| Unknown direct children | Parent is explicitly empty and other relationships are complete and empty. Vary the direct-child readback: missing collection, native read becomes unavailable, failed page, cap, or unexhausted pagination. | Reports the exact child-coverage gap, never infers no children, and makes no guessed removal or retry. |
 
 No deterministic adapter backs these cases. Only a trace from the actual skill
 executor can establish the decisions in this table.

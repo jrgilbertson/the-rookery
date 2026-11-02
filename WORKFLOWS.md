@@ -15,7 +15,7 @@ Each section explains what I do, which tools I use, and when I'm ready to move o
 | [Design](#design) | Write a design brief and shared design rules | `impeccable shape`, `impeccable audit` and `critique`, `DESIGN.md` | The brief exists and the visual choices are written down |
 | [Build](#build) | Make and check one small part at a time | `ce-work`, `lfg`, Orca worktrees | Required CI checks pass, the work stays within its limits, and the design is followed |
 | [Ship](#ship) | Review and verify the change, then merge it | `ce-simplify-code`, `ce-code-review`, `ce-commit-push-pr`, `ce-babysit-pr` | A human has read the work and its explanation makes sense |
-| [Maintain](#maintain) | Keep the repo useful and prevent repeated mistakes | `repo-gardener`, `ce-compound`, `impeccable extract` | The lesson is saved in the strongest form that can enforce it |
+| [Maintain](#maintain) | Keep the repo useful and prevent repeated mistakes | Orca automations, `ce-compound`, `impeccable extract` | The lesson is saved in the strongest form that can enforce it |
 | [Learn](#learn) | Connect new knowledge to existing notes and name the gaps | `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Notes are linked and unanswered questions are named |
 
 Before starting work, I choose the available tools, who owns the result, and which models and effort fit the task. [Model and effort guidance](ROUTING.md) covers planning, execution, review, and design. The sections below explain where I start.
@@ -174,7 +174,7 @@ The shipping steps run in this order:
 
 I can also ask the agent to explain the change or a concept it introduced. Compound Engineering handles publication and monitoring without a separate local readiness check. Interactive publication normally hands off to babysit. For an orchestrated ordinary `mode:pipeline` publication, the caller must start babysit explicitly. Publishing a stack can hand off stack-aware monitoring; the caller keeps that watcher rather than starting another.
 
-A successful bounded pipeline run and an interactive report that the PR looks ready to merge describe only what they checked. Neither means the PR was merged. I merge ordinary PRs myself. For a confirmed managed stack, an explicit `posture:stack-land` grant lets babysit use the native stack route and confirm it landed. Repo Gardener never gets that grant. Afterward, I write the changelog and release notes from the merged PRs.
+A successful bounded pipeline run and an interactive report that the PR looks ready to merge describe only what they checked. Neither means the PR was merged. I merge ordinary PRs myself. For a confirmed managed stack, an explicit `posture:stack-land` grant lets babysit use the native stack route and confirm it landed. Afterward, I write the changelog and release notes from the merged PRs.
 
 CI blocks merge until the project's selected requirements pass. [Testing with agents](TESTING.md#deliver-the-verified-work) explains how to divide broader checks between local work and release. GitHub can enforce a PR for every change, resolved review comments before merge, and no direct pushes to main, including by administrators. Each of those protections must be turned on.
 
@@ -200,8 +200,6 @@ Other [automations](automations/README.md) review tests, CI, codebase design,
 and coding standards. Their prompts and schedules live separately from skills:
 a scheduled prompt can invoke an existing skill or describe a review directly.
 I copy them into Orca and choose the target repository, agent, and schedule there.
-
-[`repo-gardener`](skills/repo-gardener/SKILL.md) checks one repository, sends Executors to ship one reviewable PR each through the installed Compound Engineering shipping skills, and posts one morning report. Run it on a schedule by name. A human still merges.
 
 Impeccable handles design maintenance. `impeccable extract` finds patterns used three or more times for the same purpose and turns them into shared design values and reusable building blocks. `impeccable document` rebuilds the design documentation from what shipped, so the tools can read the design rules rather than guess.
 

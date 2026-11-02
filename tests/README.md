@@ -27,6 +27,10 @@ against the version 3 shape in
 The repository-integrity tests also exercise malformed packages and unsafe
 paths.
 
+Repository text checks reject concrete local home-directory paths. Generic
+placeholders and exact, file-scoped portable setup examples remain allowed;
+context-dependent privacy review is still necessary.
+
 Each fixture runner creates disposable state and requires no model calls.
 Retain synthetic fixture inputs that these tests consume. Add a runner to the
 explicit roster when adding a deterministic helper test; discovery checks that

@@ -16,6 +16,10 @@ tags: [skills, yaml, pyyaml, fail-closed, durable-file, parser-unification]
 
 # Parse one durable file with one parser
 
+Repo Gardener was retired on 2026-11-02. Its examples below are historical.
+Recurring reviews now use [Orca automations](../../../automations/README.md);
+approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.md#build).
+
 ## Context
 
 The gardener scripts described here were later removed; the learning still

@@ -35,7 +35,10 @@ tags:
 # Do not split human and agent skill products
 
 The readiness skills and their dedicated tests were retired on 2026-10-13.
-Their examples and source-path citations below describe the historical workflow.
+Repo Gardener was retired on 2026-11-02. Their examples and source-path citations
+below describe the historical workflow. Recurring reviews now use
+[Orca automations](../../../automations/README.md); approved changes follow the
+[Compound Engineering workflow](../../../WORKFLOWS.md#build).
 Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 
@@ -165,5 +168,5 @@ back into the gate.
 - [Answer-first natural prose for owner-facing skill readouts](../best-practices/answer-first-natural-prose-for-owner-facing-skill-readouts.md) — pyramid print shape, not the end-of-run API
 - [Put the test seam in the environment, not in the shipped skill](keep-the-test-seam-out-of-the-shipped-skill.md) — numbered option 1 is a later write, not a second product
 - Skills: `skills/checking-pr-readiness/SKILL.md`, `skills/checking-merge-readiness/SKILL.md`
-- Caller adapter owner: `skills/repo-gardener/SKILL.md`
+- Historical caller adapter: `skills/repo-gardener/SKILL.md` (Git history)
 - Related issue: [keep helper skills from presenting owner menus in unattended Workers](https://github.com/jrgilbertson/the-rookery/issues/88)

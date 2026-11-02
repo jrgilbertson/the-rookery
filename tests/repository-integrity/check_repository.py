@@ -46,6 +46,78 @@ def require(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
+def check_home_paths(repository: Path) -> None:
+    document = repository / "home-path.txt"
+    # Construct synthetic paths so the detector's own test source needs no bypass.
+    macos = "/Users/" + "fixture-account/project"
+    linux = "/home/" + "fixture-account/project"
+    windows = "C:" + "\\Users\\fixture-account\\project"
+    home_relative = "~" + "/fixture-project"
+    approved = "~" + "/.codex/AGENTS.md"
+    document.write_text(
+        "/usr/local/bin\n/opt/homebrew/bin\nrelative/home/project\n"
+        "https://example.invalid/home/project\n"
+        "http://localhost/home/project\nhttps://localhost/Users/project\n"
+        "/Users/" + "<user>/project\n/home/" + "{user}/project\n"
+        "/Users/" + "$USER/project\n/home/" + "${USER}/project\n"
+        "C:" + "\\Users\\%USERNAME%\\project\n"
+        "C:" + "\\Users\\<user>\\project\n"
+        "c:" + "/uSeRs/<user>/project\n"
+        "file:///Users/" + "<user>/project\n"
+        "file:///home/" + "${USER}/project\n"
+        "~" + "/<project>\n~" + "/$PROJECT\n",
+        encoding="utf-8",
+    )
+    generic = run_checker(repository)
+    require(generic.returncode == 0, f"generic path examples failed: {generic.stderr}")
+
+    for contents in (
+        macos, linux, windows, home_relative,
+        "/Users/" + "example", "/home/" + "example",
+        "c:" + "\\uSeRs\\fixture-account\\project",
+        "C:" + "\\\\Users\\\\fixture-account\\\\project",
+        "file://" + macos, "file://" + linux,
+        "file://localhost" + macos, "file://localhost" + linux,
+        "C:" + "/users/fixture-account/project",
+        "c:" + "/uSeRs/fixture-account/project",
+        approved,
+    ):
+        document.write_text("ordinary text\n" + contents + "\n", encoding="utf-8")
+        result = run_checker(repository)
+        require(
+            result.returncode == 1
+            and "home-path.txt:2: local home-directory path is not allowed" in result.stderr,
+            f"repository checker accepted local home path {contents!r}: {result.stderr}",
+        )
+    document.unlink()
+
+    workflow = repository / "WORKFLOWS.md"
+    workflow.write_text(f"Shared instructions: `{approved}`.\n", encoding="utf-8")
+    reviewed = run_checker(repository)
+    require(reviewed.returncode == 0, f"reviewed setup example failed: {reviewed.stderr}")
+    for unreviewed in (home_relative, approved + ".private"):
+        workflow.write_text(f"`{approved}` and `{unreviewed}`\n", encoding="utf-8")
+        result = run_checker(repository)
+        require(
+            result.returncode == 1
+            and "WORKFLOWS.md:1: local home-directory path is not allowed" in result.stderr,
+            f"reviewed example exempted another path: {result.stderr}",
+        )
+    workflow.unlink()
+
+    test_source = repository / "tests/repository-integrity/check_repository.py"
+    test_source.parent.mkdir(parents=True)
+    test_source.write_text(f'path = "{macos}"\n', encoding="utf-8")
+    result = run_checker(repository)
+    require(
+        result.returncode == 1
+        and "tests/repository-integrity/check_repository.py:1: local home-directory path is not allowed"
+        in result.stderr,
+        f"detector test source was exempted from home-path checking: {result.stderr}",
+    )
+    test_source.unlink()
+
+
 def check_link_scanning(repository: Path) -> None:
     document = repository / "syntax.markdown"
     document.write_text(
@@ -210,6 +282,7 @@ def main() -> int:
         )
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
+        check_home_paths(repository)
         check_link_scanning(repository)
 
         invalid_text = repository / "invalid-text.txt"

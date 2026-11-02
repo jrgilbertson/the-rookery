@@ -138,12 +138,19 @@ may add relationships on its own. Supply a unique write identity when the
 transport supports one. Accept the response only when it returns an exact issue
 identity tied to that attempt; read it back and require exact workspace, team,
 identifier, and URL matchback. In that readback, explicitly request the created
-issue's relationships; a default issue read may omit them. Relationships the
-readback does not return are unknown, as for any missing requested section:
-the create stays `applied` and later effects are `unapplied`; stop before the
-next effect and report the relationships as unconfirmed. An unapproved
-relationship follows the provider-automation rule in `SKILL.md`. Managing
-Issues applies every effect once:
+issue's parent, direct children, and other relationships; a default issue read
+may omit them. For MCP, `includeRelations` covers blocking, related, and
+duplicate links; it does not establish parent or child coverage. Require an
+explicit parent value (including an explicit empty value when absent) and an
+exhaustive direct-child collection, using a separate provider-native read and
+all pages when needed. Use only the selected transport's authoritative schema
+or guide for these reads; do not assume one relation flag covers hierarchy.
+Missing or partial parent, direct-child, or other relationship readback is
+unknown, as for any missing requested section: the create stays `applied` and
+later effects are `unapplied`; stop before the next effect and report the exact
+unconfirmed surface. An unapproved parent, child, or other relationship follows
+the provider-automation rule in `SKILL.md`. Managing Issues applies every effect
+once:
 even if an Orca guide or MCP client offers a retry for an unconfirmed write, an
 unconfirmed Managing Issues create is `indeterminate` and is never retried or
 similarity-matched.

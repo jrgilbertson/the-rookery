@@ -8,6 +8,7 @@ repository.
 |---|---|---|---|
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 05:00 | America/Chicago |
 | [Sessions audit (remote)](sessions-audit.md) | Review recent AI sessions on the remote host | Daily at 03:00 | America/Chicago |
+| [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and file issues | Monday at 06:00 | America/Chicago |
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 23:00 | America/Chicago |
 | [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
 | [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 05:00 | America/Chicago |

@@ -84,6 +84,19 @@ services, unfinished ownership, and human holds. Name the remaining obligation
 when cleanup must wait, and continue independent work. Do not turn uncertainty
 into forced removal or add a separate cleanup system.
 
+## Assignment briefs
+
+Build each brief from the project's own instructions and the installed guides.
+Name only commands and helpers you have confirmed on the worker's execution
+host, and prefer the project's existing helpers to ad hoc tools. Carry the
+operator's current decisions from their owning record, never a proposal the
+operator declined.
+
+Tell each worker to wait for long-running checks inside its own turn, using a
+bounded foreground wait, and to end a turn only with a question or a completion
+report. A turn that ends while a background watcher still runs reads as a
+stopped worker and wakes the Coordinator for nothing.
+
 ## Recoverable working context
 
 Reuse canonical issues, plans, worktrees, and current native records. Preserve
@@ -96,7 +109,9 @@ another checkout or machine. No fixed directory bundle or universal state
 schema is required.
 
 Account-specific conversation memory must not be the only way to discover
-unfinished work. Report existing backup coverage and its gaps without promising
+unfinished work. When the operator confirms a plan or answers a decision round,
+record the decisions in the canonical tracker before acting on them; a usage
+limit can end the session without warning. Report existing backup coverage and its gaps without promising
 host-loss restoration. Keep private identities, transcripts, and credentials
 out of public source; preserve lasting outcomes in their owning records and
 let temporary context expire when no longer useful.

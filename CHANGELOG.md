@@ -38,6 +38,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` assignment briefs name only commands confirmed on the
+  worker's host, carry current decisions rather than declined proposals, and
+  ask workers to wait for long-running checks inside their own turn. Operator
+  decisions go to the canonical tracker before the Coordinator acts on them.
+- Global agent guidance tells a delegating agent to rely on a delegate's watch
+  and to report a merge-queue enqueue instead of polling it. The paid-call
+  exception for live browser testing moves to the repositories that grant it;
+  the rule to mock models in automated tests stays global.
 - Evaluation policy allows targeted synthetic discovery, precise-constraint
   checks, and useful regression coverage while keeping evaluator investment
   proportional to observed failures and cost. New skill delivery does not

@@ -69,24 +69,28 @@ canonical public version.
 
 ## Layout
 
-One folder per automation slug:
+One folder per automation slug. When one automation runs against more than one
+repository, give each target its own slug, such as `test-audit-<repo>`, so
+projects never share decisions or runs.
 
-- `<slug>/runs/YYYY-MM-DD-<host>.md`: one file per run, with the window
+- `<slug>/runs/YYYY-MM-DD-HHMM-<host>.md`: one file per run, with the window
   reviewed, the findings as presented (with numbers and short stable titles),
-  and what the run changed. `<host>` is `hostname -s`.
+  and what the run changed. `<host>` is `hostname -s`, and the time keeps a
+  retry from replacing an earlier report.
 - `<slug>/decisions.md`: append-only, one entry per answered finding, with the
   date, run file, finding title, decision (`accepted`, `declined`, `deferred`,
   or `already-fixed`), the owner's words, and the issue or PR that carries it.
 
 ## Run contract
 
-1. Start with `git -C ~/.local/state/automation-runs pull --rebase`, cloning
-   the repository first if it is missing. Read `<slug>/decisions.md` and the
+1. Start with `git -C ~/.local/state/automation-runs pull --rebase --autostash`,
+   cloning the repository first if it is missing. Read `<slug>/decisions.md` and the
    three newest runs from any host.
 2. Report a declined finding only with materially new evidence, labeled as
    previously declined. Mark repeats and say whether the fix held.
-3. At the end, write the run file, commit, `git pull --rebase`, and push. On a
-   push race, rebase and push again.
+3. At the end, write the run file, commit, `git pull --rebase --autostash`,
+   and push. Another writer may share the checkout, so commit only your own
+   files. On a push race, rebase and push again.
 4. When the owner answers, append the answers to `decisions.md`, then commit
    and push before acting on them.
 ```

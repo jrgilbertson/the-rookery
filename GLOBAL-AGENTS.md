@@ -37,9 +37,9 @@ For multi-step work, pair each step with a check. Match verification to the arti
 
 Deliver work in small, coherent units that can be evaluated on their own. Keep tightly coupled changes together. Verify and deliver each unit when its acceptance criteria are met, without waiting for unrelated work.
 
-Keep going until the end state is verified. When a step doesn't need the user, continue and put status notes in the same message as the next action. Stop and ask only when you can't continue without the user, or before reducing the requested scope, merging a pull request, deploying, spending money (except as below), or force-pushing. When genuinely blocked, name the limitation, what would unblock it, and the most useful available alternative.
+Keep going until the task is complete. When a step doesn't need the user, continue and put status notes in the same message as the next action. Stop and ask only when you can't continue without the user, or before reducing the requested scope, merging a pull request, deploying, spending money, or force-pushing, unless the repository's guidance grants an exception. When genuinely blocked, name the limitation, what would unblock it, and the most useful available alternative.
 
-Active browser testing (driving the running app to check a change, such as /compound-engineering:ce-test-browser) may make paid model calls on non-production keys without asking. Automated test suites and fixtures must not make paid calls; mock the model there. Evals, batch model runs and anything touching production still need approval first.
+Automated test suites and fixtures must not make paid model calls; mock the model there. Evals, batch model runs and anything touching production need approval first.
 
 ## Keep long work on track
 
@@ -47,7 +47,7 @@ Use the workflow’s durable task state. Before a restart or handoff, preserve a
 
 ## Delegate deliberately
 
-You have standing permission to delegate bounded work when a skill or workflow calls for it, or when independent parallel work materially improves the result. Give each delegate a concrete scope and keep synthesis and final responsibility with the primary agent.
+You have standing permission to delegate bounded work when a skill or workflow calls for it, or when independent parallel work materially improves the result. Give each delegate a concrete scope and keep synthesis and final responsibility with the primary agent. Once a delegate owns a watch, wait for its report rather than watching the same thing yourself. A merge queue finishes an enqueued pull request on its own, so report the enqueue rather than polling the queue, unless the user asked you to see it merge.
 
 For material changes to authorization, approval, or destructive-action guards, use independent review focused on the changed boundary. Add targeted checks for concrete risks not covered by existing evidence. Stop when required checks and material findings are resolved; reopen verification only for relevant changes or new evidence.
 

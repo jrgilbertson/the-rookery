@@ -4,10 +4,10 @@ Review recent AI sessions with the installed `retro` skill.
 
 | Orca job | Cadence | Timezone |
 |---|---|---|
-| Sessions audit (local) | Daily at 05:00 | America/Chicago |
-| Sessions audit (remote) | Daily at 03:00 | America/Chicago |
+| Sessions audit (local) | Daily at 03:00 | America/Los_Angeles |
+| Sessions audit (remote) | Daily at 01:00 | America/Los_Angeles |
 
-- **Requires:** Matt Pocock's [`retro`](https://github.com/mattpocock/skills/tree/main/skills/engineering/retro) and [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) skills installed for the selected agent, access to that machine's AI session histories, and access to the repository's current guidance.
+- **Requires:** Matt Pocock's [`retro`](https://github.com/mattpocock/skills/tree/main/skills/engineering/retro) and [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) skills installed for the selected agent, access to that machine's AI session histories, and access to the repository's current guidance. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 Before scheduling, follow the
 [upstream installation instructions](https://github.com/mattpocock/skills#installation-30-second-setup)
@@ -27,4 +27,6 @@ after missed runs to cover sessions from when the host was unavailable.
 
 ```text
 /retro all my AI sessions for the past 24 hours, together with The Rookery repository's skills, workflows, guidance, and related configuration.
+
+Shared state: follow the run contract in ~/.local/state/automation-runs/README.md for the `sessions-audit` folder; clone <your private automation-state repository> there first if it is missing. Before you start, read that folder's decisions.md and its three newest runs from any host. When you finish, write this run's file there and push it. When the owner answers your findings, record the answers in decisions.md and push before acting on them.
 ```

@@ -55,16 +55,13 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 [Testing with agents](TESTING.md) explains how I give agents room to work while
 permissions, end-to-end tests, and independent checks protect the result. Use it
 when setting up your own environment and deciding where safeguards belong.
-For skill validation, [SKILLS.md](SKILLS.md) distinguishes deterministic
-repository checks from behavioral evaluation through the evals plugin's
-`evals-start` workflow. Choose behavioral checks and a runner when a concrete
-evaluation need warrants them.
+[SKILLS.md](SKILLS.md) covers skill validation and evaluation.
 
 ## The skills
 
 - [checking-simplicity](skills/checking-simplicity/SKILL.md). Find opportunities to safely simplify a design, plan, or approach against the current need. Use it when you ask to simplify something, including during a build, or when the next step adds durable machinery that isn't tied to that need.
 - [coordinating-work](skills/coordinating-work/SKILL.md). Establish or revive an Orca collaboration arrangement through one editable proposal. Use it for team setup or recovery after account or session interruptions, while existing workflows retain ordinary execution and cleanup.
-- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a portable skill package. Use it to deliver a self-contained package; this repository routes behavioral evaluation through the evals plugin's `evals-start` workflow.
+- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a portable skill package. Use it to deliver a self-contained package.
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
@@ -79,6 +76,7 @@ schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
 - [Sessions audit (local and remote)](automations/sessions-audit.md). Use `retro` to review recent AI sessions on each host for improvements to the coding environment.
+- [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and file an issue for each gap.
 - [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.
 - [Optimize CI](automations/optimize-ci.md). Review continuous integration and recommend improvements.
 - [Weekly codebase design](automations/weekly-codebase-design.md). Review codebase design and recommend improvements.

@@ -25,12 +25,6 @@ It records ownership, native access details, and user-approved source
 restrictions, not source contents or access results. Workflows select which
 roles to read and when, within those restrictions.
 
-### Access override
-
-A complete native access description for one explicitly identified harness in
-a source binding. It changes how that harness reaches the designated source;
-ownership and shared read bounds remain with the binding.
-
 ### Source Access Audit
 
 A temporary record, shown with one response, of which relevant sources were
@@ -93,14 +87,6 @@ names the gap that remains, and returns a better question to Research. It is
 distinct from the Repository Learning Loop because it improves the operator's
 understanding rather than the repository's safeguards and procedures.
 
-### Owning Workflow
-
-The one existing workflow responsible for resolving a request's current
-uncertainty or producing the lasting result it asks for. A route assessment
-names exactly one first owner based on the work requested, rather than how the
-request arrived. Later workflows take over only if needed and do not share
-current ownership.
-
 ## Issue management
 
 ### Canonical Tracker
@@ -110,14 +96,6 @@ to them. A cross-tracker request may reach its canonical record only through one
 exact provider-native link; otherwise Managing Issues asks for the canonical
 issue or stops. An issue in another tracker is not a second write target.
 
-### Owned Issue Graph
-
-The canonical issue family relevant to one requested outcome: its top parent,
-all reachable descendants, and the native blocks or blocked-by relationships
-that affect their readiness or completion. Relevant nodes outside the
-repository's authority remain read-only boundary nodes rather than silently
-disappearing from the graph.
-
 ### Implementation Leaf
 
 One issue whose deliverable and Verification boundary fit one independently
@@ -125,31 +103,14 @@ deliverable, reviewable pull request. A stacked PR series is one leaf only when
 no PR in the stack delivers independently observable behavior; otherwise each
 such PR is its own leaf. A single-leaf change needs no artificial parent.
 
-### Issue Readiness Posture
-
-The issue's IDE-neutral information state: `needs-discovery` when the problem or
-outcome is not understood, `needs-planning` when the outcome is understood but
-Scope, Verification, decomposition, required metadata choices, or native
-relationships remain unsettled, or `ready` when those facts are settled for its
-role as a parent or leaf. It does not name or invoke a particular skill and
-remains separate from dependency readiness, so a ready leaf may remain blocked
-and outside the Ready Frontier.
-
 ### Ready Frontier
 
-The implementation leaves in an Owned Issue Graph whose Issue Readiness Posture
+The implementation leaves in a requested issue family whose derived readiness
 is `ready` and whose current native blockers and declared prerequisites are
 satisfied. It is determined from a fresh read of the canonical tracker before a
 handoff. It is never stored as a separate record of work status.
 
 ## Shipping and verification
-
-### Published Catalog
-
-The skills available for individual installation from this repository.
-Installers read the default branch, so anything merged there becomes available
-immediately. That branch stays install-clean. A skill is published once it
-appears in the catalog and installs on its own.
 
 ### Install Probe
 
@@ -162,16 +123,18 @@ and again after merge against the published state.
 ### Installation Parity
 
 The maintainer installs from this repository exactly the way a visitor does.
-Nothing in the published catalog may depend on context that exists only on the
-maintainer's machine, including absolute paths, private names, or
-personal-environment assumptions. A verification sweep enforces the rule
-across shipped files. The rule binds from the moment the repository declares
-itself public-bound, regardless of its current hosting visibility.
+Nothing in the [published catalog](skills/README.md) may depend on context
+that exists only on the maintainer's machine, including absolute paths, private
+names, or personal-environment assumptions. The repository text check rejects
+local home-directory paths in tracked files; review covers private names and
+other personal-environment assumptions. The rule binds from the moment the
+repository declares itself public-bound, regardless of its current hosting
+visibility.
 
 ### Release Snapshot
 
 An immutable semantic-version tag and GitHub Release that identify one validated
-state of the Published Catalog. It is a historical checkpoint with release
+state of the published catalog. It is a historical checkpoint with release
 notes, not an installation pin: ordinary installs continue to follow `main`, and
 a correction receives a new release tag instead of moving an existing one.
 
@@ -192,41 +155,3 @@ assumptions, constraints, mechanisms, system relationships, change over time,
 and downstream effects without requiring a separate named question type. It may
 inform a decision, but unlike `ce-pov`'s compact, project-grounded verdict it
 preserves a multi-perspective research record as the primary result.
-
-## Instruction and workflow contracts
-
-### Degradation Path
-
-A skill's defined behavior when something it prefers is absent, such as a
-validator that cannot run, a companion skill that is not installed, or a tool
-without a clean-context mechanism. The skill uses the best available substitute
-and states what was skipped.
-
-### Disposition List
-
-A per-item record in a prune or restructure commit message that marks each
-removed item as kept, folded into a named survivor, or dropped with a reason.
-Folded items point to what replaced them, and retired names must disappear from
-live references.
-
-### Delete Test
-
-This check asks one question for every line: would the agent get this wrong
-without it? A line that restates default model behavior fails and is cut whole.
-The test decides only whether to keep the line. The separate operationalize-the-qualifier check makes remaining vague qualifiers specific enough to guide the
-agent consistently. The skill review checklist names this check No-ops.
-
-### System-Owned Invariant
-
-A hard constraint that stays explicit because the user or surrounding system
-owns it. Examples include portable formats, user authority, deterministic
-validation, exact output requirements, and fragile operation order. Generic
-reminders to think, narrate, or recheck may be removed when they no longer help.
-
-### Trigger Contract
-
-A Trigger Contract treats a skill's description as the activation API the
-harness shows when deciding whether to load the skill. Should-trigger
-phrasings must load it, and near-misses must not. A listing proxy judges the
-name and description alone. Native activation observes the harness's load
-decision. Metadata-only observations do not prove which instructions loaded.

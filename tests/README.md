@@ -1,9 +1,8 @@
 # Repository tests
 
 This directory holds deterministic tests of shipped skill helpers and the
-repository checks. Behavioral evaluation follows
-[SKILLS.md](../SKILLS.md#evaluation-workflow) through the evals plugin's
-`evals-start` routing. The
+repository checks. Behavioral evaluation follows the
+[SKILLS.md evaluation workflow](../SKILLS.md#evaluation-workflow). The
 [Creating Portable Skills checks](creating-portable-skills/README.md) exercise
 its shipped signal scanner. Report native host behavior separately from
 repository checks.

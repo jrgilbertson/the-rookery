@@ -57,6 +57,12 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` starts task workers through Orca's supervised launch,
   so the runtime can flag a worker that stops without reporting, and revive
   tells a worker with an open assignment to continue it in the same turn.
+- `coordinating-work` freezes an assignment's brief once it is dispatched.
+  Only the Coordinator changes it, through a dated amendment that names what
+  it supersedes, and each worker re-reads its amendments at every step
+  boundary and names in its reports the latest one its work follows. Revive
+  carries the brief with its amendments, and the resumed worker confirms the
+  latest one.
 - Global agent guidance tells a delegating agent to rely on a delegate's watch
   and to report a merge-queue enqueue instead of polling it. The paid-call
   exception for live browser testing moves to the repositories that grant it;

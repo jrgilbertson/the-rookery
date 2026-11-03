@@ -66,7 +66,9 @@ Use the native continuation, retry, or fresh-handoff path for each approved
 effect. In a fresh handoff, carry scope, branch/worktree, preserved local work,
 verification evidence, applicable decisions, remaining step, and current
 authority from their owning records. Insufficient essential context blocks that
-handoff without blocking an independent approved recovery.
+handoff without blocking an independent approved recovery. In a continuation
+or fresh handoff, carry the assignment's brief with all its amendments, and
+have the resumed worker confirm the latest amendment it is working from.
 
 Keep original native request identities for uncertain results and inspect their
 receipts and current attempts before repeating. A lost launch response does not

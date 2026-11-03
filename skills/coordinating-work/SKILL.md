@@ -98,8 +98,8 @@ then telling the worker. The Planner proposes changes to the Coordinator
 instead of editing a dispatched brief. Before sending or re-sending an
 assignment, the Coordinator reads the whole brief, amendments included. Tell
 each worker to re-read its amendments at every step boundary, at least before
-planning, verification and pushing, and to name the latest one in each report,
-so a stale read shows up at once.
+planning, verification and pushing, and to name in each report the latest one
+its work follows, so stale work shows up at once.
 
 Tell each worker to wait for long-running checks inside its own turn, using a
 bounded foreground wait, and to end a turn only with a question or a completion

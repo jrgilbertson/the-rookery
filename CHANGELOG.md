@@ -60,8 +60,9 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` freezes an assignment's brief once it is dispatched.
   Only the Coordinator changes it, through a dated amendment that names what
   it supersedes, and each worker re-reads its amendments at every step
-  boundary and names the latest one in its reports. Revive carries the brief
-  with its amendments, and the resumed worker confirms the latest one.
+  boundary and names in its reports the latest one its work follows. Revive
+  carries the brief with its amendments, and the resumed worker confirms the
+  latest one.
 - Global agent guidance tells a delegating agent to rely on a delegate's watch
   and to report a merge-queue enqueue instead of polling it. The paid-call
   exception for live browser testing moves to the repositories that grant it;

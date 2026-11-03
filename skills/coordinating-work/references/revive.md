@@ -75,6 +75,11 @@ effects, current recipients, and existing monitor ownership before further
 actions. Send through the current proven identity, not both stale and replacement
 addresses. Repeated revive must not duplicate workers, assignments, or timers.
 
+Tell each recovered participant that holds an open assignment to continue it
+in the same turn, and offer waiting only to one with no open assignment. A
+resume message that offers "or wait" lets a worker end its turn mid-assignment
+with its work uncommitted.
+
 Restore needed supervision through the current native workflow. Inspect existing
 watchers and services through their owning lifecycle before changing them;
 retained local services may still be needed by another role. Revive is not an

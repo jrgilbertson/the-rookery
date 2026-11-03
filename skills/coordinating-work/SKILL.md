@@ -97,6 +97,10 @@ bounded foreground wait, and to end a turn only with a question or a completion
 report. A turn that ends while a background watcher still runs reads as a
 stopped worker and wakes the Coordinator for nothing.
 
+Start each task worker through the guide's supervised launch path. Work sent
+as plain terminal text gets neither the runtime's detection of a worker that
+stopped without reporting nor its blocking-question route.
+
 ## Recoverable working context
 
 Reuse canonical issues, plans, worktrees, and current native records. Preserve

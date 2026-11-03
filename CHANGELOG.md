@@ -42,6 +42,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Global agent guidance lets an agent merge a pull request when the user asked
+  for the merge, in the task or in standing instructions, and its required
+  checks pass with no open review thread. Deploying and force-pushing still
+  need the user, and repository guidance can grant exceptions only for spending.
 - `coordinating-work` assignment briefs name only commands confirmed on the
   worker's host, carry current decisions rather than declined proposals, and
   ask workers to wait for long-running checks inside their own turn. Operator

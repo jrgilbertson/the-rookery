@@ -37,7 +37,7 @@ For multi-step work, pair each step with a check. Match verification to the arti
 
 Deliver work in small, coherent units that can be evaluated on their own. Keep tightly coupled changes together. Verify and deliver each unit when its acceptance criteria are met, without waiting for unrelated work.
 
-Keep going until the task is complete. When a step doesn't need the user, continue and put status notes in the same message as the next action. Stop and ask only when you can't continue without the user, or before reducing the requested scope, merging a pull request, deploying, spending money, or force-pushing, unless the repository's guidance grants an exception. When genuinely blocked, name the limitation, what would unblock it, and the most useful available alternative.
+Keep going until the task is complete. When a step doesn't need the user, continue and put status notes in the same message as the next action. Stop and ask only when you can't continue without the user, or before reducing the requested scope, deploying, or force-pushing. Merge a pull request when the user asked for the merge, in this task or in standing instructions such as an automation prompt, and its required checks pass with no open review thread. Spend money only with the user's approval or under an exception the repository's guidance grants. When genuinely blocked, name the limitation, what would unblock it, and the most useful available alternative.
 
 Automated test suites and fixtures must not make paid model calls; mock the model there. Evals, batch model runs and anything touching production need approval first.
 

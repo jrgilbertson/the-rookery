@@ -46,20 +46,9 @@ match, body, and local resource links directly, and record the limitation. Exerc
 bundled helpers with realistic inputs in disposable storage outside the host
 project; preserve existing inputs and outputs.
 
-Start behavioral evaluation with error analysis of actual use and the host's
-policy. Fix clear instruction gaps first. A new skill does not by itself
-require a corpus, grader, fixed case count, or evaluation sign-off before
-delivery. Package checks, helper tests, and applicable authorized smoke checks
-still run; report behavior that has not been exercised as unverified.
-
-When evaluation is warranted, follow
-[references/evaluation.md](references/evaluation.md). Use the evals plugin's
-`evals-start` entry point, or its targeted skill when the evaluation job is
-already known. Let that workflow select current guidance and a runner suited
-to the need. Reuse relevant cases and checks. Obtain approval of the actual
-inputs and grading method before using them, separately from authorization
-for model calls or other side effects. Preserve the host's independent review,
-storage, budget, and release requirements; missing evidence stays unverified.
+Package checks, helper tests, and applicable authorized smoke checks run for
+every package. For behavioral evaluation, follow
+[references/evaluation.md](references/evaluation.md).
 
 ## Deliver
 
@@ -73,6 +62,5 @@ runtime instructions. Follow the host's release and installation process.
 ## Sources
 
 The [Agent Skills specification](https://agentskills.io/specification) owns the
-package format. The evals plugin owns evaluation routing and its targeted
-workflows; [references/evaluation.md](references/evaluation.md) describes their
-use and the host's authority boundaries.
+package format. [references/evaluation.md](references/evaluation.md) owns
+evaluation and names the upstream workflows it uses.

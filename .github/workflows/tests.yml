@@ -24,9 +24,6 @@ jobs:
         shell: bash
         run: bash scripts/checks/install-verification-tools.sh
 
-      - name: Install policy parser
-        run: python3 -m pip install --user 'pyyaml==6.0.3'
-
       - name: Validate Lefthook configuration
         run: lefthook validate
 

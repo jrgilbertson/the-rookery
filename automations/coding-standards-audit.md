@@ -4,7 +4,7 @@ Review coding standards against repository evidence and current primary sources.
 
 - **Cadence:** Saturday at 07:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** Access to the target repository, its PR and review history, and current primary sources.
+- **Requires:** Access to the target repository, its PR and review history, and current primary sources. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 If `CODING_STANDARDS.md` is missing, the prompt asks the agent to propose a first edition.
 
@@ -33,4 +33,6 @@ Keep the standards focused on adopted coding guidance. Research procedures, audi
 Return a small, prioritized set of recommendations for approval. If the file is missing, propose a repository-specific first edition. If no changes are justified, say so.
 
 Do not modify repository files, install tools, change configuration, or publish issues or PRs without approval.
+
+Shared state: follow the run contract in ~/.local/state/automation-runs/README.md for the `coding-standards-audit` folder; clone <your private automation-state repository> there first if it is missing. Before you start, read that folder's decisions.md and its three newest runs from any host. When you finish, write this run's file there and push it. When the owner answers your findings, record the answers in decisions.md and push before acting on them.
 ```

@@ -30,7 +30,7 @@ The workflows need three things:
 
 My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them through a single `@~/.codex/AGENTS.md` line in `~/.claude/CLAUDE.md`, so Codex and Claude Code follow the same rules.
 
-[GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. The local file remains the source of truth, and `scripts/sync-global-agents.sh` copies it here. Copy mode requires Python 3 and atomically replaces the repository file, including destination symlinks, without opening their targets. A pre-push check catches a committed copy that has fallen behind. That check runs only in a clone configured with `git config rookery.globalAgentsSource`; contributors do not run it.
+[GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. [`scripts/sync-global-agents.sh`](scripts/sync-global-agents.sh) documents how the copy is kept current.
 
 The skills work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I use [Orca](https://github.com/stablyai/orca) to run several agent tools side by side in one project.
 
@@ -62,7 +62,7 @@ Before moving to Plan:
 
 **Goal:** Write what to build, how to check it, and the limits the work must respect.
 
-I usually plan in the session that did the research. If the research needs to stay useful after the work ships, I maintain a findings document in `docs/research/` and plan from it. A one-time audit or early investigation stays with the issue, pull request, or research system. It does not become repository documentation by default.
+I usually plan in the session that did the research. A one-time audit or early investigation stays with the issue, pull request, or research system. It does not become repository documentation by default.
 
 First I settle the problem, what a good result looks like, and how I'll know it's solved. `ce-brainstorm` writes that down when the outcome is still open. `ce-plan` then records the decisions, parts of the work, files, tests, and risks. It leaves the implementation to the agent that builds it.
 
@@ -136,7 +136,7 @@ I choose models based on how I'll judge the result. For work I can check objecti
 
 `ce-work` from Compound Engineering handles one part of the plan at a time so I can inspect changes as they land. `lfg` runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use these autonomous modes only when the goal is clear and completion can be checked.
 
-Compound Engineering handles planning, execution, review, and saving lessons inside each worktree. One session usually owns the work. I add Executors when parts can be worked on separately and use orchestration tools to supervise them. A handoff lets another session take over. [Model and effort guidance](ROUTING.md) helps me choose models and an independent Reviewer where practical.
+Compound Engineering handles planning, execution, review, and saving lessons inside each worktree. [Model and effort guidance](ROUTING.md#work-alone-delegate-or-hand-off) covers when to add Executors or hand off, and how to choose models and an independent Reviewer.
 
 For continuing Orca collaboration, [`coordinating-work`](skills/coordinating-work/SKILL.md) helps establish or adopt the arrangement and revive it after account or session interruptions. Setup and revive each use one editable proposal. Ordinary coordination follows existing authority, with task-scoped PR workers and ongoing roles kept while useful; CE and Orca retain execution and lifecycle mechanics.
 
@@ -149,7 +149,6 @@ During a build, I use:
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates across agent tools, and supports feedback on selected elements in the browser. Use it for independent parts of a plan or direct visual iteration on an interface.
 - **Impeccable, mid-build.** Reviews and polishes visual work, checks technical quality, handles edge cases, and offers three versions of a selected element with the option to apply one. Use it to keep the interface aligned with the design brief and the project's limits.
 - `ce-test-browser` and `ce-dogfood`. Check the browser flows affected by a branch. Dogfood can also fix small problems, add regression tests, and commit its changes. Use `ce-test-browser` for a focused check or `ce-dogfood` for a repair pass that runs on its own.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Challenges a design decision or reassesses an existing system. Use it before adding lasting machinery that the current problem does not need, even when nobody has asked to simplify.
 
 Before moving to Ship:
 
@@ -217,7 +216,7 @@ Choose where to keep a lesson based on how it can prevent the mistake. A test ru
 | Decision record | An architecture decision record with the choice, alternatives, and reasons | Keeps the explanation available to anyone who knows to look |
 | Written instruction | A README line, code comment, or instructions file | Depends entirely on being read and followed |
 
-When a lesson belongs in a skill, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits the package and checks its structure and installation. It routes evaluation through `evals-start` or the appropriate targeted skill. Use it when a recurring gap needs a portable skill rather than a one-time instruction. [`SKILLS.md`](SKILLS.md) defines this repository's evaluation and evidence rules.
+When a lesson belongs in a skill, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits the package and checks its structure and installation. Use it when a recurring gap needs a portable skill rather than a one-time instruction. [`SKILLS.md`](SKILLS.md) defines this repository's evaluation and evidence rules.
 
 A bug I can reproduce becomes a regression test. A convention becomes a lint rule. Lessons that fit none of the stronger options become written instructions. That is often the right choice for something we cannot automate yet.
 

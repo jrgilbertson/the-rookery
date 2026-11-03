@@ -10,10 +10,9 @@ rolling install source; a release records one validated historical state.
   `Unreleased` to the target version.
 - From a clean checkout at the exact candidate commit, run the complete
   Lefthook check group documented in [tests/README.md](tests/README.md).
-  Determine any behavioral evaluation needed for the candidate through
-  [SKILLS.md](SKILLS.md) and the evals plugin's `evals-start` workflow. Report
-  the actual coverage and unresolved revalidation; deterministic checks alone
-  do not establish skill behavior.
+  Determine any behavioral evaluation the candidate needs through the
+  [SKILLS.md evaluation workflow](SKILLS.md#evaluation-workflow), and report
+  its actual coverage and unresolved revalidation.
 - Audit the public tree, history, hosted GitHub surfaces, licenses, attribution,
   and shipped skill behavior. Resolve every material privacy, licensing,
   security, install, or documentation blocker.

@@ -22,6 +22,10 @@ looked" surface. GitHub Releases mirror its entries.
   instructions for session, test, CI, codebase design, and coding standards
   reviews. README, workflow, testing, product, and contribution guidance now
   explain how scheduled reviews fit into the working system.
+- Shared run state for the automations: every prompt reads and writes one
+  private Git repository, cloned on each host, so runs on different machines
+  see earlier findings and the owner's decisions. `automations/README.md`
+  explains why and carries the run contract as a template to copy.
 
 ### Removed
 
@@ -88,6 +92,20 @@ looked" surface. GitHub Releases mirror its entries.
   re-scoping its open issues in the same change.
 - Personal Chief of Staff fixture checks validate the shipped source-map
   sample directly instead of a test-only copy of the schema.
+- Repository docs keep one owner per rule. `creating-portable-skills`'s
+  `references/evaluation.md` owns evaluation policy, and the other docs link to
+  it; `SKILLS.md` keeps only this repository's evidence rules. `CONCEPTS.md`
+  drops ten terms used in at most one other file and states what checks
+  Installation Parity. Stale pointers, a restated sync-script header, and a
+  duplicate `checking-simplicity` summary are gone. `SKILLS.md` notes that
+  this repository rejects `allowed-tools` and adds uninstalling from each host
+  to retiring a skill.
+- Automation schedules all use America/Los_Angeles, and starts on the same
+  host sit at least an hour apart (Weekly codebase design moves to Saturday
+  04:00). Test audit runs `ce-simplify-code` as a report of what it would
+  change, ordered by priority, instead of applying fixes. The README lists
+  Analytics gap audit. CI no longer installs PyYAML, which no
+  Python check imports.
 
 ### Fixed
 

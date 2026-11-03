@@ -9,9 +9,8 @@ renders, previews, inspection files, dependency links), goes in a per-run
 temporary directory outside the working directory, and final artifacts go only
 to an explicitly approved external or private destination.
 
-The root `outputs/` directory remains ignored as a privacy safeguard for older
-Codex Desktop and similar tooling that may write generated artifacts there. It
-is not part of the current workflow or an approved storage location.
+The root `outputs/` directory stays ignored as a privacy safeguard; it is not
+an approved storage location.
 
 Before staging or committing, inspect all untracked paths and confirm that no
 personal or business artifacts are present.
@@ -40,6 +39,5 @@ repository's package, evaluation, and evidence requirements.
 When implementing or debugging, search `docs/solutions/` for relevant prior
 solutions and read matches.
 
-`CONCEPTS.md` holds the shared vocabulary for this project: the entities,
-named processes, and status concepts that carry a specific meaning here.
-Relevant when orienting to the repo or discussing its concepts.
+Read [CONCEPTS.md](CONCEPTS.md) for this project's shared vocabulary when
+orienting to the repo or discussing its concepts.

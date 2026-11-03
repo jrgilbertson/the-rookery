@@ -45,6 +45,7 @@ independent-review, and release requirements.
 
 Distinguish package validation, installation identity, actual skill loading,
 input preservation, and successful task behavior. Report only what the
-observed evidence supports. An answer, a tool-use observation, or a successful
+observed evidence supports. Missing outputs, provider errors, and unavailable
+observations stay unverified. An answer, a tool-use observation, or a successful
 runner exit alone does not establish task quality. Keep expectations and
 grader-only material out of the executor's access.

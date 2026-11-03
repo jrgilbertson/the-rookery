@@ -54,6 +54,9 @@ looked" surface. GitHub Releases mirror its entries.
   worker's host, carry current decisions rather than declined proposals, and
   ask workers to wait for long-running checks inside their own turn. Operator
   decisions go to the canonical tracker before the Coordinator acts on them.
+- `coordinating-work` starts task workers through Orca's supervised launch,
+  so the runtime can flag a worker that stops without reporting, and revive
+  tells a worker with an open assignment to continue it in the same turn.
 - Global agent guidance tells a delegating agent to rely on a delegate's watch
   and to report a merge-queue enqueue instead of polling it. The paid-call
   exception for live browser testing moves to the repositories that grant it;

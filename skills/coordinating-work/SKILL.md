@@ -92,6 +92,15 @@ host, and prefer the project's existing helpers to ad hoc tools. Carry the
 operator's current decisions from their owning record, never a proposal the
 operator declined.
 
+Once an assignment is dispatched, its brief is fixed. Only the Coordinator
+changes it, by appending a dated amendment that names what it supersedes and
+then telling the worker. The Planner proposes changes to the Coordinator
+instead of editing a dispatched brief. Before sending or re-sending an
+assignment, the Coordinator reads the whole brief, amendments included. Tell
+each worker to re-read its amendments at every step boundary, at least before
+planning, verification and pushing, and to name the latest one in each report,
+so a stale read shows up at once.
+
 Tell each worker to wait for long-running checks inside its own turn, using a
 bounded foreground wait, and to end a turn only with a question or a completion
 report. A turn that ends while a background watcher still runs reads as a

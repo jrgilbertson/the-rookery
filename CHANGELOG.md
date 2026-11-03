@@ -42,9 +42,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- Global agent guidance asks for an independent review of guard changes from a
-  different model family, a failing-first test for each confirmed bypass, and a
-  second review when fixes change the logic.
+- Global agent guidance asks for an independent review from a different model
+  family on changes to authorization, approval, destructive-action guards, money,
+  data deletion, privacy boundaries or release gates, a failing-first test for
+  each confirmed bypass, and a second review when fixes change the logic.
 - Global agent guidance lets an agent merge a pull request when the user asked
   for the merge, in the task or in standing instructions, and its required
   checks pass with no open review thread. Deploying and force-pushing still

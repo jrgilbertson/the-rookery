@@ -11,7 +11,7 @@ repository.
 | [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and file issues | Monday at 04:00 | America/Los_Angeles |
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 21:00 | America/Los_Angeles |
 | [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
-| [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 03:00 | America/Los_Angeles |
+| [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 04:00 | America/Los_Angeles |
 | [Coding standards audit](coding-standards-audit.md) | Keep adopted coding guidance current and useful | Saturday at 07:00 | America/Los_Angeles |
 
 All schedules use America/Los_Angeles. Choose a cadence and timezone that suit

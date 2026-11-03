@@ -100,8 +100,11 @@ looked" surface. GitHub Releases mirror its entries.
   duplicate `checking-simplicity` summary are gone. `SKILLS.md` notes that
   this repository rejects `allowed-tools` and adds uninstalling from each host
   to retiring a skill.
-- Automation schedules all use America/Los_Angeles at the same instants, and
-  the README lists Analytics gap audit. CI no longer installs PyYAML, which no
+- Automation schedules all use America/Los_Angeles, and starts on the same
+  host sit at least an hour apart (Weekly codebase design moves to Saturday
+  04:00). Test audit runs `ce-simplify-code` as a report of what it would
+  change, ordered by priority, instead of applying fixes. The README lists
+  Analytics gap audit. CI no longer installs PyYAML, which no
   Python check imports.
 
 ### Fixed

@@ -2,7 +2,7 @@
 
 Review the codebase design and recommend improvements.
 
-- **Cadence:** Saturday at 03:00.
+- **Cadence:** Saturday at 04:00.
 - **Timezone:** America/Los_Angeles.
 - **Requires:** Matt Pocock's [`codebase-design` skill](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design) and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 

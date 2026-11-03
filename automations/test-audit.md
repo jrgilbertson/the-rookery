@@ -9,7 +9,7 @@ Review the repository's tests, find gaps in what they protect, and recommend imp
 ## Prompt
 
 ```text
-compound-engineering:ce-simplify-code do a test audit of this repo and provide recommendations for improvement.
+compound-engineering:ce-simplify-code audit this repo's tests as a report only: list what you would change, as recommendations ordered by priority, and apply none of them.
 
 Then look for what the tests fail to protect. List the repository's material high-risk behaviors and invariants, and map each one to the tests that protect it. Label the strongest evidence for each:
 
@@ -20,7 +20,7 @@ Then look for what the tests fail to protect. List the repository's material hig
 
 Report every risk without inspected evidence as a gap or unknown. Treat line coverage, test count, and pass rate as diagnostic signals, never as proof that a behavior is protected. For each gap, recommend the cheapest test layer that still exercises the real boundary.
 
-Return a small, prioritized set of recommendations for approval, and state which surfaces you did not assess. Apart from a temporary break you revert to falsify a test, do not modify repository files, and do not publish issues or PRs without approval.
+Return one small set of recommendations from both passes, ordered by priority, for approval, and state which surfaces you did not assess. The only change this run makes to repository files is a temporary break you revert to falsify a test. Publish issues or PRs only after approval.
 
 Shared state: follow the run contract in ~/.local/state/automation-runs/README.md for the `test-audit` folder; clone <your private automation-state repository> there first if it is missing. Before you start, read that folder's decisions.md and its three newest runs from any host. When you finish, write this run's file there and push it. When the owner answers your findings, record the answers in decisions.md and push before acting on them.
 ```

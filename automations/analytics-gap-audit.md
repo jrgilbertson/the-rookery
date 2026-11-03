@@ -11,7 +11,7 @@ Replace each bracketed placeholder with your own project's value. This is the pr
 ## Prompt
 
 ```text
-Audit [product] for analytics gaps and file each new gap as a Linear issue that a coding agent can fix with the `instrument-product-analytics` skill. Creating Linear issues is your only write.
+Audit [product] for analytics gaps and file each new gap as a Linear issue that a coding agent can fix with the `instrument-product-analytics` skill. Creating Linear issues and writing this run to the shared state repository are your only writes.
 
 First confirm you can reach GitHub, the PostHog project [production analytics project], the Vercel production aliases, and Linear. If any of them is unreachable, report the run as failed and stop.
 

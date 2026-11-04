@@ -42,6 +42,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Global agent guidance permits Compound Engineering reviews through existing
+  sign-in accounts after naming the model, while excluding credentials and
+  personal data.
 - Test audit recommendations are prioritized by risk and impact without a fixed
   finding limit, so material findings are not omitted to keep the report small.
 - Global agent guidance asks for an independent review from a different model

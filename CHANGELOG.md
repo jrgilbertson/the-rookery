@@ -42,6 +42,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Test audit recommendations are prioritized by risk and impact without a fixed
+  finding limit, so material findings are not omitted to keep the report small.
 - Global agent guidance asks for an independent review from a different model
   family on changes to authorization, approval, destructive-action guards, money,
   data deletion, privacy boundaries or release gates, a failing-first test for

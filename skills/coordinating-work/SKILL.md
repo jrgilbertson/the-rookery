@@ -71,7 +71,10 @@ remain with the operator. Do not silently switch accounts or substitute settings
 
 ## Worker lifetime and cleanup
 
-Default to task-scoped PR workers, normally one worktree per PR. Keep the
+Default to task-scoped PR workers, normally one worktree per PR. A reused
+worktree starts each assignment on a fresh branch from the latest default
+branch; an assignment that deliberately builds on another branch names that
+base and when its work returns to the default branch. Keep the
 Coordinator, Planner, or another role while it has a concrete ongoing
 responsibility. An ongoing member can be idle awaiting another assignment;
 do not invent filler work to keep it busy.
@@ -100,6 +103,16 @@ assignment, the Coordinator reads the whole brief, amendments included. Tell
 each worker to re-read its amendments at every step boundary, at least before
 planning, verification and pushing, and to name in each report the latest one
 its work follows, so stale work shows up at once.
+
+Tell each worker to bring its branch up to date with the latest default
+branch before each run of the repository's verification gate, following that
+repository's merge policy, so verification tests the fixes already merged.
+
+Tell each worker which message type each kind of report uses: `ask` for a
+question that needs an answer, `escalation` for a blocker that needs the
+Coordinator to intervene, `worker_done` for finished work, and `status` for
+progress. The Coordinator's wait wakes on questions, escalations, and
+completions; progress reports arrive with the next delivered batch.
 
 Tell each worker to wait for long-running checks inside its own turn, using a
 bounded foreground wait, and to end a turn only with a question or a completion

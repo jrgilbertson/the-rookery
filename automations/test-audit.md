@@ -22,5 +22,5 @@ Report every risk without inspected evidence as a gap or unknown. Treat line cov
 
 Return the material recommendations from both passes, ordered by risk and impact, for approval. Focus on what matters: include each finding that warrants action, with enough evidence to assess it, without a fixed limit on the number of findings. Consolidate recommendations that share a cause, and state which surfaces you did not assess. The only change this run makes to repository files is a temporary break you revert to falsify a test. Publish issues or PRs only after approval.
 
-Shared state: follow the run contract in ~/.local/state/automation-runs/README.md for the `test-audit` folder; clone <your private automation-state repository> there first if it is missing. Before you start, read that folder's decisions.md and its three newest runs from any host. When you finish, write this run's file there and push it. When the owner answers your findings, record the answers in decisions.md and push before acting on them.
+Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `test-audit`.
 ```

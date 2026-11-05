@@ -131,6 +131,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Automation prompts now tell each run to update the shared run-state
+  repository and follow its README, which owns the run contract. The README
+  template names reports in UTC with seconds, matching the live contract.
 - Repository verification bounds malformed inline-link scanning and treats YAML
   filenames as data. Guidance synchronization replaces destination symlinks
   safely, skill scans preserve pathname boundaries, and evaluation imports

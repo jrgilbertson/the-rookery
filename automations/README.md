@@ -60,12 +60,17 @@ reads and writes one private Git repository, cloned to
 
 Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
-Each prompt ends with a paragraph that points the run at this contract. Copy
-the template below into your private repository's README; this is the
-canonical public version.
+Each prompt ends by telling the run to clone or update that repository, then
+read its README and follow the instructions for the job's slug. The README owns
+the contract, so a change to it reaches every job on its next run without
+editing the prompts. Copy the template below into your private repository's
+README; this is the canonical public version.
 
 ```markdown
 # Automation runs
+
+Before each run, update this checkout and read this README. It owns the run
+contract, so changes here reach every automation on its next run.
 
 ## Layout
 
@@ -73,10 +78,10 @@ One folder per automation slug. When one automation runs against more than one
 repository, give each target its own slug, such as `test-audit-<repo>`, so
 projects never share decisions or runs.
 
-- `<slug>/runs/YYYY-MM-DD-HHMM-<host>.md`: one file per run, with the window
-  reviewed, the findings as presented (with numbers and short stable titles),
-  and what the run changed. `<host>` is `hostname -s`, and the time keeps a
-  retry from replacing an earlier report.
+- `<slug>/runs/YYYY-MM-DD-HHMMSS-<host>.md`: one file per run, dated in UTC,
+  with the window reviewed, the findings as presented (with numbers and short
+  stable titles), and what the run changed. `<host>` is `hostname -s`. The
+  seconds keep a retry from replacing an earlier report; never overwrite one.
 - `<slug>/decisions.md`: append-only, one entry per answered finding, with the
   date, run file, finding title, decision (`accepted`, `declined`, `deferred`,
   or `already-fixed`), the owner's words, and the issue or PR that carries it.

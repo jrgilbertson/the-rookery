@@ -68,6 +68,11 @@ looked" surface. GitHub Releases mirror its entries.
   boundary and names in its reports the latest one its work follows. Revive
   carries the brief with its amendments, and the resumed worker confirms the
   latest one.
+- `coordinating-work` starts each assignment on a fresh branch from the
+  latest default branch and has workers update their branch before each
+  verification run, names the message type for questions, blockers,
+  completions, and progress, and has the Coordinator wake the Planner by
+  message instead of a timer.
 - Global agent guidance tells a delegating agent to rely on a delegate's watch
   and to report a merge-queue enqueue instead of polling it. The paid-call
   exception for live browser testing moves to the repositories that grant it;

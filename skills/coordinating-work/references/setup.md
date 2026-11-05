@@ -63,6 +63,13 @@ context, current decisions, and the correct communication path. Establish the
 ordinary native supervision the arrangement needs, reconciling any existing
 monitoring first. Do not add a second scheduler or a fixed tick cadence.
 
+A Planner keeps no timer of its own. The Coordinator wakes it by message when a
+pull request merges, a worker is freed or needs its next assignment, the
+operator decides something that changes the plan, or a worker is stuck long
+enough to put the plan at risk, and for anything else at its own judgment. The
+Planner messages the Coordinator only with a ready brief, a risk, or a question
+for the operator.
+
 Verify the entry skill's individual outcomes, effective settings, communication,
 and supervision. Leave only the missing recoverable context and its discoverable
 reference for a future replacement Coordinator. Everyday work then continues

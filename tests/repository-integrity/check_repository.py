@@ -285,6 +285,15 @@ def check_guidance_copy(temporary_root: Path) -> None:
     require(sync("--check").returncode != 0,
             "branch with stale edited guidance was accepted because main matched")
 
+    # Without a merge base, as in a shallow clone, the check cannot tell
+    # whether the branch edits the copy, so it asks for the history.
+    git("checkout", "-q", "--orphan", "unrelated")
+    source.write_bytes(destination.read_bytes())
+    git("commit", "-qm", "Unrelated history")
+    unrelated = sync("--check")
+    require(unrelated.returncode != 0 and "history" in unrelated.stderr,
+            f"guidance check without a merge base did not ask for history: {unrelated.stderr}")
+
 
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:

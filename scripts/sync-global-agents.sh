@@ -26,9 +26,17 @@ case "${1:-}" in
     # branch is judged by the default branch, so an old branch does not fail
     # because main refreshed the copy after it forked.
     published=HEAD
-    if git rev-parse --verify --quiet origin/main >/dev/null &&
-      git diff --quiet origin/main...HEAD -- GLOBAL-AGENTS.md 2>/dev/null; then
-      published=origin/main
+    if git rev-parse --verify --quiet origin/main >/dev/null; then
+      edited=0
+      git diff --quiet origin/main...HEAD -- GLOBAL-AGENTS.md 2>/dev/null || edited=$?
+      case "$edited" in
+        0) published=origin/main ;;
+        1) ;;
+        *)
+          echo "global-agents: cannot find where this branch left origin/main; fetch the missing history (git fetch --unshallow)" >&2
+          exit 1
+          ;;
+      esac
     fi
     if ! git show "$published:GLOBAL-AGENTS.md" 2>/dev/null |
       diff -u --label "$published:GLOBAL-AGENTS.md" --label "$source_file" - "$source_file"; then

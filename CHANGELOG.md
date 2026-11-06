@@ -73,6 +73,17 @@ looked" surface. GitHub Releases mirror its entries.
   verification run, names the message type for questions, blockers,
   completions, and progress, and has the Coordinator wake the Planner by
   message instead of a timer.
+- `coordinating-work` lets the Coordinator run an operator-approved stall
+  sweep that nudges only idle participants with an open assignment, no running
+  job, and no report, and still bans any other second scheduler. It confirms
+  that a message reached an idle participant and reads the effective account
+  from the running agent rather than launch metadata. Briefs say a returning
+  helper skill does not end a worker's turn, and on a shared host heavy jobs
+  are limited by measured CPU and memory. Cleanup checks unpushed work against
+  the default branch and pull request head, not the upstream alone. Revive
+  lists background jobs and names which to relaunch, lets running paid work
+  reach an idle point, and checks a usage-limited participant's background
+  jobs before reassigning it.
 - `personal-chief-of-staff` finds a source map moved into a designated vault
   or workspace through an approved pointer in an instruction or configuration
   file the host loads for that workspace, after any location the caller

@@ -42,6 +42,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Global agent guidance permits Compound Engineering reviews through existing
+  sign-in accounts after naming the model, while excluding credentials and
+  personal data.
+- Test audit recommendations are prioritized by risk and impact without a fixed
+  finding limit, so material findings are not omitted to keep the report small.
 - Global agent guidance asks for an independent review from a different model
   family on changes to authorization, approval, destructive-action guards, money,
   data deletion, privacy boundaries or release gates, a failing-first test for
@@ -63,12 +68,17 @@ looked" surface. GitHub Releases mirror its entries.
   boundary and names in its reports the latest one its work follows. Revive
   carries the brief with its amendments, and the resumed worker confirms the
   latest one.
+- `coordinating-work` starts each assignment on a fresh branch from the
+  latest default branch and has workers update their branch before each
+  verification run, names the message type for questions, blockers,
+  completions, and progress, and has the Coordinator wake the Planner by
+  message instead of a timer.
 - `personal-chief-of-staff` finds a source map moved into a designated vault
   or workspace through an approved pointer in an instruction or configuration
   file the host loads for that workspace, after any location the caller
-  supplies. A named location that cannot be
-  read is a gap rather than a reason to use the default, and moving the map
-  proposes removing the previous copy. Vault-owned maps are `.json` files read
+  supplies. A named location that cannot be read is a gap rather than a
+  reason to use the default, and moving the map proposes removing the previous
+  copy. Vault-owned maps are `.json` files read
   and saved through the Obsidian CLI, and `reviewing-meetings` reads a supplied
   map through its owning system the same way.
 - Global agent guidance tells a delegating agent to rely on a delegate's watch
@@ -134,6 +144,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Automation prompts now tell each run to update the shared run-state
+  repository and follow its README, which owns the run contract. The README
+  template names reports in UTC with seconds, matching the live contract.
 - Repository verification bounds malformed inline-link scanning and treats YAML
   filenames as data. Guidance synchronization replaces destination symlinks
   safely, skill scans preserve pathname boundaries, and evaluation imports

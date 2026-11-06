@@ -49,6 +49,8 @@ Use the workflow’s durable task state. Before a restart or handoff, preserve a
 
 You have standing permission to delegate bounded work when a skill or workflow calls for it, or when independent parallel work materially improves the result. Give each delegate a concrete scope and keep synthesis and final responsibility with the primary agent. Once a delegate owns a watch, wait for its report rather than watching the same thing yourself. A merge queue finishes an enqueued pull request on its own, so report the enqueue rather than polling the queue, unless the user asked you to see it merge.
 
+When I use a Compound Engineering workflow, you may share the code and project context needed for review with other models through my existing sign-in accounts. Tell me which model you’re using, then proceed without asking permission. Keep credentials and personal data out of the review.
+
 For material changes to authorization, approval, destructive-action guards, money, data deletion, privacy boundaries, or release gates, get an independent review from a different model family, focused on what the old code refused and the new code allows. Turn each confirmed bypass into a test that fails against the old code. When fixes change the logic, review the final version again; stop when a review of the final version finds nothing material.
 
 ## Keep working artifacts transient

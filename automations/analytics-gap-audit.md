@@ -30,5 +30,5 @@ File every new gap, grouping gaps that share a root cause or came from the same 
 
 End with a summary listing each source as reachable or failed, how many PRs the window held and how many you reviewed, the issues filed, gaps already flagged, and events awaiting evidence.
 
-Shared state: follow the run contract in ~/.local/state/automation-runs/README.md for the `analytics-gap-audit` folder; clone <your private automation-state repository> there first if it is missing. Before you start, read that folder's decisions.md and its three newest runs from any host. When you finish, write this run's file there and push it. When the owner answers your findings, record the answers in decisions.md and push before acting on them.
+Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `analytics-gap-audit`.
 ```

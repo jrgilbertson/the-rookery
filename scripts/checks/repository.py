@@ -57,12 +57,12 @@ HOME_PATH = re.compile(
 # Split the home prefix so the allowlist itself contains no local-path literals.
 HOME_PATH_EXAMPLES = {
     "automations/README.md": {"~" + "/.local/state/automation-runs"},
-    "automations/analytics-gap-audit.md": {"~" + "/.local/state/automation-runs/README.md"},
-    "automations/coding-standards-audit.md": {"~" + "/.local/state/automation-runs/README.md"},
-    "automations/optimize-ci.md": {"~" + "/.local/state/automation-runs/README.md"},
-    "automations/sessions-audit.md": {"~" + "/.local/state/automation-runs/README.md"},
-    "automations/test-audit.md": {"~" + "/.local/state/automation-runs/README.md"},
-    "automations/weekly-codebase-design.md": {"~" + "/.local/state/automation-runs/README.md"},
+    "automations/analytics-gap-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/coding-standards-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/optimize-ci.md": {"~" + "/.local/state/automation-runs"},
+    "automations/sessions-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/test-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/weekly-codebase-design.md": {"~" + "/.local/state/automation-runs"},
     "WORKFLOWS.md": {"~" + "/.codex/AGENTS.md", "~" + "/.claude/CLAUDE.md"},
     "scripts/sync-global-agents.sh": {"~" + "/.codex/AGENTS.md"},
     "docs/solutions/best-practices/blind-cross-model-grading-through-native-schema-flags.md": {

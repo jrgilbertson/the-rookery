@@ -18,7 +18,8 @@ than infer bindings.
 
 Read the supplied map through its owning system's native interface. Use host
 file tools for a host-owned file and the official Obsidian CLI with an explicit
-vault and exact target for an Obsidian-owned map. A supplied filesystem path
+vault and exact target for an Obsidian-owned map, which is a `.json` file read
+whole by its exact vault path. A supplied filesystem path
 does not change vault ownership. If the system or access route is unresolved,
 ask the caller or user; do not search for a substitute map or use a synced copy.
 Keep the concrete location in caller configuration rather than the portable

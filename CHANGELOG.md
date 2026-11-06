@@ -63,6 +63,14 @@ looked" surface. GitHub Releases mirror its entries.
   boundary and names in its reports the latest one its work follows. Revive
   carries the brief with its amendments, and the resumed worker confirms the
   latest one.
+- `personal-chief-of-staff` finds a source map moved into a designated vault
+  or workspace through an approved pointer in an instruction or configuration
+  file the host loads for that workspace, after any location the caller
+  supplies. A named location that cannot be
+  read is a gap rather than a reason to use the default, and moving the map
+  proposes removing the previous copy. Vault-owned maps are `.json` files read
+  and saved through the Obsidian CLI, and `reviewing-meetings` reads a supplied
+  map through its owning system the same way.
 - Global agent guidance tells a delegating agent to rely on a delegate's watch
   and to report a merge-queue enqueue instead of polling it. The paid-call
   exception for live browser testing moves to the repositories that grant it;

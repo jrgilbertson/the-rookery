@@ -83,9 +83,11 @@ Retire a completed PR worker after its delivery and monitoring obligations.
 Use the native release procedure. After merge, clean eligible worktrees through
 the repository and Orca lifecycle within existing authority. A merged branch
 alone does not prove removal is safe: preserve needed local work, evidence,
-services, unfinished ownership, and human holds. Name the remaining obligation
-when cleanup must wait, and continue independent work. Do not turn uncertainty
-into forced removal or add a separate cleanup system.
+services, unfinished ownership, and human holds. Check unpushed work against
+the default branch and the pull request head, never against the branch's
+upstream alone; a branch with no upstream reads as fully pushed. Name the
+remaining obligation when cleanup must wait, and continue independent work. Do
+not turn uncertainty into forced removal or add a separate cleanup system.
 
 ## Assignment briefs
 
@@ -116,8 +118,9 @@ completions; progress reports arrive with the next delivered batch.
 
 Tell each worker to wait for long-running checks inside its own turn, using a
 bounded foreground wait, and to end a turn only with a question or a completion
-report. A turn that ends while a background watcher still runs reads as a
-stopped worker and wakes the Coordinator for nothing.
+report. A helper skill returning is never the end of the worker's turn. A turn
+that ends while a background watcher still runs reads as a stopped worker and
+wakes the Coordinator for nothing.
 
 Start each task worker through the guide's supervised launch path. Work sent
 as plain terminal text gets neither the runtime's detection of a worker that
@@ -152,9 +155,13 @@ workers or unresolved candidates when they affect the outcome.
 Confirm the participant's current assignment or deliberate disposition and
 applicable recent decisions, a working return path to the current Coordinator,
 and needed supervision. A queued message, heartbeat, live process, or successful
-script exit alone does not establish recovery. No new code or paid work is
-required merely to prove communication. Verify effective settings where the
-runtime exposes them; distinguish requested settings from observed values.
+script exit alone does not establish recovery. Before relying on a message to
+an idle participant, confirm it reached that participant; a delivered reply or
+status is not proof it was read. No new code or paid work is required merely
+to prove communication. Verify effective settings where the runtime exposes
+them; distinguish requested settings from observed values. Verify a
+participant's effective account from its running agent's own configuration,
+not from launch metadata it inherited.
 
 Lead with what is established and what still needs action. Give evidence and
 the next action for each exception. Unsupported capabilities and unknown

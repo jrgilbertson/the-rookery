@@ -20,12 +20,16 @@ hints, not membership proof. Exclude unrelated agents and completed PR workers
 awaiting cleanup.
 
 Determine each participant's assignment, actual liveness, writer ownership,
-worktree and local work, human holds, and previous effective provider/model/
-effort where available. Include ongoing members awaiting another assignment
-when the account change affects them; preserve that idle disposition after
-recovery. Preserve healthy work that needs no approved transition and explicit
-human holds. Silence, timeout, or unreachable host alone does not prove exit
-or authorize replacement or cleanup.
+worktree and local work, background jobs and shells, human holds, and previous
+effective provider/model/effort where available. Include ongoing members
+awaiting another assignment when the account change affects them; preserve
+that idle disposition after recovery. Preserve healthy work that needs no
+approved transition and explicit human holds. Healthy work with a running job,
+such as a long check or a paid run, moves at its next idle point; never exit
+it in the middle of a paid run. Silence, timeout, or unreachable host alone
+does not prove exit or authorize replacement or cleanup. A participant stopped
+by a usage limit is not dead work: jobs it started in the background may still
+finish, so check them before reassigning.
 
 Recover applicable recent decisions, unread messages, unresolved questions and
 approvals, and needed monitoring. History supplies evidence and task context;
@@ -79,8 +83,10 @@ addresses. Repeated revive must not duplicate workers, assignments, or timers.
 
 Tell each recovered participant whose open assignment has no hold or named
 dependency to continue it in the same turn; preserve holds and dependency
-waits as recorded. A resume message that offers "or wait" lets a worker end its
-turn mid-assignment with its work uncommitted.
+waits as recorded. Stopping an agent can stop its background jobs, so the
+resume message names which of the participant's inventoried jobs to relaunch.
+A resume message that offers "or wait" lets a worker end its turn
+mid-assignment with its work uncommitted.
 
 Restore needed supervision through the current native workflow. Inspect existing
 watchers and services through their owning lifecycle before changing them;

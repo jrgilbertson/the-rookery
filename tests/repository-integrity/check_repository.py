@@ -280,6 +280,10 @@ def check_guidance_copy(temporary_root: Path) -> None:
     require(sync("--check").returncode == 0, "branch with fresh edited guidance was rejected")
     source.write_text("newest guidance\n", encoding="utf-8")
     require(sync("--check").returncode != 0, "branch with stale edited guidance was accepted")
+    source.write_bytes(subprocess.run(["git", "show", "origin/main:GLOBAL-AGENTS.md"], cwd=repository,
+                                      check=True, capture_output=True).stdout)
+    require(sync("--check").returncode != 0,
+            "branch with stale edited guidance was accepted because main matched")
 
 
 def main() -> int:

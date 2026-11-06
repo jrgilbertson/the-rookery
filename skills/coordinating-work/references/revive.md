@@ -84,7 +84,8 @@ addresses. Repeated revive must not duplicate workers, assignments, or timers.
 Tell each recovered participant whose open assignment has no hold or named
 dependency to continue it in the same turn; preserve holds and dependency
 waits as recorded. Stopping an agent can stop its background jobs, so the
-resume message names which of the participant's inventoried jobs to relaunch.
+resume message names each inventoried job confirmed stopped before finishing,
+for relaunch; a job still running or in an unknown state is not relaunched.
 A resume message that offers "or wait" lets a worker end its turn
 mid-assignment with its work uncommitted.
 

@@ -29,8 +29,9 @@ does not create a competing roadmap, issue database, or mandatory outer plan
 for an ordinary CE task. Staffing, isolation, concurrency, and resource use
 follow the native workflow and the operator's existing limits. On a shared
 execution host, limit concurrent heavy jobs, such as verification, builds, and
-browser runs, by measured CPU and memory rather than by participant count, and
-name the project's own metering helper in each brief.
+browser runs, by measured CPU and memory rather than by participant count. Each
+brief names the project's own metering helper, or, when the project has none, a
+host command confirmed to measure CPU and memory.
 
 ## Propose before establishing
 
@@ -65,9 +66,10 @@ Provide each participant its bounded assignment and access to canonical
 context, current decisions, and the correct communication path. Establish the
 ordinary native supervision the arrangement needs, reconciling any existing
 monitoring first. The one periodic check allowed is a stall sweep at an
-interval the operator approves. It looks only for a participant with an open
-assignment that is idle at its prompt, with no running job and no report since
-its last assignment, and sends that participant a plain continue nudge. A
+interval the operator approves. It looks only for a participant whose open
+assignment has no hold or named dependency, that is idle at its prompt, with
+no running job and no report since its last assignment, and sends that
+participant a plain continue nudge. A
 participant that stops after a helper returns sends no message, so no
 message-driven wait wakes for it. Anything beyond that sweep is a second
 scheduler or a fixed tick cadence; do not add one.

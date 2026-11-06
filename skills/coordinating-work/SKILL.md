@@ -156,8 +156,8 @@ Confirm the participant's current assignment or deliberate disposition and
 applicable recent decisions, a working return path to the current Coordinator,
 and needed supervision. A queued message, heartbeat, live process, or successful
 script exit alone does not establish recovery. Before relying on a message to
-an idle participant, confirm it reached that participant; a delivered reply or
-status is not proof it was read. No new code or paid work is required merely
+an idle participant, confirm from that participant's own reply or action that
+it read the message; a delivery receipt or status is not proof it was read. No new code or paid work is required merely
 to prove communication. Verify effective settings where the runtime exposes
 them; distinguish requested settings from observed values. Verify a
 participant's effective account from its running agent's own configuration,

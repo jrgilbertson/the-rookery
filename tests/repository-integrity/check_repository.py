@@ -259,6 +259,28 @@ def check_guidance_copy(temporary_root: Path) -> None:
     source.write_text("updated guidance\n", encoding="utf-8")
     require(sync("--check").returncode != 0, "stale committed guidance was accepted")
 
+    def git(*arguments):
+        subprocess.run(["git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                        *arguments], cwd=repository, check=True, capture_output=True)
+
+    # A branch that does not edit the copy is judged by the default branch.
+    git("branch", "old-branch")
+    destination.write_bytes(source.read_bytes())
+    git("commit", "-qam", "Refresh guidance")
+    git("update-ref", "refs/remotes/origin/main", "HEAD")
+    git("checkout", "-q", "old-branch")
+    require(sync("--check").returncode == 0,
+            "branch that does not edit guidance was judged by its stale HEAD copy")
+    source.write_text("newer guidance\n", encoding="utf-8")
+    require(sync("--check").returncode != 0, "stale default-branch guidance was accepted")
+
+    # A branch that edits the copy is judged by what it pushes.
+    destination.write_bytes(source.read_bytes())
+    git("commit", "-qam", "Edit guidance on branch")
+    require(sync("--check").returncode == 0, "branch with fresh edited guidance was rejected")
+    source.write_text("newest guidance\n", encoding="utf-8")
+    require(sync("--check").returncode != 0, "branch with stale edited guidance was accepted")
+
 
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:

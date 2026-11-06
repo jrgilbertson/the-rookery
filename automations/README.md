@@ -64,7 +64,7 @@ Each prompt ends by telling the run to clone or update that repository, then
 read its README and follow the instructions for the job's slug. The README owns
 the contract, so a change to it reaches every job on its next run without
 editing the prompts. Copy the template below into your private repository's
-README; this is the canonical public version.
+README; this is the public version.
 
 ```markdown
 # Automation runs

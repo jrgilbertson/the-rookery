@@ -4,7 +4,8 @@
 # The maintainer opts in once per clone:
 #   git config rookery.globalAgentsSource ~/.codex/AGENTS.md
 #   scripts/sync-global-agents.sh          copy the local file into the repository
-#   scripts/sync-global-agents.sh --check  fail when the committed copy is stale
+#   scripts/sync-global-agents.sh --check  fail when the copy on main, or on a
+#                                          branch that edits it, is stale
 set -euo pipefail
 
 repo_root=$(git rev-parse --show-toplevel)
@@ -21,10 +22,25 @@ case "${1:-}" in
       echo "global-agents: configured source not found: $source_file" >&2
       exit 1
     fi
-    # Compare the committed copy, which is what a push sends.
-    if ! git show HEAD:GLOBAL-AGENTS.md 2>/dev/null |
-      diff -u --label "HEAD:GLOBAL-AGENTS.md" --label "$source_file" - "$source_file"; then
-      echo "global-agents: committed GLOBAL-AGENTS.md is stale; run scripts/sync-global-agents.sh and commit" >&2
+    # A branch that edits the copy is judged by what its push sends. Any other
+    # branch is judged by the default branch, so an old branch does not fail
+    # because main refreshed the copy after it forked.
+    published=HEAD
+    if git rev-parse --verify --quiet origin/main >/dev/null; then
+      edited=0
+      git diff --quiet origin/main...HEAD -- GLOBAL-AGENTS.md 2>/dev/null || edited=$?
+      case "$edited" in
+        0) published=origin/main ;;
+        1) ;;
+        *)
+          echo "global-agents: cannot find where this branch left origin/main; fetch the missing history (git fetch --unshallow)" >&2
+          exit 1
+          ;;
+      esac
+    fi
+    if ! git show "$published:GLOBAL-AGENTS.md" 2>/dev/null |
+      diff -u --label "$published:GLOBAL-AGENTS.md" --label "$source_file" - "$source_file"; then
+      echo "global-agents: $published:GLOBAL-AGENTS.md is stale; run scripts/sync-global-agents.sh and commit" >&2
       exit 1
     fi
     ;;

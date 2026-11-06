@@ -110,14 +110,14 @@ Tell each worker to bring its branch up to date with the latest default
 branch before each run of the repository's verification gate, following that
 repository's merge policy, so verification tests the fixes already merged.
 
-Tell each worker which message type each kind of report uses: `ask` for a
-question that needs an answer, `escalation` for a blocker that needs the
-Coordinator to intervene, `worker_done` for finished work, and `status` for
-progress. The Coordinator's wait wakes on questions, escalations, and
+Tell each worker which message type each kind of report uses: `question`,
+sent with the `ask` command, for a question that needs an answer, `escalation`
+for a blocker that needs the Coordinator to intervene, `worker_done` for
+finished work, and `status` for progress. The Coordinator's wait wakes on questions, escalations, and
 completions; progress reports arrive with the next delivered batch.
 
 Tell each worker to wait for long-running checks inside its own turn, using a
-bounded foreground wait, and to end a turn only with a question or a completion
+tracked background wait, and to end a turn only with a question or a completion
 report. A helper skill returning is never the end of the worker's turn. A turn
 that ends while a background watcher still runs reads as a stopped worker and
 wakes the Coordinator for nothing.
@@ -139,7 +139,7 @@ schema is required.
 
 Account-specific conversation memory must not be the only way to discover
 unfinished work. When the operator confirms a plan or answers a decision round,
-record the decisions in the canonical tracker before acting on them; a usage
+record the decisions in their owning record before acting on them; a usage
 limit can end the session without warning. Report existing backup coverage and its gaps without promising
 host-loss restoration. Keep private identities, transcripts, and credentials
 out of public source; preserve lasting outcomes in their owning records and

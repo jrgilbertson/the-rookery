@@ -26,10 +26,13 @@ in the release pull request.
 - Obtain the owner's final documentation and repository review.
 - Merge only after required checks pass, then verify the merged tree still
   matches the qualified candidate and freeze that green `main` commit.
-- Install the catalog from `main` through the documented public
-  `npx skills add` path. Confirm every catalog skill is listed and every helper
-  under a skill's `scripts/` directory is still executable in the installed
-  copy. This is a maintainer step; agents do not install skills locally.
+- Confirm `main` still points at the frozen commit, then install the catalog
+  from `main` through the documented public `npx skills add` path. Confirm
+  every catalog skill is listed and every helper under a skill's `scripts/`
+  directory is still executable in the installed copy. Run the
+  [Install Probe](CONCEPTS.md#install-probe) activation check for each
+  supported harness, or record it as Unmeasured for a harness that is not
+  available. This is a maintainer step; agents do not install skills locally.
 - Read back the public repository protections, security-reporting path, and
   the install result above before creating a release.
 - Enable release immutability and read back the enabled state before the target

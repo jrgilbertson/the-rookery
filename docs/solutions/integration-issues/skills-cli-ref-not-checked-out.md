@@ -44,7 +44,7 @@ This surfaced while running the install-probe gate for `skills/creating-portable
 
 Split the probe by merge state:
 
-**Pre-merge** — check discovery from the local source without installing anything:
+**Pre-merge** — check discovery from the local source without installing anything, and confirm the candidate's name appears in the output (the command can succeed while listing only other skills):
 
 ```console
 $ npx skills add . --list

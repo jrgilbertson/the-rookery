@@ -2,7 +2,7 @@
 name: personal-chief-of-staff
 description: Use when the user wants to complete a daily journal or wind down, requests a daily chief-of-staff review or a weekly or quarterly review, asks to set up, list, add, update, or remove chief-of-staff source mappings, approves, resumes, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for morning briefings, start-of-day planning, or same-day triage of what needs attention, or for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
-compatibility: Requires host file capabilities, private persistent storage, and access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
+compatibility: Requires access to the user's designated source map and authoritative systems. Obsidian workflows require a running Obsidian app and its CLI.
 ---
 
 # Personal Chief of Staff

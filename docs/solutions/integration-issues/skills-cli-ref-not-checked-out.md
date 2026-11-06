@@ -32,7 +32,7 @@ This surfaced while running the install-probe gate for `skills/creating-portable
 
 - `npx skills add jrgilbertson/the-rookery@jrgilbertson/Initial-setup` echoed `Source: ...@jrgilbertson/Initial-setup` and `Repository cloned`, then reported `No skills found` — while `gh api` confirmed that ref contained `skills/creating-portable-skills/SKILL.md` with valid frontmatter.
 - The same result with a full 40-character commit SHA as the ref, ruling out slashed-branch-name parsing as the cause.
-- A local-path scan of the identical tree discovered the skill correctly (session-verified with `npx skills add . --list`; the recorded gate evidence uses the install form shown under Solution), isolating the failure to remote ref handling.
+- A local-path scan of the identical tree discovered the skill correctly (session-verified with `npx skills add . --list`; the recorded gate evidence used the since-retired local install, `npx skills add . --skill creating-portable-skills --agent claude-code --agent codex -g -y --copy`), isolating the failure to remote ref handling.
 
 ## What Didn't Work
 

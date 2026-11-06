@@ -117,7 +117,7 @@ finished work, and `status` for progress. The Coordinator's wait wakes on questi
 completions; progress reports arrive with the next delivered batch.
 
 Tell each worker to wait for long-running checks inside its own turn, using a
-bounded foreground wait, and to end a turn only with a question or a completion
+tracked background wait, and to end a turn only with a question or a completion
 report. A helper skill returning is never the end of the worker's turn. A turn
 that ends while a background watcher still runs reads as a stopped worker and
 wakes the Coordinator for nothing.

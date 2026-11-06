@@ -160,7 +160,8 @@ looked" surface. GitHub Releases mirror its entries.
   with the copy on `origin/main`, and with `HEAD` only when the branch edits the
   copy. Branches started before the copy was refreshed on `main` no longer fail.
 - `coordinating-work` asks for operator decisions to be recorded in their
-  owning record, and says a worker's question is sent with the `ask` command.
+  owning record, says a worker's question is sent with the `ask` command, and
+  has workers wait for long-running checks with a tracked background wait.
   The automation run contract template no longer calls itself canonical.
 - Automation prompts now tell each run to update the shared run-state
   repository and follow its README, which owns the run contract. The README

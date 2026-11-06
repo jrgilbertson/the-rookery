@@ -68,11 +68,12 @@ ordinary native supervision the arrangement needs, reconciling any existing
 monitoring first. The one periodic check allowed is a stall sweep at an
 interval the operator approves. It looks only for a participant whose open
 assignment has no hold or named dependency, that is idle at its prompt, with
-no running job and no report since its last assignment, and sends that
-participant a plain continue nudge. A
-participant that stops after a helper returns sends no message, so no
-message-driven wait wakes for it. Anything beyond that sweep is a second
-scheduler or a fixed tick cadence; do not add one.
+no running job and no completion report, open question, or escalation since
+its last assignment, and sends that participant a plain continue nudge. A
+progress or status report does not exempt a participant. A participant that
+stops after a helper returns sends no message, so no message-driven wait wakes
+for it. Anything beyond that sweep is a second scheduler or a fixed tick
+cadence; do not add one.
 
 A Planner keeps no timer of its own. The Coordinator wakes it by message when a
 pull request merges, a worker is freed or needs its next assignment, the

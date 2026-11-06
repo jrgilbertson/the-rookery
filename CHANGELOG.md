@@ -75,7 +75,8 @@ looked" surface. GitHub Releases mirror its entries.
   message instead of a timer.
 - `coordinating-work` lets the Coordinator run an operator-approved stall
   sweep that nudges only idle participants with an unheld open assignment, no
-  running job, and no report, and still bans any other second scheduler. It
+  running job, and no completion report, open question, or escalation since
+  that assignment, and still bans any other second scheduler. It
   confirms that an idle participant read a message and reads the effective
   account from the running agent rather than launch metadata. Briefs say a
   returning helper skill does not end a worker's turn, and on a shared host

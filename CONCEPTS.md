@@ -117,8 +117,9 @@ handoff. It is never stored as a separate record of work status.
 The per-harness smoke check proving that an exact skill revision installs
 through the repository's documented path and activates on one trigger query.
 A passing probe establishes installability and activation for that harness
-only; it is not behavioral evidence. Runs before merge from the local source
-and again after merge against the published state.
+only; it is not behavioral evidence. The maintainer runs it after merge,
+against the published state. Agents never install a candidate locally to
+probe it.
 
 ### Installation Parity
 

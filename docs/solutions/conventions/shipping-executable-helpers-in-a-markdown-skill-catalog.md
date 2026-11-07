@@ -1,7 +1,7 @@
 ---
 title: "Shipping executable helpers in a markdown skill catalog"
 date: 2026-07-31
-last_updated: 2026-10-09
+last_updated: 2026-11-06
 category: conventions
 module: "skills"
 problem_type: convention
@@ -40,20 +40,23 @@ are `skills/checking-pr-readiness/scripts/surface-report.sh`,
   `Valid skill`), but that was unknown until tried — treat the first
   non-markdown addition to any skill as a stop-condition check, run
   immediately after creating the directory with a stub file.
-- **Run the install probe from local source with `--copy` and check the bits.**
-  `npx skills add <repo-path> --skill <name> --copy` into a disposable project
-  delivered all files with executable bits intact (`-rwxr-xr-x`). The `--copy`
-  flag matters for scripts: a symlinked install can differ in whether
-  permission bits and file identity survive, and the probe is the only place
-  that would catch it. Record the skills CLI version with the probe — it is a
-  fast-moving tool resolved fresh via `npx`.
+- **Check the executable bits in the installed copy at release time.** The
+  original probe with `npx skills add <repo-path> --skill <name> --copy` into
+  a disposable project delivered all files with executable bits intact
+  (`-rwxr-xr-x`). A symlinked or copied install can differ in whether
+  permission bits and file identity survive, and an installed copy is the only
+  place that would show it. Agents no longer install candidates locally; the
+  maintainer checks the bits after installing from `main`, as
+  [RELEASING.md](../../../RELEASING.md) lists. Record the skills CLI version
+  with the check — it is a fast-moving tool resolved fresh via `npx`.
 - **A trigger-suite pass is a listing proxy, never activation proof.** Judging
   queries against a skill's name and description shows the description works
   as an activation API; only a per-harness in-session smoke run — install,
   fire one trigger query, confirm from the trace which copy activated — shows
-  the harness actually loads and runs the skill. Log the smoke per harness, or
-  log explicit `not run — harness unavailable` lines; never fold a deferred
-  smoke into a probe's pass line.
+  the harness actually loads and runs the skill. That smoke run is a
+  maintainer step after merge, never an agent install before merge. Log the
+  smoke per harness, or log explicit `not run — harness unavailable` lines;
+  never fold a deferred smoke into a probe's pass line.
 
 ## Why This Matters
 

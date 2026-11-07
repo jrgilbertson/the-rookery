@@ -16,9 +16,6 @@ rolling install source; a release records one validated historical state.
 - Audit the public tree, history, hosted GitHub surfaces, licenses, attribution,
   and shipped skill behavior. Resolve every material privacy, licensing,
   security, install, or documentation blocker.
-- Test every catalog skill from a clean local checkout. After the repository is
-  public, repeat installation through the documented public `npx skills add`
-  path before publishing the release.
 
 Keep raw scan output and other potentially private evidence outside the
 repository. Put only concise, sanitized results and exact candidate identities
@@ -29,8 +26,15 @@ in the release pull request.
 - Obtain the owner's final documentation and repository review.
 - Merge only after required checks pass, then verify the merged tree still
   matches the qualified candidate and freeze that green `main` commit.
+- Confirm `main` still points at the frozen commit, then install the catalog
+  from `main` through the documented public `npx skills add` path. Confirm
+  every catalog skill is listed and every helper under a skill's `scripts/`
+  directory is still executable in the installed copy. Run the
+  [Install Probe](CONCEPTS.md#install-probe) activation check for each
+  supported harness, or record it as Unmeasured for a harness that is not
+  available. This is a maintainer step; agents do not install skills locally.
 - Read back the public repository protections, security-reporting path, and
-  remote install result before creating a release.
+  the install result above before creating a release.
 - Enable release immutability and read back the enabled state before the target
   tag or GitHub Release exists.
 - Create an annotated semantic-version tag at the frozen commit, then publish

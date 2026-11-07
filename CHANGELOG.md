@@ -42,6 +42,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Agents no longer install a skill candidate locally before merge. The
+  `coordinating-work` test notes drop their pre-merge install step, the Install
+  Probe runs after merge as a maintainer step, and the release checklist has
+  the maintainer install from `main` and confirm every bundled helper is still
+  executable in the installed copy.
 - Global agent guidance permits Compound Engineering reviews through existing
   sign-in accounts after naming the model, while excluding credentials and
   personal data.

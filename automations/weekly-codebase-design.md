@@ -20,5 +20,5 @@ Assessment only: issue creation, implementation, and PR publication require sepa
 
 Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Use its helper to read `weekly-codebase-design` runs and owner decisions before assessing, and save the final report afterward. Revisit declined findings only with new evidence. README documents storage and helper usage.
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `weekly-codebase-design` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

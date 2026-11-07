@@ -76,7 +76,8 @@ schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
 - [Sessions audit (local and remote)](automations/sessions-audit.md). Use `retro` to review recent AI sessions on each host for improvements to the coding environment.
-- [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and file an issue for each gap.
+- [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and recommend fixes for approval.
+- [State-machine correctness audit](automations/state-machine-audit.md). Assess application lifecycles under retries and concurrency, and recommend fixes for approval.
 - [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.
 - [Optimize CI](automations/optimize-ci.md). Review continuous integration and recommend improvements.
 - [Weekly codebase design](automations/weekly-codebase-design.md). Review codebase design and recommend improvements.

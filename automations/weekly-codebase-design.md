@@ -14,7 +14,11 @@ for that agent, or run `npx skills@latest add mattpocock/skills` and select
 ## Prompt
 
 ```text
-codebase-design review the repo and provide recommendations for improvement.
+Use `codebase-design` to review this repository and recommend improvements grounded in its current design and needs.
 
-Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `weekly-codebase-design`.
+Assessment only: issue creation, implementation, and PR publication require separate approval.
+
+Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `weekly-codebase-design` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

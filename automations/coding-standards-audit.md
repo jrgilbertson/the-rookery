@@ -11,28 +11,17 @@ If `CODING_STANDARDS.md` is missing, the prompt asks the agent to propose a firs
 ## Prompt
 
 ```text
-Review this repository’s root CODING_STANDARDS.md and recommend improvements that keep it current, curated, and useful for humans and AI coding agents.
+Review root CODING_STANDARDS.md and recommend additions, revisions, consolidation, or removal. If missing, propose a repository-specific first edition.
 
-Ground the review in the repository’s architecture, installed versions, tooling, accepted decisions, and recent PRs and code review feedback. Existing code is evidence, not the ceiling for good practice. Check previous audit results when available and avoid repeating recommendations already addressed.
+Ground recommendations in the architecture, installed versions, tooling, accepted decisions, recent PRs and reviews, and current primary sources for the technologies actually used. Existing code informs the review without limiting better approaches; resolve conflicting guidance for this repository.
 
-Research current primary sources for the languages, frameworks, infrastructure, and ML/AI systems actually used here. Consult relevant practitioners without treating any author as authoritative for every decision. Highlight conflicting guidance and explain which approach fits this repository and why.
+Prioritize correctness, security, maintainability, and behavior over style. Preserve implementation freedom. Distinguish mandatory rules from defaults and exceptions. Prefer enforcement through existing types, schemas, tests, or tooling; distinguish actual checks from human review. Scope broader migrations separately. Apply new standards to new and materially changed code by default.
 
-Recommend additions, revisions, consolidation, or removal. Prioritize correctness, security, maintainability, and useful guardrails over stylistic preferences. Favor rules that protect observable behavior, interface contracts, and task intent while leaving agents freedom over implementation. Distinguish mandatory requirements from defaults with justified exceptions.
+For each recommendation, give the exact edit, evidence and benefit, dated source links, tradeoffs and exceptions, and current or proposed enforcement. Keep adopted coding guidance separate from research procedures and unadopted proposals.
 
-For each worthwhile recommendation, provide:
+Assessment only: do not modify repository files, install tools, change configuration, create or update issues, or publish PRs without separate approval.
 
-1. The exact proposed wording or edit.
-2. The problem or source-backed benefit, with repository evidence where relevant.
-3. Primary-source links and the date checked.
-4. Material tradeoffs, conflicting guidance, and exceptions.
-5. How compliance is enforced today, and any tooling or migration work needed.
+Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-Prefer structural prevention through existing types, schemas, tests, or tooling when appropriate. Do not imply that a check exists when compliance currently depends on review. Keep broader migrations separately scoped. New standards should normally apply to new and materially changed code, including substantive refactors.
-
-Keep the standards focused on adopted coding guidance. Research procedures, audit instructions, and unadopted candidates belong outside it.
-Return a small, prioritized set of recommendations for approval. If the file is missing, propose a repository-specific first edition. If no changes are justified, say so.
-
-Do not modify repository files, install tools, change configuration, or publish issues or PRs without approval.
-
-Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `coding-standards-audit`.
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `coding-standards-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

@@ -18,12 +18,11 @@ runs.
 ## Prompt
 
 ```text
-ce-optimize look at the CI and provide recommendations for improvement.
+Use `ce-optimize` to assess CI and recommend improvements. Keep experiments within its approval requirements; recommendations do not authorize issue creation, implementation, or PR publication.
 
-Use $HOME/.local/state/ci-optimize/<repository name>/ as the durable state root, so
-the measurement harness and experiment logs outlive this run's worktree. Reuse
-the harness already there, start a new dated experiment for this run, and
-compare its results with earlier runs.
+Reuse the measurement harness and experiment history at $HOME/.local/state/ci-optimize/<repository name>/. Keep new measurements dated and compare them with earlier runs.
 
-Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `optimize-ci`.
+Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `optimize-ci` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

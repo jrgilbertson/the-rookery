@@ -26,7 +26,13 @@ after missed runs to cover sessions from when the host was unavailable.
 ## Prompt
 
 ```text
-/retro all my AI sessions for the past 24 hours, together with The Rookery repository's skills, workflows, guidance, and related configuration.
+Use `retro` to review this host's AI sessions from the past 24 hours alongside The Rookery's skills, workflows, guidance, and configuration.
 
-Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `sessions-audit`.
+Read actual transcripts across configured agents and account homes. Select by modification time, follow symlinks, deduplicate real paths, and cross-check Orca's session journal; it does not cover all terminal or external-app sessions. Describe personal threads by category only.
+
+Recommend environment and workflow improvements supported by session evidence. Assessment only: issue creation, implementation, and PR publication require separate approval.
+
+Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `sessions-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

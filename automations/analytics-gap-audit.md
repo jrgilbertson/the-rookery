@@ -1,34 +1,32 @@
 # Analytics gap audit
 
-Find user actions that shipped without analytics tracking, and tracked events that never arrive in production, and file each gap as an issue a coding agent can fix.
+Find user actions that shipped without analytics tracking, and tracked events that never arrive in production, and recommend fixes for approval.
 
 - **Cadence:** Monday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill installed for the agent, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. Issue creation reads the [`managing-issues`](../skills/managing-issues/SKILL.md) configuration file for the team, labels, and readiness, but skips that skill's per-batch approval: the job runs unattended and files issues on its own. Run it once read-only and review what it would file before enabling it. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill installed for the agent, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. This is a read-only assessment of the application and issue tracker. Review its recommendations before separately authorizing issue creation or implementation. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only private names and paths swapped out.
 
 ## Prompt
 
 ```text
-Audit [product] for analytics gaps and file each new gap as a Linear issue that a coding agent can fix with the `instrument-product-analytics` skill. Creating Linear issues and writing this run to the shared state repository are your only writes.
+Audit [product] for analytics gaps and recommend fixes using `instrument-product-analytics`. Assess the application and issue tracker read-only; the audit report is the only persistent write.
 
-First confirm you can reach GitHub, the PostHog project [production analytics project], the Vercel production aliases, and Linear. If any of them is unreachable, report the run as failed and stop.
+Confirm access to GitHub, PostHog project [production analytics project], the Vercel production aliases, and Linear. If any is unreachable, report the run as failed and stop.
 
-A gap is one of two kinds:
+Look for:
 
-- **Missing:** a client or server user action added in a PR merged to `main` in the last 14 days (`gh pr list --state merged --base main --search "merged:>=<date>" --limit 1000`; the default limit silently truncates) that captures no event from [event schema] and that no existing production event already covers.
-- **Silent:** a schema event whose code is live in production and has never arrived in [production analytics project] since that release, even though consenting sessions reached the surface that fires it. Read the live SHA from the Vercel aliases as [release runbook] describes, and date releases with the [release tags]. Events sent only under non-person identities, such as system jobs and webhooks, are out of scope. When no sessions have reached the surface yet, list the event as awaiting evidence; every run checks it again.
+- Missing: user actions added in PRs merged to `main` in the last 14 days that capture no event from [event schema] and are not covered by an existing production event. Use `gh pr list --state merged --base main --search "merged:>=<date>" --limit 1000`; the default limit truncates results. Report any remaining truncation.
+- Silent: schema events live in production that have never arrived since release, despite consenting sessions reaching the triggering surface. Resolve the live SHA using [release runbook] and date releases with [release tags]. Exclude non-person events such as system jobs and webhooks. Recheck events awaiting exposure evidence on later runs.
 
-When PostHog cannot show whether a surface was used, you may query the production Supabase database inside read-only transactions.
+If PostHog cannot establish surface usage, use read-only Supabase transactions. Label silent-gap evidence internal, real, or unclassified using the project's test-account filters.
 
-Label each silent gap's evidence internal or real using the project's test-account filters, or unclassified when none are set.
+Assign stable keys: `analytics-gap-key: missing:<file>#<handler, component, or route>` or `analytics-gap-key: silent:<event>`. Check Linear, including archived issues, for duplicates. Group new confirmed gaps by root cause or originating PR. Include keys, code locations, PR/release evidence, and fixes through the schema, [typed capture helpers], and [analytics data policy].
 
-Give each gap a key taken from the code, so it stays the same across runs: `analytics-gap-key: missing:<file>#<handler, component, or route>` or `analytics-gap-key: silent:<event>`. A key already in Linear, in any state including archived, is already flagged.
+Report source availability, PRs in the window versus reviewed, proposed work, existing issues, and cases awaiting evidence. Do not create or update issues, implement fixes, or publish PRs without separate approval.
 
-File every new gap, grouping gaps that share a root cause or came from the same PR into one issue that lists each gap's key line. Create the issues directly with the Linear connector, using the team, labels, and readiness in `.agents/managing-issues.json`: `feature` for missing, `fix` for silent, readiness `ready`. Each issue carries its key lines, the file and line, the PR or release, the evidence, and a fix that goes through the schema, [typed capture helpers], and [analytics data policy].
+Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-End with a summary listing each source as reachable or failed, how many PRs the window held and how many you reviewed, the issues filed, gaps already flagged, and events awaiting evidence.
-
-Shared state: before each run, clone or update <your private automation-state repository> at ~/.local/state/automation-runs, then read its README.md and follow the instructions for `analytics-gap-audit`.
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `analytics-gap-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

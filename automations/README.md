@@ -8,7 +8,8 @@ repository.
 |---|---|---|---|
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |
 | [Sessions audit (remote)](sessions-audit.md) | Review recent AI sessions on the remote host | Daily at 01:00 | America/Los_Angeles |
-| [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and file issues | Monday at 04:00 | America/Los_Angeles |
+| [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and recommend fixes | Monday at 04:00 | America/Los_Angeles |
+| [State-machine correctness audit](state-machine-audit.md) | Assess lifecycle correctness and recommend fixes | Sunday at 04:00 | America/Los_Angeles |
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 21:00 | America/Los_Angeles |
 | [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
 | [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 04:00 | America/Los_Angeles |
@@ -20,8 +21,9 @@ your work.
 ## Set up a scheduled review
 
 Create an automation in Orca and select the target repository and agent. Set
-the schedule and paste the prompt from its file. Install any named skills and
-give the agent access to the sources the review requires. For Sessions audit,
+the schedule and paste the prompt from its file. Install any named skills,
+including `ce-pov` for the final recommendation review, and give the agent access
+to the sources the review requires. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
 Sessions audit invokes `retro` on each host separately. Install its required
@@ -60,17 +62,20 @@ reads and writes one private Git repository, cloned to
 
 Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
-Each prompt ends by telling the run to clone or update that repository, then
-read its README and follow the instructions for the job's slug. The README owns
-the contract, so a change to it reaches every job on its next run without
-editing the prompts. Copy the template below into your private repository's
-README; this is the public version.
+Each automation contains its assessment instructions, authority limits, and
+final `ce-pov` review in its own prompt. It runs independently; the history
+repository stores reports and owner decisions, not a shared assessment workflow.
+Its README documents storage and helper usage. Install `ce-pov` for each agent
+and host running these prompts.
+
+Copy the storage template below into your private repository's README. If it
+provides a history helper, document how to use it for these operations.
 
 ```markdown
 # Automation runs
 
-Before each run, update this checkout and read this README. It owns the run
-contract, so changes here reach every automation on its next run.
+This repository stores automation reports and owner decisions. Each automation
+keeps its assessment and recommendation-review instructions in its own prompt.
 
 ## Layout
 
@@ -86,7 +91,7 @@ projects never share decisions or runs.
   date, run file, finding title, decision (`accepted`, `declined`, `deferred`,
   or `already-fixed`), the owner's words, and the issue or PR that carries it.
 
-## Run contract
+## Storing run history
 
 1. Start with `git -C ~/.local/state/automation-runs pull --rebase --autostash`,
    cloning the repository first if it is missing. Read `<slug>/decisions.md` and the

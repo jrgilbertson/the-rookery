@@ -61,6 +61,7 @@ HOME_PATH_EXAMPLES = {
     "automations/coding-standards-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/optimize-ci.md": {"~" + "/.local/state/automation-runs"},
     "automations/sessions-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/state-machine-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/test-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/weekly-codebase-design.md": {"~" + "/.local/state/automation-runs"},
     "WORKFLOWS.md": {"~" + "/.codex/AGENTS.md", "~" + "/.claude/CLAUDE.md"},

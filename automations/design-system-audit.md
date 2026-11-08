@@ -11,26 +11,26 @@ Use a repository-specific slug in the prompt. Keep the automation paused while v
 ## Prompt
 
 ```text
-Assess [product]'s interface against its design system and recommend fixes for approval, using the `impeccable` skill. Run impeccable only in its read-only modes: never run `document`, `extract` past its planning steps, `polish` or any other command that applies changes, `doctor --fix`, ignore-list changes, `live`, or `npx impeccable update`. This run is unattended: put every question impeccable would ask the user, including critique's closing questions, in the report's "Questions for you" section and continue.
+Audit [product]'s interface against its design system with the `impeccable` skill and recommend fixes for approval. [design contract] is the contract; [sidecar file] is its sidecar. Run impeccable `context` once from the repository root, then read the contract in full.
 
-[design contract] is the contract for drift findings, and [sidecar file] is its sidecar. Run impeccable `context` once from the repository root, then read the design contract in full.
+Review every page, public and signed-in, each run:
 
-Review every page, public and signed-in. A page family is a set of pages that share a route group and the same page shell or layout. Start from the previous report's family map and include the current one in the report.
+1. Run [token and layout validators], [sidecar tests], `impeccable doctor --json`, and `impeccable detect --json` over [UI source paths] only; detect ignores .gitignore, and exit code 2 means findings.
+2. Start the local stack in the background and sign in as a throwaway fictional account, following [signed-in setup docs]. Capture every page that account can reach. Review token-bound routes, and pages it cannot reach, from code and name them. If the stack or sign-in fails, review signed-in pages from code and carry on. Always finish with [teardown command that removes the database volumes]; a kept database blocks next week's run.
+3. Group pages into families that share a route group and page shell. Critique each family once with impeccable `critique` and the `audit` rubric, adding page notes only where a page departs from its family.
 
-1. Mechanical sweep, every page: run [token and layout validators]; impeccable `detect --json` over [UI source paths] only, because it ignores .gitignore (exit code 2 means findings, not failure); impeccable `doctor --json`; and [sidecar tests].
-2. Rendered review: start the local stack with [local stack start command] in the background and wait until the app responds. Seed a throwaway review account with [review-account seed command], using a fictional email, a fresh UUID, and a random password generated for this run, then sign in through [development sign-in code endpoint]. Capture every page the account can reach, building URLs for parameterized routes from the seeded data. Review token-bound or one-time routes, and pages the account cannot reach, from code, and list them by name. If the stack or sign-in fails, review signed-in pages from code, say so, and finish everything else. Always end with [local stack teardown command that removes the database volumes], including after a failure.
-3. Critique each page family once with impeccable `critique`, and apply the `audit` rubric. Add per-page notes only where a page departs from its family.
+Report, in this order:
 
-For each finding, name its kind: token drift (a hard-coded value where a token belongs), pattern drift (the same element built differently in different places), rule drift (a design-contract rule applied unevenly), or a complexity or hierarchy problem. Give the evidence (page, file and line, capture), the rule or token it breaks, and a fix that uses existing shared components and tokens.
+- The top five issues by impact.
+- This run's counts beside the last run's: validator and detector findings, duplicate-pattern clusters, extraction candidates, sidecar mismatches, and pages rendered versus reviewed from code.
+- The remaining drift, grouped by cause. Label each token, pattern, or rule drift, or a complexity problem, with its page, file and line, the contract rule it breaks, and a fix using existing components and tokens.
+- Extractions: shared components or page templates for patterns used three or more times with the same intent, from `extract`'s planning steps.
+- The exact sidecar patch.
+- Premium bar: contract revisions that raise the craft toward [reference products], kept apart from drift. The contract's own identity wins over theirs.
+- Ratchet: a lint rule or validator for any finding that appeared in two or more earlier reports.
+- The questions impeccable would have asked, and what was not assessed.
 
-- Extraction: recommend a shared component or page template only for a pattern used three or more times with the same intent and the same reason to change. Use `extract` through its planning steps only. Name the proposed piece, its variants, and the call sites it would replace.
-- Sidecar: compare the sidecar with the design contract and with the source components it describes, including any part no test guards. Report an exact proposed patch; do not write it.
-- Premium bar: separately from drift, propose design-contract revisions that raise the interface toward the craft of [reference products]. They set the quality bar, not the look; the contract's own identity and Do's and Don'ts take precedence. Give evidence and tradeoffs for each.
-- Ratchet: when a finding recurs, meaning the same title or cause appeared in two or more earlier reports or it matches a kind the owner already accepted, propose an automated check, such as a lint rule or validator, that would catch it permanently, following the project's existing design checks.
-
-Report in this order: the top five issues by impact; a table comparing this run's numbers with the last run's (validator and detector counts, duplicate-pattern clusters, extraction candidates, sidecar mismatches, pages rendered versus reviewed from code, findings by priority); the remaining findings grouped by cause; the sidecar patch; premium-bar proposals; proposed checks; questions for you; and what was not assessed or was blocked. Keep screenshots only as evidence for the top issues and premium-bar proposals.
-
-Assessment only: do not modify tracked files, create or update issues, or publish PRs; implementation and issue creation require separate approval. The local stack and its seeded account are the only allowed side effects.
+Keep screenshots only for the top issues and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
 
 Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 

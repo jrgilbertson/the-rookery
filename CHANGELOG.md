@@ -47,6 +47,10 @@ looked" surface. GitHub Releases mirror its entries.
   recommendation before the `ce-pov` review. The Analytics gap audit loads
   `instrument-product-analytics` through the PostHog MCP instead of an
   installed plugin skill.
+- The Weekly codebase design, Coding standards audit, Optimize CI, Test audit,
+  and Analytics gap audit prompts also run `checking-simplicity` on each draft
+  recommendation before the `ce-pov` review, matching Sessions audit, and list
+  `checking-simplicity` among their requirements.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has

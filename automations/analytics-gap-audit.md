@@ -11,7 +11,7 @@ Replace each bracketed placeholder with your own project's value. This is the pr
 ## Prompt
 
 ```text
-Audit [product] for analytics gaps and recommend fixes that follow PostHog's `instrument-product-analytics` skill. Load it through the PostHog MCP: `learn posthog:instrument-product-analytics`. Assess the application and issue tracker read-only; the audit report is the only persistent write.
+Audit [product] for analytics gaps and recommend fixes that follow PostHog's `instrument-product-analytics` skill. Load it through the PostHog MCP: `learn posthog:instrument-product-analytics`. If the skill does not load, report the run as failed and stop. Assess the application and issue tracker read-only; the audit report is the only persistent write.
 
 Confirm access to GitHub, PostHog project [production analytics project], the Vercel production aliases, and Linear. If any is unreachable, report the run as failed and stop.
 

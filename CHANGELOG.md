@@ -95,6 +95,10 @@ looked" surface. GitHub Releases mirror its entries.
   alone. Revive lists background jobs and relaunches only those confirmed
   stopped unfinished, lets running paid work reach an idle point, and checks a
   usage-limited participant's background jobs before reassigning it.
+- `coordinating-work` briefs ask that a security re-review prompt state its
+  threat model, and that a worker whose last two review rounds found only new
+  instances of one class fix that class structurally or ask the Coordinator,
+  instead of patching each new instance.
 - `personal-chief-of-staff` finds a source map moved into a designated vault
   or workspace through an approved pointer in an instruction or configuration
   file the host loads for that workspace, after any location the caller

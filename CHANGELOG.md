@@ -99,6 +99,11 @@ looked" surface. GitHub Releases mirror its entries.
   threat model, and that a worker whose last two review rounds found only new
   instances of one class fix that class structurally or ask the Coordinator,
   instead of patching each new instance.
+- `coordinating-work` setup adopts an agent already working on the objective,
+  such as a chat started for a batch. When the guide cannot attach a
+  supervised Task to it, the Coordinator keeps it as a message-assigned worker
+  reached through the guide's reference lookup and includes it in the stall
+  sweep.
 - `personal-chief-of-staff` finds a source map moved into a designated vault
   or workspace through an approved pointer in an instruction or configuration
   file the host loads for that workspace, after any location the caller

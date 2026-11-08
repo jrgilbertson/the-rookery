@@ -4,7 +4,7 @@ Review continuous integration and recommend improvements.
 
 - **Cadence:** Saturday at 09:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The Compound Engineering `ce-optimize` skill and access to the target repository's CI configuration. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** The Compound Engineering `ce-optimize` skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, and access to the target repository's CI configuration. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 The installed `ce-optimize` workflow builds measurement scaffolding before its
 experiment approval gate. This prompt asks for recommendations and leaves that
@@ -22,7 +22,7 @@ Use `ce-optimize` to assess CI and recommend improvements. Keep experiments with
 
 Reuse the measurement harness and experiment history at $HOME/.local/state/ci-optimize/<repository name>/. Keep new measurements dated and compare them with earlier runs.
 
-Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `optimize-ci` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

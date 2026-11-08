@@ -4,7 +4,7 @@ Find user actions that shipped without analytics tracking, and tracked events th
 
 - **Cadence:** Monday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill, loaded through the PostHog MCP with `learn posthog:instrument-product-analytics`, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. This is a read-only assessment of the application and issue tracker. Review its recommendations before separately authorizing issue creation or implementation. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill, loaded through the PostHog MCP with `learn posthog:instrument-product-analytics`, and this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. This is a read-only assessment of the application and issue tracker. Review its recommendations before separately authorizing issue creation or implementation. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only private names and paths swapped out.
 
@@ -26,7 +26,7 @@ Assign stable keys: `analytics-gap-key: missing:<file>#<handler, component, or r
 
 Report source availability, PRs in the window versus reviewed, proposed work, existing issues, and cases awaiting evidence. Do not create or update issues, implement fixes, or publish PRs without separate approval.
 
-Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `analytics-gap-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

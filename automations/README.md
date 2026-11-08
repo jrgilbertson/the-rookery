@@ -22,8 +22,8 @@ your work.
 
 Create an automation in Orca and select the target repository and agent. Set
 the schedule and paste the prompt from its file. Install any named skills,
-including `ce-pov` for the final recommendation review, and give the agent access
-to the sources the review requires. For Sessions audit,
+including `checking-simplicity` and `ce-pov` for the recommendation review,
+and give the agent access to the sources the review requires. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
 Sessions audit invokes `retro` on each host separately. Install its required
@@ -65,8 +65,8 @@ Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 Each automation contains its assessment instructions, authority limits, and
 final `ce-pov` review in its own prompt. It runs independently; the history
 repository stores reports and owner decisions, not a shared assessment workflow.
-Its README documents storage and helper usage. Install `ce-pov` for each agent
-and host running these prompts.
+Its README documents storage and helper usage. Install `checking-simplicity` and
+`ce-pov` for each agent and host running these prompts.
 
 Copy the storage template below into your private repository's README. If it
 provides a history helper, document how to use it for these operations.

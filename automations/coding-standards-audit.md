@@ -4,7 +4,7 @@ Review coding standards against repository evidence and current primary sources.
 
 - **Cadence:** Saturday at 07:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** Access to the target repository, its PR and review history, and current primary sources. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** This repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, access to the target repository, its PR and review history, and current primary sources. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 If `CODING_STANDARDS.md` is missing, the prompt asks the agent to propose a first edition.
 
@@ -21,7 +21,7 @@ For each recommendation, give the exact edit, evidence and benefit, dated source
 
 Assessment only: do not modify repository files, install tools, change configuration, create or update issues, or publish PRs without separate approval.
 
-Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `coding-standards-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

@@ -15,7 +15,10 @@ Read the supplied objective, canonical work and project instructions, current
 participants, and any existing coordination context. If several arrangements
 plausibly match, obtain the missing selection before changing them. Adopt useful
 existing roles, assignments, holds, and working context rather than recreating
-them.
+them. An agent already working on the objective before setup, such as a chat
+started for a batch, is a participant to adopt. When the guide cannot attach a
+supervised Task to it, keep it as a message-assigned worker reached through the
+guide's reference lookup, and include it in the stall sweep.
 
 Propose only the roles and initial assignments the requested work needs. Planner,
 Coordinator, and implementation workers are available roles, not a mandatory

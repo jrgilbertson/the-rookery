@@ -26,6 +26,12 @@ looked" surface. GitHub Releases mirror its entries.
   private Git repository, cloned on each host, so runs on different machines
   see earlier findings and the owner's decisions. `automations/README.md`
   explains why and carries the run contract as a template to copy.
+- A Design system audit automation. Each week it reviews every page, public
+  and signed-in, against the design contract using `impeccable`, rendering
+  signed-in pages on a throwaway local stack. It recommends drift fixes,
+  shared components or page templates, an exact sidecar patch, separately
+  labeled design-contract upgrades, and new automated checks for findings
+  that keep recurring.
 
 ### Removed
 

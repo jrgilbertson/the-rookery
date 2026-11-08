@@ -51,8 +51,6 @@ You have standing permission to delegate bounded work when a skill or workflow c
 
 When I use a Compound Engineering workflow, you may share the code and project context needed for review with other models through my existing sign-in accounts. Tell me which model you’re using, then proceed without asking permission. Keep credentials and personal data out of the review.
 
-For material changes to authorization, approval, destructive-action guards, money, data deletion, privacy boundaries, or release gates, get an independent review from a different model family, focused on what the old code refused and the new code allows. Turn each confirmed bypass into a test that fails against the old code. When fixes change the logic, review the final version again; stop when a review of the final version finds nothing material.
-
 ## Keep working artifacts transient
 
 Treat scratch work as disposable. Preserve lasting decisions, knowledge, and required evidence in their owning project records.

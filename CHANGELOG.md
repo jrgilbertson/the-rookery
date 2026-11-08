@@ -39,6 +39,13 @@ looked" surface. GitHub Releases mirror its entries.
   tests, and runner-specific instructions, along with the speculative cases
   and judges. Behavioral evaluation uses the evals plugin's `evals-start`
   routing and selects a runner when needed.
+- The global agent guidance rule requiring an independent review from a
+  different model family for changes to authorization, approval,
+  destructive-action guards, money, data deletion, privacy boundaries, or
+  release gates. It forced hand-written cross-model reviews, two of which hung
+  for 30 minutes waiting on stdin on 2026-11-08, on hosts where Compound
+  Engineering's own review already selects a cross-model pass by consequence.
+  Projects that need the rule now carry it in their own guidance.
 
 ### Changed
 

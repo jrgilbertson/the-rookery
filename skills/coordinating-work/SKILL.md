@@ -122,6 +122,10 @@ report. A helper skill returning is never the end of the worker's turn. A turn
 that ends while a background watcher still runs reads as a stopped worker and
 wakes the Coordinator for nothing.
 
+Tell each worker that a security re-review prompt states its threat model, and
+that when two rounds in a row find only new instances of one class, the worker
+fixes the class structurally or asks the Coordinator.
+
 Start each task worker through the guide's supervised launch path. Work sent
 as plain terminal text gets neither the runtime's detection of a worker that
 stopped without reporting nor its blocking-question route.

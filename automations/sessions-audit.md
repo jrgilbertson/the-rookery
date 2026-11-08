@@ -7,7 +7,7 @@ Review recent AI sessions with the installed `retro` skill.
 | Sessions audit (local) | Daily at 03:00 | America/Los_Angeles |
 | Sessions audit (remote) | Daily at 01:00 | America/Los_Angeles |
 
-- **Requires:** Matt Pocock's [`retro`](https://github.com/mattpocock/skills/tree/main/skills/engineering/retro) and [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) skills installed for the selected agent, access to that machine's AI session histories, and access to the repository's current guidance. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** Matt Pocock's [`retro`](https://github.com/mattpocock/skills/tree/main/skills/engineering/retro) and [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) skills installed for the selected agent, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, access to that machine's AI session histories, and access to the repository's current guidance. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 Before scheduling, follow the
 [upstream installation instructions](https://github.com/mattpocock/skills#installation-30-second-setup)
@@ -25,14 +25,18 @@ after missed runs to cover sessions from when the host was unavailable.
 
 ## Prompt
 
+The prompt starts with the `/retro` slash command because `retro` sets
+`disable-model-invocation`, so Claude Code loads it only from a slash command.
+On another agent, invoke `retro` the way that agent loads user-invoked skills.
+
 ```text
-Use `retro` to review this host's AI sessions from the past 24 hours alongside The Rookery's skills, workflows, guidance, and configuration.
+/retro this host's AI sessions from the past 24 hours alongside The Rookery's skills, workflows, guidance, and configuration.
 
 Read actual transcripts across configured agents and account homes. Select by modification time, follow symlinks, deduplicate real paths, and cross-check Orca's session journal; it does not cover all terminal or external-app sessions. Describe personal threads by category only.
 
 Recommend environment and workflow improvements supported by session evidence. Assessment only: issue creation, implementation, and PR publication require separate approval.
 
-Run `ce-pov` on the draft recommendations, then incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `sessions-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

@@ -42,6 +42,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The Sessions audit prompt starts with `/retro`, because `retro` hides itself
+  from model invocation, and runs `checking-simplicity` on each draft
+  recommendation before the `ce-pov` review. The Analytics gap audit loads
+  `instrument-product-analytics` through the PostHog MCP instead of an
+  installed plugin skill.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has

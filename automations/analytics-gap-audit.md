@@ -4,14 +4,14 @@ Find user actions that shipped without analytics tracking, and tracked events th
 
 - **Cadence:** Monday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill installed for the agent, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. This is a read-only assessment of the application and issue tracker. Review its recommendations before separately authorizing issue creation or implementation. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill, loaded through the PostHog MCP with `learn posthog:instrument-product-analytics`, plus access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. This is a read-only assessment of the application and issue tracker. Review its recommendations before separately authorizing issue creation or implementation. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only private names and paths swapped out.
 
 ## Prompt
 
 ```text
-Audit [product] for analytics gaps and recommend fixes using `instrument-product-analytics`. Assess the application and issue tracker read-only; the audit report is the only persistent write.
+Audit [product] for analytics gaps and recommend fixes that follow PostHog's `instrument-product-analytics` skill. Load it through the PostHog MCP: `learn posthog:instrument-product-analytics`. If the skill does not load, report the run as failed and stop. Assess the application and issue tracker read-only; the audit report is the only persistent write.
 
 Confirm access to GitHub, PostHog project [production analytics project], the Vercel production aliases, and Linear. If any is unreachable, report the run as failed and stop.
 

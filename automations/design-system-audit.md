@@ -16,7 +16,7 @@ Audit [product]'s interface against its design system with the `impeccable` skil
 Review every page, public and signed-in, each run:
 
 1. Run [token and layout validators], [sidecar tests], `impeccable doctor --json`, and `impeccable detect --json` over [UI source paths] only; detect ignores .gitignore, and exit code 2 means findings.
-2. Start the local stack in the background and sign in as a throwaway fictional account, following [signed-in setup docs]. If the stack refuses its slot, claim another free slot whose leftover data it will clear on its own, and leave other worktrees' data in place. Capture every page that account can reach. Review token-bound routes, and pages it cannot reach, from code and name them. If the stack or sign-in fails, review signed-in pages from code and carry on. Always finish with [teardown command that removes the database volumes]; a kept database blocks next week's run.
+2. Start the local stack in the background and sign in as a throwaway fictional account, following [signed-in setup docs]. Capture every page that account can reach. Review token-bound routes, and pages it cannot reach, from code and name them. If the stack or sign-in fails, review signed-in pages from code and carry on. Always finish with [teardown command that removes the database volumes]; a kept database blocks next week's run.
 3. Group pages into families that share a route group and page shell. Critique each family once with impeccable `critique` and the `audit` rubric, adding page notes only where a page departs from its family.
 
 Report, in this order:

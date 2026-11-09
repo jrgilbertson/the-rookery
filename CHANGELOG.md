@@ -115,6 +115,11 @@ looked" surface. GitHub Releases mirror its entries.
   supervised Task to it, the Coordinator keeps it as a message-assigned worker
   reached through the guide's reference lookup and includes it in the stall
   sweep.
+- `coordinating-work` setup inspects every execution host the guide can reach
+  and recommends where heavy workers run, preferring a reachable host kept for
+  development work over the operator's own machine. The proposal shows the
+  measured CPU and memory behind the recommendation, and the operator chooses
+  the placement.
 - `personal-chief-of-staff` finds a source map moved into a designated vault
   or workspace through an approved pointer in an instruction or configuration
   file the host loads for that workspace, after any location the caller

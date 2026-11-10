@@ -112,18 +112,27 @@ correctness.
 Image-generation rankings inform image-model selection, not the coding LLM's
 design ability.
 
+Taste is more subjective than the other roles, and preference sources often
+list a release days after launch. The maintainer may place a release by
+judgment before any source has tested it. When the maintainer supplies one,
+record the slot as a judgment call: state what it rests on, list the
+maintainer's usual setting as its effort, and name the result that would
+change it.
+
 Without comparable results at multiple effort settings, retain the
 configuration supporting the selection, including its effort. If effort is
 undisclosed, choose it provisionally without attributing it to that result.
 Change that configuration only for an explicit workload, budget, or latency
-reason. Label unmeasured assumptions about quality and savings. A result at
-max does not tell us whether max is needed or whether a lower effort preserves
-quality. When cost or time is missing, the best balance is still unknown.
+reason, or for a maintainer judgment call. Label unmeasured assumptions
+about quality and savings. A result at max does not tell us whether max is
+needed or whether a lower effort preserves quality. When cost or time is
+missing, the best balance is still unknown.
 
 ## Recommend
 
 Propose Primary, Secondary, and Tertiary provider/model/effort slots for each
-affected role. Each ranked row may contain at most one model per provider.
+affected role. Each ranked row may contain at most one model per provider,
+unless the maintainer names models with separate usage caps.
 Show before-to-after choices and a short reason for each change
 or retention, comparing alternatives in the row. Where measured, state why
 the next upgrade's quality gain is or is not worth its cost and time.
@@ -202,7 +211,7 @@ can also support a calculation when it publishes the required matched inputs.
   ([category methodology](https://arena.ai/blog/new-categories-code-arena)).
   Use [Image-to-WebDev](https://arena.ai/leaderboard/code/image-to-webdev)
   for following screenshots or an existing visual direction. Category views
-  share WebDev evidence, so do not count them as independent sources.
+  share WebDev evidence, so count them as one source.
   Arena Text informs writing taste.
 - [Design Arena](https://www.designarena.ai/leaderboard/website)
   is a separate human-preference source ([methodology](https://www.designarena.ai/about));
@@ -236,7 +245,9 @@ and leave the calculation unresolved.
 Keep component quality paired with that component's costs; a weighted index
 cost describes the whole benchmark mix. Distinguish billed spend from
 API-equivalent cost estimates, and measured task runtime from estimated
-token-generation time, noting excluded work. Mark missing or inaccessible
+token-generation time, noting excluded work. Several sources draw results in
+charts that fetched page text omits; read the page's data file or embedded
+data before marking a figure missing. Mark missing or inaccessible
 data. Do not fill gaps with unrelated runs or infer task cost from token
 prices alone.
 For design sources, distinguish blind human preference from rubric scores and

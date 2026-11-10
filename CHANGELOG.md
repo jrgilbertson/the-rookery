@@ -26,6 +26,12 @@ looked" surface. GitHub Releases mirror its entries.
   private Git repository, cloned on each host, so runs on different machines
   see earlier findings and the owner's decisions. `automations/README.md`
   explains why and carries the run contract as a template to copy.
+- A Design system audit automation. Each week it reviews every page, public
+  and signed-in, against the design contract using `impeccable`, rendering
+  signed-in pages on a throwaway local stack. It recommends drift fixes,
+  shared components or page templates, an exact sidecar patch, separately
+  labeled design-contract upgrades, and new automated checks for findings
+  that keep recurring.
 
 ### Removed
 
@@ -55,9 +61,10 @@ looked" surface. GitHub Releases mirror its entries.
   `instrument-product-analytics` through the PostHog MCP instead of an
   installed plugin skill.
 - The Weekly codebase design, Coding standards audit, Optimize CI, Test audit,
-  and Analytics gap audit prompts also run `checking-simplicity` on each draft
-  recommendation before the `ce-pov` review, matching Sessions audit, and list
-  `checking-simplicity` among their requirements.
+  Analytics gap audit, and State-machine correctness audit prompts also run
+  `checking-simplicity` on each draft recommendation before the `ce-pov`
+  review, matching Sessions audit, and list `checking-simplicity` among their
+  requirements.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has

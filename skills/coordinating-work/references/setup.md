@@ -38,8 +38,11 @@ host command confirmed to measure CPU and memory.
 
 ## Propose before establishing
 
-Inspect available provider/model/effort choices and placement support on the
-actual execution host. Distinguish the Coordinator already running from
+Inspect available provider/model/effort choices and placement support on each
+execution host the guide can reach. Recommend where heavy workers run,
+preferring a reachable host kept for development work over the operator's own
+machine, and show the measured CPU and memory behind the recommendation; the
+operator chooses the placement. Distinguish the Coordinator already running from
 participants that need starting. Preserve evidenced settings for existing
 participants; show the supported choices for new ones.
 

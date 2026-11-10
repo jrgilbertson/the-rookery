@@ -132,7 +132,7 @@ missing, the best balance is still unknown.
 
 Propose Primary, Secondary, and Tertiary provider/model/effort slots for each
 affected role. Each ranked row may contain at most one model per provider,
-unless the maintainer names models that use separate quotas.
+unless the maintainer names models with separate usage caps.
 Show before-to-after choices and a short reason for each change
 or retention, comparing alternatives in the row. Where measured, state why
 the next upgrade's quality gain is or is not worth its cost and time.

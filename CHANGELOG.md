@@ -120,6 +120,11 @@ looked" surface. GitHub Releases mirror its entries.
   development work over the operator's own machine. The proposal shows the
   measured CPU and memory behind the recommendation, and the operator chooses
   the placement.
+- `coordinating-work` briefs invoke the CE skill that owns an assignment by
+  name instead of restating its steps, and say that the task asks for the
+  subagents and helpers that skill starts. A runtime's worker instructions can
+  forbid subagents unless the task asks, which made a worker skip the skill's
+  own reviewers.
 - `personal-chief-of-staff` finds a source map moved into a designated vault
   or workspace through an approved pointer in an instruction or configuration
   file the host loads for that workspace, after any location the caller

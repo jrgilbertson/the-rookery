@@ -97,6 +97,11 @@ host, and prefer the project's existing helpers to ad hoc tools. Carry the
 operator's current decisions from their owning record, never a proposal the
 operator declined.
 
+When a CE skill owns an assignment, the brief invokes that skill by name
+instead of restating its steps, and says that the task asks for the subagents
+and helpers that skill starts, because the runtime's worker instructions can
+forbid them unless the task asks.
+
 Once an assignment is dispatched, its brief is fixed. Only the Coordinator
 changes it, by appending a dated amendment that names what it supersedes and
 then telling the worker. The Planner proposes changes to the Coordinator

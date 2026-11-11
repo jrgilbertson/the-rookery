@@ -23,7 +23,7 @@ Use `improve` to audit this repository and recommend improvements. Run the skill
 
 Assessment only: stop after the vetted, prioritized findings and direction options. Plan files, `execute`, `--issues`, issue creation, implementation, and PR publication require separate approval. Approved plans go in the repository's ignored working path for plans, not a tracked `plans/` folder.
 
-Run `checking-simplicity` on each recommendation of medium or large effort and on the ten highest-leverage findings, then run `ce-pov` on that revised set and incorporate its judgment into the final prioritized recommendations for approval. List the remaining findings without that review, and skip findings whose recommendation is unchanged from an earlier run.
+Run `checking-simplicity` on each recommendation of medium or large effort and on the ten highest-leverage findings, then run `ce-pov` on that revised set and incorporate its judgment into the final prioritized recommendations for approval. List the remaining findings without that review. For a finding whose recommendation is unchanged from an earlier run, carry that run's review forward without repeating it. Report a finding that returns after its fix as a repeat, and review it again.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `improve-audit-<repository name>` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```

@@ -9,6 +9,7 @@ repository.
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |
 | [Sessions audit (remote)](sessions-audit.md) | Review recent AI sessions on the remote host | Daily at 01:00 | America/Los_Angeles |
 | [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and recommend fixes | Monday at 04:00 | America/Los_Angeles |
+| [Improve audit](improve-audit.md) | Survey the whole codebase with `improve` and recommend improvements | Tuesday at 04:00 | America/Los_Angeles |
 | [State-machine correctness audit](state-machine-audit.md) | Assess lifecycle correctness and recommend fixes | Sunday at 04:00 | America/Los_Angeles |
 | [Design system audit](design-system-audit.md) | Review every page against the design system and recommend fixes, shared components, and design upgrades | Wednesday at 04:00 | America/Los_Angeles |
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 21:00 | America/Los_Angeles |

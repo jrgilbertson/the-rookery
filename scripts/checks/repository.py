@@ -60,6 +60,7 @@ HOME_PATH_EXAMPLES = {
     "automations/analytics-gap-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/coding-standards-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/design-system-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/improve-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/optimize-ci.md": {"~" + "/.local/state/automation-runs"},
     "automations/sessions-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/state-machine-audit.md": {"~" + "/.local/state/automation-runs"},

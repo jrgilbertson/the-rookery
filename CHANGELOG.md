@@ -32,6 +32,10 @@ looked" surface. GitHub Releases mirror its entries.
   shared components or page templates, an exact sidecar patch, separately
   labeled design-contract upgrades, and new automated checks for findings
   that keep recurring.
+- An Improve audit automation. Each week it surveys the whole codebase with
+  shadcn's `improve` skill, run as written across all of its categories, and
+  stops at vetted, prioritized findings. The recommendation review covers
+  medium and large recommendations and the ten highest-leverage findings.
 
 ### Removed
 

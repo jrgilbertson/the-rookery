@@ -50,7 +50,8 @@ authority. A role name, workspace title, or nearby agent does not establish
 membership or ownership.
 
 The canonical tracker owns issue state. CE owns issue-specific planning,
-execution, review, and shipping; the Coordinator runs no review of its own.
+execution, review, and shipping. The Coordinator judges no code quality; it
+only classifies a pull request against the hold classes.
 
 ## Proposal and authority
 
@@ -144,8 +145,9 @@ Each brief tells its worker:
   class, say so, so the worker expects a held reply.
 - **Merge-ready is a question.** When `ce-babysit-pr` reports looks
   merge-ready, the worker asks the Coordinator, naming the pull request,
-  quoting the report's first line verbatim, and giving the head commit read
-  from the pull request when that report was written. It stays open
+  quoting the report's first line verbatim, and giving the head commit that
+  report covered. If the head moved after the report, the worker waits for a
+  report on the new head before asking. It stays open
   for the reply: merged, held for the operator, or findings to fix. A worker
   told its pull request is held has finished its assignment.
 - **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a

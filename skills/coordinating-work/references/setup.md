@@ -89,23 +89,13 @@ reconciling any existing monitoring first.
 
 The one periodic check allowed is a stall sweep at the interval the operator
 approved. The runtime reports a supervised worker's stop once, with the
-worker's last output, and does not report that worker's later idle turns. So
-the sweep looks for what nothing else reports:
-
-- a participant whose open assignment has no hold or named dependency, that is
-  idle at its prompt with no running job, and has no completion report sent
-  and no question or escalation still unanswered;
-- a message-assigned participant with no supervised Task, which the runtime
-  does not report at all;
-- a pull request the Coordinator enqueued, which has either merged or left the
-  merge queue unmerged.
-
-The sweep sends an idle participant a plain continue nudge. For an enqueued
-pull request it sends the merged reply or returns the ejected one to its
-worker, as Operate describes. A progress or status report does not exempt
-a participant. The sweep reads state without consuming the Coordinator's
-inbox. Anything beyond that sweep is a second scheduler or a fixed tick
-cadence; do not add one.
+worker's last output, and does not report that worker's later idle turns or a
+message-assigned participant at all. The sweep covers what nothing else
+reports, by the wait rule in Operate: it acts on each recorded wait that has
+ended and on each open assignment with no recorded wait, hold, or running job.
+A progress or status report does not exempt a participant. The sweep reads
+state without consuming the Coordinator's inbox. Anything beyond that sweep is
+a second scheduler or a fixed tick cadence; do not add one.
 
 Verify the entry skill's individual outcomes, effective settings, communication,
 and supervision. Everyday work then continues under Operate; setup is not rerun

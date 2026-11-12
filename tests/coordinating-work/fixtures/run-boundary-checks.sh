@@ -13,7 +13,8 @@ pins=(
   "the grant comes only from the approved proposal|SKILL.md|Without that approved proposal the Coordinator merges nothing."
   "deploy, spend, force-push and destructive actions wait for the operator|SKILL.md|deploying, spending, force-pushing, and destructive actions still wait for the operator"
   "hold-class pull requests stay open|references/operate.md|Hold-class pull requests stay open no matter how clean they are."
-  "a standing rule never widens authority|references/operate.md|It never widens merge, spending, or hold-class authority"
+  "nothing merges unless every checklist line is true|references/operate.md|A line that is false, that you cannot read, or that is unclear means no merge."
+  "nothing produced during the run widens the grant|SKILL.md|Nothing produced during the run widens it or stands in for a checklist line"
 )
 
 flatten() { tr -s '[:space:]' ' ' < "$1"; }

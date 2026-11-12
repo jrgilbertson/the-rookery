@@ -13,7 +13,8 @@ record. On every start or revive, before any new dispatch:
    questions, and the tail of the decisions.
 2. Confirm from each worker's own reply which amendment it is working from.
 3. Re-arm the stall sweep at the approved interval, after checking that no
-   earlier sweep is still installed.
+   earlier sweep is still installed. A sweep that lived in the previous
+   session ended with it.
 
 ## Reconstruct current work
 
@@ -60,16 +61,41 @@ Choose the supported route for each participant:
 | Unknown writer, essential missing context, or unsupported account/settings/host capability | Hold the affected change and report what is missing |
 | Completed PR worker awaiting cleanup | Exclude from recovery; report any relevant remaining cleanup obligation |
 
-For a same-provider account change, keep each participant's conversation. In
-the same workspace, start the provider again under the newly selected account
-and resume the original conversation by its ID with the provider's documented
-resume option. For a supervised worker, re-attach the terminal running the
-resumed conversation through the guide's retry path instead of launching a
-fresh agent. Before stopping a participant, confirm the new account can open
-that conversation and already trusts the workspace. Provider changes use fresh
-handoffs, never another provider's conversation identity. When a resume is not
-possible, disclose the lost conversation continuity and establish whether
-canonical context suffices for the work.
+For a same-provider account change, keep each participant's conversation.
+Provider changes use fresh handoffs, never another provider's conversation
+identity.
+
+First read each participant's effective account from its running agent. The
+runtime may already have carried a participant to the newly selected account
+with its conversation intact. This has been observed for agents running as
+chats, while agents running in terminals kept the account they were launched
+with. A participant already on the new account needs no move: confirm from
+its own reply that it has its latest instructions, and leave it running.
+
+Move each participant still on the old account by hand. Check first, without
+changing anything:
+
+- which account is now selected on the participant's host;
+- that the new account can open the participant's conversation;
+- whether the new account already trusts the participant's workspace;
+- the participant's unpushed and uncommitted work and its running jobs.
+
+Then, as approved:
+
+1. Stop the old worker through the guide's stop, so its exit is proven.
+2. Open a new terminal in the same workspace. A shell that was already open
+   keeps the old account. Start the provider there and resume the original
+   conversation by its ID with the provider's documented resume option, on
+   the previous model and effort.
+3. If the new account asks whether to trust that workspace, answer it. The
+   approved recovery row covers trusting the same workspace the participant
+   already worked in, and nothing wider.
+4. Re-attach that terminal to the same task through the guide's retry path
+   instead of launching a fresh agent.
+5. Send the resume message described below.
+
+When a resume is not possible, disclose the lost conversation continuity and
+establish whether canonical context suffices for the work.
 
 Show the entry skill's proposal with previous and proposed settings, exact
 intended recovery effects, unchanged participants, and unresolved branches.
@@ -100,6 +126,10 @@ Follow the guide's reconciliation path for uncertain results before repeating
 anything. Repeated revive must not duplicate workers, assignments, or timers.
 After a resume, check that a worker with an open question to the Coordinator
 can still receive the reply.
+
+Re-attaching gives a worker new identifiers and delivers its brief again. The
+resume message says so: use only the newest identifiers, the brief is
+unchanged, and here is the state of its local work.
 
 Tell each recovered participant whose open assignment has no hold or named
 dependency to continue it in the same turn; preserve holds and dependency

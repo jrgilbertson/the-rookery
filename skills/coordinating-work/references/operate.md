@@ -27,6 +27,11 @@ Follow the installed guide: start the workers, end your turn, and let the
 runtime wake you. Do not poll or run watch scripts. The approved stall sweep
 is the only periodic check.
 
+When a worker fails to start, follow the guide's recovery path. Read the
+cause, retry once on the same task when the cause was transient, and
+otherwise put the assignment on the ready-for-operator list. Never route
+around the guide's retry limit.
+
 ## The merge checklist
 
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
@@ -40,16 +45,19 @@ pull request when you decide, never from the message or from memory.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
    and adds no condition, such as updating the branch or a position in a
-   stack, and the worker gave the head commit that report covered.
+   stack, and the worker gave the head commit that report covered. A closing
+   phrase that leaves the merge to the reader is not a condition.
 3. **Routine.** The diff touches no hold class; a change that relates to a
    class at all, wording and tests included, touches it. The pull request
    body has no unticked item under `lfg`'s unapplied review findings.
-   `ce-babysit-pr` has at no point parked an item on it for a human. Merging it starts only what the proposal
+   The record shows no report from its worker that `ce-babysit-pr` parked an
+   item on it for a human. Merging it starts only what the proposal
    showed.
 4. **Current.** Read the pull request now: its head is the reported commit,
    checks have reported on that head and every one finished without failing,
    no review thread is open, no review requests changes, and the branch is
-   not behind its base.
+   not behind its base. A check that finished neutral or skipped has finished
+   without failing.
 5. **Merge.** Merge that head with the merge conditional on the reported
    commit, and read the pull request once more to confirm it landed. Never
    use an override or bypass a protection: a merge the repository refuses
@@ -62,7 +70,14 @@ So does any situation this list does not describe. Then:
   fixing a failed check, resolving a thread, updating a stale branch, or
   running the continuous watch and asking again;
 - otherwise leave the pull request open, add it to the ready-for-operator list
-  with the line that failed, and reply that it is held for the operator.
+  with the line that failed, and reply that it is held for the operator. When
+  a pull request will be held anyway, hold it without first sending fixable
+  lines back.
+
+Nobody keeps a held pull request current. Its entry on the list says it may
+have fallen behind its base. Bringing a held pull request in the batch
+current, or applying an open finding on it, is allowed work to assign when
+the operator asks for it.
 
 Hold-class pull requests stay open no matter how clean they are.
 
@@ -92,7 +107,8 @@ left waiting for a reply.
 
 ## The ready-for-operator list
 
-Keep one list in the record, complete and unfiltered:
+Give the operator one list, complete and unfiltered, read from the record's
+log and table:
 
 - every held pull request, with the checklist line that held it and any
   unticked review items;
@@ -128,7 +144,9 @@ A report that a worker stopped is an event, not the worker's current state.
 Re-read the worker's live state before acting on it. When the stop matches a
 recorded wait, leave the worker alone: do not escalate, nudge, or reassign it.
 
-The stall sweep does three things. It answers every question still
+The stall sweep takes its worker and pull request identifiers from the
+record's table each time it runs, never from its own stored prompt, and is
+cancelled when no assignment is open. It does three things. It answers every question still
 unanswered. For each recorded wait that has ended, or whose end it cannot
 determine, it takes the next step: continue the worker, reply merged, or
 return an ejected pull request to its worker. For each open assignment with

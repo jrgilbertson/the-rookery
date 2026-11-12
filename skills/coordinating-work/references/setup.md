@@ -38,7 +38,11 @@ preferring a reachable host kept for development work over the operator's own
 machine, and show the measured CPU and memory behind the recommendation; the
 operator chooses the placement. Distinguish the Coordinator already running from
 participants that need starting. Preserve evidenced settings for existing
-participants; show the supported choices for new ones.
+participants; show the supported choices for new ones. "Host default, no
+override" is an explicit value when the host's choices cannot be listed. Where
+the runtime offers more than one surface for an agent, recommend the one the
+guide or observed behavior on that host shows follows an account change by
+itself, and say why.
 
 Present the entry skill's proposal, including reused participants, their task
 ownership, and initial workers to start. The proposal also states, so that one

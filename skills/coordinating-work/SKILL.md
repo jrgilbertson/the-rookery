@@ -1,25 +1,37 @@
 ---
 name: coordinating-work
-description: "Establish or revive an Orca collaboration arrangement, including Planner, Coordinator, and task workers. Use when explicitly asked to set up a team or recover existing collaboration after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows."
+description: "Establish, run, or revive an Orca arrangement of one Coordinator and its task workers that delivers a batch of issues unattended. Use when explicitly asked to set up a Coordinator or team, to let one run without the operator, or to recover one after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows."
 license: MIT
-compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, and authenticated providers supported on the execution host."
+compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov."
 ---
 
 # Coordinating Work
 
-Establish or recover a working collaboration arrangement through one editable
-proposal. The result is an approved arrangement with verified individual
-outcomes and a working communication and supervision loop.
+Establish, run, or recover one arrangement through one editable proposal. The
+result is an approved arrangement that delivers its batch without the
+operator: routine pull requests merged, sensitive ones held open, and one
+complete list of what needs the operator.
 
 ## Choose the operation
 
 - For a new arrangement or adoption of an existing one, read
   [Setup](references/setup.md).
+- For running an established arrangement, read
+  [Operate](references/operate.md).
 - For interrupted collaboration, read [Revive](references/revive.md).
 
 This is an optional entry point. Ordinary issue execution, a small delegation,
-and a plain handoff retain their existing owners. A continuing arrangement does
-not make each implementation worker permanent.
+and a plain handoff retain their existing owners.
+
+## Shape
+
+An arrangement is one Coordinator, alone or with task workers. The Coordinator
+owns assignments, supervision, merging, and the arrangement's record. Each
+task worker owns one assignment, normally one worktree and one pull request.
+Give each assignment one current writer.
+
+The skill describes no other role. Leave a participant it does not describe
+running as you found it, and do not create or recreate one.
 
 ## Runtime and work ownership
 
@@ -29,18 +41,16 @@ When companion skills are absent, use the runtime's supported guide-discovery
 interface. If the required guide or capability cannot be reached, report the
 affected operation blocked; do not reconstruct commands from historical scripts.
 
-The current guides own placement, launch, Run/Task/Dispatch authority, messaging,
-liveness, retries, monitoring, release, and worktree operations. Inspect the
+The current guides own placement, launch, Run/Task/Dispatch authority, message
+types and what each wakes, liveness, retries, monitoring, release, and worktree
+operations. Follow them for those mechanics instead of this skill. Inspect the
 execution host and supported surface: a chat worker is not necessarily a
 terminal, and worker chat support does not prove replacement Coordinator
 authority. A role name, workspace title, or nearby agent does not establish
 membership or ownership.
 
 The canonical tracker owns issue state. CE owns issue-specific planning,
-execution, verification, and shipping. The Planner, when chosen, shapes the
-agreed roadmap and briefs from those records; the Coordinator owns assignments,
-supervision, and relaying decisions. Give each assignment one current writer
-and avoid separate Planner and Coordinator instructions competing for it.
+execution, review, and shipping; the Coordinator runs no review of its own.
 
 ## Proposal and authority
 
@@ -64,95 +74,112 @@ proposal. Preserve independent approved successes.
 
 This confirmation belongs to setup and revive. Routine assignments and worker
 starts continue under existing project authority without rerunning setup or
-adding a staffing confirmation for every task. Existing approval requirements
-still apply; this skill grants no merge, spending, trust, or destructive-action
-authority. Account selection and manually starting a replacement Coordinator
-remain with the operator. Do not silently switch accounts or substitute settings.
+adding a staffing confirmation for every task.
+
+The Coordinator may merge only under the standing merge grant: the merge bar
+and hold classes shown in the setup proposal the operator approved. Without
+that approved proposal the Coordinator merges nothing. Workers never merge.
+The grant covers merging and nothing else: deploying, spending, force-pushing,
+and destructive actions still wait for the operator, and this skill grants no
+trust authority. Account selection and manually starting a replacement
+Coordinator remain with the operator. Do not silently switch accounts or
+substitute settings.
 
 ## Worker lifetime and cleanup
 
 Default to task-scoped PR workers, normally one worktree per PR. A reused
 worktree starts each assignment on a fresh branch from the latest default
 branch; an assignment that deliberately builds on another branch names that
-base and when its work returns to the default branch. Keep the
-Coordinator, Planner, or another role while it has a concrete ongoing
-responsibility. An ongoing member can be idle awaiting another assignment;
-do not invent filler work to keep it busy.
+base and when its work returns to the default branch. Keep the Coordinator
+while the arrangement has open work. A worker can be idle awaiting another
+assignment; do not invent filler work to keep it busy.
 
-Retire a completed PR worker after its delivery and monitoring obligations.
-Use the native release procedure. After merge, clean eligible worktrees through
-the repository and Orca lifecycle within existing authority. A merged branch
-alone does not prove removal is safe: preserve needed local work, evidence,
-services, unfinished ownership, and human holds. Check unpushed work against
-the default branch and the pull request head, never against the branch's
-upstream alone; a branch with no upstream reads as fully pushed. Name the
-remaining obligation when cleanup must wait, and continue independent work. Do
-not turn uncertainty into forced removal or add a separate cleanup system.
+Retire a completed PR worker after its delivery and monitoring obligations,
+through the guide's release procedure. After merge, clean eligible worktrees
+through the repository and Orca lifecycle within existing authority. A merged
+branch alone does not prove removal is safe: preserve needed local work,
+evidence, services, unfinished ownership, and human holds. Check unpushed work
+against the default branch and the pull request head, never against the
+branch's upstream alone; a branch with no upstream reads as fully pushed. Name
+the remaining obligation when cleanup must wait, and continue independent
+work. Do not turn uncertainty into forced removal or add a separate cleanup
+system.
 
 ## Assignment briefs
 
 Build each brief from the project's own instructions and the installed guides.
 Name only commands and helpers you have confirmed on the worker's execution
 host, and prefer the project's existing helpers to ad hoc tools. Carry the
-operator's current decisions from their owning record, never a proposal the
-operator declined.
+operator's current decisions from the record, never a proposal the operator
+declined.
 
-When a CE skill owns an assignment, the brief invokes that skill by name
-instead of restating its steps, and says that the task asks for the subagents
-and helpers that skill starts, because the runtime's worker instructions can
-forbid them unless the task asks.
+Start each task worker through the guide's supervised launch path, and send
+the whole brief inline. A worker on another host cannot read the Coordinator's
+files, so a brief never points at a file on the Coordinator's host.
+
+Each brief tells its worker:
+
+- **The pipeline.** Run `lfg` for the assignment, then `ce-babysit-pr` on the
+  resulting pull request, asked to keep the branch current, until it reports
+  looks merge-ready. Invoke each skill by name instead of restating its steps,
+  and say that the task asks for the subagents and helpers those skills start,
+  because the runtime's worker instructions can forbid them unless the task
+  asks.
+- **No human is present.** The run is unattended. The worker asks the
+  Coordinator, never the operator, and opens no interview with a user.
+- **Whether the pull request will be held.** When the issue falls in a hold
+  class, say so, so the worker expects a held reply.
+- **Merge-ready is a question.** When `ce-babysit-pr` reports looks
+  merge-ready, the worker asks the Coordinator, naming the pull request, the
+  head commit the report covered, and the report's status line. It stays open
+  for the reply: merged, held for the operator, or findings to fix. A worker
+  told its pull request is held has finished its assignment.
+- **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a
+  human, or a check it could not fix, the worker reports it to the Coordinator
+  immediately, with the full item, and keeps the watch running.
+- **A choice is a question.** A blocker that offers options for the
+  Coordinator to choose between is sent as a `question`. An `escalation` is
+  for a blocker the worker cannot frame as a choice.
+- **How to wait.** A worker waiting on a long-running check or watch ends its
+  turn with a last line that names the running job. A helper skill returning
+  is not a reason to stop: the worker continues to the next step of its
+  assignment.
+- **Verification currency.** Bring the branch up to date with the latest
+  default branch before each run of the repository's verification gate,
+  following that repository's merge policy, so verification tests the fixes
+  already merged.
+- **Security re-review.** A security re-review prompt states its threat model,
+  and when two rounds in a row find only new instances of one class, the
+  worker fixes the class structurally or asks the Coordinator.
 
 Once an assignment is dispatched, its brief is fixed. Only the Coordinator
 changes it, by appending a dated amendment that names what it supersedes and
-then telling the worker. The Planner proposes changes to the Coordinator
-instead of editing a dispatched brief. Before sending or re-sending an
-assignment, the Coordinator reads the whole brief, amendments included. Tell
-each worker to re-read its amendments at every step boundary, at least before
-planning, verification and pushing, and to name in each report the latest one
-its work follows, so stale work shows up at once.
+sending that amendment in full to the worker's own dispatch. Before sending or
+re-sending an assignment, the Coordinator reads the whole brief, amendments
+included. Tell each worker to name in each report the latest amendment its
+work follows, so stale work shows up at once.
 
-Tell each worker to bring its branch up to date with the latest default
-branch before each run of the repository's verification gate, following that
-repository's merge policy, so verification tests the fixes already merged.
+## The record
 
-Tell each worker which message type each kind of report uses: `question`,
-sent with the `ask` command, for a question that needs an answer, `escalation`
-for a blocker that needs the Coordinator to intervene, `worker_done` for
-finished work, and `status` for progress. The Coordinator's wait wakes on questions, escalations, and
-completions; progress reports arrive with the next delivered batch.
+Each arrangement has one record, kept on the Coordinator's host, in a durable
+and private location the operator approved at setup. It holds the approved
+proposal, the standing rules, every brief and amendment, operator decisions,
+open questions with their defaults, the ready-for-operator list, and the
+current session and worker identities. Session scratch space and public source
+are not valid locations: the first can be cleared without warning, and the
+second publishes private context.
 
-Tell each worker to wait for long-running checks inside its own turn, using a
-tracked background wait, and to end a turn only with a question or a completion
-report. A helper skill returning is never the end of the worker's turn. A turn
-that ends while a background watcher still runs reads as a stopped worker and
-wakes the Coordinator for nothing.
-
-Tell each worker that a security re-review prompt states its threat model, and
-that when two rounds in a row find only new instances of one class, the worker
-fixes the class structurally or asks the Coordinator.
-
-Start each task worker through the guide's supervised launch path. Work sent
-as plain terminal text gets neither the runtime's detection of a worker that
-stopped without reporting nor its blocking-question route.
-
-## Recoverable working context
-
-Reuse canonical issues, plans, worktrees, and current native records. Preserve
-only otherwise-unrecoverable coordination context in private disposable working
-files, such as an interrupted approved operation and its original receipt.
-Keep a discoverable reference through the arrangement's existing work record;
-name the base of relative references and how other participating worktrees
-reach them. Ignored files in one checkout are not automatically shared with
-another checkout or machine. No fixed directory bundle or universal state
-schema is required.
+There is no second copy. Workers on another host receive what they need by
+message. Keep a discoverable reference to the record through the arrangement's
+existing work record, so a replacement Coordinator started on that host can
+find it.
 
 Account-specific conversation memory must not be the only way to discover
-unfinished work. When the operator confirms a plan or answers a decision round,
-record the decisions in their owning record before acting on them; a usage
-limit can end the session without warning. Report existing backup coverage and its gaps without promising
-host-loss restoration. Keep private identities, transcripts, and credentials
-out of public source; preserve lasting outcomes in their owning records and
-let temporary context expire when no longer useful.
+unfinished work. When the operator confirms a plan or answers a decision,
+write it to the record before acting on it; a usage limit can end the session
+without warning. Report existing backup coverage and its gaps without
+promising host-loss restoration. Keep private identities, transcripts, and
+credentials out of public source.
 
 ## Verify and report
 

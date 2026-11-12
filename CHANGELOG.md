@@ -59,6 +59,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` now runs an arrangement unattended. Setup proposes a
+  merge bar and hold classes, and the operator's approval is the Coordinator's
+  standing merge grant. Workers run `lfg` and then `ce-babysit-pr`. The
+  Coordinator merges a PR that `ce-babysit-pr` reports looks merge-ready, and
+  holds changes to access, money, deletion, privacy, email, and release gates,
+  along with any PR that carries unapplied review findings. It never waits for
+  an answer, keeps one record on its own host, and resumes conversations after
+  a same-provider account switch. The Planner role is removed, a new
+  `references/operate.md` covers running the arrangement, and a fixture pins
+  the merge guards.
 - The Sessions audit prompt starts with `/retro`, because `retro` hides itself
   from model invocation, and runs `checking-simplicity` on each draft
   recommendation before the `ce-pov` review. The Analytics gap audit loads

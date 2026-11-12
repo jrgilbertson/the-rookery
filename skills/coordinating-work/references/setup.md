@@ -1,7 +1,7 @@
 # Setup
 
-Read this when establishing collaboration or adopting an existing arrangement.
-The entry skill owns shared authority, worker lifetime, working context, and
+Read this when establishing an arrangement or adopting an existing one. The
+entry skill owns shape, shared authority, worker lifetime, the record, and
 outcome requirements.
 
 ## Establish the intended arrangement
@@ -12,29 +12,23 @@ authority; do not launch a duplicate Coordinator because this one lacks a
 terminal handle.
 
 Read the supplied objective, canonical work and project instructions, current
-participants, and any existing coordination context. If several arrangements
-plausibly match, obtain the missing selection before changing them. Adopt useful
-existing roles, assignments, holds, and working context rather than recreating
-them. An agent already working on the objective before setup, such as a chat
-started for a batch, is a participant to adopt. When the guide cannot attach a
+participants, and any existing record. If several arrangements plausibly
+match, obtain the missing selection before changing them. Adopt useful
+existing assignments, holds, and working context rather than recreating them.
+An agent already working on the objective before setup, such as a chat started
+for a batch, is a participant to adopt. When the guide cannot attach a
 supervised Task to it, keep it as a message-assigned worker reached through the
 guide's reference lookup, and include it in the stall sweep.
 
-Propose only the roles and initial assignments the requested work needs. Planner,
-Coordinator, and implementation workers are available roles, not a mandatory
-hierarchy or fixed roster. Use a Planner for priority and brief work when chosen;
-let the Coordinator turn approved work into assignments and return outcomes to
-the Planner. Additional ongoing roles need a concrete responsibility, such as
-maintaining a test environment or integrating a batch.
-
-Use existing plans or the workflow that owns unresolved product planning. Setup
-does not create a competing roadmap, issue database, or mandatory outer plan
-for an ordinary CE task. Staffing, isolation, concurrency, and resource use
-follow the native workflow and the operator's existing limits. On a shared
-execution host, limit concurrent heavy jobs, such as verification, builds, and
-browser runs, by measured CPU and memory rather than by participant count. Each
-brief names the project's own metering helper, or, when the project has none, a
-host command confirmed to measure CPU and memory.
+Propose only the initial assignments the requested work needs. Dispatch from
+the canonical tracker's ready issues, with the issue as the source of each
+brief. Setup does not create a competing roadmap, issue database, or mandatory
+outer plan for an ordinary CE task. Staffing, isolation, concurrency, and
+resource use follow the native workflow and the operator's existing limits. On
+a shared execution host, limit concurrent heavy jobs, such as verification,
+builds, and browser runs, by measured CPU and memory rather than by
+participant count. Each brief names the project's own metering helper, or,
+when the project has none, a host command confirmed to measure CPU and memory.
 
 ## Propose before establishing
 
@@ -47,48 +41,66 @@ participants that need starting. Preserve evidenced settings for existing
 participants; show the supported choices for new ones.
 
 Present the entry skill's proposal, including reused participants, their task
-ownership, initial workers to start, and the needed communication and supervision
-arrangement. Do not start workers, allocate new tasks, create worktrees, install
-ongoing monitoring, or change the team while the proposal is under discussion.
-Read-only inspection and disposable proposal notes may proceed.
+ownership, and initial workers to start. The proposal also states, so that one
+approval covers them:
 
-Resolve explicit edits in the same proposal interaction. Apply only after its
-final effects are approved under the entry skill's approval rules.
+- **The merge bar and the hold classes.** Show the defaults from
+  [Operate](operate.md). When the project's own guidance defines a merge bar
+  or hold classes, show those instead and say where they came from. The
+  operator may edit either.
+- **The standing instruction not to wait.** State it as the operator's
+  instruction: the Coordinator never stops for an answer, decides a default
+  as Operate describes, and logs the question. An installed guide that says
+  to ask the user first yields to this instruction once it is approved.
+- **Where the record lives.** Name a durable, private location on the
+  Coordinator's host, as the entry skill requires.
+- **The stall-sweep interval.**
+
+Approval of the proposal is the standing merge grant for this arrangement and
+records the instruction not to wait. Write the approved proposal to the record
+before starting anything.
+
+Do not start workers, allocate new tasks, create worktrees, install ongoing
+monitoring, or change the team while the proposal is under discussion.
+Read-only inspection and disposable proposal notes may proceed. Resolve
+explicit edits in the same proposal interaction. Apply only after its final
+effects are approved under the entry skill's approval rules.
 
 ## Establish and check
 
 Immediately before affected changes, reconcile current ownership and any work
 that completed during the discussion. Use the supported native operations for
-the approved roles, assignments, settings, and execution placements. If the
-current Coordinator lacks the required binding or authority, report that path
-blocked instead of manufacturing a takeover.
+the approved assignments, settings, and execution placements. If the current
+Coordinator lacks the required binding or authority, report that path blocked
+instead of manufacturing a takeover.
 
-Preserve native operation identities and receipts when an outcome is uncertain;
-use the current guide's reconciliation path before another attempt. A partial
-startup does not authorize duplicating successful workers or changing the
-approved arrangement. Report unsupported branches separately.
+A partial startup does not authorize duplicating successful workers or changing
+the approved arrangement. Follow the guide's reconciliation path before another
+attempt, and report unsupported branches separately.
 
-Provide each participant its bounded assignment and access to canonical
-context, current decisions, and the correct communication path. Establish the
-ordinary native supervision the arrangement needs, reconciling any existing
-monitoring first. The one periodic check allowed is a stall sweep at an
-interval the operator approves. It looks only for a participant whose open
-assignment has no hold or named dependency, that is idle at its prompt, with
-no running job and no completion report, open question, or escalation since
-its last assignment, and sends that participant a plain continue nudge. A
-progress or status report does not exempt a participant. A participant that
-stops after a helper returns sends no message, so no message-driven wait wakes
-for it. Anything beyond that sweep is a second scheduler or a fixed tick
+Provide each participant its bounded assignment by the brief the entry skill
+describes. Establish the ordinary native supervision the arrangement needs,
+reconciling any existing monitoring first.
+
+The one periodic check allowed is a stall sweep at the interval the operator
+approved. The runtime reports a supervised worker's stop once, with the
+worker's last output, and does not report that worker's later idle turns. So
+the sweep looks for what nothing else reports:
+
+- a participant whose open assignment has no hold or named dependency, that is
+  idle at its prompt with no running job, and has sent no completion report,
+  open question, or escalation since its last assignment;
+- a message-assigned participant with no supervised Task, which the runtime
+  does not report at all;
+- a pull request the Coordinator enqueued that has left the merge queue
+  unmerged.
+
+The sweep sends an idle participant a plain continue nudge and returns an
+ejected pull request to its worker. A progress or status report does not exempt
+a participant. The sweep reads state without consuming the Coordinator's
+inbox. Anything beyond that sweep is a second scheduler or a fixed tick
 cadence; do not add one.
 
-A Planner keeps no timer of its own. The Coordinator wakes it by message when a
-pull request merges, a worker is freed or needs its next assignment, the
-operator decides something that changes the plan, or a worker is stuck long
-enough to put the plan at risk, and for anything else at its own judgment. The
-Planner messages the Coordinator only with a ready brief, a risk, or a question
-for the operator.
-
 Verify the entry skill's individual outcomes, effective settings, communication,
-and supervision. Leave only the missing recoverable context and its discoverable
-reference for a future replacement Coordinator. Everyday work then continues
-under existing authority; setup is not rerun for each issue or wave.
+and supervision. Everyday work then continues under Operate; setup is not rerun
+for each issue or wave.

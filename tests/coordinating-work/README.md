@@ -7,9 +7,16 @@ checks through the complete gate:
 lefthook run pre-push --force
 ```
 
-This prose package adds no executable helper or behavioral runner. The gate
-checks package validity and repository integration; it does not establish
-successful team setup, conversation continuation, or recovery. Name the
+This prose package adds no executable helper or behavioral runner. Its one
+fixture, `fixtures/run-boundary-checks.sh`, pins the sentences that carry the
+merge guards: workers never merge, the grant comes only from the approved
+proposal, hold-class pull requests stay open, a standing rule never widens
+authority, and deploying, spending, force-pushing, and destructive actions
+wait for the operator. It fails when one of those sentences is removed and
+proves that on a scratch copy each run. It does not show that an agent obeys
+them. The gate checks package validity and repository integration; it does not
+establish successful team setup, unattended merging, conversation
+continuation, or recovery. Name the
 candidate, host, provider, and surface for any observed result; unavailable
 evidence remains Unmeasured.
 

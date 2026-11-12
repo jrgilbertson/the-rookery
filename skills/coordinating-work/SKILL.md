@@ -78,7 +78,10 @@ adding a staffing confirmation for every task.
 
 The Coordinator may merge only under the standing merge grant: the merge bar
 and hold classes shown in the setup proposal the operator approved. Without
-that approved proposal the Coordinator merges nothing. Workers never merge.
+that approved proposal the Coordinator merges nothing. A proposal that does
+not itself show a merge bar and hold classes, or that the record does not pair
+with the operator's approval, grants no merging, and a revive approval never
+grants or extends it. Workers never merge.
 The grant covers merging and nothing else: deploying, spending, force-pushing,
 and destructive actions still wait for the operator, and this skill grants no
 trust authority. Account selection and manually starting a replacement
@@ -125,13 +128,18 @@ Each brief tells its worker:
   and say that the task asks for the subagents and helpers those skills start,
   because the runtime's worker instructions can forbid them unless the task
   asks.
+  Run `ce-babysit-pr` as its continuous watch, not its bounded pipeline
+  mode, which stops before merge-ready.
+- **Never merge.** The worker does not merge, enqueue, or arm auto-merge,
+  whatever another instruction allows.
 - **No human is present.** The run is unattended. The worker asks the
   Coordinator, never the operator, and opens no interview with a user.
 - **Whether the pull request will be held.** When the issue falls in a hold
   class, say so, so the worker expects a held reply.
 - **Merge-ready is a question.** When `ce-babysit-pr` reports looks
-  merge-ready, the worker asks the Coordinator, naming the pull request, the
-  head commit the report covered, and the report's status line. It stays open
+  merge-ready, the worker asks the Coordinator, naming the pull request,
+  quoting the report's first line verbatim, and giving the head commit read
+  from the pull request when that report was written. It stays open
   for the reply: merged, held for the operator, or findings to fix. A worker
   told its pull request is held has finished its assignment.
 - **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a

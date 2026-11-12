@@ -7,8 +7,10 @@ record. Setup produced the approved proposal this file acts under.
 ## Defaults the proposal shows
 
 **Merge bar.** `ce-babysit-pr` gave its plain looks-merge-ready report on the
-pull request's current head. A cautious ready report does not clear the bar,
-and neither does a report that tells whoever merges to update the branch.
+pull request's current head. A cautious ready report does not clear the bar.
+Neither does a report that tells whoever merges to update the branch, a
+readiness that is only relative to a stack or a parent pull request, or a
+structured result from the bounded pipeline mode.
 
 **Hold classes.** A pull request is held for the operator when it changes:
 
@@ -36,27 +38,33 @@ this order, and answer the worker each time.
 1. **Does the report clear the bar?** If it is cautious, tells the merger to
    update the branch, or names an open item, do not merge. Reply with what is
    missing.
-2. **Is the pull request held?** Classify it from its changed files, even when
-   the issue was classified at dispatch. Hold it when it falls in a hold
-   class, when you cannot tell, or when its body carries an unticked item
-   under `lfg`'s unapplied review findings. Leave a held pull request open,
+2. **Is the pull request held?** Classify it from its diff, even when the
+   issue was classified at dispatch. Hold it when it falls in a hold class,
+   when you cannot tell, when its body carries an unticked item under `lfg`'s
+   unapplied review findings, when `ce-babysit-pr` parked an item on it for a
+   human, or when merging it would start something the approved proposal did
+   not show. Leave a held pull request open,
    add it to the ready-for-operator list with the reason and any unticked
    items, and reply that it is held for the operator.
 3. **Is it still what the worker reported?** Re-read the pull request
-   immediately before merging. Required checks still pass, no review thread is
-   open, the branch is not behind its base, and the head is the commit the
-   report covered. If any of these fails, return the pull request to its
+   immediately before merging. Every check on the head has finished and none
+   failed, no review thread is open, the branch is not behind its base, and
+   the head is the commit the report covered. If any of these fails, return the pull request to its
    worker.
 4. **Merge that head.** Make the merge conditional on the reported head
-   commit, so a push that lands in between cannot be merged. Confirm the merge
-   landed, record it, and reply merged.
+   commit, so a push that lands in between cannot be merged. Never bypass
+   branch protection: a merge the repository refuses is returned or held.
+   Confirm the merge landed, record it, and reply merged.
 
 Where the repository merges through a queue, enqueue the reported head, record
 the pull request as enqueued, and reply merged only once it reads merged. The
-stall sweep returns a pull request that left the queue unmerged to its worker.
+stall sweep checks each enqueued pull request: it sends the merged reply once
+the pull request reads merged, and returns one that left the queue unmerged to
+its worker.
 
 Hold-class pull requests stay open no matter how clean they are. Then dispatch
-the next ready issue.
+the next ready issue in the batch the approved proposal lists. When none
+remains, dispatch nothing.
 
 ## Never wait for an answer
 
@@ -66,15 +74,18 @@ answer, whether or not the operator is present.
 On a judgment call the brief, the record, and the standing rules do not
 settle, run `ce-pov` to establish a default. Write the question and that
 default to the record. When acting on the default is reversible, proceed on
-it. When it would deploy, spend, force-push, destroy, or widen any authority,
-do not proceed: hold only the work that depends on the answer.
+it. When it would merge, release or reclassify a hold, deploy, spend,
+force-push, destroy, or widen any authority, do not proceed: hold only the
+work that depends on the answer.
 
 A logged question, a held pull request, or a parked item stops only the work
 that depends on it. Keep every independent assignment moving.
 
 When a worker reports an item `ce-babysit-pr` parked, answer it by the same
 rule: a default you can decide goes back to the worker as a reply, and one you
-cannot goes on the ready-for-operator list with the pull request.
+cannot goes on the ready-for-operator list with the pull request. Either way
+that pull request is now held for the operator, because the item was parked
+for a human.
 
 ## The ready-for-operator list
 
@@ -95,8 +106,10 @@ workers need a rule the briefs lack, add it without asking: one dated rule,
 tied to the named incident that caused it. Send it to affected workers as an
 amendment, and list each new rule in your next report to the operator.
 
-A standing rule may tighten how workers operate. It never widens merge,
-spending, or hold-class authority, and it never removes a hold. When an
+A standing rule only adds a restriction on how workers operate. It never
+widens merge, spending, or hold-class authority, it never removes a hold, and
+it never changes what clears the merge bar or how a pull request is
+classified. When an
 incident seems to call for that, log a question instead.
 
 ## Stops and waits
@@ -107,8 +120,10 @@ Re-read the worker's live state before acting on it.
 When the stopped worker's last line names a running job, such as a
 verification run or a `ce-babysit-pr` watch, record a wait and leave the
 worker alone. Do not escalate, nudge, or reassign it. The runtime also raises
-stops of its own, such as a usage limit with a reset time; these are not
-worker blockers, and Revive covers them.
+stops of its own, such as a usage limit with a reset time. These are not
+worker blockers: record a wait until the reset time, and let the sweep nudge
+the worker after it. Moving, replacing, or switching the account of a worker
+waits for the operator and goes on the ready-for-operator list.
 
 When the last line names no job and the worker has an open assignment with no
 hold or dependency, tell it to continue.

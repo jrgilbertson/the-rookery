@@ -69,6 +69,9 @@ looked" surface. GitHub Releases mirror its entries.
   `checking-simplicity` on each draft recommendation before the `ce-pov`
   review, matching Sessions audit, and list `checking-simplicity` among their
   requirements.
+- The Sessions audit prompt confirms each finding's cause in the transcript
+  lines it cites before the review passes, so a reader subagent's summary can't
+  supply a finding's premise unchecked.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has

@@ -31,14 +31,13 @@ raises. Recover any other failed start through the guide, and put what it
 cannot recover on the ready-for-operator list.
 
 After every decision, dispatch the next ready issue in the batch the approved
-proposal lists, in the order and at the concurrency you judge best. Measure
-the whole host before a heavy job. When it is busy, leave the issue for the
-next check. When a
-merge changes what a later issue should assume, say so in that issue's brief.
-When no issue remains, note on the ready-for-operator list that the batch is
-finished. Adding issues takes an amended proposal the operator approves,
-except incidental work inside a class the approved proposal names. Dispatch
-each such item as its own pull request.
+proposal lists, in the order and at the concurrency you judge best. Measure the
+whole host before a heavy job. When it is busy, leave the issue for the next
+check. When a merge changes what a later issue should assume, say so in that
+issue's brief. When no issue remains, note on the ready-for-operator list that
+the batch is finished. Adding issues takes an amended proposal the operator
+approves, except incidental work inside a class the approved proposal names.
+Dispatch each such item as its own pull request.
 
 ## The merge checklist
 
@@ -57,13 +56,11 @@ the head commit it covered.
    request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
-   and adds no condition, such as updating the branch or a position in a
-   stack, and the worker gave the head commit that report covered. A closing
-   phrase that leaves the merge to the reader is not a condition. Where line 4
-   leaves currency to the repository, a note that the branch is behind its
-   base is not such a condition.
+   and adds no condition, such as a position in a stack, and the worker gave
+   the head commit that report covered. A closing phrase that leaves the merge
+   to the reader is not a condition.
 3. **Routine.** The diff touches no held change, except one the record shows
-   the operator pre-authorised for this issue, under a bar this pull request
+   the operator pre-authorized for this issue, under a bar this pull request
    meets. A change that relates to a held change at all, wording and tests
    included, touches it. The pull request body has no unticked item under
    `lfg`'s unapplied review findings. The record shows no item, at any point,
@@ -78,7 +75,9 @@ the head commit it covered.
    check that finished neutral or skipped has finished without failing.
 5. **Merge.** Merge that head now, as an ordinary merge the repository
    accepts, with the merge conditional on the reported commit, and read the
-   pull request once more to confirm it landed.
+   pull request once more to confirm it landed. Where the repository merges
+   through a queue, the merge is an enqueue, and it has landed once the pull
+   request reads merged.
 
 A line that is false, that you cannot read, or that is unclear means no merge.
 So does any situation this list does not describe. Then:
@@ -90,9 +89,6 @@ So does any situation this list does not describe. Then:
   with the line that failed, and reply that it is held for the operator. A
   pull request that will be held anyway is held straight away.
 
-A pull request with a held change stays open no matter how clean it is,
-unless the operator pre-authorised it.
-
 A parked item that is only about a reviewer or tool being unavailable, such
 as a review bot out of quota, says nothing about the change. Log it, answer
 the worker with the default, and let the checklist decide.
@@ -100,12 +96,10 @@ the worker with the default, and let the checklist decide.
 A held pull request is left as it is. Bringing one current, or applying an open
 finding on it, is work to assign when the operator asks.
 
-After a merge, record it and reply merged. Where the repository merges through
-a queue, the merge is an enqueue: reply merged once the pull request reads
-merged. Then run the `managing-issues` completion check on the issue. The
-issue closes on that result, not on the merge. A gap the check finds, or a
-missing `managing-issues`, leaves the issue open and puts it on the
-ready-for-operator list.
+After a merge lands, record it and reply merged. Then run the `managing-issues`
+completion check on the issue. The issue closes on that result, not on the
+merge. A gap the check finds, or a missing `managing-issues`, leaves the issue
+open and puts it on the ready-for-operator list.
 
 ## Never wait for an answer
 
@@ -115,40 +109,38 @@ dialogs unused. The skill asks the operator for exactly two things, and those
 are the only waits: approval of a proposal, and a new session's confirmation
 that the previous Coordinator has ended.
 
-On a judgment call the brief, the record, and the standing rules do not
-settle, decide a default and write the question and that default to the
-record. Decide it yourself when acting on it is reversible and stays inside
-the merge approval, and proceed. When a worker proposes something its issue
-does not name, the default is the smaller option. When the call is
-irreversible or touches the merge approval, run `ce-pov` for the default, log
-it, and hold only the work that depends on the answer.
+On a judgment call the brief, the record, and the standing rules do not settle,
+decide a default and write the question and that default to the record. A
+two-way door is a call that can be undone later; a one-way door is one that
+cannot. Decide a two-way door yourself and proceed when it stays inside the
+merge approval. For a one-way door, or any call that touches the merge
+approval, run `ce-pov` for the default, log it, and hold only the work that
+depends on the answer. When a worker proposes something its issue does not
+name, the default is the smaller option.
 
 A logged question, a held pull request, or a parked item stops only the work
 that depends on it. So does an outside service that is down, such as the
-tracker. Record the pending write, continue independent work, and before each
-retry, check whether an earlier attempt landed. A timed-out write is not proof
-it failed. Answer every question a worker sends, by a default or by
-holding its work, so each worker always has its reply.
+tracker. Record the pending write, continue independent work, and retry it at
+each check after checking whether an earlier attempt landed. A timed-out write
+is not proof it failed. Answer every question a worker sends, by a default or
+by holding its work, so each worker always has its reply.
 
 ## The ready-for-operator list
 
 Give the operator one list, complete and unfiltered, read from the record's
-log and table:
+log and table, with every report and whenever they ask for open questions or
+an update:
 
 - every held pull request, with the checklist line that held it and any
   unticked review items;
-- every open question, with the default taken and whether work proceeded on it;
+- every open question, and every decision you made by default since the last
+  report, each with the default taken and what proceeded on it;
 - every parked item awaiting the operator, with the pull request it blocks;
 - every worker or chat that needs the operator: one to move, replace, or
   re-account, one waiting at a prompt, and one only the operator can close;
 - every merge made, with the pull request and the head merged;
 - every incidental item dispatched, with its class and pull request;
 - every issue a completion check left open, with the gap it found.
-
-When the operator asks for open questions or an update, also go through every
-decision you made by default since the last such report: the question, the
-default taken, and what proceeded on it. Read them from the log, where each
-default is already written.
 
 ## Standing rules
 
@@ -184,19 +176,17 @@ changed:
 - when the cause of a hold placed for the operator is verifiably gone, such
   as a prompt the operator has since answered, continue that assignment.
   Held changes and merge decisions stay held;
-- tell a worker to continue when its assignment is open, meaning dispatched
-  and not yet merged, held, or finished, with nothing it is waiting on;
+- tell a worker to continue when its assignment is open, as the entry skill
+  defines it, with nothing it is waiting on;
 - dispatch an issue left for this check when the host now has room;
 - list for the operator a worker that has not acknowledged its last reply
   by the following check.
 
 The check belongs to the Coordinator's own session. It ends with that session,
 or when no assignment is open or waiting at a prompt the operator can answer,
-no batch issue is still to dispatch, and no recorded write is pending. While a
-write is pending, each check retries it after checking whether an earlier
-attempt landed. The record says how to stop it. A scheduler that
-starts a new agent session is a second Coordinator, so the check uses the
-session's own timer.
+no batch issue is still to dispatch, and no recorded write is pending. The
+record says how to stop it. A scheduler that starts a new agent session is a
+second Coordinator, so the check uses the session's own timer.
 
 Moving, replacing, or switching the account of a worker happens only in
 Revive, at the operator's request.

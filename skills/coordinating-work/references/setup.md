@@ -64,7 +64,7 @@ approval covers them:
   or held changes, show those instead and say where they came from. The
   operator may edit either. Mark each listed issue that touches a held change,
   and each later issue it would block. Ask the operator directly whether to
-  hold those for review or pre-authorise merging them under a stated bar.
+  hold those for review or pre-authorize merging them under a stated bar.
   With no answer, they are held. The answer goes in the record and is part of
   the merge approval.
 - **The standing instruction not to wait.** State it as the operator's

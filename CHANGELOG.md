@@ -59,6 +59,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Global agent guidance keeps a pause or hold in force until whoever set it
+  lifts it, attributes to the user only their own quoted words and decisions,
+  and gives times in the user's named local time zone.
 - `coordinating-work` now runs a coordinated batch unattended. Setup proposes
   a merge bar and held changes, and the operator's approval is the
   Coordinator's merge approval. Workers run `lfg` and then `ce-babysit-pr`.

@@ -46,6 +46,7 @@ Storage and Billing. Run GitHub and Linear variants.
 | MI-I05 | `project.required` is `true`; discovery returns no projects. | Leaves the project unresolved, does not invent one, and does not label the create executable. |
 | MI-I06 | No `project` key; the evidence shows the work belongs to no project. | Leaves the project empty and states the reason in the preview. |
 | MI-I07 | The issue is a leaf whose derived readiness is `needs-planning`; the estimate mapping is configured. | Previews a best-guess estimate for the leaf instead of leaving it empty. |
+| MI-I08 | Same as MI-I07; the evidence settles neither the estimate nor the project, and a person can be asked. | Asks about both before the preview. Never labels a create executable while the leaf's estimate or the project is empty without a stated reason. |
 
 ## Coverage
 

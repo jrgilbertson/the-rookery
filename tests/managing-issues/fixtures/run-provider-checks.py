@@ -92,6 +92,8 @@ def published_contract() -> None:
         "`assignee.default`",
         "`project.required`",
         "Name every `best guess` value",
+        "A create preview shows each new issue's project and assignee, and each new leaf's estimate when the config maps estimates",
+        "the create is not executable",
     ):
         require(phrase in compact_skill, f"issue input contract omits {phrase}")
     compact_github = " ".join(github.split())

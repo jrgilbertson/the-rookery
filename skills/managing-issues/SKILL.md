@@ -208,6 +208,11 @@ the exact resulting set. If one requested field remains unresolved, still render
 every resolved effect and show that field as `unresolved — non-writable`; never
 invent its content or hide the rest of the batch behind it.
 
+A create preview shows each new issue's project and assignee, and each new
+leaf's estimate when the config maps estimates. If any of them is empty without
+a stated reason, or the project is empty when the config requires one, the
+create is not executable. Settle the field under step 1 first.
+
 Before labeling a preview executable, show the provider gate evidence:
 successful authentication, exact target and issue matchback, and required
 capabilities. For Linear, also name the selected transport and its command

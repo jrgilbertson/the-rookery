@@ -212,7 +212,9 @@ looked" surface. GitHub Releases mirror its entries.
   with a stated reason. When the request and evidence do not settle an input,
   it asks the requester, naming the field, the candidates, and its lean. A run
   that cannot ask applies the lean and marks it `best guess` for a person to
-  correct. A leaf gets a best-guess estimate whatever its readiness.
+  correct. A leaf gets a best-guess estimate whatever its readiness, and a
+  create preview is not executable while a leaf's estimate, the project, or the
+  assignee is empty without a stated reason.
   `.agents/managing-issues.json` accepts two optional keys,
   `"assignee": { "default": "<login or user>" }` and
   `"project": { "required": true }`. A config without them stays valid; no

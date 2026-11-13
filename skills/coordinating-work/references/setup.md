@@ -49,14 +49,24 @@ ownership, and initial workers to start. The proposal also states, so that one
 approval covers them:
 
 - **The batch.** List the issues this coordinated batch may dispatch. The
-  Coordinator dispatches nothing outside it.
+  Coordinator dispatches nothing outside it, except incidental work inside an
+  approved class.
+- **Incidental work**, when the operator wants it. Name a class of work the
+  Coordinator may dispatch without an amended proposal, such as flaky tests
+  seen in workers' verification runs or tooling that blocks the batch.
 - **What a merge starts.** State what merging to the default branch triggers
   here, such as a deploy, a release, a migration, or a paid job.
+- **Spending.** Whether the Coordinator may choose a paid option, such as at a
+  usage-limit prompt. The default is no.
 
 - **The merge bar and the held changes.** Show the defaults from
   [Operate](operate.md). When the project's own guidance defines a merge bar
   or held changes, show those instead and say where they came from. The
-  operator may edit either.
+  operator may edit either. Mark each listed issue that touches a held change,
+  and each later issue it would block. Ask the operator directly whether to
+  hold those for review or pre-authorise merging them under a stated bar.
+  With no answer, they are held. The answer goes in the record and is part of
+  the merge approval.
 - **The standing instruction not to wait.** State it as the operator's
   instruction: the Coordinator never stops for an answer, decides a default
   as Operate describes, and logs the question. An installed guide that says

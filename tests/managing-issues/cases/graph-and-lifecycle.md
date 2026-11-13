@@ -31,6 +31,22 @@ S; S has children B and C. C is blocked by A. Estimates are A=2, B=3, C=1, with
 none on P or S. Map these symbolic names to exact synthetic provider identities
 during preparation, without exposing the expected frontier to the executor.
 
+## Issue inputs
+
+Request: “Create an issue for the save failure.” Use the base issue content.
+The config is valid. Discovery returns members `ada` and `grace` and projects
+Storage and Billing. Run GitHub and Linear variants.
+
+| ID | Config, requester, and evidence | Expected observations |
+| --- | --- | --- |
+| MI-I01 | `assignee.default` is `ada`; the request names no one; evidence points to Storage. | Previews assignee `ada` and project Storage without asking. |
+| MI-I02 | Same config; the request says “assign it to grace.” | Previews assignee `grace`, not the default. |
+| MI-I03 | No `assignee` key; a person made the request; nothing names an assignee or a project. | Before any preview, asks about the assignee and the project. Each question names the field, the candidates, and a lean, then waits. It asks about no input the evidence settles. |
+| MI-I04 | Same as MI-I03, but the request comes from a scheduled run that cannot ask, with an explicit instruction that binds the create. | Applies its lean for each unsettled field from the discovered candidates, marks each one `best guess` in the preview and the result, and asks no question. |
+| MI-I05 | `project.required` is `true`; discovery returns no projects. | Leaves the project unresolved, does not invent one, and does not label the create executable. |
+| MI-I06 | No `project` key; the evidence shows the work belongs to no project. | Leaves the project empty and states the reason in the preview. |
+| MI-I07 | The issue is a leaf whose derived readiness is `needs-planning`; the estimate mapping is configured. | Previews a best-guess estimate for the leaf instead of leaving it empty. |
+
 ## Coverage
 
 Request: “Read this issue family and report its Ready Frontier.” Begin with a

@@ -57,19 +57,38 @@ five rules above before previewing tracker effects.
 
 Create a parent only when it owns a distinct whole outcome delivered by several
 children. Keep the graph as shallow as the outcomes allow. Parents have no
-estimate; estimate only childless implementation leaves. Analyze priority,
-relevant labels, estimate, and readiness for every issue instead of applying a
-default. Readiness is `needs-discovery`, `needs-planning`, or
-`ready` and describes whether the issue has enough information for its role,
-not a named agent or workflow.
+estimate. Estimate every childless implementation leaf, whatever its
+readiness. A leaf that still needs discovery or planning gets a best-guess
+estimate at creation, and planning revises it. Readiness is
+`needs-discovery`, `needs-planning`, or `ready` and describes whether the
+issue has enough information for its role, not a named agent or workflow.
+
+Analyze priority, relevant labels, estimate, readiness, project, and assignee
+for every issue from the request and evidence instead of applying a default.
+As the one exception, assign the configured default assignee unless the
+request names someone else. Every issue belongs to a project. Leave the project or
+assignee empty only with a stated reason, and never leave the project empty
+when the config requires one.
+
+When the request and evidence do not settle one of those inputs, ask before
+the preview. Name the field, the candidates, and the one you lean to, then
+wait. Do not ask about an input the evidence settles. Ask whoever made the
+request; a calling agent or workflow answers or passes the question to its own
+requester. A scheduled or headless run may have no way to ask, and a question
+may come back unanswered. In either case, apply your lean and mark it
+`best guess` in the preview and the result so a person can correct it. A lean
+is always one of the discovered candidates. With no candidate, the field stays
+unresolved, and an unresolved required project makes the create
+non-executable.
 
 For an existing family or any proposed relationship, load
 `references/graph-and-completion.md`. Its native coverage, readiness, frontier,
 and completion rules govern the graph.
 
 Completion: every proposed issue owns a distinct outcome, every leaf is
-independently verifiable, every blocker is necessary, and metadata choices are
-supported by the available evidence or named as unresolved.
+independently verifiable, every blocker is necessary, and every metadata
+choice is supported by the evidence, answered by the requester, marked
+`best guess`, or named as unresolved.
 
 ## 2. Resolve the tracker and current facts
 
@@ -93,8 +112,9 @@ canonical provider, exact target, and metadata mappings.
 
 Load the selected provider's starter config from
 `assets/config-template-github.json` or `assets/config-template-linear.json`.
-Discover that target's current priority, estimate, label, and readiness choices
-and the capability to create any missing metadata.
+Discover that target's current priority, estimate, label, and readiness
+choices, its assignable members and projects, and the capability to create any
+missing metadata.
 
 Present every recommended key and provider representation from the selected
 starter template beside exact discovered alternatives; list each one rather
@@ -106,6 +126,14 @@ never treat existing metadata as the preferred answer.
 The operator may leave priority, estimate, or general-label mappings empty, but
 readiness always maps `needs-discovery`, `needs-planning`, and `ready`. These are
 available choices, never defaults applied to an issue.
+
+The starter templates also carry two optional settings. `assignee.default`
+names one exact identity from the discovered members, a GitHub login or a
+Linear user. It is the only default the skill applies to an issue.
+`project.required` set to `true` means no issue may be created without a
+project. The operator may keep, change, or remove either one. Without
+`assignee.default`, the assignee comes from the request and evidence. Without
+`project.required`, a project may stay empty with a stated reason.
 
 If the chosen representations do not exist, show their exact provider metadata
 effects as a complete setup batch with its own direct approval. Apply and read
@@ -257,7 +285,8 @@ Return the canonical tracker identity and target, each `applied`,
 `already_satisfied`, `failed`, `indeterminate`, or `unapplied` result, its
 readback or exact gap, and current issue, relationship, readiness, blocker, and
 Verification facts requested. Say “confirmed in the tracker” only for exact
-readback. Name incomplete coverage and which conclusion it weakens.
+readback. Name incomplete coverage and which conclusion it weakens. Name every
+`best guess` value so a person can correct it.
 
 For a stopped batch, name every later effect as not run, require a fresh
 canonical read, complete preview, and new approval before continuing, and offer

@@ -31,7 +31,7 @@ Read the supported issue surface before an update, immediately before its write,
 and immediately after an accepted write:
 
 ```text
-gh issue view NUMBER_OR_URL -R github.com/OWNER/REPO --json id,number,title,body,state,stateReason,updatedAt,url,labels,assignees,issueType,parent,subIssues,blockedBy,blocking
+gh issue view NUMBER_OR_URL -R github.com/OWNER/REPO --json id,number,title,body,state,stateReason,updatedAt,url,labels,assignees,projectItems,issueType,parent,subIssues,blockedBy,blocking
 ```
 
 Accept only a positive decimal number or an exact issue URL under the repository
@@ -63,6 +63,14 @@ If the result reaches the limit, coverage is unknown. Require one exact label.
 GitHub parses label flag values as CSV; any requested label containing a comma
 or double quote is unsupported because it cannot preserve one exact label.
 Resolve assignees by exact login through the host-qualified assignee endpoint.
+GitHub issues have no single project field. An issue's project is its
+membership in a GitHub Project; a milestone is not a project. Resolve a
+project by exact unique title from
+`gh project list --owner OWNER --format json --limit 1000`, run with
+`GH_HOST=github.com` in its environment because the command has no host flag;
+reaching the limit makes coverage unknown, and a title containing a comma or double quote is
+unsupported for the same CSV reason as labels. Project reads and writes need
+the token's `project` scope; without it, project effects are unavailable.
 Resolve issue types by exact name through the complete paginated repository
 `issueTypes` GraphQL connection. If installed discovery cannot establish a
 requested metadata identity exactly, stop before previewing that effect.
@@ -104,17 +112,18 @@ gh issue create -R github.com/OWNER/REPO --title TITLE --body-file -
 gh issue edit NUMBER -R github.com/OWNER/REPO --title TITLE --body-file -
 ```
 
-For create, add only approved metadata flags supported by the installed CLI. A
-create is a node-only effect. Accept its output as identity only when it is one
-exact canonical issue URL, then read that URL back and repeat URL/number
-matchback. An authoritative no-persistence rejection is `failed`; a request
+For create, add only approved metadata flags supported by the installed CLI,
+such as `--assignee LOGIN` and `--project TITLE`. A create is a node-only
+effect. Accept its output as identity only when it is one exact canonical issue
+URL, then read that URL back and repeat URL/number matchback. An authoritative no-persistence rejection is `failed`; a request
 that may have persisted without exact identity or readback is `indeterminate`.
 
 For update, include only approved surgical flags for title, body, labels,
-assignees, issue type, or native relationships. Read the target and required
-metadata immediately beforehand. Single-valued label-backed fields replace the
-current mapped value in one edit by removing the old exact label and adding the
-new exact label. Show both changes. Never run a no-op or an unrelated bundled
+assignees, project, issue type, or native relationships. Change a project with
+`--add-project` and `--remove-project`, and read it back through
+`projectItems`. Read the target and required metadata immediately beforehand.
+Single-valued label-backed fields replace the current mapped value in one edit
+by removing the old exact label and adding the new exact label. Show both changes. Never run a no-op or an unrelated bundled
 change.
 
 ## Reversible lifecycle

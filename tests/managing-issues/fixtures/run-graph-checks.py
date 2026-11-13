@@ -38,6 +38,8 @@ def published_contract_checks() -> None:
         "needs-planning",
         "`ready`",
         "no estimate",
+        "at every readiness",
+        "priority, labels, readiness, project, assignee, and native graph position",
         "shared lifecycle's first-stop rule",
         "applied",
         "already_satisfied",

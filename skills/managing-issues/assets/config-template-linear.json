@@ -31,5 +31,11 @@
       "needs-planning": "needs-planning",
       "ready": "ready"
     }
+  },
+  "assignee": {
+    "default": "REPLACE_WITH_DEFAULT_ASSIGNEE"
+  },
+  "project": {
+    "required": true
   }
 }

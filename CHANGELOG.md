@@ -82,6 +82,10 @@ looked" surface. GitHub Releases mirror its entries.
 - The Sessions audit prompt confirms each finding's cause in the transcript
   lines it cites before the review passes, so a reader subagent's summary can't
   supply a finding's premise unchecked.
+- The two Sessions audit jobs consolidate. The remote job saves its report with
+  its Orca session ID and stops; the local job reads it, becomes the remote
+  workspace's parent in Orca, and brings the owner one prioritized list across
+  both hosts. Each job adds its own closing paragraph to the shared prompt.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has
@@ -217,6 +221,18 @@ looked" surface. GitHub Releases mirror its entries.
   change, ordered by priority, instead of applying fixes. The README lists
   Analytics gap audit. CI no longer installs PyYAML, which no
   Python check imports.
+- `managing-issues` analyzes project and assignee for every issue with
+  priority, labels, estimate, and readiness. It leaves either one empty only
+  with a stated reason. When the request and evidence do not settle an input,
+  it asks the requester, naming the field, the candidates, and its lean. A run
+  that cannot ask applies the lean and marks it `best guess` for a person to
+  correct. A leaf gets a best-guess estimate whatever its readiness, and a
+  create preview is not executable while a leaf's estimate, the project, or the
+  assignee is empty without a stated reason.
+  `.agents/managing-issues.json` accepts two optional keys,
+  `"assignee": { "default": "<login or user>" }` and
+  `"project": { "required": true }`. A config without them stays valid; no
+  default assignee applies and a project is not required.
 
 ### Fixed
 

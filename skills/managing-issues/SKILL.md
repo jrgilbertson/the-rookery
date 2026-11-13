@@ -232,13 +232,18 @@ instruction beside the complete preview and proceed without asking again only
 when every effect fits it and governing policy permits it. Approval of the
 underlying work or decision alone does not authorize a tracker write.
 
-Include predictable provider automation, such as automatic cycle assignment,
-in the preview and readback. It is covered by the same authorization only when
-it is a known consequence of the authorized action and does not materially
-change the agreed result. An unexpected or materially different effect stops
-the batch under step 4; do not silently accept or repair it. A relationship on
-a newly created issue that the approved batch did not include is such an
-effect. The create stays `applied`; stop before the next effect, mark later
+Include predictable provider automation, such as automatic cycle assignment
+or a related link Linear derives from an issue mention in the approved content,
+in the preview and readback. On Linear, the preview names each issue the
+approved content mentions, so the operator sees those links before approving. Automation is
+covered by the same authorization only when it is a known consequence of the
+authorized action and does not materially change the agreed result; the
+readback reports it and the batch continues. An unexpected or materially
+different effect stops the batch under step 4; do not silently accept or repair
+it. Any other relationship on a newly created issue that the approved batch did
+not include is such an effect: a parent, a child, a blocker, a duplicate, or a
+related link to an issue the approved content does not mention. The create
+stays `applied`; stop before the next effect, mark later
 effects `unapplied`, and report what was observed without guessing why the
 provider added it. Include a complete preview of the effect that removes the
 relationship; it needs fresh approval like any other effect.
@@ -270,7 +275,10 @@ back immediately. A create is indeterminate unless its response yields an exact
 canonical identity tied to that attempt and readback confirms it. Never retry an
 indeterminate create or match one by title, body, author, time, or similarity.
 An accepted non-create effect is `indeterminate` when its exact required
-readback fails, is partial, or mismatches the approved result.
+readback fails, is partial, or mismatches the approved result. Provider
+rewriting of approved text, such as a bare domain turned into a link or an
+issue or pull-request mention rendered as a reference, is not a mismatch; name
+the rewriting in the result.
 
 Classify each processed effect as exactly `applied`, `already_satisfied`,
 `failed`, or `indeterminate`. At the first `failed` or `indeterminate` effect,

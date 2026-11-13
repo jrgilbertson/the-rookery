@@ -150,8 +150,11 @@ or guide for these reads; do not assume one relation flag covers hierarchy.
 Missing or partial parent, direct-child, or other relationship readback is
 unknown, as for any missing requested section: the create stays `applied` and
 later effects are `unapplied`; stop before the next effect and report the exact
-unconfirmed surface. An unapproved parent, child, or other relationship follows
-the provider-automation rule in `SKILL.md`. Managing Issues applies every effect
+unconfirmed surface. Linear turns an issue mention in created content into a
+related link; a related link to an issue the approved content mentions is
+predictable automation, so report it and continue. An unapproved parent,
+child, or other relationship follows the provider-automation rule in
+`SKILL.md`. Managing Issues applies every effect
 once:
 even if an Orca guide or MCP client offers a retry for an unconfirmed write, an
 unconfirmed Managing Issues create is `indeterminate` and is never retried or

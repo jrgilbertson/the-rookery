@@ -46,7 +46,9 @@ finished. Adding issues takes an amended proposal the operator approves.
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
 only when every line below is true. The worker's message is a claim: line 2
 checks what it claims, and lines 3 and 4 are facts you read yourself from the
-pull request and the record when you decide.
+pull request and the record when you decide. In a batch with no task workers,
+you run `lfg` and the continuous `ce-babysit-pr` watch yourself, and line 2
+reads the first line of your own watch report and the head commit it covered.
 
 1. **Approval.** The record holds the setup proposal the operator approved, it
    shows a merge bar and held changes, and this pull request's issue is in

@@ -89,7 +89,8 @@ changing anything:
 - whether the new account already trusts the participant's workspace;
 - the participant's unpushed and uncommitted work and its running jobs.
 
-Then:
+Then, once the recovery is approved or one of the two no-approval cases below
+applies:
 
 1. Stop the old worker through the guide's stop, so its exit is proven.
 2. Open a new terminal in the same workspace. A shell that was already open

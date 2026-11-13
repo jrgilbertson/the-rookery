@@ -72,6 +72,10 @@ looked" surface. GitHub Releases mirror its entries.
 - The Sessions audit prompt confirms each finding's cause in the transcript
   lines it cites before the review passes, so a reader subagent's summary can't
   supply a finding's premise unchecked.
+- The two Sessions audit jobs consolidate. The remote job saves its report with
+  its Orca session ID and stops; the local job reads it, becomes the remote
+  workspace's parent in Orca, and brings the owner one prioritized list across
+  both hosts. Each job adds its own closing paragraph to the shared prompt.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has

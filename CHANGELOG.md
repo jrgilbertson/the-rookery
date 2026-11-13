@@ -59,6 +59,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Global agent guidance keeps a pause or hold in force until whoever set it
+  lifts it, attributes to the user only their own quoted words and decisions,
+  and gives times in the user's named local time zone.
 - The Sessions audit prompt starts with `/retro`, because `retro` hides itself
   from model invocation, and runs `checking-simplicity` on each draft
   recommendation before the `ce-pov` review. The Analytics gap audit loads

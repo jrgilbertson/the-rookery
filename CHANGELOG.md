@@ -189,10 +189,9 @@ looked" surface. GitHub Releases mirror its entries.
 - Checking Simplicity no longer requires four options for every question.
 - Creating Portable Skills reviews flag opaque prose: instructions a new reader
   cannot follow, internal classifications, and security jargon.
-- Managing Issues fixture checks no longer carry synthetic provider adapters
-  that only tested themselves. Graph and lifecycle expectations are retained as
-  behavioral case definitions awaiting native-host evaluation; incidental prose
-  changes no longer fail graph checks.
+- Managing Issues tests no longer match the skill's text. The phrase checks and
+  the graph and lifecycle case rows are replaced by nine plain scenarios, and
+  the configuration validator test stays.
 - `GLOBAL-AGENTS.md` matches the maintainer's current global guidance.
   Non-trivial work names a verifiable end state without a completion
   template. Long work uses the workflow's durable task state, and scratch

@@ -34,8 +34,9 @@ Persisting it would make repository state depend on whichever client happened
 to be available when setup ran.
 
 Managing Issues applies that separation directly. Its validator accepts only
-`version`, `provider`, `target`, and four metadata mapping families. There is no
-transport or integration-posture field
+`version`, `provider`, `target`, four metadata mapping families, and two
+optional team choices: a default assignee and whether a project is required.
+There is no transport or integration-posture field
 (`skills/managing-issues/scripts/config_check.py`). The Linear starter
 config records a workspace, team, canonical priority names, estimates, labels,
 and readiness vocabulary without selecting MCP or Orca
@@ -52,8 +53,9 @@ session transport”).
 Store the operator's canonical provider and exact target and the metadata
 vocabulary issue authors choose from. Do not store an IDE, CLI binary, MCP
 server, skill name, or transport preference. The validator normalizes version,
-provider, target, and mappings as the complete durable
-configuration (`skills/managing-issues/scripts/config_check.py`).
+provider, target, mappings, and the optional assignee and project settings as
+the complete durable configuration
+(`skills/managing-issues/scripts/config_check.py`).
 
 ### Choose one transport per session
 

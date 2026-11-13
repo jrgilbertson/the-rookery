@@ -62,9 +62,9 @@ Before setup or revive changes, present one concrete proposal covering:
 
 Include the current Coordinator, relevant participants left unchanged, and
 needed communication or supervision changes. State unresolved membership or
-capability gaps that affect the proposal. Use current supported choices; do
-not embed a changing model catalog. An actual prior setting differs from a
-configured default. Unknown prior values stay unknown.
+capability gaps that affect the proposal. Use current supported choices. An
+actual prior setting differs from a configured default. Unknown prior values
+stay unknown.
 
 Obtain approval of the final effects. An explicit approval with fully specified
 edits approves that edited proposal once. An exploratory question is not an
@@ -80,7 +80,7 @@ adding a staffing confirmation for every task.
 
 The merge approval is the merge bar and held changes shown in the setup
 proposal the operator approved, with any held change the operator
-pre-authorised in it, as written to the record. It lets the Coordinator merge a
+pre-authorized in it, as written to the record. It lets the Coordinator merge a
 pull request that passes every line of the merge checklist in
 [Operate](references/operate.md), and nothing else.
 
@@ -133,12 +133,11 @@ requires. Carry the operator's current decisions from the record.
 
 Start each task worker through the guide's supervised launch path, and send
 the whole brief inline. A worker on another host cannot read the Coordinator's
-files, so the brief carries everything the worker needs. A follow-on to a
-settled assignment, one that is merged, held, or finished, is a new
-assignment. Confirm the
-earlier session has ended, and release it through the guide when it has not,
-then start the follow-on fresh with the whole brief. Never message a settled
-assignment.
+files, so the brief carries everything the worker needs. An assignment is
+open from dispatch until it is merged, held, or finished, and settled after
+that. A follow-on to a settled assignment is a new assignment. Confirm the
+earlier session has ended, release it through the guide when it has not, then
+start the follow-on fresh with the whole brief.
 
 Each brief tells its worker the following. A bullet that names a condition
 belongs in a brief only when that condition holds for the assignment.
@@ -158,16 +157,16 @@ belongs in a brief only when that condition holds for the assignment.
 - **No human is present.** The run is unattended. The worker sends every
   question to the Coordinator.
 - **Whether the pull request will be held.** When the issue is a held change
-  the operator did not pre-authorise, say so, so the worker expects a held
+  the operator did not pre-authorize, say so, so the worker expects a held
   reply.
 - **Merge-ready is a question.** When `ce-babysit-pr` reports looks
   merge-ready, the worker asks the Coordinator once, naming the pull request,
   quoting the report's first line verbatim, and giving the head commit that
   report covered. Evidence belongs in the pull request body, not in the
-  message. If the head moved after the report, the worker waits for a
-  report on the new head before asking. It stays open
-  for the reply: merged, held for the operator, or findings to fix. A worker
-  told its pull request is held has finished its assignment.
+  message. If the head moved after the report, the worker waits for a report on
+  the new head before asking. It stays open for the reply: merged, held for the
+  operator, or findings to fix. A worker told its pull request is held has
+  finished its assignment.
 - **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a
   human, or a check it could not fix, the worker reports it to the Coordinator
   immediately, with the full item, and keeps the watch running.
@@ -180,7 +179,9 @@ belongs in a brief only when that condition holds for the assignment.
 - **Verification currency.** Bring the branch up to date with the latest
   default branch before each run of the repository's verification gate,
   following that repository's merge policy, so verification tests the fixes
-  already merged.
+  already merged. After merging the base into an open pull request itself, the
+  worker takes a fresh watch report on that head and says in its question that
+  the base merge was its own.
 - **Repeated review findings.** When two review rounds in a row on the pull
   request raise the same kind of finding, the worker runs `checking-simplicity`
   on its approach before a third fix round, and asks the Coordinator when the
@@ -199,8 +200,9 @@ work follows, so stale work shows up at once.
 
 ## The record
 
-Each coordinated batch has one record, kept on the Coordinator's host, in a durable
-and private location the operator approved at setup. It holds four things:
+Each coordinated batch has one record, kept on the Coordinator's host, in a
+durable and private location the operator approved at setup. It holds four
+things:
 
 - the approved proposal and the standing rules;
 - every brief and amendment, as sent;
@@ -210,13 +212,13 @@ and private location the operator approved at setup. It holds four things:
   worker's current identifiers, its pull request, its state, and what it is
   waiting on.
 
-Write each event once, in the log, and update the table. The
-ready-for-operator list is read from them, not kept as a third copy. Session scratch space and public source
-are not valid locations: the first can be cleared without warning, and the
-second publishes private context.
+Write each event once, in the log, and update the table. The ready-for-operator
+list is read from them, not kept as a third copy. Session scratch space and
+public source are not valid locations: the first can be cleared without
+warning, and the second publishes private context.
 
-It is the only copy. Workers on another host receive what they need by
-message. Keep a discoverable reference to the record through the coordinated batch's
+It is the only copy. Workers on another host receive what they need by message.
+Keep a discoverable reference to the record through the coordinated batch's
 existing work record, so a replacement Coordinator started on that host can
 find it.
 
@@ -236,14 +238,14 @@ workers or unresolved candidates when they affect the outcome.
 
 Confirm the participant's current assignment or deliberate disposition and
 applicable recent decisions, a working return path to the current Coordinator,
-and needed supervision. A queued message, heartbeat, live process, or successful
-script exit alone does not establish recovery. Before relying on a message to
-an idle participant, confirm from that participant's own reply or action that
-it read the message; a delivery receipt or status is not proof it was read. No new code or paid work is required merely
-to prove communication. Verify effective settings where the runtime exposes
-them; distinguish requested settings from observed values. Verify a
-participant's effective account from its running agent's own configuration,
-not from launch metadata it inherited.
+and needed supervision. A queued message, heartbeat, live process, or
+successful script exit alone does not establish recovery. Before relying on a
+message to an idle participant, confirm from that participant's own reply or
+action that it read the message; a delivery receipt or status is not proof it
+was read. No new code or paid work is required merely to prove communication.
+Verify effective settings where the runtime exposes them; distinguish requested
+settings from observed values. Verify a participant's effective account from
+its running agent's own configuration, not from launch metadata it inherited.
 
 Lead with what is established and what still needs action. Give evidence and
 the next action for each exception. Unsupported capabilities and unknown

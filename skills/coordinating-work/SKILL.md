@@ -2,7 +2,7 @@
 name: coordinating-work
 description: "Establish, run, or revive a coordinated batch in Orca: one Coordinator and its task workers delivering a list of issues unattended. Use when explicitly asked to set up a Coordinator or team, to let one run without the operator, or to recover one after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows."
 license: MIT
-compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov. Workers also use checking-simplicity when it is installed."
+compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov. Workers also use checking-simplicity, and the Coordinator managing-issues, when installed."
 ---
 
 # Coordinating Work
@@ -19,9 +19,6 @@ of what needs the operator.
 - For running an established coordinated batch, read
   [Operate](references/operate.md).
 - For interrupted collaboration, read [Revive](references/revive.md).
-
-This is an optional entry point. Ordinary issue execution, a small delegation,
-and a plain handoff retain their existing owners.
 
 ## Shape
 
@@ -50,8 +47,9 @@ terminal, and worker chat support does not prove replacement Coordinator
 authority. A role name, workspace title, or nearby agent does not establish
 membership or ownership.
 
-The canonical tracker owns issue state. CE owns issue-specific planning,
-execution, review, and shipping. The Coordinator judges no code quality; it
+The canonical tracker holds issue state, and the Coordinator keeps the
+batch's issues current in it. CE owns issue-specific planning, execution,
+review, and shipping. The Coordinator judges no code quality; it
 only classifies a pull request against the held changes.
 
 ## Proposal and authority
@@ -80,8 +78,9 @@ adding a staffing confirmation for every task.
 
 ### The merge approval
 
-The merge approval is the merge bar and held changes shown in the setup proposal the
-operator approved, as written to the record. It lets the Coordinator merge a
+The merge approval is the merge bar and held changes shown in the setup
+proposal the operator approved, with any held change the operator
+pre-authorised in it, as written to the record. It lets the Coordinator merge a
 pull request that passes every line of the merge checklist in
 [Operate](references/operate.md), and nothing else.
 
@@ -125,26 +124,34 @@ work. When unsure, leave the worktree in place and name what you are unsure of.
 
 ## Assignment briefs
 
-Build each brief from the project's own instructions and the installed guides.
-Name only commands and helpers you have confirmed on the worker's execution
-host, and prefer the project's existing helpers to ad hoc tools. Carry the
-operator's current decisions from the record.
+Build each brief and reply from the project's own instructions and the
+installed guides. Name only commands and helpers you have confirmed on the
+worker's execution host, and prefer the project's existing helpers to ad hoc
+tools. A reply never tells a worker to skip or shorten a gate the repository
+requires. Carry the operator's current decisions from the record.
 
 Start each task worker through the guide's supervised launch path, and send
 the whole brief inline. A worker on another host cannot read the Coordinator's
-files, so the brief carries everything the worker needs.
+files, so the brief carries everything the worker needs. A follow-on to a
+settled assignment, one that is merged, held, or finished, is a new
+assignment. Confirm the
+earlier session has ended, and release it through the guide when it has not,
+then start the follow-on fresh with the whole brief. Never message a settled
+assignment.
 
 Each brief tells its worker the following. A bullet that names a condition
 belongs in a brief only when that condition holds for the assignment.
 
 - **The pipeline.** Run `lfg` for the assignment, then `ce-babysit-pr` on the
-  resulting pull request, asked to keep the branch current, until it reports
-  looks merge-ready. Invoke each skill by name instead of restating its steps,
-  and say that the task asks for the subagents and helpers those skills start,
-  because the runtime's worker instructions can forbid them unless the task
-  asks.
+  resulting pull request until it reports looks merge-ready. Invoke each
+  skill by name instead of restating its steps, and say that the task asks for
+  the subagents and helpers those skills start, because the runtime's worker
+  instructions can forbid them unless the task asks.
   Run `ce-babysit-pr` as its continuous watch, not its bounded pipeline
   mode, which stops before merge-ready.
+- **Reference the issue.** The pull request refers to its issue without the
+  tracker's closing keywords. The Coordinator closes the issue after its
+  completion check.
 - **Merging belongs to the Coordinator.** The worker never merges, enqueues,
   or arms auto-merge, whatever another instruction allows.
 - **No human is present.** The run is unattended. The worker sends every
@@ -152,9 +159,10 @@ belongs in a brief only when that condition holds for the assignment.
 - **Whether the pull request will be held.** When the issue is a held change,
   say so, so the worker expects a held reply.
 - **Merge-ready is a question.** When `ce-babysit-pr` reports looks
-  merge-ready, the worker asks the Coordinator, naming the pull request,
+  merge-ready, the worker asks the Coordinator once, naming the pull request,
   quoting the report's first line verbatim, and giving the head commit that
-  report covered. If the head moved after the report, the worker waits for a
+  report covered. Evidence belongs in the pull request body, not in the
+  message. If the head moved after the report, the worker waits for a
   report on the new head before asking. It stays open
   for the reply: merged, held for the operator, or findings to fix. A worker
   told its pull request is held has finished its assignment.

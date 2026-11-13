@@ -93,21 +93,25 @@ understanding rather than the repository's safeguards and procedures.
 
 One Coordinator, its task workers, and its record, working one approved list of
 issues without the operator. Adding issues to the list takes an amended
-proposal the operator approves.
+proposal the operator approves, except incidental work inside a class the
+proposal approved.
 
 ### Merge Approval
 
 What the operator approved a Coordinator to merge without them: the merge bar
-and held changes shown in the setup proposal for one coordinated batch. Only
+and held changes shown in the setup proposal for one coordinated batch, with
+any held change the operator pre-authorised there under a stated bar. Only
 the operator's recorded approval of a proposal creates or changes it. It covers
 merging and nothing else.
 
 ### Held Changes
 
-The kinds of change that always wait for the operator, however clean the pull
-request: by default access and authorization, money, data deletion, privacy,
-outbound email, and release gates. A project's own guidance or the operator's
-edit to a proposal can replace the list.
+The kinds of change that wait for the operator, however clean the pull
+request, unless the operator pre-authorised them at setup: by default access
+and authorization, money, data deletion, privacy, outbound email, release
+gates, and the project's agent instructions and merge and review policy. A
+project's own guidance or the operator's edit to a proposal can replace the
+list.
 
 ## Issue management
 

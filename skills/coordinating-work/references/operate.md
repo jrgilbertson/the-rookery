@@ -16,22 +16,19 @@ pull request's current head.
 - data deletion;
 - privacy;
 - outbound email;
-- release gates.
+- release gates;
+- the project's agent instructions, and its merge and review policy.
 
 The approved proposal governs. It may replace either default with the
 project's own guidance or the operator's edits.
 
 ## Running the batch
 
-Follow the installed guide: start the workers, end your turn, and let the
-runtime wake you with their questions, completions, and stops.
-
-When a worker's start fails, read the cause. Retry once on the same task when
-it was transient. When the start is waiting at a one-time trust or setup
-prompt, tell the operator, who answers it once for that agent in that
-repository, and hold only that assignment. Revive covers the prompt a resumed
-worker's new account raises. Put anything else on the
-ready-for-operator list, and stay within the guide's retry limit.
+When a worker's start waits at a one-time trust or setup prompt, tell the
+operator, who answers it once for that agent in that repository, and hold only
+that assignment. Revive covers the prompt a resumed worker's new account
+raises. Recover any other failed start through the guide, and put what it
+cannot recover on the ready-for-operator list.
 
 After every decision, dispatch the next ready issue in the batch the approved
 proposal lists, in the order and at the concurrency you judge best. Measure
@@ -39,7 +36,9 @@ the whole host before a heavy job. When it is busy, leave the issue for the
 next check. When a
 merge changes what a later issue should assume, say so in that issue's brief.
 When no issue remains, note on the ready-for-operator list that the batch is
-finished. Adding issues takes an amended proposal the operator approves.
+finished. Adding issues takes an amended proposal the operator approves,
+except incidental work inside a class the approved proposal names. Dispatch
+each such item as its own pull request.
 
 ## The merge checklist
 
@@ -53,27 +52,33 @@ the head commit it covered.
 
 1. **Approval.** The record holds the setup proposal the operator approved, it
    shows a merge bar and held changes, and this pull request's issue is in
-   its batch. Every condition the approved merge bar adds beyond this list is
-   true for this pull request.
+   its batch or inside an approved class of incidental work. Every condition
+   the approved merge bar adds beyond this list is true for this pull
+   request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
    and adds no condition, such as updating the branch or a position in a
    stack, and the worker gave the head commit that report covered. A closing
-   phrase that leaves the merge to the reader is not a condition.
-3. **Routine.** The diff touches no held change; a change that relates to one
-   at all, wording and tests included, touches it. The pull request body has
-   no unticked item under `lfg`'s unapplied review findings. The record
-   shows no item, at any point, that `ce-babysit-pr` parked for a human about
-   the change itself. Merging it starts only what the proposal showed.
+   phrase that leaves the merge to the reader is not a condition. Where line 4
+   leaves currency to the repository, a note that the branch is behind its
+   base is not such a condition.
+3. **Routine.** The diff touches no held change, except one the record shows
+   the operator pre-authorised for this issue, under a bar this pull request
+   meets. A change that relates to a held change at all, wording and tests
+   included, touches it. The pull request body has no unticked item under
+   `lfg`'s unapplied review findings. The record shows no item, at any point,
+   that `ce-babysit-pr` parked for a human about the change itself. Merging
+   it starts only what the proposal showed.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
-   failing, no review thread is open, no review requests changes, and the
-   branch is current with its base. A check that finished neutral or skipped
-   has finished without failing.
+   failing, no review thread is open, no review requests changes, and the code
+   host reports it mergeable under the repository's own rules. Where the
+   repository merges through a queue or enforces up-to-date branches itself,
+   that decides currency; otherwise the branch is current with its base. A
+   check that finished neutral or skipped has finished without failing.
 5. **Merge.** Merge that head now, as an ordinary merge the repository
    accepts, with the merge conditional on the reported commit, and read the
-   pull request once more to confirm it landed. A merge the repository
-   refuses fails this line.
+   pull request once more to confirm it landed.
 
 A line that is false, that you cannot read, or that is unclear means no merge.
 So does any situation this list does not describe. Then:
@@ -85,19 +90,22 @@ So does any situation this list does not describe. Then:
   with the line that failed, and reply that it is held for the operator. A
   pull request that will be held anyway is held straight away.
 
-A pull request with a held change stays open no matter how clean it is.
+A pull request with a held change stays open no matter how clean it is,
+unless the operator pre-authorised it.
 
 A parked item that is only about a reviewer or tool being unavailable, such
 as a review bot out of quota, says nothing about the change. Log it, answer
 the worker with the default, and let the checklist decide.
 
-A held pull request is left as it is, and its entry on the list says it may
-have fallen behind its base. Bringing one current, or applying an open
+A held pull request is left as it is. Bringing one current, or applying an open
 finding on it, is work to assign when the operator asks.
 
 After a merge, record it and reply merged. Where the repository merges through
 a queue, the merge is an enqueue: reply merged once the pull request reads
-merged.
+merged. Then run the `managing-issues` completion check on the issue, or check
+each of its Verification lines yourself when that skill is absent. The issue
+closes on that result, not on the merge. A gap the check finds leaves the
+issue open and puts it on the ready-for-operator list.
 
 ## Never wait for an answer
 
@@ -116,7 +124,10 @@ irreversible or touches the merge approval, run `ce-pov` for the default, log
 it, and hold only the work that depends on the answer.
 
 A logged question, a held pull request, or a parked item stops only the work
-that depends on it. Answer every question a worker sends, by a default or by
+that depends on it. So does an outside service that is down, such as the
+tracker. Record the pending write, continue independent work, and before each
+retry, check whether an earlier attempt landed. A timed-out write is not proof
+it failed. Answer every question a worker sends, by a default or by
 holding its work, so each worker always has its reply.
 
 ## The ready-for-operator list
@@ -130,9 +141,9 @@ log and table:
 - every parked item awaiting the operator, with the pull request it blocks;
 - every worker or chat that needs the operator: one to move, replace, or
   re-account, one waiting at a prompt, and one only the operator can close;
-- every merge made, with the pull request and the head merged.
-
-It is the operator's whole picture of the run, so it carries everything.
+- every merge made, with the pull request and the head merged;
+- every incidental item dispatched, with its class and pull request;
+- every issue a completion check left open, with the gap it found.
 
 ## Standing rules
 
@@ -161,6 +172,10 @@ changed:
 - when a wait has ended, or its end cannot be determined, take the next step:
   continue the worker, reply merged, or return a pull request the queue
   ejected to its worker;
+- when a worker waits at a usage-limit prompt, choose no paid option unless
+  the approved proposal lets you, since that is spending. Once the limit
+  clears, cancel the prompt and tell the worker to continue. That is part of
+  the check, not a Revive;
 - when the cause of a hold placed for the operator is verifiably gone, such
   as a prompt the operator has since answered, continue that assignment.
   Held changes and merge decisions stay held;

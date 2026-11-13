@@ -50,7 +50,8 @@ pull request and the record when you decide.
 
 1. **Approval.** The record holds the setup proposal the operator approved, it
    shows a merge bar and held changes, and this pull request's issue is in
-   its batch.
+   its batch. Every condition the approved merge bar adds beyond this list is
+   true for this pull request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
    and adds no condition, such as updating the branch or a position in a
@@ -162,11 +163,12 @@ changed:
   Held changes and merge decisions stay held;
 - tell a worker to continue when its assignment is open, meaning dispatched
   and not yet merged, held, or finished, with nothing it is waiting on;
+- dispatch an issue left for this check when the host now has room;
 - list for the operator a worker that has not acknowledged its last reply
   by the following check.
 
-The check belongs to the Coordinator's own session and ends with it, or when
-no assignment is open. The record says how to stop it. A scheduler that
+The check belongs to the Coordinator's own session. It ends with that session,
+or when no assignment is open and no batch issue is still to dispatch. The record says how to stop it. A scheduler that
 starts a new agent session is a second Coordinator, so the check uses the
 session's own timer.
 

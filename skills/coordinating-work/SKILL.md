@@ -8,8 +8,9 @@ compatibility: "Requires Orca, access to its version-matched CLI and orchestrati
 # Coordinating Work
 
 Establish, run, or recover one coordinated batch through one editable
-proposal. The result is an approved batch delivered without the operator: routine pull requests merged, sensitive ones held open, and one
-complete list of what needs the operator.
+proposal. The result is an approved batch delivered without the operator:
+routine pull requests merged, sensitive ones held open, and one complete list
+of what needs the operator.
 
 ## Choose the operation
 
@@ -110,8 +111,8 @@ assignment, and stays idle until it has one.
 Retire a completed PR worker after its delivery and monitoring obligations,
 through the guide's release procedure, which closes a supervised worker's
 terminal or chat. Three kinds of session stay open for the operator to close,
-and go on the ready-for-operator list: a worker re-attached to a terminal that
-already existed, a chat adopted without a supervised task, and the
+and go on the ready-for-operator list: a worker re-attached to a terminal the
+Coordinator opened by hand, a chat adopted without a supervised task, and the
 Coordinator's own chat. After merge, remove the worker's
 worktree through the repository and Orca lifecycle when its work is fully
 pushed and merged; that removal is routine, not a destructive action. A merged

@@ -78,6 +78,43 @@ def published_contract() -> None:
         "Linear recommends an exclusive readiness group" in compact_skill,
         "setup recommendation rationale differs",
     )
+    for phrase in (
+        "Analyze priority, relevant labels, estimate, readiness, project, and assignee for every issue",
+        "assign the configured default assignee unless the request names someone else",
+        "Every issue belongs to a project",
+        "never leave the project empty when the config requires one",
+        "Name the field, the candidates, and the one you lean to, then wait",
+        "Do not ask about an input the evidence settles",
+        "Ask whoever made the request",
+        "mark it `best guess` in the preview and the result",
+        "A lean is always one of the discovered candidates",
+        "whatever its readiness",
+        "When the config maps estimates, estimate every childless implementation leaf",
+        "`assignee.default`",
+        "`project.required`",
+        "Name every `best guess` value",
+        "A create preview shows each new issue's project and assignee, and each new leaf's estimate when the config maps estimates",
+        "the create is not executable",
+    ):
+        require(phrase in compact_skill, f"issue input contract omits {phrase}")
+    compact_github = " ".join(github.split())
+    for phrase in (
+        "projectItems",
+        "--assignee LOGIN",
+        "--project TITLE",
+        "--add-project",
+        "--remove-project",
+        "`project` scope",
+        "a milestone is not a project",
+        "`GH_HOST=github.com` in its environment because the command has no host flag",
+    ):
+        require(phrase in compact_github, f"GitHub assignee and project contract omits {phrase}")
+    for phrase in (
+        "workflow states, labels, members, and projects",
+        "label, assignee, project, and relationship mutations",
+        "default-assignee candidates",
+    ):
+        require(phrase in compact_linear, f"Linear assignee and project contract omits {phrase}")
     require(
         "active account" in github
         and "matchback" in github

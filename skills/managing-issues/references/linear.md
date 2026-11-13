@@ -56,9 +56,9 @@ Use the selected transport to confirm authentication. For MCP, a successful
 authenticated tool read supplies provider identity. For Orca, follow the loaded
 guide to confirm provider status. Authentication supplies identity only.
 
-Discover the exact workspace, team, workflow states, labels, and members needed
-for the requested effect through the selected transport. Require one workspace
-and one team matching the normalized target. Prefer stable IDs; accept a name
+Discover the exact workspace, team, workflow states, labels, members, and
+projects needed for the requested effect through the selected transport.
+Require one workspace and one team matching the normalized target. Prefer stable IDs; accept a name
 only when it matches exactly and uniquely within its provider scope. Linear
 config stores the canonical priority names `none`, `urgent`, `high`, `medium`,
 and `low`, not a transport-specific argument. At the MCP boundary, translate
@@ -74,8 +74,10 @@ identity, never workflow status.
 During first-use setup, present the native priority and estimate choices and
 exact existing labels beside the Linear starter recommendations. Recommend a
 workspace-scoped readiness group named `readiness` with kebab-case children
-`needs-discovery`, `needs-planning`, and `ready`. The operator chooses the
-mappings. Do not change the team's native priority or estimation scheme.
+`needs-discovery`, `needs-planning`, and `ready`. Offer the team's members as
+default-assignee candidates and store the chosen member's stable user ID. The
+operator chooses the mappings. Do not change the team's native priority or
+estimation scheme.
 
 When a chosen general label is absent, offer a flat label create. When a chosen
 readiness child is absent, offer the group-then-children recipe: create the
@@ -126,8 +128,8 @@ Follow `graph-and-completion.md` for family traversal and the shared node limit.
 
 Construct effects only after resolving the selected transport's command
 authority. Prefer field-specific status, priority, estimate, label, assignee,
-and relationship mutations for surgical updates. Prefer label add/remove to
-whole-set replacement. If only a whole-record save or whole-label-set operation
+project, and relationship mutations for surgical updates. Use the issue's
+native project field. Prefer label add/remove to whole-set replacement. If only a whole-record save or whole-label-set operation
 can express an approved effect, reread the complete current set immediately
 before writing and show the exact resulting set in the preview; any drift stops
 the batch.

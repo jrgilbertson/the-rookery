@@ -94,7 +94,7 @@ On the same benchmark, Fable 5.2 high reaches 45.29 quality points and 49.39% pa
 
 ## Work alone, delegate, or hand off
 
-One session usually owns the work and makes sure it gets finished. Add Executors when parts of the work can be done separately. Use orchestration tools to supervise those agents. Hand off the work when another session should take over.
+One session usually owns the work and makes sure it gets finished. Add Executors when parts of the work can be done separately. Use orchestration tools to supervise those agents. For a batch of related issues that should run unattended, [`coordinating-work`](skills/coordinating-work/SKILL.md) sets up one Coordinator and its task workers. Hand off the work when another session should take over.
 
 ## Choose effort and tools
 

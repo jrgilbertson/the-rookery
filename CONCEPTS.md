@@ -87,6 +87,28 @@ names the gap that remains, and returns a better question to Research. It is
 distinct from the Repository Learning Loop because it improves the operator's
 understanding rather than the repository's safeguards and procedures.
 
+## Coordinating work
+
+### Coordinated Batch
+
+One Coordinator, its task workers, and its record, working one approved list of
+issues without the operator. Adding issues to the list takes an amended
+proposal the operator approves.
+
+### Merge Approval
+
+What the operator approved a Coordinator to merge without them: the merge bar
+and held changes shown in the setup proposal for one coordinated batch. Only
+the operator's recorded approval of a proposal creates or changes it. It covers
+merging and nothing else.
+
+### Held Changes
+
+The kinds of change that always wait for the operator, however clean the pull
+request: by default access and authorization, money, data deletion, privacy,
+outbound email, and release gates. A project's own guidance or the operator's
+edit to a proposal can replace the list.
+
 ## Issue management
 
 ### Canonical Tracker

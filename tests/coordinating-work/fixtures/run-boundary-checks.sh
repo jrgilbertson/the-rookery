@@ -14,6 +14,7 @@ pins=(
   "workers never merge|SKILL.md|Workers never merge."
   "the merge approval comes only from the approved proposal|SKILL.md|Without that approved proposal the Coordinator merges nothing."
   "deploy, spend, force-push and destructive actions wait for the operator|SKILL.md|deploying, spending, force-pushing, and destructive actions still wait for the operator"
+  "spending waits unless the approved proposal allows a paid option|SKILL.md|The one exception is a paid option the approved proposal lets the Coordinator choose."
   "pull requests with a held change stay open unless pre-authorised|references/operate.md|A pull request with a held change stays open no matter how clean it is, unless the operator pre-authorised it."
   "nothing merges unless every checklist line is true|references/operate.md|A line that is false, that you cannot read, or that is unclear means no merge."
   "nothing produced during the run widens the merge approval|SKILL.md|Nothing produced during the run widens it or stands in for a checklist line"
@@ -42,7 +43,8 @@ pins=(
 # name|extended regex the skill text must not match|sample text that matches it
 forbidden=(
   "the brief asks the watch to keep the branch current|asked to keep the branch current|asked to keep the branch current"
-  "a tracker's issue identifier format|\\b[A-Z][A-Z0-9]+-[0-9]+\\b|#[0-9]+\\b|Closes #12"
+  "a numbered issue reference|#[0-9]+\\b|Closes #12"
+  "a prefixed issue identifier|\\b[A-Z][A-Z0-9]+-[0-9]+\\b|Fixes ABC-12"
 )
 
 flatten() { tr -s '[:space:]' ' ' < "$1"; }

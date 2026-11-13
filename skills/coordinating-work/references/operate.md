@@ -44,23 +44,22 @@ finished. Adding issues takes an amended proposal the operator approves.
 ## The merge checklist
 
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
-only when every line below is true. The worker's message is a claim, so you
-read every fact yourself when you decide: line 2 from the worker's own output,
-and lines 3 and 4 from the pull request and the record. In a batch with no task workers,
-you run `lfg` and the continuous `ce-babysit-pr` watch yourself, and line 2
-reads the first line of your own watch report and the head commit it covered.
+only when every line below is true. Line 2 is the worker's report, taken on
+the worker's word because the worker runs the watch. Lines 3 and 4 are facts
+you read yourself from the pull request and the record when you decide. In a
+batch with no task workers, you run `lfg` and the continuous `ce-babysit-pr`
+watch yourself, and line 2 reads the first line of your own watch report and
+the head commit it covered.
 
 1. **Approval.** The record holds the setup proposal the operator approved, it
    shows a merge bar and held changes, and this pull request's issue is in
    its batch. Every condition the approved merge bar adds beyond this list is
    true for this pull request.
-2. **Report.** Read `ce-babysit-pr`'s continuous-watch report in the worker's
-   own output, through the guide's read of a worker's output. Its first line
-   says the pull request looks merge-ready and adds no condition, such as
-   updating the branch or a position in a stack, and it covers the head
-   commit the worker named. A closing phrase that leaves the merge to the
-   reader is not a condition. A quote in the worker's message alone does not
-   make this line true.
+2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
+   continuous-watch report, that line says the pull request looks merge-ready
+   and adds no condition, such as updating the branch or a position in a
+   stack, and the worker gave the head commit that report covered. A closing
+   phrase that leaves the merge to the reader is not a condition.
 3. **Routine.** The diff touches no held change; a change that relates to one
    at all, wording and tests included, touches it. The pull request body has
    no unticked item under `lfg`'s unapplied review findings. The record

@@ -29,12 +29,14 @@ runtime wake you with their questions, completions, and stops.
 When a worker's start fails, read the cause. Retry once on the same task when
 it was transient. When the start is waiting at a one-time trust or setup
 prompt, tell the operator, who answers it once for that agent in that
-repository, and hold only that assignment. Put anything else on the
+repository, and hold only that assignment. Revive covers the prompt a resumed
+worker's new account raises. Put anything else on the
 ready-for-operator list, and stay within the guide's retry limit.
 
 After every decision, dispatch the next ready issue in the batch the approved
 proposal lists, in the order and at the concurrency you judge best. Measure
-the whole host before a heavy job and start fewer when it is busy. When a
+the whole host before a heavy job. When it is busy, leave the issue for the
+next check. When a
 merge changes what a later issue should assume, say so in that issue's brief.
 When no issue remains, note on the ready-for-operator list that the batch is
 finished. Adding issues takes an amended proposal the operator approves.
@@ -56,17 +58,18 @@ pull request and the record when you decide.
    phrase that leaves the merge to the reader is not a condition.
 3. **Routine.** The diff touches no held change; a change that relates to one
    at all, wording and tests included, touches it. The pull request body has
-   no unticked item under `lfg`'s unapplied review findings. No item that
-   `ce-babysit-pr` parked for a human about the change itself is on record
-   for it. Merging it starts only what the proposal showed.
+   no unticked item under `lfg`'s unapplied review findings. The record
+   shows no item, at any point, that `ce-babysit-pr` parked for a human about
+   the change itself. Merging it starts only what the proposal showed.
 4. **Current.** Read the pull request now: its head is the reported commit,
-   checks have reported on that head and every one finished without failing,
-   no review thread is open, no review requests changes, and the branch is
-   current with its base. A check that finished neutral or skipped has
-   finished without failing.
-5. **Merge.** Merge that head through the repository's normal path, with the
-   merge conditional on the reported commit, and read the pull request once
-   more to confirm it landed. A merge the repository refuses fails this line.
+   at least one check passed on that head and every check finished without
+   failing, no review thread is open, no review requests changes, and the
+   branch is current with its base. A check that finished neutral or skipped
+   has finished without failing.
+5. **Merge.** Merge that head now, as an ordinary merge the repository
+   accepts, with the merge conditional on the reported commit, and read the
+   pull request once more to confirm it landed. A merge the repository
+   refuses fails this line.
 
 A line that is false, that you cannot read, or that is unclear means no merge.
 So does any situation this list does not describe. Then:
@@ -96,7 +99,9 @@ merged.
 
 Keep the batch moving without the operator, whether or not they are present.
 Put every question in the record with a default, and leave blocking question
-dialogs unused.
+dialogs unused. The skill asks the operator for exactly two things, and those
+are the only waits: approval of a proposal, and a new session's confirmation
+that the previous Coordinator has ended.
 
 On a judgment call the brief, the record, and the standing rules do not
 settle, decide a default and write the question and that default to the
@@ -155,8 +160,8 @@ changed:
 - when the cause of a hold placed for the operator is verifiably gone, such
   as a prompt the operator has since answered, continue that assignment.
   Held changes and merge decisions stay held;
-- tell a worker to continue when its assignment is open with nothing it is
-  waiting on;
+- tell a worker to continue when its assignment is open, meaning dispatched
+  and not yet merged, held, or finished, with nothing it is waiting on;
 - list for the operator a worker that has not acknowledged its last reply
   by the following check.
 
@@ -165,5 +170,5 @@ no assignment is open. The record says how to stop it. A scheduler that
 starts a new agent session is a second Coordinator, so the check uses the
 session's own timer.
 
-Moving, replacing, or switching the account of a worker waits for the
-operator.
+Moving, replacing, or switching the account of a worker happens only in
+Revive, at the operator's request.

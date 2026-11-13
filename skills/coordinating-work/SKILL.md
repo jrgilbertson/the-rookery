@@ -2,7 +2,7 @@
 name: coordinating-work
 description: "Establish, run, or revive a coordinated batch in Orca: one Coordinator and its task workers delivering a list of issues unattended. Use when explicitly asked to set up a Coordinator or team, to let one run without the operator, or to recover one after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows."
 license: MIT
-compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov."
+compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov. Workers also use checking-simplicity when it is installed."
 ---
 
 # Coordinating Work
@@ -85,7 +85,8 @@ pull request that passes every line of the merge checklist in
 [Operate](references/operate.md), and nothing else.
 
 Without that approved proposal the Coordinator merges nothing. Workers never
-merge. Everything else stays with the operator: deploying, spending,
+merge. A merge may start what the approved proposal showed it starts, such as
+a deploy. Everything else stays with the operator: deploying, spending,
 force-pushing, and destructive actions still wait for the operator, and so do
 account selection and manually starting a replacement Coordinator. Use the
 account and settings the operator selected.
@@ -147,8 +148,8 @@ belongs in a brief only when that condition holds for the assignment.
   or arms auto-merge, whatever another instruction allows.
 - **No human is present.** The run is unattended. The worker sends every
   question to the Coordinator.
-- **Whether the pull request will be held.** When the issue falls in a hold
-  class, say so, so the worker expects a held reply.
+- **Whether the pull request will be held.** When the issue is a held change,
+  say so, so the worker expects a held reply.
 - **Merge-ready is a question.** When `ce-babysit-pr` reports looks
   merge-ready, the worker asks the Coordinator, naming the pull request,
   quoting the report's first line verbatim, and giving the head commit that
@@ -156,8 +157,7 @@ belongs in a brief only when that condition holds for the assignment.
   report on the new head before asking. It stays open
   for the reply: merged, held for the operator, or findings to fix. A worker
   told its pull request is held has finished its assignment.
-- **Parked items go at once**, when the project's pull requests receive
-  review or bot feedback. When `ce-babysit-pr` parks an item that needs a
+- **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a
   human, or a check it could not fix, the worker reports it to the Coordinator
   immediately, with the full item, and keeps the watch running.
 - **A choice is a question.** A blocker that offers options for the

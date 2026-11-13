@@ -35,6 +35,7 @@ pins=(
   "setup asks whether to hold or pre-authorise held changes|references/setup.md|Ask the operator directly whether to hold those for review or pre-authorise merging them under a stated bar. With no answer, they are held."
   "a pre-authorised held change merges only under its recorded bar|references/operate.md|except one the record shows the operator pre-authorised for this issue, under a bar this pull request meets"
   "the Coordinator's own rules are a held change|references/operate.md|the project's agent instructions, and its merge and review policy"
+  "an update reports the defaults decided alone|references/operate.md|also go through every decision you made by default since the last such report"
 )
 
 # name|extended regex the skill text must not match|sample text that matches it

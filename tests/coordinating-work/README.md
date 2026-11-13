@@ -18,7 +18,8 @@ sentence for each batch rule: branch currency left to a merge queue or an
 enforced up-to-date rule, follow-ons started fresh, usage-limit prompts,
 replies that keep the repository's gates whole, incidental work, closing an
 issue only after its completion check, outside-service outages, short
-merge-ready questions, and held changes chosen at setup. Two patterns are
+merge-ready questions, held changes chosen at setup, and defaults reported with
+every update. Two patterns are
 forbidden anywhere in the skill: asking the watch to keep the branch current,
 and a tracker's issue identifier. The fixture fails when a pinned sentence is
 removed or a forbidden pattern appears, and proves both on a scratch copy each

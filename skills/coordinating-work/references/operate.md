@@ -145,6 +145,11 @@ log and table:
 - every incidental item dispatched, with its class and pull request;
 - every issue a completion check left open, with the gap it found.
 
+When the operator asks for open questions or an update, also go through every
+decision you made by default since the last such report: the question, the
+default taken, and what proceeded on it. Read them from the log, where each
+default is already written.
+
 ## Standing rules
 
 Keep the coordinated batch's standing rules in the record. When an incident

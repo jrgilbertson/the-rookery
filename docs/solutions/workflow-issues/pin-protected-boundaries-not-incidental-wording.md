@@ -26,10 +26,12 @@ Their examples and source-path citations below describe the historical workflow.
 Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 
-On 2026-11-13, `coordinating-work` dropped its sentence pins for five plain
-scenario rows in [its test README](../../../tests/coordinating-work/README.md):
-the pins broke on every rewording, grew with every new rule, and never showed
-that an agent obeys a rule. Do not add sentence pins back for that skill.
+On 2026-11-13, `coordinating-work` and `managing-issues` dropped their
+sentence pins for plain scenario rows in their test READMEs
+([coordinating-work](../../../tests/coordinating-work/README.md),
+[managing-issues](../../../tests/managing-issues/README.md)): the pins broke on
+every rewording, grew with every new rule, and never showed that an agent obeys
+a rule. Do not add sentence pins back for either skill.
 
 ## Context
 

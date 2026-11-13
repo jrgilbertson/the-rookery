@@ -8,9 +8,9 @@ its shipped signal scanner. Report native host behavior separately from
 repository checks.
 The [Coordinating Work scenarios](coordinating-work/README.md) describe five
 situations and what a reviewer should see, for evaluation runs.
-The [Managing Issues checks](managing-issues/README.md) distinguish deterministic
-text and configuration checks from the graph and lifecycle behavioral case
-definitions.
+The [Managing Issues checks](managing-issues/README.md) run its configuration
+validator and describe nine situations and what a reviewer should see, for
+evaluation runs.
 
 Run the complete repository gate:
 
@@ -21,8 +21,8 @@ lefthook run pre-push --force
 The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
-exercise the shipped signal scan and issue configuration helper, published
-text contracts, and the shipped personal-chief-of-staff source-map sample
+exercise the shipped signal scan and issue configuration helper, and the
+shipped personal-chief-of-staff source-map sample
 against the version 3 shape in
 [source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md).
 The repository-integrity tests also exercise malformed packages and unsafe

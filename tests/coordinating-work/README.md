@@ -19,10 +19,11 @@ enforced up-to-date rule, follow-ons started fresh, usage-limit prompts,
 replies that keep the repository's gates whole, incidental work, closing an
 issue only after its completion check, outside-service outages, short
 merge-ready questions, held changes chosen at setup, and defaults reported with
-every update. Two patterns are
+every update. Three patterns are
 forbidden anywhere in the skill: asking the watch to keep the branch current,
-and a tracker's issue identifier. The fixture fails when a pinned sentence is
-removed or a forbidden pattern appears, and proves both on a scratch copy each
+a numbered issue reference, and a prefixed issue identifier. The fixture fails
+when a pinned sentence is removed or a forbidden pattern appears, and proves
+both on a scratch copy each
 run. It does not show that an agent obeys
 them. The gate checks package validity and repository integration; it does not
 establish successful team setup, unattended merging, conversation

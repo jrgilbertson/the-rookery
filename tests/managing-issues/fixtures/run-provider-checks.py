@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -63,6 +64,27 @@ def published_contract() -> None:
         and "it needs fresh approval like any other effect" in compact_skill,
         "unexpected create relationship contract differs",
     )
+    for phrase in (
+        "a related link Linear derives from an issue mention in the approved content",
+        "The preview names each issue the approved content mentions",
+        "a related link to an issue the approved content does not mention",
+        "Provider rewriting of approved text",
+        "is not a mismatch; name the rewriting",
+    ):
+        require(phrase in compact_skill, f"mention-derived link contract omits {phrase}")
+    require(
+        "a related link to an issue the approved content mentions is predictable automation" in compact_linear,
+        "Linear mention-derived link contract differs",
+    )
+    require(
+        "GitHub has no equivalent automatic relationship" in " ".join(github.split())
+        and "timeline cross-reference" in " ".join(github.split()),
+        "GitHub mention contract differs",
+    )
+    identifier = re.compile(r"\b[A-Z][A-Z0-9]+-[0-9]+\b")
+    for path, text in ((SKILL, skill), (GITHUB_REF, github), (LINEAR_REF, linear)):
+        found = identifier.search(text)
+        require(found is None, f"{path.name} hardcodes a tracker identifier: {found.group(0) if found else ''}")
     compact_graph = " ".join(GRAPH_REF.read_text(encoding="utf-8").split())
     require(
         "relationships is ordinary readback, not inspection of an unreported effect" in compact_graph,

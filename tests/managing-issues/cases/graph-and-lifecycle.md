@@ -114,11 +114,22 @@ surface.
 
 | Variant | Provider readback | Additional expected observations |
 | --- | --- | --- |
-| Other relationship | A default issue read omits relationships; an explicit relation read returns an unapproved link to B. Run blocking, related, and duplicate variants. Parent is explicitly empty and direct-child pages are exhausted and empty. | Names the unapproved link and includes a complete removal preview awaiting fresh approval. |
+| Other relationship | A default issue read omits relationships; an explicit relation read returns an unapproved link to B. The approved content does not mention B. Run blocking, related, and duplicate variants. Parent is explicitly empty and direct-child pages are exhausted and empty. | Names the unapproved link and includes a complete removal preview awaiting fresh approval. |
 | Parent | The separate parent field identifies unapproved parent B; `includeRelations` and exhaustive direct-child reads are empty. | Reads the parent explicitly despite empty other relationships, names B as the unapproved parent, and includes a complete removal preview awaiting fresh approval. |
 | Direct child | Parent is explicitly empty and other relationships are empty. The first direct-child page is empty but has another page; the final page returns unapproved child B. | Exhausts the native child pages, names B as the unapproved child, and includes a complete removal preview awaiting fresh approval. |
 | Unknown parent | The parent field is missing; direct-child and other relationship reads are complete and empty. | Reports parent coverage unknown, never infers no parent, and makes no guessed removal or retry. |
 | Unknown direct children | Parent is explicitly empty and other relationships are complete and empty. Vary the direct-child readback: missing collection, native read becomes unavailable, failed page, cap, or unexhausted pagination. | Reports the exact child-coverage gap, never infers no children, and makes no guessed removal or retry. |
+
+## Provider automation on create
+
+Run the Linear variant. An approved batch creates an issue whose approved
+description mentions existing issue B, then sets the new issue's parent to P.
+The exact create identity and node fields are confirmed.
+
+| ID | Provider state or readback | Expected observations |
+| --- | --- | --- |
+| MI-P08 | The preview is requested before approval. After the create, an explicit relation read returns a related link to B. Parent is explicitly empty, direct-child pages are exhausted and empty, and no other link is present. | The preview names B as an issue Linear will link. After approval, the create is `applied`, the link to B is reported as provider automation, and the parent effect runs without a new approval. |
+| MI-P09 | The created issue's description reads back with a bare domain in the approved text turned into a web link and the mention of B rendered as an issue reference; every other field matches. | Classifies the readback as a match, not `indeterminate`, names the rewriting in the result, and continues to the parent effect. |
 
 No deterministic adapter backs these cases. Only a trace from the actual skill
 executor can establish the decisions in this table.

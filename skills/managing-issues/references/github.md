@@ -138,7 +138,11 @@ The readback must confirm the intended state and state reason.
 ## Native relationships
 
 Use only GitHub's native parent, sub-issue, blocked-by, and blocking operations,
-and only after every new node has an exact identity and readback. Probe each
+and only after every new node has an exact identity and readback. GitHub has no
+equivalent automatic relationship: an issue mention in approved content adds
+only a timeline cross-reference, which is not a relationship this skill writes
+or reads, so it never stops a batch. GitHub stores the body as written, so a
+body readback compares exactly. Probe each
 required capability from the installed `gh issue edit --help` before a graph
 preview. An absent required flag makes the proposed graph unsupported; do not
 create its nodes.

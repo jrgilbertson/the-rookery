@@ -4,17 +4,26 @@ Read this after the operator manually starts a replacement Coordinator or asks
 to recover an interrupted coordinated batch. The entry skill owns shape, shared
 approval, worker lifetime, the record, and completion requirements.
 
-## Start from the record
+## Start with the Coordinator
 
-A replacement Coordinator starts on the host that holds the coordinated batch's
-record. On every start or revive, before any new dispatch:
+Recovery starts with the Coordinator. The operator switches its account, or
+starts a replacement on the host that holds the coordinated batch's record,
+and the Coordinator then brings the workers along. On every start or revive,
+in this order, before any new dispatch:
 
-1. Read the record: the approved proposal, the standing rules, the open
-   questions, and the tail of the decisions.
-2. Confirm from each worker's own reply which amendment it is working from.
-3. Re-arm the stall sweep at the approved interval, after checking that no
-   earlier sweep is still installed. A sweep that lived in the previous
-   session ended with it.
+1. A session that is new to the batch asks the operator to confirm the
+   previous Coordinator has ended, and waits for that answer. A Coordinator
+   continuing its own conversation skips this step.
+2. Read the record: the approved proposal, the standing rules, the table, and
+   the tail of the log, where open questions sit. Read mail with the guide's
+   read that leaves the inbox as it is.
+3. Take each worker's latest amendment from its last report. Ask a worker
+   only when the record leaves it unclear.
+4. Stop any earlier check the way the record says, then arm one at the
+   approved interval.
+
+A replacement writes the brief for a batch issue that has not started, under
+the existing approval.
 
 ## Reconstruct current work
 
@@ -105,7 +114,8 @@ changes do not authorize execution.
 
 Go ahead without a new approval in two cases. The first is when every row
 keeps an approval already in the record and the only change is the
-Coordinator's own identity or account. The second is when the operator has
+Coordinator's own account, with the operator's confirmation from step 1 when
+the session is new. The second is when the operator has
 switched an account and asked for recovery, and every row resumes the same
 conversation under the newly selected account with the same provider, model,
 and effort. Replacing a worker, changing its provider or settings, or a fresh

@@ -18,7 +18,7 @@ existing assignments, holds, and working context rather than recreating them.
 An agent already working on the objective before setup, such as a chat started
 for a batch, is a participant to adopt. When the guide cannot attach a
 supervised Task to it, keep it as a message-assigned worker reached through the
-guide's reference lookup, and include it in the stall sweep.
+guide's reference lookup, and include it in the check.
 
 Propose only the initial assignments the requested work needs. Dispatch from
 the canonical tracker's ready issues, with the issue as the source of each
@@ -39,10 +39,10 @@ machine, and show the measured CPU and memory behind the recommendation; the
 operator chooses the placement. Distinguish the Coordinator already running from
 participants that need starting. Preserve evidenced settings for existing
 participants; show the supported choices for new ones. "Host default, no
-override" is an explicit value when the host's choices cannot be listed. Where
-the runtime offers more than one surface for an agent, recommend the one the
-guide or observed behavior on that host shows follows an account change by
-itself, and say why.
+override" is an explicit value when the host's choices cannot be listed.
+Workers launch on the surface the host is set to. Where the guide or observed
+behavior shows one surface follows an account change by itself, tell the
+operator which, so they can set the host to it.
 
 Present the entry skill's proposal, including reused participants, their task
 ownership, and initial workers to start. The proposal also states, so that one
@@ -63,7 +63,7 @@ approval covers them:
   to ask the user first yields to this instruction once it is approved.
 - **Where the record lives.** Name a durable, private location on the
   Coordinator's host, as the entry skill requires.
-- **The stall-sweep interval.**
+- **The check interval**, for the one periodic check Operate describes.
 
 Approval of the proposal is the standing merge approval for this coordinated batch and
 records the instruction not to wait. Write the approved proposal to the record
@@ -91,15 +91,9 @@ Provide each participant its bounded assignment by the brief the entry skill
 describes. Establish the ordinary native supervision the coordinated batch needs,
 reconciling any existing monitoring first.
 
-The one periodic check allowed is a stall sweep at the interval the operator
-approved. The runtime reports a supervised worker's stop once, with the
-worker's last output, and does not report that worker's later idle turns or a
-message-assigned participant at all. The sweep covers what nothing else
-reports, by the wait rule in Operate: it acts on each recorded wait that has
-ended and on each open assignment with no recorded wait, hold, or running job.
-A progress or status report does not exempt a participant. The sweep reads
-state without consuming the Coordinator's inbox. Anything beyond that sweep is
-a second scheduler or a fixed tick cadence; do not add one.
+Arm the one check Operate describes, at the approved interval, and write in
+the record how to stop it. It is the only periodic work in the batch. It reads
+mail with the guide's read that leaves the inbox as it is.
 
 Verify the entry skill's individual outcomes, effective settings, communication,
 and supervision. Everyday work then continues under Operate; setup is not rerun

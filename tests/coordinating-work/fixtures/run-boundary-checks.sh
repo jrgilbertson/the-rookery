@@ -29,6 +29,7 @@ pins=(
   "setup may approve a class of incidental work|references/setup.md|Name a class of work the Coordinator may dispatch without an amended proposal"
   "work outside the batch and its approved class takes an amended proposal|references/operate.md|Adding issues takes an amended proposal the operator approves, except incidental work inside a class the approved proposal names"
   "an issue closes on its completion check, not on the merge|references/operate.md|The issue closes on that result, not on the merge"
+  "an issue stays open when the completion check cannot run|references/operate.md|A gap the check finds, or a missing \`managing-issues\`, leaves the issue open"
   "briefs leave out the tracker's closing keywords|SKILL.md|without the tracker's closing keywords"
   "a timed-out write is checked before a retry|references/operate.md|before each retry, check whether an earlier attempt landed. A timed-out write is not proof it failed."
   "a merge-ready question leaves evidence in the pull request|SKILL.md|Evidence belongs in the pull request body, not in the message."

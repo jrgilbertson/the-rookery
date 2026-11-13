@@ -191,9 +191,10 @@ changed:
   by the following check.
 
 The check belongs to the Coordinator's own session. It ends with that session,
-or when no assignment is open, no batch issue is still to dispatch, and no
-recorded write is pending. While one is pending, each check retries it after
-checking whether an earlier attempt landed. The record says how to stop it. A scheduler that
+or when no assignment is open or waiting at a prompt the operator can answer,
+no batch issue is still to dispatch, and no recorded write is pending. While a
+write is pending, each check retries it after checking whether an earlier
+attempt landed. The record says how to stop it. A scheduler that
 starts a new agent session is a second Coordinator, so the check uses the
 session's own timer.
 

@@ -234,8 +234,8 @@ underlying work or decision alone does not authorize a tracker write.
 
 Include predictable provider automation, such as automatic cycle assignment
 or a related link Linear derives from an issue mention in the approved content,
-in the preview and readback. The preview names each issue the approved content
-mentions, so the operator sees those links before approving. Automation is
+in the preview and readback. On Linear, the preview names each issue the
+approved content mentions, so the operator sees those links before approving. Automation is
 covered by the same authorization only when it is a known consequence of the
 authorized action and does not materially change the agreed result; the
 readback reports it and the batch continues. An unexpected or materially

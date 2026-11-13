@@ -66,7 +66,7 @@ def published_contract() -> None:
     )
     for phrase in (
         "a related link Linear derives from an issue mention in the approved content",
-        "The preview names each issue the approved content mentions",
+        "On Linear, the preview names each issue the approved content mentions",
         "a related link to an issue the approved content does not mention",
         "Provider rewriting of approved text",
         "is not a mismatch; name the rewriting",

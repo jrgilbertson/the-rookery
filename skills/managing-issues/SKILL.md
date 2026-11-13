@@ -57,8 +57,9 @@ five rules above before previewing tracker effects.
 
 Create a parent only when it owns a distinct whole outcome delivered by several
 children. Keep the graph as shallow as the outcomes allow. Parents have no
-estimate. Estimate every childless implementation leaf, whatever its
-readiness. A leaf that still needs discovery or planning gets a best-guess
+estimate. When the config maps estimates, estimate every childless
+implementation leaf, whatever its readiness. A leaf that still needs discovery
+or planning gets a best-guess
 estimate at creation, and planning revises it. Readiness is
 `needs-discovery`, `needs-planning`, or `ready` and describes whether the
 issue has enough information for its role, not a named agent or workflow.

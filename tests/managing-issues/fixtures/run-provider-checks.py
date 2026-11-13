@@ -89,6 +89,7 @@ def published_contract() -> None:
         "mark it `best guess` in the preview and the result",
         "A lean is always one of the discovered candidates",
         "whatever its readiness",
+        "When the config maps estimates, estimate every childless implementation leaf",
         "`assignee.default`",
         "`project.required`",
         "Name every `best guess` value",
@@ -105,6 +106,7 @@ def published_contract() -> None:
         "--remove-project",
         "`project` scope",
         "a milestone is not a project",
+        "`GH_HOST=github.com` in its environment because the command has no host flag",
     ):
         require(phrase in compact_github, f"GitHub assignee and project contract omits {phrase}")
     for phrase in (

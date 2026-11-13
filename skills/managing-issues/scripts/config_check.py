@@ -33,7 +33,10 @@ GITHUB_OWNER_REPO = (
     r"(?P<repo>(?!\.\.?(?:$|#))[A-Za-z0-9._-]{1,100})"
 )
 GITHUB_TARGET = re.compile(GITHUB_OWNER_REPO + r"$")
-GITHUB_LOGIN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$")
+# Enterprise Managed User logins append "_<enterprise shortcode>" to the handle.
+GITHUB_LOGIN = re.compile(
+    r"^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}(?:_[A-Za-z0-9]+)?$"
+)
 LINEAR_TARGET_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
 
 

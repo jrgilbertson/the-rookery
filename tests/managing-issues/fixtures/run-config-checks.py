@@ -337,7 +337,12 @@ def check_assignee_and_project(repo_root: Path) -> None:
         invalid = base_config()
         invalid["assignee"] = value
         expect_invalid(invalid, repo_root, message)
-    for login in ("@me", "-octocat", "octocat-", "octo--cat", "a" * 40, "octo cat"):
+    managed_user = base_config()
+    managed_user["assignee"] = {"default": "mona-cat_octo"}
+    expected_managed_user = copy.deepcopy(managed_user)
+    expected_managed_user["target"] = "exampleorg/project"
+    expect_valid(managed_user, repo_root, expected_managed_user)
+    for login in ("@me", "-octocat", "octocat-", "octo--cat", "a" * 40, "octo cat", "octo_", "_octo", "octo_cat_x"):
         invalid = base_config()
         invalid["assignee"] = {"default": login}
         expect_invalid(invalid, repo_root, "assignee.default must be a GitHub login")

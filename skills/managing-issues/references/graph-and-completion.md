@@ -13,8 +13,8 @@ distinct sub-outcome that itself needs several leaves. This is the shallowest
 useful graph; it has no fixed depth limit.
 
 Any node with children is a parent, including a nested sub-outcome, and carries
-no estimate. Only childless implementation leaves receive estimates, at every
-readiness. Every node still receives its own Problem, Scope, Verification,
+no estimate. When the config maps estimates, only childless implementation
+leaves receive them, at every readiness. Every node still receives its own Problem, Scope, Verification,
 priority, labels, readiness, project, assignee, and native graph position.
 
 ## Establish complete coverage

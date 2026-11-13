@@ -66,8 +66,9 @@ Resolve assignees by exact login through the host-qualified assignee endpoint.
 GitHub issues have no single project field. An issue's project is its
 membership in a GitHub Project; a milestone is not a project. Resolve a
 project by exact unique title from
-`gh project list --owner OWNER --format json --limit 1000`; reaching the limit
-makes coverage unknown, and a title containing a comma or double quote is
+`gh project list --owner OWNER --format json --limit 1000`, run with
+`GH_HOST=github.com` in its environment because the command has no host flag;
+reaching the limit makes coverage unknown, and a title containing a comma or double quote is
 unsupported for the same CSV reason as labels. Project reads and writes need
 the token's `project` scope; without it, project effects are unavailable.
 Resolve issue types by exact name through the complete paginated repository

@@ -60,7 +60,7 @@ Consolidation: end the saved report with this session's Orca session ID and work
 Add this paragraph to the end of the local job's prompt:
 
 ```text
-Consolidation: when the remote host's audit saved a report in the past 24 hours, read it and make this workspace the parent of its workspace in Orca. Merge both hosts' revised recommendations into one prioritized list before `ce-pov` judges it: combine matching findings, say where the two hosts' evidence conflicts, and mark each item's host. The owner answers here; relay each answer for the remote host to its session through Orca. With no remote report, say so and report this host only.
+Consolidation: when the remote host's audit saved a report in the past 24 hours, read it and make this workspace the parent of its workspace in Orca. Merge its recommendations with this host's revised recommendations into one prioritized list before `ce-pov` judges it: combine matching findings, say where the two hosts' evidence conflicts, and mark each item's host. The owner answers here; relay each answer for the remote host to its session through Orca. With no remote report, say so and report this host only.
 ```
 
 A job that runs on one host only uses the shared prompt without either

@@ -70,8 +70,8 @@ looked" surface. GitHub Releases mirror its entries.
   along with any PR that carries unapplied review findings. It never waits for
   an answer, keeps one record on its own host, and resumes conversations after
   a same-provider account switch. The Planner role is removed, a new
-  `references/operate.md` covers running the batch, and a fixture pins the
-  merge guards.
+  `references/operate.md` covers running the batch, and five plain scenarios
+  describe what a reviewer should see.
 - The Sessions audit prompt starts with `/retro`, because `retro` hides itself
   from model invocation, and runs `checking-simplicity` on each draft
   recommendation before the `ce-pov` review. The Analytics gap audit loads

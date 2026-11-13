@@ -26,6 +26,11 @@ Their examples and source-path citations below describe the historical workflow.
 Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 
+On 2026-11-13, `coordinating-work` dropped its sentence pins for five plain
+scenario rows in [its test README](../../../tests/coordinating-work/README.md):
+the pins broke on every rewording, grew with every new rule, and never showed
+that an agent obeys a rule. Do not add sentence pins back for that skill.
+
 ## Context
 
 `checking-merge-readiness`, run from the session that wrote a pull request,

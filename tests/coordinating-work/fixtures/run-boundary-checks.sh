@@ -10,11 +10,11 @@ skill_dir="$repo_root/skills/coordinating-work"
 # name|file relative to the skill|sentence that carries the boundary
 pins=(
   "workers never merge|SKILL.md|Workers never merge."
-  "the grant comes only from the approved proposal|SKILL.md|Without that approved proposal the Coordinator merges nothing."
+  "the merge approval comes only from the approved proposal|SKILL.md|Without that approved proposal the Coordinator merges nothing."
   "deploy, spend, force-push and destructive actions wait for the operator|SKILL.md|deploying, spending, force-pushing, and destructive actions still wait for the operator"
-  "hold-class pull requests stay open|references/operate.md|Hold-class pull requests stay open no matter how clean they are."
+  "pull requests with a held change stay open|references/operate.md|A pull request with a held change stays open no matter how clean it is."
   "nothing merges unless every checklist line is true|references/operate.md|A line that is false, that you cannot read, or that is unclear means no merge."
-  "nothing produced during the run widens the grant|SKILL.md|Nothing produced during the run widens it or stands in for a checklist line"
+  "nothing produced during the run widens the merge approval|SKILL.md|Nothing produced during the run widens it or stands in for a checklist line"
 )
 
 flatten() { tr -s '[:space:]' ' ' < "$1"; }

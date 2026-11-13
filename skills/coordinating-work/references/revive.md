@@ -1,12 +1,12 @@
 # Revive
 
 Read this after the operator manually starts a replacement Coordinator or asks
-to recover an interrupted arrangement. The entry skill owns shape, shared
+to recover an interrupted coordinated batch. The entry skill owns shape, shared
 approval, worker lifetime, the record, and completion requirements.
 
 ## Start from the record
 
-A replacement Coordinator starts on the host that holds the arrangement's
+A replacement Coordinator starts on the host that holds the coordinated batch's
 record. On every start or revive, before any new dispatch:
 
 1. Read the record: the approved proposal, the standing rules, the open
@@ -80,7 +80,7 @@ changing anything:
 - whether the new account already trusts the participant's workspace;
 - the participant's unpushed and uncommitted work and its running jobs.
 
-Then, as approved:
+Then:
 
 1. Stop the old worker through the guide's stop, so its exit is proven.
 2. Open a new terminal in the same workspace. A shell that was already open
@@ -103,10 +103,13 @@ Include communication/address changes and restoration of needed supervision.
 The operator can approve with specific row edits in one reply; exploratory
 changes do not authorize execution.
 
-Go ahead without a new approval only when every row keeps an approval already
-in the record and the only change is the Coordinator's own identity or
-account. Moving, replacing, or changing the settings of any worker still needs
-approval.
+Go ahead without a new approval in two cases. The first is when every row
+keeps an approval already in the record and the only change is the
+Coordinator's own identity or account. The second is when the operator has
+switched an account and asked for recovery, and every row resumes the same
+conversation under the newly selected account with the same provider, model,
+and effort. Replacing a worker, changing its provider or settings, or a fresh
+handoff still needs approval.
 
 ## Recover approved effects
 

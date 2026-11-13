@@ -1,7 +1,7 @@
 # Operate
 
-Read this while running an established arrangement, with or without the
-operator present. The entry skill owns shape, the merge grant, briefs, and the
+Read this while running an established coordinated batch, with or without the
+operator present. The entry skill owns shape, the merge approval, briefs, and the
 record. Setup produced the approved proposal this file acts under.
 
 ## Defaults the proposal shows
@@ -9,7 +9,7 @@ record. Setup produced the approved proposal this file acts under.
 **Merge bar.** `ce-babysit-pr` gave its plain looks-merge-ready report on the
 pull request's current head.
 
-**Hold classes.** A pull request is held for the operator when it changes:
+**Held changes.** A pull request is held for the operator when it changes:
 
 - access and authorization;
 - money;
@@ -39,15 +39,15 @@ only when every line below is true. The worker's message is a claim: line 2
 checks what it claims, and lines 3 and 4 are facts you read yourself from the
 pull request when you decide, never from the message or from memory.
 
-1. **Grant.** The record holds the setup proposal the operator approved, it
-   shows a merge bar and hold classes, and this pull request's issue is in
+1. **Approval.** The record holds the setup proposal the operator approved, it
+   shows a merge bar and held changes, and this pull request's issue is in
    its batch.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
    and adds no condition, such as updating the branch or a position in a
    stack, and the worker gave the head commit that report covered. A closing
    phrase that leaves the merge to the reader is not a condition.
-3. **Routine.** The diff touches no hold class; a change that relates to a
+3. **Routine.** The diff touches no held change; a change that relates to a
    class at all, wording and tests included, touches it. The pull request
    body has no unticked item under `lfg`'s unapplied review findings.
    The record shows no report from its worker that `ce-babysit-pr` parked an
@@ -79,26 +79,31 @@ have fallen behind its base. Bringing a held pull request in the batch
 current, or applying an open finding on it, is allowed work to assign when
 the operator asks for it.
 
-Hold-class pull requests stay open no matter how clean they are.
+A pull request with a held change stays open no matter how clean it is.
 
 After a merge, record it and reply merged. Where the repository merges through
 a queue, the merge is an enqueue: record a wait for that pull request, and
 reply merged only once it reads merged.
 
 After every decision, merged or not, dispatch the next ready issue in the
-batch the approved proposal lists. When none remains, dispatch nothing and
-note on the ready-for-operator list that the batch is finished.
+batch the approved proposal lists, in the order and at the concurrency you
+judge best. Before starting a heavy job, measure the whole host, not only your
+own workers, and start fewer when it is busy. When no issue remains, dispatch
+nothing and note on the ready-for-operator list that the batch is finished.
+Adding issues to the batch takes an amended proposal the operator approves.
 
 ## Never wait for an answer
 
-Do not open a blocking question dialog and do not stop the arrangement for an
+Do not open a blocking question dialog and do not stop the coordinated batch for an
 answer, whether or not the operator is present.
 
 On a judgment call the brief, the record, and the standing rules do not
-settle, run `ce-pov` to establish a default. Write the question and that
-default to the record. When acting on the default is reversible and stays
-inside what the operator already granted, proceed on it. Otherwise hold only
-the work that depends on the answer.
+settle, decide a default and write the question and that default to the
+record. Decide it yourself when acting on it is reversible and stays inside
+the merge approval, and proceed. When a worker proposes something its issue
+does not name, the default is the smaller option. When the call is
+irreversible or touches the merge approval, run `ce-pov` for the default, log
+it, and hold only the work that depends on the answer.
 
 A logged question, a held pull request, or a parked item stops only the work
 that depends on it. Keep every independent assignment moving. Answer every
@@ -122,7 +127,7 @@ of the run.
 
 ## Standing rules
 
-Keep the arrangement's standing rules in the record. When an incident shows
+Keep the coordinated batch's standing rules in the record. When an incident shows
 workers need a rule the briefs lack, add it without asking: one dated rule,
 tied to the named incident that caused it. Send it to affected workers as an
 amendment, and list each new rule in your next report to the operator. A

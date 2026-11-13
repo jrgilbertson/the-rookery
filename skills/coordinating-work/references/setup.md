@@ -1,13 +1,13 @@
 # Setup
 
-Read this when establishing an arrangement or adopting an existing one. The
+Read this when establishing a coordinated batch or adopting an existing one. The
 entry skill owns shape, shared authority, worker lifetime, the record, and
 outcome requirements.
 
-## Establish the intended arrangement
+## Establish the intended coordinated batch
 
 Use the invoking session as Coordinator unless the operator requested another
-arrangement. Establish its actual runtime identity and supported coordination
+coordinated batch. Establish its actual runtime identity and supported coordination
 authority; do not launch a duplicate Coordinator because this one lacks a
 terminal handle.
 
@@ -48,14 +48,14 @@ Present the entry skill's proposal, including reused participants, their task
 ownership, and initial workers to start. The proposal also states, so that one
 approval covers them:
 
-- **The batch.** List the issues this arrangement may dispatch. The
+- **The batch.** List the issues this coordinated batch may dispatch. The
   Coordinator dispatches nothing outside it.
 - **What a merge starts.** State what merging to the default branch triggers
   here, such as a deploy, a release, a migration, or a paid job.
 
-- **The merge bar and the hold classes.** Show the defaults from
+- **The merge bar and the held changes.** Show the defaults from
   [Operate](operate.md). When the project's own guidance defines a merge bar
-  or hold classes, show those instead and say where they came from. The
+  or held changes, show those instead and say where they came from. The
   operator may edit either.
 - **The standing instruction not to wait.** State it as the operator's
   instruction: the Coordinator never stops for an answer, decides a default
@@ -65,7 +65,7 @@ approval covers them:
   Coordinator's host, as the entry skill requires.
 - **The stall-sweep interval.**
 
-Approval of the proposal is the standing merge grant for this arrangement and
+Approval of the proposal is the standing merge approval for this coordinated batch and
 records the instruction not to wait. Write the approved proposal to the record
 before starting anything.
 
@@ -84,11 +84,11 @@ Coordinator lacks the required binding or authority, report that path blocked
 instead of manufacturing a takeover.
 
 A partial startup does not authorize duplicating successful workers or changing
-the approved arrangement. Follow the guide's reconciliation path before another
+the approved coordinated batch. Follow the guide's reconciliation path before another
 attempt, and report unsupported branches separately.
 
 Provide each participant its bounded assignment by the brief the entry skill
-describes. Establish the ordinary native supervision the arrangement needs,
+describes. Establish the ordinary native supervision the coordinated batch needs,
 reconciling any existing monitoring first.
 
 The one periodic check allowed is a stall sweep at the interval the operator

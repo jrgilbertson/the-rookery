@@ -15,10 +15,11 @@ for the agent selected in Orca, or run `npx skills@latest add mattpocock/skills`
 and select `retro` and `writing-for-agents` for that agent. Repeat the
 installation on each host where a session audit will run.
 
-Both jobs use the same prompt. Create each job on the Orca host whose sessions
-it should review; a job on one host does not establish coverage of the other.
-Replace The Rookery with the repository whose skills, workflows, guidance, and
-configuration you want reviewed.
+Create each job on the Orca host whose sessions it should review; a job on one
+host does not establish coverage of the other. Both jobs share the prompt
+below, and each adds its own closing paragraph from
+[Consolidation](#consolidation). Replace The Rookery with the repository whose
+skills, workflows, guidance, and configuration you want reviewed.
 
 The prompt reviews the previous 24 hours on every run. Widen the review window
 after missed runs to cover sessions from when the host was unavailable.
@@ -40,3 +41,27 @@ Confirm each finding's cause in the transcript lines it cites, not in a reader's
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `sessions-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 ```
+
+## Consolidation
+
+When the same work spans both hosts, two separate reports ask the owner the
+same question twice, and neither job sees the other's evidence. The remote job
+therefore runs two hours before the local one, saves its report, and asks the
+owner nothing. The local job reads that report, becomes the remote workspace's
+parent in Orca, and brings the owner one prioritized list. The owner answers in
+one place, and each host's evidence can support or contradict the other's.
+
+Add this paragraph to the end of the remote job's prompt:
+
+```text
+Consolidation: end the saved report with this session's Orca session ID and workspace, then stop without asking the owner. The local Sessions audit reads the report, becomes this workspace's parent in Orca, and brings the owner one combined list. Answer its messages and carry out what it relays.
+```
+
+Add this paragraph to the end of the local job's prompt:
+
+```text
+Consolidation: when the remote host's audit saved a report in the past 24 hours, read it and make this workspace the parent of its workspace in Orca. Merge both hosts' revised recommendations into one prioritized list before `ce-pov` judges it: combine matching findings, say where the two hosts' evidence conflicts, and mark each item's host. The owner answers here; relay each answer for the remote host to its session through Orca. With no remote report, say so and report this host only.
+```
+
+A job that runs on one host only uses the shared prompt without either
+paragraph.

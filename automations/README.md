@@ -29,7 +29,9 @@ and give the agent access to the sources the review requires. For Sessions audit
 replace the reference to The Rookery with your own repository.
 
 Sessions audit invokes `retro` on each host separately. Install its required
-skills on both hosts before scheduling both jobs.
+skills on both hosts before scheduling both jobs. The remote job runs first and
+the local job merges both hosts' findings into one list; see
+[Consolidation](sessions-audit.md#consolidation).
 
 Some prompts invoke an existing skill; others describe the review directly.
 Orca runs the prompt on a schedule; an invoked skill tells the agent how to do

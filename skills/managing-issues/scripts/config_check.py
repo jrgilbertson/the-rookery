@@ -17,6 +17,7 @@ MAX_MAPPING_ENTRIES = 64
 MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
 TOP_LEVEL_FIELDS = {"version", "provider", "target", "mappings"}
+OPTIONAL_TOP_LEVEL_FIELDS = {"assignee", "project"}
 MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
 READINESS_FIELDS = {
     "needs-discovery",
@@ -32,6 +33,7 @@ GITHUB_OWNER_REPO = (
     r"(?P<repo>(?!\.\.?(?:$|#))[A-Za-z0-9._-]{1,100})"
 )
 GITHUB_TARGET = re.compile(GITHUB_OWNER_REPO + r"$")
+GITHUB_LOGIN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$")
 LINEAR_TARGET_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
 
 
@@ -182,6 +184,25 @@ def normalize_target(provider: str, value: Any) -> str | dict[str, str]:
     return {"workspace": workspace, "team": team}
 
 
+def normalize_assignee(provider: str, value: Any) -> dict[str, str]:
+    require(isinstance(value, dict), "assignee must be an object")
+    require_exact_fields(value, {"default"}, {"default"}, "assignee")
+    assignee = require_concrete_text(value["default"], "assignee.default")
+    if provider == "github":
+        require(
+            GITHUB_LOGIN.fullmatch(assignee) is not None,
+            "assignee.default must be a GitHub login",
+        )
+    return {"default": assignee}
+
+
+def normalize_project(value: Any) -> dict[str, bool]:
+    require(isinstance(value, dict), "project must be an object")
+    require_exact_fields(value, {"required"}, {"required"}, "project")
+    require(isinstance(value["required"], bool), "project.required must be true or false")
+    return {"required": value["required"]}
+
+
 def normalize_mapping(
     provider: str,
     field: str,
@@ -251,7 +272,9 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         raise ConfigError(
             "config version 1 is unsupported; run Managing Issues setup to create version 2"
         )
-    require_exact_fields(value, TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
+    require_exact_fields(
+        value, TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS | OPTIONAL_TOP_LEVEL_FIELDS, "config"
+    )
     version = value["version"]
     require(
         isinstance(version, int) and not isinstance(version, bool) and version == 2,
@@ -281,6 +304,10 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "target": normalize_target(provider, value["target"]),
         "mappings": normalized_mappings,
     }
+    if "assignee" in value:
+        normalized["assignee"] = normalize_assignee(provider, value["assignee"])
+    if "project" in value:
+        normalized["project"] = normalize_project(value["project"])
     return normalized
 
 

@@ -309,13 +309,66 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_config.unlink()
 
 
+def check_assignee_and_project(repo_root: Path) -> None:
+    for provider, assignee in (("github", "octo-cat"), ("linear", "5f0c1e2a-user-id")):
+        configured = base_config(provider)
+        configured["assignee"] = {"default": assignee}
+        configured["project"] = {"required": True}
+        expected = copy.deepcopy(configured)
+        if provider == "github":
+            expected["target"] = "exampleorg/project"
+        expect_valid(configured, repo_root, expected)
+
+        not_required = base_config(provider)
+        not_required["project"] = {"required": False}
+        expected = copy.deepcopy(not_required)
+        if provider == "github":
+            expected["target"] = "exampleorg/project"
+        expect_valid(not_required, repo_root, expected)
+
+    for value, message in (
+        ("default", "assignee must be an object"),
+        ({}, "assignee missing key: default"),
+        ({"default": "octo-cat", "fallback": "hubot"}, "assignee has unexpected key: fallback"),
+        ({"default": ""}, "assignee.default must be nonempty trimmed text"),
+        ({"default": " octo-cat"}, "assignee.default must be nonempty trimmed text"),
+        ({"default": "REPLACE_WITH_DEFAULT_ASSIGNEE"}, "unresolved REPLACE_WITH placeholder"),
+    ):
+        invalid = base_config()
+        invalid["assignee"] = value
+        expect_invalid(invalid, repo_root, message)
+    for login in ("@me", "-octocat", "octocat-", "octo--cat", "a" * 40, "octo cat"):
+        invalid = base_config()
+        invalid["assignee"] = {"default": login}
+        expect_invalid(invalid, repo_root, "assignee.default must be a GitHub login")
+    linear_name = base_config("linear")
+    linear_name["assignee"] = {"default": "Ada Lovelace"}
+    expect_valid(linear_name, repo_root, linear_name)
+
+    for value, message in (
+        (True, "project must be an object"),
+        ({}, "project missing key: required"),
+        ({"required": True, "default": "Roadmap"}, "project has unexpected key: default"),
+        ({"required": "true"}, "project.required must be true or false"),
+        ({"required": 1}, "project.required must be true or false"),
+    ):
+        invalid = base_config()
+        invalid["project"] = value
+        expect_invalid(invalid, repo_root, message)
+
+
 def check_templates(repo_root: Path) -> None:
     for provider, template_path in (("github", TEMPLATE_GITHUB), ("linear", TEMPLATE_LINEAR)):
         require(template_path.is_file(), f"missing {provider} config template")
         template = json.loads(template_path.read_text(encoding="utf-8"))
         require(
-            set(template) == {"version", "provider", "target", "mappings"},
+            set(template) == {"version", "provider", "target", "mappings", "assignee", "project"},
             f"{provider} template keys differ",
+        )
+        require(
+            template["assignee"] == {"default": "REPLACE_WITH_DEFAULT_ASSIGNEE"}
+            and template["project"] == {"required": True},
+            f"{provider} template assignee or project recommendation differs",
         )
         require(template["version"] == 2 and template["provider"] == provider, f"{provider} template identity differs")
         require(set(template["mappings"]) == {"priority", "leaf_estimate", "labels", "readiness"}, f"{provider} template mapping shape differs")
@@ -345,6 +398,7 @@ def check_templates(repo_root: Path) -> None:
             if provider == "github"
             else {"workspace": "workspace-fixture", "team": "ENG"}
         )
+        resolved["assignee"] = {"default": "octo-cat"}
         expected = copy.deepcopy(resolved)
         if provider == "github":
             expected["target"] = "exampleorg/project"
@@ -505,6 +559,7 @@ def main() -> int:
         active_config.unlink()
 
         check_active_config_filesystem_cases(repo_root, outside)
+        check_assignee_and_project(repo_root)
         check_templates(repo_root)
 
     print("PASS: managing-issues config contract")

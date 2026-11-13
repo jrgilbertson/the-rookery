@@ -156,8 +156,9 @@ belongs in a brief only when that condition holds for the assignment.
   or arms auto-merge, whatever another instruction allows.
 - **No human is present.** The run is unattended. The worker sends every
   question to the Coordinator.
-- **Whether the pull request will be held.** When the issue is a held change,
-  say so, so the worker expects a held reply.
+- **Whether the pull request will be held.** When the issue is a held change
+  the operator did not pre-authorise, say so, so the worker expects a held
+  reply.
 - **Merge-ready is a question.** When `ce-babysit-pr` reports looks
   merge-ready, the worker asks the Coordinator once, naming the pull request,
   quoting the report's first line verbatim, and giving the head commit that

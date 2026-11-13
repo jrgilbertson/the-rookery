@@ -102,10 +102,10 @@ finding on it, is work to assign when the operator asks.
 
 After a merge, record it and reply merged. Where the repository merges through
 a queue, the merge is an enqueue: reply merged once the pull request reads
-merged. Then run the `managing-issues` completion check on the issue, or check
-each of its Verification lines yourself when that skill is absent. The issue
-closes on that result, not on the merge. A gap the check finds leaves the
-issue open and puts it on the ready-for-operator list.
+merged. Then run the `managing-issues` completion check on the issue. The
+issue closes on that result, not on the merge. A gap the check finds, or a
+missing `managing-issues`, leaves the issue open and puts it on the
+ready-for-operator list.
 
 ## Never wait for an answer
 
@@ -191,7 +191,9 @@ changed:
   by the following check.
 
 The check belongs to the Coordinator's own session. It ends with that session,
-or when no assignment is open and no batch issue is still to dispatch. The record says how to stop it. A scheduler that
+or when no assignment is open, no batch issue is still to dispatch, and no
+recorded write is pending. While one is pending, each check retries it after
+checking whether an earlier attempt landed. The record says how to stop it. A scheduler that
 starts a new agent session is a second Coordinator, so the check uses the
 session's own timer.
 

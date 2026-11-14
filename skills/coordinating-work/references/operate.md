@@ -6,8 +6,14 @@ the record. Setup produced the approved proposal this file acts under.
 
 ## Defaults the proposal shows
 
-**Merge bar.** `ce-babysit-pr` gave its plain looks-merge-ready report on the
-pull request's current head.
+**Merge bar.** `ce-babysit-pr` gave its looks-merge-ready report on the
+pull request's current head. A cautious report qualifies only when its sole
+remaining caution is missing reviewer coverage: explicit quota or
+unavailability, or a reviewer that has not completed after `ce-babysit-pr`'s
+prescribed wait. Another external reviewer on the pull request, distinct from
+the coding agent's own review, must have reviewed that head. All other merge
+requirements still apply. `ce-babysit-pr` and `ce-resolve-pr-feedback` own
+feedback assessment, including justified declines and follow-up handling.
 
 **Held changes.** A pull request is held for the operator when it changes:
 
@@ -20,7 +26,9 @@ pull request's current head.
 - the project's agent instructions, and its merge and review policy.
 
 The approved proposal governs. It may replace either default with the
-project's own guidance or the operator's edits.
+project's own guidance or the operator's edits. Updating this skill does not
+widen an existing batch's merge approval; only the operator's recorded approval
+of an amended proposal can do that.
 
 ## Running the batch
 
@@ -56,9 +64,10 @@ the head commit it covered.
    request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
-   and adds no condition, such as a position in a stack, and the worker gave
-   the head commit that report covered. A closing phrase that leaves the merge
-   to the reader is not a condition.
+   under the merge bar above, with no other condition such as a position in a
+   stack, and the worker gave the head commit that report covered. For a
+   cautious report, read the other external review on that head yourself.
+   A closing phrase that leaves the merge to the reader is not a condition.
 3. **Routine.** The diff touches no held change, except one the record shows
    the operator pre-authorized for this issue, under a bar this pull request
    meets. A change that relates to a held change at all, wording and tests

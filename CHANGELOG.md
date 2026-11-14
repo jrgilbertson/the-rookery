@@ -59,6 +59,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` suggests 30 minutes as the starting check interval in
+  the setup proposal; the operator still approves the interval. `CONCEPTS.md`
+  and `WORKFLOWS.md` now spell "pre-authorized" like the skill.
 - `coordinating-work` follows the project's own rule for linking a pull
   request to its issue, and keeps the old no-closing-keyword reference only
   where the project has none. Because a merge may now close the issue, the

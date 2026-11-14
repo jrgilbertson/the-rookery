@@ -246,6 +246,13 @@ looked" surface. GitHub Releases mirror its entries.
   `"assignee": { "default": "<login or user>" }` and
   `"project": { "required": true }`. A config without them stays valid; no
   default assignee applies and a project is not required.
+- The Optimize CI prompt counts local Verify as part of CI. Each report now
+  carries a hosted section, pull-request runner minutes per merged pull request
+  by one fixed method, and a local section, Verify duration per suite, reuse of
+  saved results and failed attempts on the host that ran them. The measurement
+  harness moves into the private automation-state repository so every host
+  gets it by pulling, while its downloaded responses stay in a per-host cache.
+  The prompt also records what a series of local Verify fixes taught.
 
 ### Fixed
 

@@ -20,7 +20,7 @@ npx skills add jrgilbertson/networked-thinking-skills -g -y --skill atomic-note 
 npx skills add jrgilbertson/the-rookery -g -y --skill checking-simplicity coordinating-work creating-portable-skills managing-issues managing-personal-crm personal-chief-of-staff reviewing-meetings storm-research
 npx skills add kepano/obsidian-skills -g -y --skill defuddle json-canvas obsidian-bases obsidian-cli obsidian-markdown
 npx skills add livekit/agent-skills -g -y --skill building-livekit-agents debugging-livekit-agents operating-livekit-agents reading-livekit-docs running-livekit-simulations testing-livekit-agents writing-livekit-scenarios
-npx skills add mattpocock/skills -g -y --skill codebase-design domain-modeling grill-me grill-with-docs grilling improve-codebase-architecture retro setup-matt-pocock-skills writing-for-agents
+npx skills add mattpocock/skills -g -y --skill codebase-design domain-modeling grill-me grill-with-docs grilling improve-codebase-architecture setup-matt-pocock-skills writing-for-agents
 npx skills add millionco/react-doctor -g -y --skill react-doctor
 npx skills add morluto/rea -g -y --skill reverse-engineer-anything
 npx skills add mvanhorn/cli-printing-press -g -y --skill printing-press printing-press-amend printing-press-import printing-press-output-review printing-press-polish printing-press-publish printing-press-reprint printing-press-retro printing-press-score

@@ -42,6 +42,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- Matt Pocock's `retro` from the installed-skills list.
 - `repo-gardener`; recurring repository reviews now use Orca automations, and
   approved changes use the existing Compound Engineering workflow.
 - Repository-specific GitHub issue forms and the pull request template, so

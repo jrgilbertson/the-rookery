@@ -32,6 +32,8 @@ My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them th
 
 [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. [`scripts/sync-global-agents.sh`](scripts/sync-global-agents.sh) documents how the copy is kept current.
 
+[INSTALLED-SKILLS.md](INSTALLED-SKILLS.md) lists the skills I install on every machine, with the commands to install them and a check that compares a machine against the list.
+
 The skills work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I use [Orca](https://github.com/stablyai/orca) to run several agent tools side by side in one project.
 
 ## Research

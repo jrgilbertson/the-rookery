@@ -149,9 +149,11 @@ belongs in a brief only when that condition holds for the assignment.
   instructions can forbid them unless the task asks.
   Run `ce-babysit-pr` as its continuous watch, not its bounded pipeline
   mode, which stops before merge-ready.
-- **Reference the issue.** The pull request refers to its issue without the
-  tracker's closing keywords. The Coordinator closes the issue after its
-  completion check.
+- **Link the issue.** The pull request links its issue the way the project's
+  instructions say. Where the project has no rule, it refers to the issue
+  without the tracker's closing keywords. When a verification criterion of the
+  issue will stay unproven as written, the worker links the issue as
+  unfinished before asking and names the gap in the pull request body.
 - **Merging belongs to the Coordinator.** The worker never merges, enqueues,
   or arms auto-merge, whatever another instruction allows.
 - **No human is present.** The run is unattended. The worker sends every
@@ -167,6 +169,11 @@ belongs in a brief only when that condition holds for the assignment.
   the new head before asking. It stays open for the reply: merged, held for the
   operator, or findings to fix. A worker told its pull request is held has
   finished its assignment.
+- **Unapplied review findings.** Before asking, the worker settles each
+  unticked item `lfg` left in the pull request body and ticks it with the
+  outcome beside it: fixed in the branch, no change and why, or a follow-up
+  proposed there and not filed. Only a product or design call stays unticked,
+  and it holds the pull request for the operator.
 - **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a
   human, or a check it could not fix, the worker reports it to the Coordinator
   immediately, with the full item, and keeps the watch running.

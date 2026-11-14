@@ -59,6 +59,17 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` follows the project's own rule for linking a pull
+  request to its issue, and keeps the old no-closing-keyword reference only
+  where the project has none. Because a merge may now close the issue, the
+  merge checklist compares the pull request's evidence with each verification
+  criterion as written, and a criterion met only in part blocks the merge
+  unless the issue is linked as unfinished. After a merge the Coordinator
+  reads and records the issue's state and closes it through the completion
+  check only when the tracker left it open. Workers settle every unapplied
+  review finding before asking for a merge, leaving only product or design
+  calls for the operator, and the setup proposal names the tracker closing
+  the issue among what a merge starts. Five new scenarios cover the change.
 - Global agent guidance keeps a pause or hold in force until whoever set it
   lifts it, attributes to the user only their own quoted words and decisions,
   and gives times in the user's named local time zone.

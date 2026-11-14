@@ -55,7 +55,8 @@ approval covers them:
   Coordinator may dispatch without an amended proposal, such as flaky tests
   seen in workers' verification runs or tooling that blocks the batch.
 - **What a merge starts.** State what merging to the default branch triggers
-  here, such as a deploy, a release, a migration, or a paid job.
+  here, such as a deploy, a release, a migration, a paid job, or the tracker
+  closing the linked issue.
 - **Spending.** Whether the Coordinator may choose a paid option, such as at a
   usage-limit prompt. The default is no.
 

@@ -65,7 +65,11 @@ the head commit it covered.
    included, touches it. The pull request body has no unticked item under
    `lfg`'s unapplied review findings. The record shows no item, at any point,
    that `ce-babysit-pr` parked for a human about the change itself. Merging
-   it starts only what the proposal showed.
+   it starts only what the proposal showed. Where a merge closes the issue,
+   the pull request body sets evidence beside each of the issue's
+   verification criteria as written, or the pull request links the issue as
+   unfinished. Compare and do not interpret. A criterion met in part, with an
+   exception, or in other words is unproven.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code
@@ -96,10 +100,11 @@ the worker with the default, and let the checklist decide.
 A held pull request is left as it is. Bringing one current, or applying an open
 finding on it, is work to assign when the operator asks.
 
-After a merge lands, record it and reply merged. Then run the `managing-issues`
-completion check on the issue. The issue closes on that result, not on the
-merge. A gap the check finds, or a missing `managing-issues`, leaves the issue
-open and puts it on the ready-for-operator list.
+After a merge lands, record it and reply merged. Then read the issue and record
+its state. When the pull request finished it and the tracker left it open,
+close it through the `managing-issues` completion check. An issue still open
+after its merge goes on the ready-for-operator list with the reason: an
+unfinished link, a gap the check found, or a missing `managing-issues`.
 
 ## Never wait for an answer
 
@@ -138,9 +143,10 @@ an update:
 - every parked item awaiting the operator, with the pull request it blocks;
 - every worker or chat that needs the operator: one to move, replace, or
   re-account, one waiting at a prompt, and one only the operator can close;
-- every merge made, with the pull request and the head merged;
+- every merge made, with the pull request and the head merged, and each
+  follow-up its worker proposed;
 - every incidental item dispatched, with its class and pull request;
-- every issue a completion check left open, with the gap it found.
+- every batch issue still open after its pull request merged, with the reason.
 
 ## Standing rules
 

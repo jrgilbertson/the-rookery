@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `INSTALLED-SKILLS.md` lists the skills the maintainer installs on every
+  machine, with install commands by source and a check that compares a
+  machine's lock file against the list.
 - Repository text checks reject concrete local home-directory paths, with
   file-scoped exceptions for reviewed portable setup examples.
 - `coordinating-work`, an optional Orca-first skill for collaboration setup and

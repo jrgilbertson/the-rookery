@@ -100,14 +100,14 @@ proposal approved.
 
 What the operator approved a Coordinator to merge without them: the merge bar
 and held changes shown in the setup proposal for one coordinated batch, with
-any held change the operator pre-authorised there under a stated bar. Only
+any held change the operator pre-authorized there under a stated bar. Only
 the operator's recorded approval of a proposal creates or changes it. It covers
 merging and nothing else.
 
 ### Held Changes
 
 The kinds of change that wait for the operator, however clean the pull
-request, unless the operator pre-authorised them at setup: by default access
+request, unless the operator pre-authorized them at setup: by default access
 and authorization, money, data deletion, privacy, outbound email, release
 gates, and the project's agent instructions and merge and review policy. A
 project's own guidance or the operator's edit to a proposal can replace the

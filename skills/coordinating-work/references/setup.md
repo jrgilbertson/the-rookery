@@ -74,7 +74,8 @@ approval covers them:
   to ask the user first yields to this instruction once it is approved.
 - **Where the record lives.** Name a durable, private location on the
   Coordinator's host, as the entry skill requires.
-- **The check interval**, for the one periodic check Operate describes.
+- **The check interval**, for the one periodic check Operate describes;
+  suggest 30 minutes for the operator to approve.
 
 Approval of the proposal is the standing merge approval for this coordinated batch and
 records the instruction not to wait. Write the approved proposal to the record

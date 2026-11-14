@@ -64,7 +64,7 @@ the head commit it covered.
    request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
-   under the merge bar above, with no other condition such as a position in a
+   under the approved merge bar, with no other condition such as a position in a
    stack, and the worker gave the head commit that report covered. For a
    cautious report, read the other external review on that head yourself.
    A closing phrase that leaves the merge to the reader is not a condition.

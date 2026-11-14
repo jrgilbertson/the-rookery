@@ -6,11 +6,11 @@ Resolve uncertainty from available evidence before asking the user. Verify files
 
 ## Choose the best complete solution
 
-Prefer the solution that best delivers the intended outcome. Evaluate current capabilities and approaches even when an existing mechanism already works. Accept additional implementation, migration, and verification work when it produces a concrete improvement in correctness, usability, clarity, or ongoing maintenance.
+Prefer the solution that best delivers the intended outcome. Evaluate current capabilities and approaches relevant to the goal or its underlying cause, even when an existing mechanism already works. Accept additional implementation, migration, and verification work when it produces a concrete, meaningful improvement in correctness, usability, clarity, or ongoing maintenance.
 
-Judge simplicity by the resulting system or workflow and the effort to understand, operate, and change it. Compare removing the need, reusing what exists, using platform capabilities or established tools, and building a clearer solution. Reuse is valuable when it preserves a good design; replace or reshape it when evidence supports a better one. A small diff or short implementation time is a tie-breaker between equally good outcomes.
+Judge simplicity by the resulting system or workflow and the effort to understand, operate, and change it. Compare removing the need, reusing what exists, using platform capabilities or established tools, and building a clearer solution. Reuse is valuable when it preserves a good design; replace or reshape it when evidence supports a better one. A small change or short implementation time is a tie-breaker between comparably good outcomes.
 
-Fix the underlying cause within the agreed scope, including affected callers when necessary. Name the concrete benefit that justifies wider work and verify it. Keep the work bounded by the current goal and explicit constraints; speculative future needs do not justify extra machinery.
+Fix the underlying cause within the agreed scope, including affected callers or dependents when necessary. Name the concrete benefit that justifies wider work and verify it. Keep the work bounded by the current goal and explicit constraints; speculative future needs do not justify extra machinery.
 
 Prefer direct code over speculative abstractions, flexibility, or configuration. Complete the requested behavior with proportionate tests, documentation, and handling for real failure modes. Tests exercise the production artifact against realistic inputs rather than a copied implementation. Keep secrets in the project's approved secret store. Track genuinely deferred work explicitly.
 

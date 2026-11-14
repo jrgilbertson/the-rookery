@@ -64,9 +64,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 - Global agent guidance and `checking-simplicity` judge the resulting system
   rather than the smallest patch. They allow wider root-cause fixes when the
-  evidence supports a concrete improvement, while preserving scope and
-  verification requirements. Workflow guidance distinguishes reviewable
+  evidence supports a concrete, meaningful improvement, while preserving
+  scope and verification requirements. Workflow guidance distinguishes reviewable
   increments and durable safeguards from limits on the solution itself.
+  The simplicity skill description explicitly lists “can this be simpler?”, “is this
+  simple enough?”, “keep it simple”, and “check for simplicity”; it also names
+  workflow reviews and distinguishes assessment from requests for a simple
+  explanation. State-machine audit and Coordinator guidance allow complete
+  root-cause fixes within approved scope without treating patch size as the
+  default.
 - The installed-skills list includes Modern Web Guidance with instructions
   to disable telemetry in the installer and agent environment.
 

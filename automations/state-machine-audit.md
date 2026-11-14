@@ -17,7 +17,7 @@ Find explicit and implicit state machines and document their states, invariants,
 
 For complex or concurrent areas, use TLA+ and TLC to check the relevant lifecycle and interactions, including retries and failures. Check safety and liveness, stating assumptions, scope, and checking bounds. Connect model counterexamples to implementation evidence before calling them code bugs. Reuse and update prior assessment models.
 
-Prefer the simplest fix. Understanding an implicit state machine does not require replacing it.
+Recommend the simplest complete fix for the underlying cause, judging the resulting lifecycle and its maintenance rather than the size of the patch. Understanding an implicit state machine does not require replacing it; recommend a replacement when evidence shows a meaningful improvement within the current goal.
 
 Assessment only: run existing tests and isolated scratch reproductions. Keep reports, models, and debugging artifacts outside the application checkout. Do not modify application files, create or update issues, or publish PRs; implementation and issue creation require separate approval.
 

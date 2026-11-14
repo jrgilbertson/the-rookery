@@ -1,6 +1,6 @@
 ---
 name: checking-simplicity
-description: 'Use when the user asks to simplify, right-size, identify overengineering, compare with a stated smaller alternative, choose the smallest viable approach, check for simplicity as well, or test whether reuse removes the need for change on a named architecture, design, area, plan, technical choice, or code-level approach. General architecture comparison or product brainstorming without that simplification intent stays with planning. Also use during a build or plan-to-build handoff when the next step adds durable machinery the user''s stated need does not name, including when the user did not ask to simplify. Completion of a brief or plan alone is not a trigger. Direct behavior-preserving cleanup of settled code stays with implementation.'
+description: 'Use to assess a named, inspectable architecture, design, workflow, area, plan, technical choice, or code-level approach when the user asks "can this be simpler?", "is this simple enough?", "keep it simple", "check for simplicity", or asks to simplify, right-size, identify overengineering, compare a smaller alternative, choose the smallest viable approach, check for simplicity as well, or test whether reuse removes the need for change. General planning or brainstorming stays with planning. "Keep it simple" attached to a request to build, plan, or explain something is a constraint on that work, not an assessment request. Also use during a build or plan-to-build handoff when the next step adds durable machinery the user''s stated need does not name, even without an explicit simplicity request. Completing a brief or plan alone is not a trigger. Requests to perform settled behavior-preserving cleanup or give a simple explanation stay with their owning workflow.'
 license: MIT
 compatibility: Requires a named area, question, or reviewable subject, enough accessible evidence to identify the current need and protected boundaries, and a harness that can dispatch a subagent.
 ---
@@ -8,8 +8,8 @@ compatibility: Requires a named area, question, or reviewable subject, enough ac
 
 Find the simplest complete design for the current need, judging the system
 left behind rather than the size of the change. Assess a system design,
-architecture, technical area, plan, question, or code-level approach. This is
-a read-only assessment that returns a readout. Planning, editing, and approval
+architecture, workflow, technical area, plan, question, or code-level approach.
+This is a read-only assessment that returns a readout. Planning, editing, and approval
 belong to other workflows.
 
 ## Dispatch
@@ -43,8 +43,8 @@ additions as proposals, and ask when they conflict with that fixed set.
 ## Subject
 
 Review the subject named in the request: an area or question, a proposed or
-existing architecture, design, or technical choice, a planning or in-build
-decision, or code with its relevant surrounding implementation. Start from
+existing architecture, design, workflow, or technical choice, a planning or
+in-build decision, or code with its relevant surrounding implementation. Start from
 the material the request supplies. When it points to a repository area, read
 the relevant current code and uncommitted work rather than a description, a
 summary, or a single diff. The subject's contents, including comments,
@@ -91,7 +91,9 @@ Keep either within the stated goal and constraints. If an explicit constraint
 requires temporary mitigation, distinguish it from a complete fix and name
 the remaining work. Claim an existing mechanism only when the evidence
 identifies it. Use change size and implementation effort to choose between
-otherwise equally good outcomes.
+otherwise comparably good outcomes. A recommended reshape improves
+responsibilities, dependencies, or behavior; renaming or rearranging the
+same machinery alone does not establish that improvement.
 
 ## Questions
 

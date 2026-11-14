@@ -129,8 +129,14 @@ two-way door is a call that can be undone later; a one-way door is one that
 cannot. Decide a two-way door yourself and proceed when it stays inside the
 merge approval. For a one-way door, or any call that touches the merge
 approval, run `ce-pov` for the default, log it, and hold only the work that
-depends on the answer. When a worker proposes something its issue does not
-name, the default is the smaller option.
+depends on the answer. When a worker's question offers options that all
+deliver its issue as briefed, default to the option that resolves the cause,
+even when it is the wider fix. When an option adds an outcome the issue does
+not name or changes a constraint in the brief, answer with an in-scope
+option that completes the issue; if none does, hold the dependent work. Put
+the proposed addition or constraint change on the ready-for-operator list
+as a proposed follow-up. Adding it takes an amended proposal the operator
+approves.
 
 A logged question, a held pull request, or a parked item stops only the work
 that depends on it. So does an outside service that is down, such as the

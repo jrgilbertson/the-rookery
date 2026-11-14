@@ -1,7 +1,7 @@
 ---
 title: Keep qualitative agent reviews qualitative
 date: 2026-08-28
-last_updated: 2026-10-23
+last_updated: 2026-11-14
 category: best-practices
 module: skill-instruction-review
 problem_type: best_practice
@@ -11,7 +11,7 @@ applies_when:
   - "A user points to an area, question, plan, technical choice, existing architecture, or current code and asks for opportunities to simplify safely"
   - "Formal requirements are absent but the current goal, protected boundaries, consumers, or observed use provide a sufficient decision frame"
   - "A component-by-component review could miss that the whole-system shape is unnecessary"
-  - "Some complexity can be removed immediately while one user decision controls the minimum safe final shape"
+  - "Some complexity can be removed immediately while one user decision controls the simplest complete final shape"
   - "A qualitative review is being converted into parsers, schemas, receipts, reviewer quotas, or proof workspaces"
 tags: [skills, simplicity, qualitative-review, system-design, architecture, decision-frame, model-judgment, process-machinery]
 ---
@@ -63,10 +63,10 @@ demand a separate artifact that only replays the same information.
 
 Review the whole-system shape before its individual concepts. Compare the
 viable approaches, boundaries, responsibilities, data paths, and operating
-surfaces first, and state the current and smaller system shapes before the
+surfaces first, and state the current and recommended system shapes before the
 component findings. When a docs or search tool is available, confirm those
 approaches against current official docs for platforms and libraries already
-in the subject. A current best-practice article may inform a smaller
+in the subject. A current best-practice article may inform an
 approach; it does not justify a new stack or extra machinery the current
 need does not require. A queue, adapter, registry, or protocol may look
 defensible in isolation while composing into an architecture that no current

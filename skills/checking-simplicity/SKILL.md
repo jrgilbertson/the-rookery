@@ -84,8 +84,13 @@ when the evidence shows a current need or a protected correctness, safety,
 security, privacy, or operating boundary that requires it. Cover every part;
 group related ones when that makes the comparison clearer.
 
-Prefer clear ownership, direct data flow, and one source of truth over layers
-of exceptions. A local patch is appropriate when it fully resolves the cause;
+Aim for an elegant design: clear ownership, direct data flow, and one source
+of truth, with each piece of state and each branch traceable to required
+behavior. Treat state that duplicates or can be derived from another value,
+and special cases that work around the design rather than serve a requirement,
+as candidates for removal.
+
+A local patch is appropriate when it fully resolves the cause;
 a wider change is appropriate when the cause spans shared behavior or callers.
 Keep either within the stated goal and constraints. If an explicit constraint
 requires temporary mitigation, distinguish it from a complete fix and name

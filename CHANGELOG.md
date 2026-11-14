@@ -72,7 +72,9 @@ looked" surface. GitHub Releases mirror its entries.
   workflow reviews and distinguishes assessment from requests for a simple
   explanation. State-machine audit and Coordinator guidance allow complete
   root-cause fixes within approved scope without treating patch size as the
-  default.
+  default. The skill defines elegant design through ownership, data flow,
+  and state and branches tied to required behavior, and identifies redundant
+  state and design workarounds as candidates for removal.
 - The installed-skills list includes Modern Web Guidance with instructions
   to disable telemetry in the installer and agent environment.
 

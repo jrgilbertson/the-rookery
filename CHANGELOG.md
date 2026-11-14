@@ -62,6 +62,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The Design system audit recommends root-cause fixes for recurring findings,
+  then suitable safeguards where needed. It recommends lint rules or validators
+  only when they can check the corrected behavior reliably.
 - Global agent guidance and `checking-simplicity` judge the resulting system
   rather than the smallest patch. They allow wider root-cause fixes when the
   evidence supports a concrete, meaningful improvement, while preserving

@@ -27,7 +27,7 @@ Report, in this order:
 - Extractions: shared components or page templates for patterns used three or more times with the same intent, from `extract`'s planning steps.
 - The exact sidecar patch.
 - Premium bar: contract revisions that raise the craft toward [reference products], kept apart from drift. The contract's own identity wins over theirs.
-- Ratchet: a lint rule or validator for any finding that appeared in two or more earlier reports.
+- Recurring findings: for any finding that appeared in two or more earlier reports, recommend a fix for the underlying cause, then any safeguard still needed to protect the corrected behavior. Recommend a lint rule or validator when it can reliably check that behavior; otherwise name the design judgment or review that remains.
 - The questions impeccable would have asked, and what was not assessed.
 
 Keep screenshots only for the top issues and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.

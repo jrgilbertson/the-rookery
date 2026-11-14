@@ -6,7 +6,7 @@ repository checks. Behavioral evaluation follows the
 [Creating Portable Skills checks](creating-portable-skills/README.md) exercise
 its shipped signal scanner. Report native host behavior separately from
 repository checks.
-The [Coordinating Work scenarios](coordinating-work/README.md) describe five
+The [Coordinating Work scenarios](coordinating-work/README.md) describe ten
 situations and what a reviewer should see, for evaluation runs.
 The [Managing Issues checks](managing-issues/README.md) run its configuration
 validator and describe nine situations and what a reviewer should see, for

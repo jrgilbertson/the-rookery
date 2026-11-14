@@ -4,16 +4,13 @@
 
 Resolve uncertainty from available evidence before asking the user. Verify files, dependencies, and external facts before relying on them. State assumptions only when they materially affect the result.
 
-## Simplicity first
+## Choose the best complete solution
 
-The right amount of code is the minimum that fully solves the stated problem.
+Prefer the solution that best delivers the intended outcome. Evaluate current capabilities and approaches even when an existing mechanism already works. Accept additional implementation, migration, and verification work when it produces a concrete improvement in correctness, usability, clarity, or ongoing maintenance.
 
-Before writing code, climb this ladder and stop at the first rung that fully meets the requirement:
+Judge simplicity by the resulting system or workflow and the effort to understand, operate, and change it. Compare removing the need, reusing what exists, using platform capabilities or established tools, and building a clearer solution. Reuse is valuable when it preserves a good design; replace or reshape it when evidence supports a better one. A small diff or short implementation time is a tie-breaker between equally good outcomes.
 
-1. Remove the need for a change.
-2. Reuse the codebase's existing mechanism.
-3. Use the standard library, native platform, or an installed dependency.
-4. Write the smallest clear implementation that works.
+Fix the underlying cause within the agreed scope, including affected callers when necessary. Name the concrete benefit that justifies wider work and verify it. Keep the work bounded by the current goal and explicit constraints; speculative future needs do not justify extra machinery.
 
 Prefer direct code over speculative abstractions, flexibility, or configuration. Complete the requested behavior with proportionate tests, documentation, and handling for real failure modes. Tests exercise the production artifact against realistic inputs rather than a copied implementation. Keep secrets in the project's approved secret store. Track genuinely deferred work explicitly.
 
@@ -21,9 +18,9 @@ For work that spans layers, build a tracer bullet first: one thin path working e
 
 For a bug, get it red first: a failing test or repro that shows it, then fix the root cause until it's green. A new test counts as a regression guard only if it fails against the old code or a deliberate break.
 
-## Change existing code surgically
+## Keep changes coherent
 
-Every changed line should trace to the user's request. Preserve the surrounding style and working patterns. Edit the canonical source instead of duplicating knowledge, and keep affected documentation synchronized with behavior.
+Every change should trace to the user's goal or the root cause being addressed. Preserve surrounding conventions unless changing one is part of the justified solution. Edit the canonical source instead of duplicating knowledge, and keep affected documentation synchronized with behavior.
 
 Surface adjacent problems with enough evidence to make them actionable, then return to the task.
 
@@ -35,7 +32,7 @@ A task is complete when its intended outcome is verified. For non-trivial work, 
 
 For multi-step work, pair each step with a check. Match verification to the artifact: exercise code with relevant tests and builds, support analysis with inspected evidence, and confirm workflow changes in the system of record. Judge a check by its own exit status; a filtered pipeline such as `check | tail` reports the filter's status unless `pipefail` is set.
 
-Keep changes small and coherent, and commit verified work locally as you go. Keep tightly coupled changes together. Do not combine unrelated work just to reduce pushes. When pushes trigger CI or deployments, default to one push per finished, reviewed batch rather than per finding. Verify the combined result before pushing. Don’t delay a needed preview, remote check, explicit push, or handoff just to accumulate commits. Coordinate one publisher per shared branch and identify unpushed work at handoff.
+Deliver verified work in coherent, reviewable increments and commit locally as you go. Keep tightly coupled changes together. Do not combine unrelated work just to reduce pushes. When pushes trigger CI or deployments, default to one push per finished, reviewed batch rather than per finding. Verify the combined result before pushing. Don’t delay a needed preview, remote check, explicit push, or handoff just to accumulate commits. Coordinate one publisher per shared branch and identify unpushed work at handoff.
 
 Keep going until the task is complete. When a step doesn't need the user, continue and put status notes in the same message as the next action. Stop and ask only when you can't continue without the user, or before reducing the requested scope, deploying, or force-pushing. Merge a pull request when the user asked for the merge, in this task or in standing instructions such as an automation prompt, and its required checks pass with no open review thread. Spend money only with the user's approval or under an exception the repository's guidance grants. When genuinely blocked, name the limitation, what would unblock it, and the most useful available alternative.
 

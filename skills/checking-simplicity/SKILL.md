@@ -6,8 +6,9 @@ compatibility: Requires a named area, question, or reviewable subject, enough ac
 ---
 # Checking Simplicity
 
-Find opportunities to safely simplify a system design, architecture, technical
-area, plan, question, or code-level approach against the current need. This is
+Find the simplest complete design for the current need, judging the system
+left behind rather than the size of the change. Assess a system design,
+architecture, technical area, plan, question, or code-level approach. This is
 a read-only assessment that returns a readout. Planning, editing, and approval
 belong to other workflows.
 
@@ -55,36 +56,42 @@ frame comes from the caller.
 Compare viable approaches and ask whether each boundary, responsibility, data
 path, and operating surface serves a current consumer or protected constraint.
 When a documentation or search tool is available, check current official docs
-for platforms and libraries already named in the subject so a smaller native
+for platforms and libraries already named in the subject so a better native
 capability is not missed or invented from memory. Current best-practice
-articles may inform a smaller approach; a new stack or extra machinery still
+articles may inform an approach; a new stack or extra machinery still
 needs a current consumer or protected constraint. Before accounting for
-individual concepts, summarize the current shape and the smallest viable
+individual concepts, summarize the current shape and the recommended
 shape as whole systems.
 
-Separate the needed outcome from the mechanisms proposed to reach it. Then
-climb this ladder and stop at the first rung that completely satisfies the
-current need:
+Separate the needed outcome from the mechanisms proposed to reach it. Compare
+the relevant options against that outcome:
 
 1. Remove the need for a change.
 2. Reuse the codebase's existing mechanism.
 3. Use the native platform, standard library, or an installed dependency.
-4. Add the smallest clear implementation that works.
+4. Build, reshape, or replace an implementation to meet the current need and
+   address any underlying cause.
+
+These are alternatives, not a stopping order. An existing mechanism that
+works may still leave duplicated rules, awkward dependencies, special cases,
+or recurring manual work. Compare what each option leaves to understand,
+operate, verify, and change. Accept more implementation, migration, and
+verification work when it removes that burden or materially improves the
+required behavior. Name the concrete gain and the evidence supporting it.
 
 Keep each part of the subject, product code and process machinery alike, only
 when the evidence shows a current need or a protected correctness, safety,
 security, privacy, or operating boundary that requires it. Cover every part;
 group related ones when that makes the comparison clearer.
 
-Make the recommended shape as elegant, simple, and correct as possible. No
-weird wiring. No needless abstractions.
-
-Start with what can be removed. Prefer removal or reuse over renaming the
-same machinery. Recommend a smaller working slice rather than a backlog of
-deferred follow-ups. Judge simplicity by the ladder rather than line count,
-file count, or a numeric budget; reuse or a single source of truth can add
-lines and still be simpler. Claim an existing mechanism only when the
-evidence identifies it.
+Prefer clear ownership, direct data flow, and one source of truth over layers
+of exceptions. A local patch is appropriate when it fully resolves the cause;
+a wider change is appropriate when the cause spans shared behavior or callers.
+Keep either within the stated goal and constraints. If an explicit constraint
+requires temporary mitigation, distinguish it from a complete fix and name
+the remaining work. Claim an existing mechanism only when the evidence
+identifies it. Use change size and implementation effort to choose between
+otherwise equally good outcomes.
 
 ## Questions
 
@@ -102,7 +109,7 @@ missing and ask for it, including the existing mechanism being compared when
 that is the gap. Asking is not settling: ask even when the user has said the
 decision stays open.
 
-For a decision, recommend the smallest safe option the
+For a decision, recommend the simplest complete solution the
 evidence supports. For missing evidence, recommend the smallest set that
 completes the decision frame: the stated goal, the behavior and constraints
 that must be preserved, the actual callers, and the relevant current code.
@@ -113,20 +120,20 @@ A clean result is the recommendation, one affirmative reason when useful, and
 what must remain, and it ends there. It raises no question and names only
 parts the subject contains. Do not invent a concern.
 
-When simplification is needed, the readout is the smallest safe alternative,
+When simplification is needed, the readout is the simplest complete alternative,
 at most three grouped reasons with each reason's essential evidence in the
 same sentence, one sentence on protected behavior with one observable test
 for each protected behavior, and the next action. Each removal reason connects the
 machinery or scope to the current need it does not serve, and names reuse
 where it applies. For a system design or architecture, name the current and
-smaller whole-system shapes and their decision-driving contrast before the
+recommended whole-system shapes and their decision-driving contrast before the
 reasons. The next action is the caller's move on the subject: revising it, or
 handing it to the workflow that owns it.
 
 The readout contains only the assessment, in plain language that reads well
 as unrendered text, with short lists where they aid scanning, a colon for a
 label and its description, and no em dashes. Process and method stay out of
-it: the ladder, its rungs, this skill, and whether a decision was needed are
+it: the comparison procedure, this skill, and whether a decision was needed are
 not mentioned, and neither is a replay of the subject, a reviewer roster, a
 commit hash, a digest, or a status code. Detailed evidence is available on
 request. The reviewer returns the readout without revising the subject,

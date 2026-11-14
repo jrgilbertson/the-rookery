@@ -62,6 +62,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Global agent guidance and `checking-simplicity` judge the resulting system
+  rather than the smallest patch. They allow wider root-cause fixes when the
+  evidence supports a concrete improvement, while preserving scope and
+  verification requirements. Workflow guidance distinguishes reviewable
+  increments and durable safeguards from limits on the solution itself.
+- The installed-skills list includes Modern Web Guidance with instructions
+  to disable telemetry in the installer and agent environment.
+
 - `coordinating-work` suggests 30 minutes as the starting check interval in
   the setup proposal; the operator still approves the interval. `CONCEPTS.md`
   and `WORKFLOWS.md` now spell "pre-authorized" like the skill.

@@ -13,6 +13,7 @@ npx skills add ai-evals-course/evals-skills -g -y --skill build-review-interface
 npx skills add cathrynlavery/diagram-design -g -y --skill diagram-design
 npx skills add emilkowalski/skills -g -y --skill break-ui mobile-native
 npx skills add github/gh-stack -g -y --skill gh-stack
+npx skills add GoogleChrome/modern-web-guidance -g -y --skill modern-web-guidance
 npx skills add harshaneel/humanize -g -y --skill ai-check
 npx skills add https://docs.stripe.com -g -y --skill connect-recommend connect-required-verification-information metronome stripe-apps stripe-best-practices stripe-directory stripe-docs stripe-pay stripe-projects upgrade-stripe
 npx skills add jrgilbertson/networked-thinking-skills -g -y --skill atomic-note atomic-note-audit managing-obsidian-tasks
@@ -31,6 +32,11 @@ npx skills add vercel-labs/agent-skills -g -y --skill vercel-react-best-practice
 npx skills add vercel-labs/skills -g -y --skill find-skills
 npx skills add wheresryan22/anatomy -g -y --skill anatomy
 ```
+
+For Modern Web Guidance, set `DISABLE_TELEMETRY=1` in the environment used by
+the installer and coding agents. Verify that an agent-run
+`printenv DISABLE_TELEMETRY` returns `1` on each machine. This disables its
+usage telemetry, including agent-generated search queries.
 
 ## Installed another way
 

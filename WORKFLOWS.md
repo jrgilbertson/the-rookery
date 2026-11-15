@@ -26,7 +26,7 @@ The workflows need three things:
 
 - **A repository for the work.** I use repositories such as GitHub for code and knowledge. Branches let agents work in parallel, version control records changes, and backups help protect the work.
 - **A lasting home for personal knowledge.** Obsidian, Notion, or plain Markdown files can hold knowledge outside an AI provider's memory. Point each agent at the same source so every tool can read it. Turning off an agent's built-in memory is a separate choice; it keeps knowledge from collecting somewhere only one provider can reach.
-- **One shared set of agent instructions.** Every agent in every project on my machine reads the same file before the repository's own `AGENTS.md`. It contains habits that apply everywhere: try the simplest solution first, reproduce a bug before fixing it, and keep working until the result is verified. Each project adds its own rules. I change the shared file rarely and deliberately because it affects every run.
+- **One shared set of agent instructions.** Every agent in every project on my machine reads the same file before the repository's own `AGENTS.md`. It contains habits that apply everywhere: choose the best complete solution, reproduce a bug before fixing it, and keep working until the result is verified. Each project adds its own rules. I change the shared file rarely and deliberately because it affects every run.
 
 My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them through a single `@~/.codex/AGENTS.md` line in `~/.claude/CLAUDE.md`, so Codex and Claude Code follow the same rules.
 
@@ -78,7 +78,7 @@ Agents that were not in the planning session review the plan against the current
 - `ce-plan`. Records decisions, parts of the work, files, tests, and risks in one plan. It does not implement the work. Use it when the outcome is clear enough to plan how to deliver it.
 - `ce-debug`. Finds the cause of a bug before proposing a fix. Use it when the work starts with broken or unexpected behavior.
 - `ce-pov`. Answers a focused planning question using the project's evidence. Use it when one decision blocks the plan and more research would add little.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Looks for ways to simplify a design, plan, or approach without losing what it needs to do. Use it when asked to simplify, during a build, or before adding lasting machinery that the current problem does not need.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Judges simplicity by the system left behind, including whether a wider root-cause fix removes more complexity than a small patch. Use it for questions such as “can this be simpler?” or “check for simplicity,” including during a build, or before adding lasting machinery that the current problem does not need.
 
 Sometimes the remaining questions depend on one another. I consider a focused grilling session when a decision is costly to reverse, affects a large part of the system, determines later answers, or would otherwise leave the agent guessing how to judge completion. For example, who owns authentication may determine how long sessions last and who can access data. Settle that first. Unrelated open questions stay in `ce-brainstorm`; clear requirements and ordinary, reversible decisions go to `ce-plan`.
 
@@ -130,6 +130,11 @@ Before moving to Build:
 
 **Goal:** Build and verify one small part of the plan at a time.
 
+Small parts make the work reviewable; they do not determine the final design.
+A root-cause fix may span several parts. I accept that work when it produces
+a clearer, more reliable result, and verify the complete change before calling
+the problem solved.
+
 Several worktrees can run in parallel. A worktree is a separate working copy of the repository. Each agent builds on its own branch without overwriting another agent's work.
 
 A harness is the tool running the agent, such as Claude Code, Codex, Hermes, or Grok. In Orca, each worktree can use the one that suits its task.
@@ -150,6 +155,7 @@ During a build, I use:
 
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates across agent tools, and supports feedback on selected elements in the browser. Use it for independent parts of a plan or direct visual iteration on an interface.
 - **Impeccable, mid-build.** Reviews and polishes visual work, checks technical quality, handles edge cases, and offers three versions of a selected element with the option to apply one. Use it to keep the interface aligned with the design brief and the project's limits.
+- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance). Supplies current browser API and CSS guidance for frontend work, alongside Impeccable's design direction and Vercel's React guidance. Compare native capabilities with existing components on the quality of the result; verify behavior and browser requirements when replacing a component. Keep telemetry disabled as described in [Installed skills](INSTALLED-SKILLS.md).
 - `ce-test-browser` and `ce-dogfood`. Check the browser flows affected by a branch. Dogfood can also fix small problems, add regression tests, and commit its changes. Use `ce-test-browser` for a focused check or `ce-dogfood` for a repair pass that runs on its own.
 
 Before moving to Ship:
@@ -193,7 +199,7 @@ Before merge:
 Repositories and systems need care over time. Maintenance runs throughout the work, not only after merge.
 
 I schedule recurring reviews in Orca. [Sessions audit](automations/sessions-audit.md)
-uses `retro` to review the past 24 hours of AI sessions alongside The Rookery's
+uses `ce-retro` to review the past 24 hours of AI sessions alongside The Rookery's
 skills, workflows, guidance, and configuration. Separate local and remote jobs
 review sessions on their respective hosts. I review
 and approve specific changes before applying them through the workflow that
@@ -207,6 +213,12 @@ I copy them into Orca and choose the target repository, agent, and schedule ther
 Impeccable handles design maintenance. `impeccable extract` finds patterns used three or more times for the same purpose and turns them into shared design values and reusable building blocks. `impeccable document` rebuilds the design documentation from what shipped, so the tools can read the design rules rather than guess.
 
 `ce-compound` saves lessons worth keeping when I solve a problem, often before opening the PR. It writes the symptoms, cause, failed attempts, fix, and prevention strategy to `docs/solutions/`. Planning and debugging use those documents later, so I spend less time solving the same problem again.
+
+First address the cause in the design or implementation. Removing duplicated
+state, for example, can eliminate a synchronization failure instead of leaving
+every caller responsible for avoiding it. Then choose how to protect the
+corrected behavior and preserve the lesson. This ladder selects a safeguard;
+it does not limit the scope of a justified root-cause fix.
 
 Choose where to keep a lesson based on how it can prevent the mistake. A test runs without anyone remembering to read it. A written instruction only helps when someone reads and follows it. Use the strongest option that fits:
 

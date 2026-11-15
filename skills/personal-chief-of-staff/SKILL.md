@@ -15,7 +15,10 @@ conversation until the user approves specific source changes.
 
 Read [source-access.md](references/source-access.md) before the first source
 access or write on every path. Load other resources only when the matched path
-below names them. Resolve the message in this order:
+below names them. If any path needs first setup or a proposed map change,
+including a location or access repair inside a review, also read
+[source-setup.md](references/source-setup.md) before previewing or saving it.
+Resolve the message in this order:
 
 1. **Visible review action decisions:** bind approvals, edits, deferrals, and
    skips to the exact displayed bundle and its originating mode. A bare number
@@ -32,11 +35,12 @@ below names them. Resolve the message in this order:
    resources that run loaded.
 3. **Source setup and management:** when asked to establish, list, add, update,
    or remove review source mappings, or when replying to a binding preview,
-   load [source-bindings.md](references/source-bindings.md) and resolve the
-   requested mapping operation with the user. Existing mappings go directly to
+   load [source-bindings.md](references/source-bindings.md) and
+   [source-setup.md](references/source-setup.md), then resolve the requested
+   mapping operation with the user. Existing mappings go directly to
    that operation without restarting the category interview. This path opens
    no mode; finish it under
-   [Finish standalone setup](references/source-bindings.md#finish-standalone-setup).
+   [Finish standalone setup](references/source-setup.md#finish-standalone-setup).
 4. **A new review:** select one mode below. An explicit mode wins. Load
    [source-bindings.md](references/source-bindings.md) and resolve the private
    map before the mode's source retrieval. Before retrieval, also load
@@ -89,7 +93,7 @@ each proposed effect independently.
 
 Use exactly one run ending. A standalone setup run conducts no review; judge
 its ending by
-[Finish standalone setup](references/source-bindings.md#finish-standalone-setup).
+[Finish standalone setup](references/source-setup.md#finish-standalone-setup).
 
 - **Complete:** required review judgments, mode-required task coverage and
   material planning decisions are settled, and every approved action has a

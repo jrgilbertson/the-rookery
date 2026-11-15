@@ -4,6 +4,11 @@ These recurring Orca reviews are part of how I build with AI. Each file
 contains a prompt, schedule, and prerequisites you can adapt to your own
 repository.
 
+Each definition starts with its purpose, cadence, timezone, and
+prerequisites, followed by any setup instructions and the copyable prompt.
+Longer operating notes follow the prompt. Sessions audit shares one prompt
+between two jobs, with host-specific consolidation instructions below it.
+
 | Automation | Purpose | Cadence | Timezone |
 |---|---|---|---|
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |
@@ -23,13 +28,17 @@ your work.
 ## Set up a scheduled review
 
 Create an automation in Orca and select the target repository and agent. Set
-the schedule and paste the prompt from its file. Install any named skills,
-including `checking-simplicity` and `ce-pov` for the recommendation review,
-and give the agent access to the sources the review requires. For Sessions audit,
+the schedule and paste the prompt from its file. Select Chat mode and save an
+explicit model and effort, using [ROUTING.md](../ROUTING.md) to match the work.
+Keep the saved selections in Orca; changing the routing guide does not update
+existing jobs. The selected agent needs the
+named skills and access to the sources the review requires. If a required skill
+is missing or cannot load, the automation reports it and stops. Skill and plugin
+installation and updates are outside the automation. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
-Sessions audit invokes `retro` on each host separately. Install its required
-skills on both hosts before scheduling both jobs. The remote job runs first and
+Sessions audit invokes `ce-retro` on each host separately, with required skills
+available to the selected agent on each host. The remote job runs first and
 the local job merges both hosts' findings into one list; see
 [Consolidation](sessions-audit.md#consolidation).
 
@@ -66,11 +75,12 @@ reads and writes one private Git repository, cloned to
 
 Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
-Each automation contains its assessment instructions, authority limits, and
-final `ce-pov` review in its own prompt. It runs independently; the history
+Each automation contains its assessment instructions and authority limits in
+its own prompt. Selected recommendations receive independent simplicity review in
+related sets, followed by a final `ce-pov` judgment. In paired Sessions audits,
+the local job owns that final judgment after combining both hosts. The history
 repository stores reports and owner decisions, not a shared assessment workflow.
-Its README documents storage and helper usage. Install `checking-simplicity` and
-`ce-pov` for each agent and host running these prompts.
+Its README documents storage and helper usage.
 
 Copy the storage template below into your private repository's README. If it
 provides a history helper, document how to use it for these operations.
@@ -105,6 +115,7 @@ projects never share decisions or runs.
 3. At the end, write the run file, commit, `git pull --rebase --autostash`,
    and push. Another writer may share the checkout, so commit only your own
    files. On a push race, rebase and push again.
-4. When the owner answers, append the answers to `decisions.md`, then commit
-   and push before acting on them.
+4. When the owner answers, append the exact answers to `decisions.md`, then
+   commit and push. Recording a decision does not authorize an assessment run
+   to implement it; follow the owning workflow and its required approvals.
 ```

@@ -122,7 +122,7 @@ time without replacing those executions.
 
 I look back at recurring corrections, failed checks, and unnecessary
 coordination to see what should change before the next run.
-The [Sessions audit automations](automations/sessions-audit.md) use `retro` to
+The [Sessions audit automations](automations/sessions-audit.md) use `ce-retro` to
 review recent AI sessions on each host alongside the repository's skills,
 workflows, guidance, and configuration. They recommend changes to the coding
 environment based on the session evidence.
@@ -150,8 +150,9 @@ prompts, schedules, and setup instructions.
 ![Muninn flies in with a learned check for the testing layer of an exploded environment, above permissions and sandboxing and beneath path-scoped rules, skills, and prose instructions](docs/assets/testing-safeguards.svg)
 
 The [Maintain durability ladder](WORKFLOWS.md#maintain) describes the homes
-for repository learning. For agent testing and governance, I start with the
-strongest suitable way to enforce the behavior:
+for repository learning. First fix the underlying cause within the agreed
+scope, then choose a safeguard for the corrected behavior. For agent testing
+and governance, I use the strongest suitable way to enforce that behavior:
 
 **Permissions/sandbox → hooks/CI/tests → path-scoped rule → skill → prose instruction**
 

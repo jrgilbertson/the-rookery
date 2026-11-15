@@ -33,6 +33,5 @@ deliverables produced only when requested.
 
 Integrate material findings into the reader's natural sections. Omit depth
 concepts that add nothing. When source access, lens coverage, or context
-isolation is degraded, state how that limits the affected claim and confidence—
-in the Overview when it should frame the whole read, otherwise next to the
-affected claim.
+isolation is degraded, state how that limits the affected claim and confidence.
+Place those limits as step 8 of the entry skill specifies.

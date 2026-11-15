@@ -35,7 +35,7 @@ approved changes follow the [Compound Engineering workflow](../../../WORKFLOWS.m
 
 `route-work` renders one card that starts work in a development framework:
 Compound Engineering's `ce-brainstorm`, `ce-plan`, `ce-work`, or `ce-debug`,
-`grill-with-docs`, `managing-issues`, or `impeccable`. The contract lives in
+`grill-with-docs`, `managing-issues`, or `impeccable`. The contract lived in
 root `ROUTING.md`. It had picked up rules that restated what those workflows
 already decide: how many workers to start and how, a concurrency cap, when to
 add a reviewer, which grants to spell out, where workers run, and why a grant
@@ -129,9 +129,9 @@ as soon as either changes. It fails in three concrete ways:
   workflow.
 
 It does not apply when the receiving workflow has no gate for the topic. For
-example, route-work still adds a Reviewer to a run that does not implement
-through `ce-work`, because nothing else reviews a plan or grill output against
-the operator's criteria.
+example, the former route-work contract added a Reviewer to a run that did not
+implement through `ce-work`, because nothing else reviewed a plan or grill
+output against the operator's criteria.
 
 ## Examples
 

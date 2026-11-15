@@ -15,10 +15,10 @@ and nothing for this skill in the gate runs a model.
 
 The nine scenarios below describe what the skill exists to protect, from the
 requester's seat. They are plain situations, not quotes of the skill, so
-rewording a rule does not change them. Run them through the
-[evaluation workflow](../../SKILLS.md#evaluation-workflow), which says how to
-run a case and where results go. Name the host and skill revision for any
-observed result; unavailable evidence remains Unmeasured.
+rewording a rule does not change them. For behavioral evaluation, follow the
+[evaluation workflow](../../SKILLS.md#evaluation-workflow) for routing,
+approvals, and the required evidence record. Unavailable evidence remains
+[Unmeasured](../../CONCEPTS.md#unmeasured).
 
 | # | Situation | What a reviewer should see |
 | -- | -- | -- |

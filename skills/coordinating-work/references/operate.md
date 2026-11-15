@@ -57,9 +57,10 @@ batch with no task workers, you run `lfg` and the continuous `ce-babysit-pr`
 watch yourself, and line 2 reads the first line of your own watch report and
 the head commit it covered.
 
-1. **Approval.** The record holds the setup proposal the operator approved, it
-   shows a merge bar and held changes, and this pull request's issue is in
-   its batch or inside an approved class of incidental work. Every condition
+1. **Approval.** The record holds the approved setup proposal and any operator-approved
+   amendment to its batch, merge bar, or held changes. Together they show the
+   current merge bar and held changes, and this pull request's issue is in
+   the approved batch or inside an approved class of incidental work. Every condition
    the approved merge bar adds beyond this list is true for this pull
    request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
@@ -129,8 +130,14 @@ two-way door is a call that can be undone later; a one-way door is one that
 cannot. Decide a two-way door yourself and proceed when it stays inside the
 merge approval. For a one-way door, or any call that touches the merge
 approval, run `ce-pov` for the default, log it, and hold only the work that
-depends on the answer. When a worker proposes something its issue does not
-name, the default is the smaller option.
+depends on the answer. When a worker's question offers options that all
+deliver its issue as briefed, default to the option that resolves the cause,
+even when it is the wider fix. When an option adds an outcome the issue does
+not name or changes a constraint in the brief, answer with an in-scope
+option that completes the issue; if none does, hold the dependent work. Put
+the proposed addition or constraint change on the ready-for-operator list
+as a proposed follow-up. Adding it takes an amended proposal the operator
+approves.
 
 A logged question, a held pull request, or a parked item stops only the work
 that depends on it. So does an outside service that is down, such as the
@@ -175,8 +182,8 @@ worker alone.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing
-else reports. Each time, read the table against live state and act on what
-changed:
+else reports. Read mail with the guide's read that leaves the inbox as it is.
+Each time, read the table against live state and act on what changed:
 
 - answer any question still unanswered;
 - note pull requests the code host shows opened or merged since the last

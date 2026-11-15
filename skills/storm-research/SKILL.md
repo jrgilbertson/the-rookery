@@ -152,7 +152,8 @@ From the raw returns, answer:
 Keep each conflicting conclusion and its evidence. Do not replace disagreement
 with a vague hedge. A missing or failed lens is a coverage gap, not agreement.
 
-Use the Lens Charter's research-depth questions while mapping the record:
+Use the Research Depth Checks in `references/analysis-methods.md` while mapping
+the record:
 clarify the foundations and mechanisms behind material claims, and examine
 relevant relationships, patterns over time, and downstream effects. Carry these
 findings into the sections where they help the reader. Do not manufacture a
@@ -181,17 +182,16 @@ deliverable only when the user needs an audit-style source schedule.
 
 ### 7. Synthesize the requested form
 
-For a full research briefing, or for an article, paper, blog post, presentation,
-or report, read [references/briefing-template.md](references/briefing-template.md)
-and produce its long-form outline before prose. On that path, put any actionable
-implication or verdict in the Overview when the intended use calls for one, and
-do not force one into an exploratory briefing. Expand a separate What to do
-section only when the plan needs more room than Overview.
+The default is a full research briefing unless the user requests a shorter or
+custom form. For that default or an article, paper, blog post, presentation, or
+report, read [references/briefing-template.md](references/briefing-template.md)
+and produce its long-form outline before prose. Follow its rules for placing
+actionable implications and exploratory findings.
 
 For short or custom forms (one-page notes, negotiation prep, constrained
-answers), synthesize directly into the requested shape. Put action and material
-limits in that form’s natural lead—not by inventing Overview scaffolding the
-user did not ask for.
+answers), synthesize directly into the requested shape. Put action in that
+form's natural lead, without inventing Overview scaffolding. Place material
+research limits as step 8 describes.
 
 Build material claims from sourced facts, explicit assumptions, constraints,
 and supported mechanisms. Include relevant system relationships and downstream
@@ -201,16 +201,14 @@ first-principles or systems-thinking sections.
 
 ### 8. Emit the briefing
 
-Unless the user requested a shorter or custom form, read
-[references/briefing-template.md](references/briefing-template.md) and use its
-full-briefing structure and voice. For short or custom outputs, preserve
+Use the structure and voice selected in step 7. For short or custom outputs, preserve
 compact citations and compress presentation without dropping a material
 tension, finding or uncertainty, confidence limit, degradation, open question
 that would change the answer most, or reliability finding.
 
 Keep the internal run record out of a normal reader-facing deliverable. On a
 full briefing, put material research limitations in the Overview so they frame
-how the rest is read. On short or custom forms, put them next to the affected
+how the rest is read; include claim-specific limits beside the affected claim. On short or custom forms, put them next to the affected
 claim or in the lead when they should frame the whole read. Provide the full
 record when the user requests an audit, trace, or execution details.
 
@@ -245,7 +243,7 @@ that the check did not run and lower confidence.
   recorded a shortfall when fewer than three sources were inspectable).
 - The intended set reflects user narrowing. Every completed lens either used a
   verified-clean identical four-part seed except for its own lens, or the run
-  is labeled single-context synthesis / unverifiable isolation with lowered
+  is labeled single-context synthesis with lowered
   confidence and a named upgrade signal.
 - Raw returns are retained, and failed lenses remain visible in the internal
   run record.

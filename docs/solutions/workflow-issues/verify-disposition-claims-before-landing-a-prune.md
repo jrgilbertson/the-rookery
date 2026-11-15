@@ -22,6 +22,11 @@ related_components:
 
 # Verify disposition claims before landing a prune
 
+The behavioral case directories cited below have been retired. They document
+the evidence for this learning, not runnable current suites. Current evaluation
+follows [SKILLS.md](../../../SKILLS.md#evaluation-workflow); the lesson is to
+check a claimed move or consolidation against the source and its destination.
+
 ## Context
 
 On branch `jrgilbertson/Agents-md-discoverability` (local history, unpushed at

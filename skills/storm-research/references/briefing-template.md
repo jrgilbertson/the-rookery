@@ -1,13 +1,13 @@
 # Briefing Template
 
-Read this file only when the user requests a full briefing or long-form work
+Read this file for the default full briefing or requested long-form work
 such as an article, paper, blog post, presentation, or report.
 
 ## Voice
 
 Write as a precise, thoughtful human would: favor concrete details and active
-verbs, use natural varied rhythm, and ruthlessly eliminate every unnecessary
-word, abstraction, hedge, cliché, or formulaic AI phrase.
+verbs and vary the rhythm. Cut clutter, clichés, and formulaic phrases while
+preserving the facts, reasoning, evidence, and calibrated uncertainty.
 
 ## Long-form outline
 

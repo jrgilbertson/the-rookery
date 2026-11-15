@@ -6,11 +6,17 @@ Review every page of the interface against its design system, find drift and rep
 - **Timezone:** America/Los_Angeles.
 - **Requires:** The [`impeccable`](https://github.com/pbakaus/impeccable) skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, a browser tool the agent can drive, and a local development stack that can start unattended with Docker and seed a fictional signed-in account. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
-Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. The run needs the strongest model you have, because judging taste is the job. Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only project names, paths, and commands swapped out.
+## Setup
+
+Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. Choose the model and effort from the Design/taste row in [ROUTING.md](../ROUTING.md). Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only project names, paths, and commands swapped out.
 
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `design-system-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined or deferred findings only with new evidence, such as the pattern reaching more pages or getting worse.
+
 Audit [product]'s interface against its design system with the `impeccable` skill and recommend fixes for approval. [design contract] is the contract; [sidecar file] is its sidecar. Run impeccable `context` once from the repository root, then read the contract in full.
 
 Review every page, public and signed-in, each run:
@@ -27,12 +33,14 @@ Report, in this order:
 - Extractions: shared components or page templates for patterns used three or more times with the same intent, from `extract`'s planning steps.
 - The exact sidecar patch.
 - Premium bar: contract revisions that raise the craft toward [reference products], kept apart from drift. The contract's own identity wins over theirs.
-- Ratchet: a lint rule or validator for any finding that appeared in two or more earlier reports.
+- Recurring findings: for any finding that appeared in two or more earlier reports, recommend a fix for the underlying cause, then any safeguard still needed to protect the corrected behavior. Recommend a lint rule or validator when it can reliably check that behavior; otherwise name the design judgment or review that remains.
 - The questions impeccable would have asked, and what was not assessed.
 
 Keep screenshots only for the top issues and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
 
-Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+Group related draft recommendations into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `design-system-audit-<repository name>` runs and owner decisions before assessing, and save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined or deferred findings only with new evidence, such as the pattern reaching more pages or getting worse.
+Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Use its judgment to prioritize the final list for approval while retaining every recommendation submitted to that judgment, including those it disfavors, with evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
+
+Save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder.
 ```

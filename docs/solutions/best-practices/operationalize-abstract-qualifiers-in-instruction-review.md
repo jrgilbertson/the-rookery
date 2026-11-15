@@ -3,7 +3,7 @@ title: "Define the abstract qualifiers that the delete test misses"
 category: best-practices
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-11-02
+last_updated: 2026-11-14
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -111,7 +111,8 @@ deliverable. Define three routing boundaries for those descriptions:
    (`skills/checking-simplicity/SKILL.md:3`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
-   next planner or executor (`skills/checking-simplicity/SKILL.md:3`).
+   next planner or executor. The current skill places this rule in
+   [Dispatch](../../../skills/checking-simplicity/SKILL.md#dispatch).
 
 When a description change needs evaluation, follow the
 [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
@@ -199,6 +200,11 @@ stated need, keeps ordinary planning and brainstorming with their adjacent
 owners, and routes an unchanged clean result onward
 (`skills/checking-simplicity/SKILL.md:3`). The description makes both entry and
 completion observable instead of relying on broad quality words.
+
+**Current location (2026-11-14).** The example above records the earlier
+description. [PR #245](https://github.com/jrgilbertson/the-rookery/pull/245)
+removed the clean-exit rule from the description; the current rule is in
+[Dispatch](../../../skills/checking-simplicity/SKILL.md#dispatch).
 
 ## Related
 

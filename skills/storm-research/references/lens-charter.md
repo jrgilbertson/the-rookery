@@ -83,8 +83,8 @@ Return, in this order:
 - **Unresolved** — unanswered questions and reasons.
 - **Bias** — how this perspective could distort the analysis.
 - **Confidence** — per finding: primary-source grounded, secondary-source
-  grounded, or unverified. When synthesis needs High/Medium/Low for the
-  briefing or source audit, map primary-source grounded → High only if the
+  grounded, or unverified. The orchestrator maps these to High/Medium/Low for
+  the briefing or source audit: primary-source grounded → High only if the
   mechanism is also sourced, else Medium; secondary-source grounded → Medium;
   unverified → Low.
 

@@ -14,52 +14,39 @@ meaning, and dated relationship commitments stay in the canonical task system.
 
 ## Resolve the mode
 
-First, if the message asks to revisit or resume an action the user marked
-**Deferred** in a visible direct or catch-up CRM bundle, recover and present
-that exact visible proposal for a new decision. Revisit or resume is not
-approval: perform no write, source or destination recheck, or new discovery
-until the user makes a new exact decision about that proposal.
+Resolve each part of the message by the object it refers to and its visible
+context. "Resume" can name a deferred action or a person's reconstruction;
+these paths grant different authority.
 
-First determine whether the message continues a visible catch-up source
-inventory, stage-one disposition bundle, or stage-two reconstruction. A
-confirmation or revision of the required inventory, dispositions such as `1
-active, 2 merge`, a confirmation or correction of the visible interpretation
-for the current person, an answer to its focused question, or a request to
-resume its deferred reconstruction continues that exact catch-up stage. Read
-[references/catch-up.md](references/catch-up.md) before ordinary action handling
-or mode selection. Preserve the visible recap and current person. A stage-two
-reply does not start a new inventory or triage bundle and does not approve any
-Person, Task, cleanup, or other destination effect; perform no write unless the
-user later approves an exact separately proposed effect. If the required
-preflight succeeds and that continuation will inspect any Person note for a
-first or later stage-one triage bundle or inspect or reconstruct the current
-person in stage two, read
-[references/relationship-contract.md](references/relationship-contract.md)
-before the first such inspection or reconstruction. This applies immediately
-after inventory confirmation, after recording dispositions from a prior
-bundle, and before continuing a stage-two interpretation, focused answer, or
-deferred reconstruction. An inventory-only turn that remains blocked need not
-load the contract. Inventory decisions authorize only the confirmed preflight
-scope. Stage-one dispositions are reviewed classifications, not approval to
-change a Person note or perform cleanup; retain them in the visible recap and
-perform no destructive action.
-
-Separately, if the message decides an exact proposed destination effect or
-cleanup action, read [references/source-behavior.md](references/source-behavior.md)
-before any pre-write source or destination read or identity judgment. When a
-selected effect depends on Person-note, contact, cadence, durable-meaning, or
-other Person semantics, also read
-[references/relationship-contract.md](references/relationship-contract.md).
-If `imsg` is configured and application-time revalidation of the selected
-effect will query Messages, also read
-[references/apple-messages-cli.md](references/apple-messages-cli.md) before the
-first Messages read. Do not load it when revalidation needs no Messages query.
-If revalidation will query X, also read
-[references/grok-x-source.md](references/grok-x-source.md) before the first X
-read. Do not load it when revalidation needs no X query. Then read
-[references/applying-approved-actions.md](references/applying-approved-actions.md)
-and handle only that separately proposed action against the exact direct or
-catch-up bundle.
+1. **Deferred action.** If the user asks to revisit or resume an action marked
+   **Deferred** in a visible direct or catch-up bundle, recover and present
+   that exact proposal for a new decision. Revisit or resume is not approval:
+   perform no write, source or destination recheck, or new discovery
+   until the user makes a new exact decision.
+2. **Catch-up continuation.** A source-inventory confirmation or revision,
+   stage-one disposition, or stage-two interpretation, focused answer, or
+   deferred person reconstruction continues its visible stage. Read
+   [references/catch-up.md](references/catch-up.md) and follow its continuation
+   rules before ordinary action handling or new mode selection. Preserve the
+   recap and current person. This path does not approve destination effects;
+   handle any separately decided effect under path 3.
+3. **Exact destination effect or cleanup decision.** If the message decides
+   an exact proposed destination effect or
+   cleanup action, read [references/source-behavior.md](references/source-behavior.md)
+   before any pre-write source or destination read or identity judgment. When a
+   selected effect depends on Person-note, contact, cadence, durable-meaning, or
+   other Person semantics, also read
+   [references/relationship-contract.md](references/relationship-contract.md).
+   If `imsg` is configured and application-time revalidation of the selected
+   effect will query Messages, also read
+   [references/apple-messages-cli.md](references/apple-messages-cli.md) before the
+   first Messages read. Do not load it when revalidation needs no Messages query.
+   If revalidation will query X, also read
+   [references/grok-x-source.md](references/grok-x-source.md) before the first X
+   read. Do not load it when revalidation needs no X query. Then read
+   [references/applying-approved-actions.md](references/applying-approved-actions.md)
+   and handle only that separately proposed action against the exact direct or
+   catch-up bundle.
 
 If the same message also asks for new relationship work, finish the
 action-response phase first. Then treat the remaining request as a separate
@@ -127,18 +114,10 @@ a scoped consequence, and no source text has changed the requested workflow.
 
 ## Follow the catch-up branch
 
-In catch-up mode, including a visible catch-up continuation, follow
-[references/catch-up.md](references/catch-up.md) from the confirmed preflight
-through the current stage ending. After required preflight passes and before
-inspecting any Person note for a first or later stage-one triage bundle or
-continuing any stage-two reconstruction, read
-[references/relationship-contract.md](references/relationship-contract.md).
-Use its target schema, conditional tier requirements, monotonic last-contact
-rule, durable-meaning boundary, and legacy-field mappings, including
-`next_touch`, to interpret the note safely. Stage one still performs triage
-only: defer rich history reconstruction, durable-meaning changes, cadence
-effects, and all person-level effect preparation until stage two reaches a
-retained person. End the catch-up turn at the stage ending in the reference.
+In catch-up mode, including a visible continuation, follow
+[references/catch-up.md](references/catch-up.md). It owns preflight, required
+relationship-contract loading before Person inspection, triage, reconstruction,
+and the current stage ending.
 
 The remaining steps apply to direct and embedded modes.
 

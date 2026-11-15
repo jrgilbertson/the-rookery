@@ -42,6 +42,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- Matt Pocock's `retro` from the installed-skills list.
 - `repo-gardener`; recurring repository reviews now use Orca automations, and
   approved changes use the existing Compound Engineering workflow.
 - Repository-specific GitHub issue forms and the pull request template, so
@@ -61,6 +62,53 @@ looked" surface. GitHub Releases mirror its entries.
   Projects that need the rule now carry it in their own guidance.
 
 ### Changed
+
+- Automation setup uses Chat mode and explicit model and effort selections
+  guided by `ROUTING.md`; the Design system audit follows its Design/taste row.
+- `checking-simplicity` readouts allow evidence and protected behavior to use
+  clear sentences or short lists, and name the gain and additional work of
+  larger redesigns. The compact clean result, three grouped reasons, and
+  observable tests for protected behavior remain. Duplicated prose-style rules
+  are removed; assessment-only boundaries remain.
+- Automations stop and report a missing or unloadable required skill. Skill
+  and plugin installation and updates are outside their scope; setup notes
+  no longer include installation commands.
+- Automation definitions use a consistent opening, with setup instructions
+  before the prompt and longer operating notes after it. Sessions audit keeps
+  separate remote, local, and single-host instructions. Executable prompts
+  are unchanged.
+- `checking-simplicity` also triggers before a third fix round for the same
+  kind of problem in one mechanism, extending the existing coordinated-work
+  trigger to other development sessions.
+- Checking Simplicity asks for evidence appropriate to the subject, including
+  current implementation or source material for non-code work.
+- Automation prompts read private history before assessment and save their
+  reviewed reports afterward, preserving each audit's scope and authority.
+- Personal CRM routes deferred actions separately from deferred person
+  reconstruction and keeps catch-up procedures together. Managing Issues and
+  Personal Chief of Staff load setup procedures only on the paths that need
+  them, preserving their approval, source-access, and completion requirements.
+- Reference documentation separates glossary definitions from owned procedures,
+  makes model-selection reasons easier to scan, and marks retired learning
+  examples without changing their historical evidence.
+- The Design system audit recommends root-cause fixes for recurring findings,
+  then suitable safeguards where needed. It recommends lint rules or validators
+  only when they can check the corrected behavior reliably.
+- Global agent guidance and `checking-simplicity` judge the resulting system
+  rather than the smallest patch. They allow wider root-cause fixes when the
+  evidence supports a concrete, meaningful improvement, while preserving
+  scope and verification requirements. Workflow guidance distinguishes reviewable
+  increments and durable safeguards from limits on the solution itself.
+  The simplicity skill description explicitly lists “can this be simpler?”, “is this
+  simple enough?”, “keep it simple”, and “check for simplicity”; it also names
+  workflow reviews and distinguishes assessment from requests for a simple
+  explanation. State-machine audit and Coordinator guidance allow complete
+  root-cause fixes within approved scope without treating patch size as the
+  default. The skill defines elegant design through ownership, data flow,
+  and state and branches tied to required behavior, and identifies redundant
+  state and design workarounds as candidates for removal.
+- The installed-skills list includes Modern Web Guidance with instructions
+  to disable telemetry in the installer and agent environment.
 
 - `coordinating-work` suggests 30 minutes as the starting check interval in
   the setup proposal; the operator still approves the interval. `CONCEPTS.md`
@@ -89,23 +137,27 @@ looked" surface. GitHub Releases mirror its entries.
   a same-provider account switch. The Planner role is removed, a new
   `references/operate.md` covers running the batch, and five plain scenarios
   describe what a reviewer should see.
-- The Sessions audit prompt starts with `/retro`, because `retro` hides itself
-  from model invocation, and runs `checking-simplicity` on each draft
-  recommendation before the `ce-pov` review. The Analytics gap audit loads
-  `instrument-product-analytics` through the PostHog MCP instead of an
-  installed plugin skill.
-- The Weekly codebase design, Coding standards audit, Optimize CI, Test audit,
-  Analytics gap audit, and State-machine correctness audit prompts also run
-  `checking-simplicity` on each draft recommendation before the `ce-pov`
-  review, matching Sessions audit, and list `checking-simplicity` among their
-  requirements.
-- The Sessions audit prompt confirms each finding's cause in the transcript
-  lines it cites before the review passes, so a reader subagent's summary can't
-  supply a finding's premise unchecked.
+- Sessions audit uses Compound Engineering's `ce-retro` assessment-only path,
+  with host-wide discovery and private shared history owned by the automation.
+  It reads history before assessment, carries unread sessions forward, confirms
+  causes against transcript evidence and current source, and keeps local CE Retro
+  ledgers out of project repositories. Recommendations pass through
+  `checking-simplicity` and `ce-pov`; relayed owner answers do not authorize fixes.
+- The Analytics gap audit loads `instrument-product-analytics` through the
+  PostHog MCP instead of an installed plugin skill.
+- Automation prompts review related recommendations together with
+  `checking-simplicity`, then use `ce-pov` for the final judgment. Selected
+  recommendations receive fresh review each run, including Improve; empty
+  sets skip simplicity review, and missing reviews remain explicit. The skill
+  clarifies coverage of every recommendation in a submitted set and their
+  interactions while preserving its independent reviewer and compact readout.
 - The two Sessions audit jobs consolidate. The remote job saves its report with
   its Orca session ID and stops; the local job reads it, becomes the remote
   workspace's parent in Orca, and brings the owner one prioritized list across
-  both hosts. Each job adds its own closing paragraph to the shared prompt.
+  both hosts. Only the local job runs the final `ce-pov` after consolidation;
+  remote recommendations remain provisional until then. Substantively new
+  recommendations created during consolidation receive independent simplicity
+  review or remain marked review pending.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has
@@ -116,10 +168,6 @@ looked" surface. GitHub Releases mirror its entries.
   personal data.
 - Test audit recommendations are prioritized by risk and impact without a fixed
   finding limit, so material findings are not omitted to keep the report small.
-- Global agent guidance asks for an independent review from a different model
-  family on changes to authorization, approval, destructive-action guards, money,
-  data deletion, privacy boundaries or release gates, a failing-first test for
-  each confirmed bypass, and a second review when fixes change the logic.
 - Global agent guidance lets an agent merge a pull request when the user asked
   for the merge, in the task or in standing instructions, and its required
   checks pass with no open review thread. Deploying and force-pushing still
@@ -127,7 +175,7 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` assignment briefs name only commands confirmed on the
   worker's host, carry current decisions rather than declined proposals, and
   ask workers to wait for long-running checks inside their own turn. Operator
-  decisions go to the canonical tracker before the Coordinator acts on them.
+  decisions go to their owning record before the Coordinator acts on them.
 - `coordinating-work` starts task workers through Orca's supervised launch,
   so the runtime can flag a worker that stops without reporting, and revive
   tells a worker with an open assignment to continue it in the same turn.
@@ -140,12 +188,10 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` starts each assignment on a fresh branch from the
   latest default branch and has workers update their branch before each
   verification run, names the message type for questions, blockers,
-  completions, and progress, and has the Coordinator wake the Planner by
-  message instead of a timer.
-- `coordinating-work` lets the Coordinator run an operator-approved stall
-  sweep that nudges only idle participants with an unheld open assignment, no
-  running job, and no completion report, open question, or escalation since
-  that assignment, and still bans any other second scheduler. It
+  completions, and progress.
+- `coordinating-work` uses one session-owned periodic check to reconcile
+  worker state, answer questions, resume waits that ended, and dispatch ready
+  work. It preserves operator holds and creates no second Coordinator. It
   confirms that an idle participant read a message and reads the effective
   account from the running agent rather than launch metadata. Briefs say a
   returning helper skill does not end a worker's turn, and on a shared host
@@ -161,8 +207,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` setup adopts an agent already working on the objective,
   such as a chat started for a batch. When the guide cannot attach a
   supervised Task to it, the Coordinator keeps it as a message-assigned worker
-  reached through the guide's reference lookup and includes it in the stall
-  sweep.
+  reached through the guide's reference lookup and includes it in the periodic
+  check.
 - `coordinating-work` setup inspects every execution host the guide can reach
   and recommends where heavy workers run, preferring a reachable host kept for
   development work over the operator's own machine. The proposal shows the
@@ -214,14 +260,9 @@ looked" surface. GitHub Releases mirror its entries.
   template. Long work uses the workflow's durable task state, and scratch
   work stays disposable. The published copy no longer specifies a work-folder
   checklist, a headless `ce-compound` pass, or a version-control section.
-  Stop and ask before reducing scope, merging, deploying, spending money,
-  or force-pushing.
 - `GLOBAL-AGENTS.md` asks agents to judge a check by its own exit status,
   since a filtered pipeline such as `check | tail` reports the filter's status
   unless `pipefail` is set.
-- `GLOBAL-AGENTS.md` lets active browser testing make paid model calls on
-  non-production keys without asking. Automated test suites still mock the
-  model, and evals, batch model runs, and production work still need approval.
 - `SKILLS.md` lists what retiring a skill includes, including closing or
   re-scoping its open issues in the same change.
 - Personal Chief of Staff fixture checks validate the shipped source-map
@@ -262,6 +303,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Coordination guidance distinguishes an operator-approved proposal amendment
+  from a worker-brief amendment, identifies the replacement-Coordinator
+  confirmation by name, and puts non-consuming inbox reads in the periodic
+  check. Storm Research uses one placement rule for research limitations,
+  preserves calibrated uncertainty, and identifies who maps confidence levels.
 - The opt-in `GLOBAL-AGENTS.md` freshness check compares the configured source
   with the copy on `origin/main`, and with `HEAD` only when the branch edits the
   copy. Branches started before the copy was refreshed on `main` no longer fail.

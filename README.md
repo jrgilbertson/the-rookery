@@ -59,7 +59,7 @@ when setting up your own environment and deciding where safeguards belong.
 
 ## The skills
 
-- [checking-simplicity](skills/checking-simplicity/SKILL.md). Find opportunities to safely simplify a design, plan, or approach against the current need. Use it when you ask to simplify something, including during a build, or when the next step adds durable machinery that isn't tied to that need.
+- [checking-simplicity](skills/checking-simplicity/SKILL.md). Find the simplest complete design for the current need, judging the system left behind rather than the size of the change. Ask “can this be simpler?”, “is this simple enough?”, or “check for simplicity,” including during a build, or when the next step adds durable machinery that isn't tied to that need.
 - [coordinating-work](skills/coordinating-work/SKILL.md). Set up, run, or revive one Orca Coordinator and its task workers so a batch of issues ships unattended. One approved proposal is its merge approval: it merges routine PRs, leaves held changes such as billing or access open, and keeps one list of what needs you.
 - [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a portable skill package. Use it to deliver a self-contained package.
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
@@ -75,8 +75,9 @@ The [automation catalog](automations/README.md) contains copyable prompts,
 schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
-- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `retro` to review recent AI sessions on each host for improvements to the coding environment.
+- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment.
 - [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and recommend fixes for approval.
+- [Design system audit](automations/design-system-audit.md). Review every page against the design contract and recommend fixes for drift and recurring design problems.
 - [Improve audit](automations/improve-audit.md). Use shadcn's `improve` to survey the whole codebase and recommend improvements for approval.
 - [State-machine correctness audit](automations/state-machine-audit.md). Assess application lifecycles under retries and concurrency, and recommend fixes for approval.
 - [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.

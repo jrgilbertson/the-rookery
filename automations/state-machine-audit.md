@@ -11,6 +11,8 @@ Use a repository-specific slug in the prompt. Keep the automation paused while v
 ## Prompt
 
 ```text
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `state-machine-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+
 Assess whether the application's behavior matches its intended rules over time.
 
 Find explicit and implicit state machines and document their states, invariants, and transition tables in one report. Identify invalid states or transitions the code can actually reach, with evidence, including through retries and concurrency. Separate confirmed bugs from hypotheses, group related findings, and recommend fixes and regression tests by impact. State what remains unassessed.
@@ -23,5 +25,5 @@ Assessment only: run existing tests and isolated scratch reproductions. Keep rep
 
 Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `state-machine-audit-<repository name>` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+Save the final report afterward.
 ```

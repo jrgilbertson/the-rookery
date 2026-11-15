@@ -28,7 +28,7 @@ including `checking-simplicity` and `ce-pov` for the recommendation review,
 and give the agent access to the sources the review requires. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
-Sessions audit invokes `retro` on each host separately. Install its required
+Sessions audit invokes `ce-retro` on each host separately. Install its required
 skills on both hosts before scheduling both jobs. The remote job runs first and
 the local job merges both hosts' findings into one list; see
 [Consolidation](sessions-audit.md#consolidation).
@@ -105,6 +105,7 @@ projects never share decisions or runs.
 3. At the end, write the run file, commit, `git pull --rebase --autostash`,
    and push. Another writer may share the checkout, so commit only your own
    files. On a push race, rebase and push again.
-4. When the owner answers, append the answers to `decisions.md`, then commit
-   and push before acting on them.
+4. When the owner answers, append the exact answers to `decisions.md`, then
+   commit and push. Recording a decision does not authorize an assessment run
+   to implement it; follow the owning workflow and its required approvals.
 ```

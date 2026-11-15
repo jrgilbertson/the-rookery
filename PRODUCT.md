@@ -32,7 +32,7 @@ The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintai
 
 - Skills install individually and should remain useful across Claude Code, Codex, Cursor, Gemini CLI, and other compatible tools.
 - The system avoids depending on one vendor, keeps the skill catalog small, and improves from use.
-- Automation definitions are reusable prompts and schedules configured manually in Orca. Local repository bindings, account identifiers, and run history stay in the scheduler.
+- Automation definitions are reusable prompts and schedules configured manually in Orca. Local repository bindings and account identifiers stay in the scheduler; reports and owner decisions stay in the private shared history repository.
 - The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
 - Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.
 - Huginn and Muninn explain the repository and its workflows through their actions. Huginn brings back new findings; Muninn preserves useful lessons and returns them to the work.

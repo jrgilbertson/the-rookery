@@ -35,6 +35,8 @@ quick check would have caught sooner.
 ## Prompt
 
 ```text
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `optimize-ci` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+
 Use `ce-optimize` to assess CI and recommend improvements. CI includes local Verify as well as hosted runs. Keep experiments within its approval requirements; recommendations do not authorize issue creation, implementation, or PR publication.
 
 Measure with the harness in the history clone's `optimize-ci/harness/`; its README gives the commands. Downloaded GitHub responses and experiment outputs stay in the local cache at $HOME/.local/state/ci-optimize/<repository name>/, which each host rebuilds. If the run changes a harness file, commit and push that change before saving the report. Keep new measurements dated and compare them with earlier run reports.
@@ -47,5 +49,5 @@ What earlier fixes taught: most local Verify time went to checks forced to run a
 
 Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `optimize-ci` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+Save the final report afterward.
 ```

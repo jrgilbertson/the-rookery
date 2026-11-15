@@ -1,67 +1,73 @@
 # Sessions audit
 
-Review recent AI sessions with the installed `retro` skill.
+Review recent AI sessions with Compound Engineering's `ce-retro` skill.
 
 | Orca job | Cadence | Timezone |
 |---|---|---|
 | Sessions audit (local) | Daily at 03:00 | America/Los_Angeles |
 | Sessions audit (remote) | Daily at 01:00 | America/Los_Angeles |
 
-- **Requires:** Matt Pocock's [`retro`](https://github.com/mattpocock/skills/tree/main/skills/engineering/retro) and [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) skills installed for the selected agent, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, access to that machine's AI session histories, and access to the repository's current guidance. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
-
-Before scheduling, follow the
-[upstream installation instructions](https://github.com/mattpocock/skills#installation-30-second-setup)
-for the agent selected in Orca, or run `npx skills@latest add mattpocock/skills`
-and select `retro` and `writing-for-agents` for that agent. Repeat the
-installation on each host where a session audit will run.
+- **Requires:** the [Compound Engineering plugin](https://github.com/EveryInc/compound-engineering-plugin), including `ce-retro` and `ce-pov`, and this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill for the selected agent on each host. Each run needs access to that host's AI session histories, the repositories' current guidance, and a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 Create each job on the Orca host whose sessions it should review; a job on one
-host does not establish coverage of the other. Both jobs share the prompt
-below, and each adds its own closing paragraph from
-[Consolidation](#consolidation). Replace The Rookery with the repository whose
-skills, workflows, guidance, and configuration you want reviewed.
+host does not establish coverage of the other. Copy the shared prompt below,
+then replace step 5 with the host's consolidation instructions. Replace
+The Rookery with the repository whose skills, workflows, guidance, and
+configuration you want reviewed, and fill in the private history repository.
 
-The prompt reviews the previous 24 hours on every run. Widen the review window
-after missed runs to cover sessions from when the host was unavailable.
+Use the selected harness's supported invocation for `ce-retro`. The automation
+owns session discovery and private history; CE Retro supplies the assessment.
+Its default discovery covers one repository, and its local ledger is not used
+here. Keep the installed plugin unchanged.
+
+Before activating a revised prompt, run it manually. For two hosts, run the
+remote audit first and confirm its report is saved before running the local
+audit and verifying consolidation of both reports. Verify skill
+loading, account-home coverage, assessment-only behavior, unread-session
+carry-forward, private report storage, and absence of new local CE Retro state.
+Check the filesystem before and after; an existing `.context` directory is not
+proof that the run created one. Confirm each saved Orca job's prompt matches the
+reviewed definition before reporting it updated. Preserve its schedule and enabled
+state unless the owner requests a change.
 
 ## Prompt
 
-The prompt starts with the `/retro` slash command because `retro` sets
-`disable-model-invocation`, so Claude Code loads it only from a slash command.
-On another agent, invoke `retro` the way that agent loads user-invoked skills.
-
 ```text
-/retro this host's AI sessions from the past 24 hours alongside The Rookery's skills, workflows, guidance, and configuration.
+Review this host's AI sessions from the past 24 hours alongside The Rookery's skills, workflows, guidance, and configuration. Widen the window after missed runs to cover the gap. This scheduled request authorizes the named host-wide session reads. This assessment ends with a report and recorded owner decisions. Issue creation, implementation, PR publication, and configuration changes are separate work through their owning workflows after an explicit instruction; do not start them from a finding decision in this run.
 
-Read actual transcripts across configured agents and account homes. Select by modification time, follow symlinks, deduplicate real paths, and cross-check Orca's session journal; it does not cover all terminal or external-app sessions. Describe personal threads by category only.
+1. Read history first. Clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Follow its README's storage instructions, using its helper when available or its documented Git steps otherwise. Read `sessions-audit` owner decisions and recent runs, plus this host's latest report even if it is older than the three newest reports overall. Inherit only this host's still-unread sessions from that report, including when it contains both hosts. Resolve known host-name changes from existing host metadata and history; disclose uncertain identity instead of silently choosing a different host. Distinguish unavailable history from no prior history and report any resulting limits on deduplication, grading, or unread-session carry-forward. An earlier report without an unread list leaves that coverage unknown. Revisit declined findings only with materially new evidence, labeled as previously declined.
 
-Recommend environment and workflow improvements supported by session evidence. Assessment only: issue creation, implementation, and PR publication require separate approval.
+2. Discover actual transcripts across this host's configured agents, account homes, and repositories. Verify the account homes from the host's available interfaces. Select by modification time, follow symlinks, deduplicate real paths, and cross-check Orca's session journal; it does not cover all terminal or external-app sessions. Add inherited unread sessions to the window's new sessions. Report each harness and account as searched, present but unread or unsupported, or absent. Exclude this audit, synthetic evaluations, prior retros and their transcript readers. Count child transcripts with their parent. Describe personal threads by category only; keep private evidence outside public repositories.
 
-Confirm each finding's cause in the transcript lines it cites, not in a reader's summary. Then run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+3. Invoke `ce-retro` on those selected sessions and the relevant repositories' current source, using only its no-user branch: steps 1–4, then its candidates-only report. Apply nothing and record no decisions through CE Retro, even if the owner later replies. Supply the host-wide inventory explicitly; its repo-filtered `sessions` helper cannot establish this coverage. The discovered sessions, including inherited unread work, are the read set: batch them across readers rather than applying CE Retro's default sample of about 20. Use its extractors on those files. If an execution limit prevents reading them all, report the incomplete coverage and carry every unread session forward. If there are no eligible local sessions, skip local mining and still complete consolidation and reporting. Use the private history already read for prior decisions and grading, rather than its local ledger. Skip `store`, `record`, and `record-run`: `store` creates local state even without decision writes. Add no ledger directory or ignore rule. Keep extracts and `candidates.md` in temporary storage outside the repositories.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `sessions-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+4. Confirm each finding's cause in the transcript lines it cites, including findings returned by delegated readers, and check that the cause remains in current source. Quantify time and effort only where events support it; silence in a log does not establish waiting time. When extracts omit causal detail, read the relevant original events or leave the claim uncertain. Identify the owner: a Rookery-owned source change, another project's change, or a third-party skill proposal. Compare complete root-cause solutions, then recommend any safeguard still needed. Run `checking-simplicity` on each draft recommendation. A clean result is valid.
+
+5. Prepare this host's recommendations for the final review. After that review and the report save in step 7, bring its list to the owner and record the exact decisions in private history.
+
+6. Run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized list for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+
+7. Save the final report through the private history repository's storage procedure before presenting the list to the owner or waiting for answers. If saving fails, retain the report in temporary storage outside the repositories, report the failure, its cause, and that path, then stop. Do not mark it saved or consolidated; complete storage before collecting owner decisions. Append decisions when the owner answers. Include the window, host, repositories and accounts covered, coverage gaps, prior-change grading where evidence allows, and every still-unread session for this host. Carry that list forward cumulatively, including inherited items, until each is read or explicitly disposed of by the owner. State why each remains unread. Apply step 5's reporting and reply instructions. The job that presents the list to the owner records the exact decisions, including each finding's host. For a combined list, the local job is the sole decision writer. History instructions govern storage, not authority to implement; a recorded answer does not authorize this assessment run to implement a fix.
 ```
 
 ## Consolidation
 
-When the same work spans both hosts, two separate reports ask the owner the
-same question twice, and neither job sees the other's evidence. The remote job
-therefore runs two hours before the local one, saves its report, and asks the
-owner nothing. The local job reads that report, becomes the remote workspace's
-parent in Orca, and brings the owner one prioritized list. The owner answers in
-one place, and each host's evidence can support or contradict the other's.
+The remote job runs two hours before the local one and saves its report without
+asking the owner. The local job combines both hosts' findings before its final
+review and brings the owner one list. Each host's evidence can support or
+contradict the other's.
 
-Add this paragraph to the end of the remote job's prompt:
+For the remote job, replace step 5 with:
 
 ```text
-Consolidation: end the saved report with this session's Orca session ID and workspace, then stop without asking the owner. The local Sessions audit reads the report, becomes this workspace's parent in Orca, and brings the owner one combined list. Answer its messages and carry out what it relays.
+5. Prepare this host's recommendations for the final review. When saving the report in step 7, include this session's Orca session ID and workspace. After that save, stop without asking the owner. The local Sessions audit reads the report and becomes this workspace's parent in Orca. Answer its evidence questions. The local job records owner decisions for the combined list; do not append those decisions again. Relayed replies do not authorize implementation, issue creation, publication, or configuration changes.
 ```
 
-Add this paragraph to the end of the local job's prompt:
+For the local job, replace step 5 with:
 
 ```text
-Consolidation: when the remote host's audit saved a report in the past 24 hours, read it and make this workspace the parent of its workspace in Orca. Merge its recommendations with this host's revised recommendations into one prioritized list before `ce-pov` judges it: combine matching findings, say where the two hosts' evidence conflicts, and mark each item's host. The owner answers here; relay each answer for the remote host to its session through Orca. With no remote report, say so and report this host only.
+5. Read each remote report not yet included in a successful local consolidation, using the remote report paths recorded in prior local reports. Widen retrieval after missed or late runs; if prior consolidation coverage is unknown, disclose that gap and use the widened review window. Make this workspace the parent of each relevant remote workspace in Orca. Merge its recommendations with this host's revised recommendations into one prioritized list before `ce-pov` judges it: combine matching findings, say where the two hosts' evidence conflicts, and mark each item's host. Preserve each host's coverage and unread-session list in the combined report and identify the remote report paths included. After the final review and the report save in step 7, bring the combined list to the owner here and record each exact answer once in private history, labeled by host. Relay an answer to a remote session only when needed to clarify its evidence; the remote must not record it again. With no remote report, say so and report this host only. Do not resume CE Retro's apply phase after an answer.
 ```
 
-A job that runs on one host only uses the shared prompt without either
-paragraph.
+A job on one host uses the shared prompt without either replacement and brings
+that host's reviewed list to the owner.

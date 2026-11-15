@@ -75,8 +75,9 @@ The [automation catalog](automations/README.md) contains copyable prompts,
 schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
-- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `retro` to review recent AI sessions on each host for improvements to the coding environment.
+- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment.
 - [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and recommend fixes for approval.
+- [Design system audit](automations/design-system-audit.md). Review every page against the design contract and recommend fixes for drift and recurring design problems.
 - [Improve audit](automations/improve-audit.md). Use shadcn's `improve` to survey the whole codebase and recommend improvements for approval.
 - [State-machine correctness audit](automations/state-machine-audit.md). Assess application lifecycles under retries and concurrency, and recommend fixes for approval.
 - [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.

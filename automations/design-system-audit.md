@@ -11,6 +11,8 @@ Use a repository-specific slug in the prompt. Keep the automation paused while v
 ## Prompt
 
 ```text
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `design-system-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined or deferred findings only with new evidence, such as the pattern reaching more pages or getting worse.
+
 Audit [product]'s interface against its design system with the `impeccable` skill and recommend fixes for approval. [design contract] is the contract; [sidecar file] is its sidecar. Run impeccable `context` once from the repository root, then read the contract in full.
 
 Review every page, public and signed-in, each run:
@@ -34,5 +36,5 @@ Keep screenshots only for the top issues and premium-bar proposals. This is an a
 
 Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `design-system-audit-<repository name>` runs and owner decisions before assessing, and save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined or deferred findings only with new evidence, such as the pattern reaching more pages or getting worse.
+Save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder.
 ```

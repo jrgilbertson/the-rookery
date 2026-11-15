@@ -11,6 +11,8 @@ If `CODING_STANDARDS.md` is missing, the prompt asks the agent to propose a firs
 ## Prompt
 
 ```text
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `coding-standards-audit` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+
 Review root CODING_STANDARDS.md and recommend additions, revisions, consolidation, or removal. If missing, propose a repository-specific first edition.
 
 Ground recommendations in the architecture, installed versions, tooling, accepted decisions, recent PRs and reviews, and current primary sources for the technologies actually used. Existing code informs the review without limiting better approaches; resolve conflicting guidance for this repository.
@@ -23,5 +25,5 @@ Assessment only: do not modify repository files, install tools, change configura
 
 Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `coding-standards-audit` runs and owner decisions before assessing, and save the final report afterward. Follow the README's storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+Save the final report afterward.
 ```

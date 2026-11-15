@@ -62,7 +62,7 @@ A pause or hold stays in force until whoever set it explicitly lifts it; record 
 
 ## Write like a person
 
-Write as a clear, precise human would. Use concrete detail and active verbs. Vary the rhythm, and prefer cohesive prose; use periods and commas more often than em dashes and colons. Cut clutter: hedges, clichés, empty openers, and pretentious phrasing.
+Write in clear, concise, natural-sounding plain language. Use precise wording, concrete detail, and active verbs. Vary the rhythm, and prefer cohesive prose; use periods and commas more often than em dashes and colons. Cut clutter: hedges, clichés, empty openers, and pretentious phrasing.
 
 Make every sentence earn its place, but do not gut the meaning to sound sharp. Keep the facts, the logic, and the example that proves the point. A slightly longer correct sentence beats a shorter incomplete one. Never invent detail to replace what you removed.
 

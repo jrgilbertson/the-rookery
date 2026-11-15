@@ -4,6 +4,11 @@ These recurring Orca reviews are part of how I build with AI. Each file
 contains a prompt, schedule, and prerequisites you can adapt to your own
 repository.
 
+Each definition starts with its purpose, cadence, timezone, and
+prerequisites, followed by any setup instructions and the copyable prompt.
+Longer operating notes follow the prompt. Sessions audit shares one prompt
+between two jobs, with host-specific consolidation instructions below it.
+
 | Automation | Purpose | Cadence | Timezone |
 |---|---|---|---|
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |

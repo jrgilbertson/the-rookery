@@ -4,7 +4,7 @@ Review the repository's tests, find gaps in what they protect, and recommend imp
 
 - **Cadence:** Thursday at 21:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The Compound Engineering `ce-simplify-code` skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** The Compound Engineering `ce-simplify-code` skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Prompt
 

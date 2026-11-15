@@ -6,6 +6,8 @@ Review every page of the interface against its design system, find drift and rep
 - **Timezone:** America/Los_Angeles.
 - **Requires:** The [`impeccable`](https://github.com/pbakaus/impeccable) skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, a browser tool the agent can drive, and a local development stack that can start unattended with Docker and seed a fictional signed-in account. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
+## Setup
+
 Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. The run needs the strongest model you have, because judging taste is the job. Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only project names, paths, and commands swapped out.
 
 ## Prompt

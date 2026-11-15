@@ -4,7 +4,9 @@ Review continuous integration and recommend improvements.
 
 - **Cadence:** Saturday at 09:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The Compound Engineering `ce-optimize` skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, and access to the target repository's CI configuration. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state). The prompt expects a measurement harness in that repository's `optimize-ci/harness/` folder, with a README naming its commands.
+- **Requires:** The Compound Engineering `ce-optimize` skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, and access to the target repository's CI configuration. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state). The prompt expects a measurement harness in that repository's `optimize-ci/harness/` folder, with a README naming its commands.
+
+## Setup
 
 The installed `ce-optimize` workflow builds measurement scaffolding before its
 experiment approval gate. This prompt asks for recommendations and leaves that
@@ -15,22 +17,6 @@ the checkout unless a durable state root is named. The harness lives in the
 automation-state repository, so every host gets the same scripts by pulling.
 What they download, such as GitHub API responses, stays in a cache folder on
 each host outside any repository, and each host rebuilds it.
-
-Each report measures two things:
-
-- **Hosted:** pull-request runner minutes per merged pull request, by one fixed
-  method, so weeks can be compared.
-- **Local:** Verify duration per suite, reuse of saved results, and failed
-  attempts, read from the task runner's history on the host that ran the
-  verifies. The harness this was written for reads Nx's task history, which
-  records no run id, so it groups tasks into runs by time gaps. Another host
-  has its own history, so its numbers are reported as that host's and are not
-  compared with the first host's.
-
-The lessons paragraph in the prompt comes from a series of local Verify fixes:
-checks forced to run alone, reruns of passed work, cache keys that missed what a
-check reads, hosted jobs that repeated a passed local Verify, and failures a
-quick check would have caught sooner.
 
 ## Prompt
 
@@ -53,3 +39,21 @@ Run `ce-pov` once on the revised recommendations as a whole, including review-pe
 
 Save the final report afterward.
 ```
+
+## Measurement notes
+
+Each report measures two things:
+
+- **Hosted:** pull-request runner minutes per merged pull request, by one fixed
+  method, so weeks can be compared.
+- **Local:** Verify duration per suite, reuse of saved results, and failed
+  attempts, read from the task runner's history on the host that ran the
+  verifies. The harness this was written for reads Nx's task history, which
+  records no run id, so it groups tasks into runs by time gaps. Another host
+  has its own history, so its numbers are reported as that host's and are not
+  compared with the first host's.
+
+The lessons paragraph in the prompt comes from a series of local Verify fixes:
+checks forced to run alone, reruns of passed work, cache keys that missed what a
+check reads, hosted jobs that repeated a passed local Verify, and failures a
+quick check would have caught sooner.

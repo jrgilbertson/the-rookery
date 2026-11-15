@@ -63,6 +63,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Automation definitions use a consistent opening, with setup instructions
+  before the prompt and longer operating notes after it. Sessions audit keeps
+  separate remote, local, and single-host instructions. Executable prompts
+  are unchanged.
 - `checking-simplicity` also triggers before a third fix round for the same
   kind of problem in one mechanism, extending the existing coordinated-work
   trigger to other development sessions.

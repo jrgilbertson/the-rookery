@@ -6,6 +6,8 @@ Survey the whole codebase with shadcn's `improve` skill and recommend improvemen
 - **Timezone:** America/Los_Angeles.
 - **Requires:** shadcn's [`improve` skill](https://github.com/shadcn/improve), this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
+## Setup
+
 Before scheduling, install the skill for the agent selected in Orca with
 `npx skills add shadcn/improve`. Use a repository-specific slug in the prompt,
 and keep the automation paused while validating its first manual run.

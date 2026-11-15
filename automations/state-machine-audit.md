@@ -4,7 +4,9 @@ Assess whether application lifecycles follow their intended rules, including und
 
 - **Cadence:** Sunday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** Access to the target repository and its tests, TLA+ and the TLC model checker for complex or concurrent areas, and this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill. Each run also needs a clone of your private automation-state repository and `ce-pov` for the final recommendation review; see [Shared run state](README.md#shared-run-state).
+- **Requires:** This repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, and access to the target repository and its tests. Complex or concurrent areas also require TLA+ and the TLC model checker. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+
+## Setup
 
 Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. The assessment reads the application and issue trackers; its report, models, and debugging evidence live in the private audit history. Issue creation and implementation follow separate owner approval.
 

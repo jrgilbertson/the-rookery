@@ -1,34 +1,27 @@
 # Sessions audit
 
-Review recent AI sessions with Compound Engineering's `ce-retro` skill.
+Review recent AI sessions and recommend improvements to skills, workflows,
+guidance, and configuration. The remote audit runs first; the local audit
+combines both hosts' findings into one list.
 
-| Orca job | Cadence | Timezone |
-|---|---|---|
-| Sessions audit (local) | Daily at 03:00 | America/Los_Angeles |
-| Sessions audit (remote) | Daily at 01:00 | America/Los_Angeles |
+- **Cadence:** Daily, remote at 01:00 and local at 03:00.
+- **Timezone:** America/Los_Angeles.
+- **Requires:** The [Compound Engineering plugin](https://github.com/EveryInc/compound-engineering-plugin), including `ce-retro` and `ce-pov`, and this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill for the selected agent on each host. Each run needs access to that host's AI session histories, the repositories' current guidance, and a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
-- **Requires:** the [Compound Engineering plugin](https://github.com/EveryInc/compound-engineering-plugin), including `ce-retro` and `ce-pov`, and this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill for the selected agent on each host. Each run needs access to that host's AI session histories, the repositories' current guidance, and a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+## Setup
 
-Create each job on the Orca host whose sessions it should review; a job on one
-host does not establish coverage of the other. Copy the shared prompt below,
-then replace step 5 with the host's consolidation instructions. Replace
-The Rookery with the repository whose skills, workflows, guidance, and
-configuration you want reviewed, and fill in the private history repository.
+Create each job on the host whose sessions it will review. Each job covers
+only its own host. Copy the shared prompt below and replace step 5 with the
+matching [consolidation instructions](#consolidation). For a single-host job,
+keep the shared prompt as written.
+
+Replace The Rookery with the repository whose skills, workflows, guidance,
+and configuration you want reviewed. Fill in the private history repository.
 
 Use the selected harness's supported invocation for `ce-retro`. The automation
 owns session discovery and private history; CE Retro supplies the assessment.
 Its default discovery covers one repository, and its local ledger is not used
 here. Keep the installed plugin unchanged.
-
-Before activating a revised prompt, run it manually. For two hosts, run the
-remote audit first and confirm its report is saved before running the local
-audit and verifying consolidation of both reports. Verify skill
-loading, account-home coverage, assessment-only behavior, unread-session
-carry-forward, private report storage, and absence of new local CE Retro state.
-Check the filesystem before and after; an existing `.context` directory is not
-proof that the run created one. Confirm each saved Orca job's prompt matches the
-reviewed definition before reporting it updated. Preserve its schedule and enabled
-state unless the owner requests a change.
 
 ## Prompt
 
@@ -59,17 +52,35 @@ one list. If local consolidation does not finish, the saved remote report
 still awaits that judgment. Each host's evidence can support or
 contradict the other's.
 
-For the remote job, replace step 5 with:
+### Remote job
+
+Replace step 5 with:
 
 ```text
 5. Skip step 6: the local job owns the final `ce-pov` judgment after consolidation. Save this host's recommendations as provisional until that judgment, preserving any `review pending` labels. When saving the report in step 7, include this session's Orca session ID and workspace. After that save, stop without asking the owner. The local Sessions audit reads the report and becomes this workspace's parent in Orca. Answer its evidence questions. The local job records owner decisions for the combined list; do not append those decisions again. Relayed replies do not authorize implementation, issue creation, publication, or configuration changes.
 ```
 
-For the local job, replace step 5 with:
+### Local job
+
+Replace step 5 with:
 
 ```text
 5. Read each remote report not yet included in a successful local consolidation, using the remote report paths recorded in prior local reports. Widen retrieval after missed or late runs; if prior consolidation coverage is unknown, disclose that gap and use the widened review window. Make this workspace the parent of each relevant remote workspace in Orca. Merge its recommendations with this host's revised recommendations into one prioritized list before `ce-pov` judges it: combine matching findings, say where the two hosts' evidence conflicts, and mark each item's host. Independently assess any substantively new recommendation first drafted during consolidation with `checking-simplicity` before the final `ce-pov`, or label it `review pending` if review cannot finish. Deduplication and presentation changes alone do not require another simplicity review. Preserve pending-review labels from both hosts through the final judgment. Count consolidation as successful only after that judgment completes and the combined report is saved. Preserve each host's coverage and unread-session list in the combined report and identify the remote report paths included. After the final review and the report save in step 7, bring the combined list to the owner here and record each exact answer once in private history, labeled by host. Relay an answer to a remote session only when needed to clarify its evidence; the remote must not record it again. With no remote report, say so and report this host only. Do not resume CE Retro's apply phase after an answer.
 ```
 
+### Single-host job
+
 A job on one host uses the shared prompt without either replacement and brings
 that host's reviewed list to the owner.
+
+## Verify setup
+
+Before activating a revised prompt, run it manually. For two hosts, run the
+remote audit first and confirm its report is saved before running the local
+audit and verifying consolidation of both reports. Verify skill
+loading, account-home coverage, assessment-only behavior, unread-session
+carry-forward, private report storage, and absence of new local CE Retro state.
+Check the filesystem before and after; an existing `.context` directory is not
+proof that the run created one. Confirm each saved Orca job's prompt matches the
+reviewed definition before reporting it updated. Preserve its schedule and enabled
+state unless the owner requests a change.

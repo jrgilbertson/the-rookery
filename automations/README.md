@@ -66,8 +66,10 @@ reads and writes one private Git repository, cloned to
 
 Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
-Each automation contains its assessment instructions, authority limits, and
-final `ce-pov` review in its own prompt. It runs independently; the history
+Each automation contains its assessment instructions and authority limits in
+its own prompt. Selected recommendations receive independent simplicity review in
+related sets, followed by a final `ce-pov` judgment. In paired Sessions audits,
+the local job owns that final judgment after combining both hosts. The history
 repository stores reports and owner decisions, not a shared assessment workflow.
 Its README documents storage and helper usage. Install `checking-simplicity` and
 `ce-pov` for each agent and host running these prompts.

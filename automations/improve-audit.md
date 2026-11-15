@@ -25,7 +25,11 @@ Use `improve` to audit this repository and recommend improvements. Run the skill
 
 Assessment only: stop after the vetted, prioritized findings and direction options. Plan files, `execute`, `--issues`, issue creation, implementation, and PR publication require separate approval. Approved plans go in the repository's ignored working path for plans, not a tracked `plans/` folder.
 
-Run `checking-simplicity` on each recommendation of medium or large effort and on the ten highest-leverage findings, then run `ce-pov` on that revised set and incorporate its judgment into the final prioritized recommendations for approval. List the remaining findings without that review. For a finding whose recommendation is unchanged from an earlier run, carry that run's review forward without repeating it. Report a finding that returns after its fix as a repeat, and review it again.
+Select recommendations of medium or large effort and the ten highest-leverage findings for review. List the remaining findings without that review. Report a finding that returns after its fix as a repeat.
+
+Group the selected recommendations into coherent sets; split those needing materially different context. Within that selection, include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
+
+Run `ce-pov` once on the revised selected recommendations as a whole, including review-pending items and interactions across sets. Incorporate its judgment into the final prioritized recommendations for approval, preserving evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
 
 Save the final report afterward.
 ```

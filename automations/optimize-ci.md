@@ -47,7 +47,9 @@ Every report has two measured sections:
 
 What earlier fixes taught: most local Verify time went to checks forced to run alone without a recorded reason and to reruns of work whose inputs had already passed. A saved result is safe only when its cache key covers everything the check reads. A hosted pull-request job that repeats a check the local Verify already passed can move to the merge queue. Cheap static failures belong in a quick check that runs before Verify. Local timings move with machine load and with verifies that overlap, so say so when a before-and-after rests on them.
 
-Run `checking-simplicity` on each draft recommendation, then run `ce-pov` on the revised recommendations and incorporate its judgment into the final prioritized recommendations for approval. Preserve evidence, tradeoffs, and uncertainty. Report blocked reviews and cases where no change is justified.
+Group related draft recommendations into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
+
+Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Incorporate its judgment into the final prioritized recommendations for approval, preserving evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
 
 Save the final report afterward.
 ```

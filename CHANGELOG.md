@@ -128,15 +128,19 @@ looked" surface. GitHub Releases mirror its entries.
   `checking-simplicity` and `ce-pov`; relayed owner answers do not authorize fixes.
 - The Analytics gap audit loads `instrument-product-analytics` through the
   PostHog MCP instead of an installed plugin skill.
-- The Weekly codebase design, Coding standards audit, Optimize CI, Test audit,
-  Analytics gap audit, and State-machine correctness audit prompts also run
-  `checking-simplicity` on each draft recommendation before the `ce-pov`
-  review, matching Sessions audit, and list `checking-simplicity` among their
-  requirements.
+- Automation prompts review related recommendations together with
+  `checking-simplicity`, then use `ce-pov` for the final judgment. Selected
+  recommendations receive fresh review each run, including Improve; empty
+  sets skip simplicity review, and missing reviews remain explicit. The skill
+  clarifies coverage of every recommendation in a submitted set and their
+  interactions while preserving its independent reviewer and compact readout.
 - The two Sessions audit jobs consolidate. The remote job saves its report with
   its Orca session ID and stops; the local job reads it, becomes the remote
   workspace's parent in Orca, and brings the owner one prioritized list across
-  both hosts. Each job supplies its consolidation step before the final review.
+  both hosts. Only the local job runs the final `ce-pov` after consolidation;
+  remote recommendations remain provisional until then. Substantively new
+  recommendations created during consolidation receive independent simplicity
+  review or remain marked review pending.
 - Agents no longer install a skill candidate locally before merge. The
   `coordinating-work` test notes drop their pre-merge install step, the Install
   Probe runs after merge as a maintainer step, and the release checklist has

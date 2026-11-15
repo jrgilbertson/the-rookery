@@ -110,6 +110,9 @@ looked" surface. GitHub Releases mirror its entries.
 - The installed-skills list includes Modern Web Guidance with instructions
   to disable telemetry in the installer and agent environment.
 
+- `coordinating-work` routes a planned move of a worker to another provider or
+  model to Revive's existing fresh handoff, which carries the brief and its
+  amendments after the operator approves the move.
 - `coordinating-work` suggests 30 minutes as the starting check interval in
   the setup proposal; the operator still approves the interval. `CONCEPTS.md`
   and `WORKFLOWS.md` now spell "pre-authorized" like the skill.

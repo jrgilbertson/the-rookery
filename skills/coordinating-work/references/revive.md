@@ -4,6 +4,11 @@ Read this after the operator manually starts a replacement Coordinator or asks
 to recover an interrupted coordinated batch. The entry skill owns shape, shared
 approval, worker lifetime, the record, and completion requirements.
 
+A planned move of a participant to another provider or model, such as to spare
+an account's quota, uses this reference for that participant only. Skip "Start
+with the Coordinator", propose the fresh-handoff row, and move the participant
+at its next idle point, after its running job ends.
+
 ## Start with the Coordinator
 
 Recovery starts with the Coordinator. The operator switches its account, or

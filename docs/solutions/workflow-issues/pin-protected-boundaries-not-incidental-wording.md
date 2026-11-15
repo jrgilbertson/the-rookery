@@ -23,8 +23,11 @@ related_components:
 
 The readiness skills and their dedicated tests were retired on 2026-10-13.
 Their examples and source-path citations below describe the historical workflow.
-Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
-lessons here still apply to surviving skills and checks.
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship). The surviving
+lessons are to identify protected boundaries, verify that executable checks fail
+when their subject breaks, exercise shipped helpers, and review prose changes
+independently. Guidance item 2 describes the historical sentence-pin approach;
+it is not the current testing policy.
 
 On 2026-11-13, `coordinating-work` and `managing-issues` dropped their
 sentence pins for plain scenario rows in their test READMEs

@@ -45,7 +45,7 @@ retired in #191, recoverable with `git show 135e2af^:tests/route-work/log.md`).
 When an exception can be keyed either on a judgment about the request or on a
 fact the model has already fixed, key it on the fact. Here the starting owner
 had already been chosen from the owner table before the roster rule ran, so
-the exception now reads (`ROUTING.md`, "Estimate the pattern and roster"):
+the revised exception read (the historical `ROUTING.md`, "Estimate the pattern and roster"):
 
 > Skip the prediction when the operator limits the run to planning or
 > withholds implementation, or when the run starts with `managing-issues` or
@@ -80,7 +80,7 @@ its own route once the tracker is settled.
 
 ## Examples
 
-A related failure from the same branch: in the "Preserve authority"
+A related failure from the same branch: in the historical "Preserve authority"
 paragraph, "When the operator withheld merge, that line is the limit's one
 sentence. Otherwise say nothing about authority." let "Otherwise" attach to
 the nearest condition, which could cancel the limit and no-merge rules before

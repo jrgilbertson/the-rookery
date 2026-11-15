@@ -1,7 +1,7 @@
 ---
 title: Keep repository issue configuration semantic at transport boundaries
 date: 2026-08-17
-last_updated: 2026-08-18
+last_updated: 2026-11-14
 category: architecture-patterns
 module: skills/managing-issues provider configuration
 problem_type: architecture_pattern
@@ -93,7 +93,7 @@ is evidence, not an automatic preference. Priority, estimate, and general-label
 mappings may be empty, but readiness retains the three canonical choices
 `needs-discovery`, `needs-planning`, and `ready` so issue state remains
 intelligible across repositories
-(`skills/managing-issues/SKILL.md`, “Resolve the tracker and current facts”;
+(`skills/managing-issues/references/setup.md`;
 `skills/managing-issues/scripts/config_check.py`).
 
 ### Keep effect approvals separate
@@ -101,8 +101,8 @@ intelligible across repositories
 If chosen labels are missing, preview and approve their provider-side creation
 as one metadata batch and verify them first. Preview the repository config as a
 separate setup batch. Then reread current tracker state and request separate
-approval for the original issue mutation (`skills/managing-issues/SKILL.md`,
-“Resolve the tracker and current facts”). Setup approval never doubles as
+approval for the original issue mutation
+(`skills/managing-issues/references/setup.md`). Setup approval never doubles as
 issue-write approval.
 
 The configured provider stays canonical, and Managing Issues writes only that
@@ -173,8 +173,7 @@ command surface”). Do not rewrite the config to record `orca`.
 
 Pause before the tracker mutation, ask the operator to choose provider, exact
 target, and starter, existing, or custom metadata
-mappings (`skills/managing-issues/SKILL.md`, “Resolve the tracker and current
-facts”). If selected labels are missing, approve and read back their creation
+mappings (`skills/managing-issues/references/setup.md`). If selected labels are missing, approve and read back their creation
 first; next approve the exact config file; finally reread the tracker and preview
 the issue create for its own approval. A read in that same repository skips setup
 because it creates no durable shared choice.

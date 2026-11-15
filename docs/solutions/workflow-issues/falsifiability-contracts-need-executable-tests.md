@@ -1,7 +1,7 @@
 ---
 title: "Ship bundled skill helpers with an executable falsifiability contract"
 date: 2026-07-31
-last_updated: 2026-10-09
+last_updated: 2026-11-14
 category: workflow-issues
 module: "skills/checking-pr-readiness, skills/checking-merge-readiness, skills/repo-gardener"
 problem_type: workflow_issue
@@ -218,6 +218,12 @@ When a bundled helper's output is what an agent reads to decide a gate:
    rather than `head`, with a fixture payload big enough to actually trigger
    the SIGPIPE race. "Merge now, harden the tests next" leaves the gate
    silently unfalsifiable for exactly the window that matters.
+
+Items 10–12 address executable gates with machine-consumed evidence or
+configuration contracts. They do not call for adding receipts or verification
+protocols to qualitative reviews; see
+[Keep qualitative agent reviews qualitative](../best-practices/keep-qualitative-agent-reviews-qualitative.md)
+and [Reuse the shipping pipeline](../architecture-patterns/reuse-the-shipping-pipeline-instead-of-a-managed-run-protocol.md).
 
 10. **Do not let an evidence artifact authenticate itself.** A valid schema,
     digest, and claimed exit code prove only internal consistency. Require an

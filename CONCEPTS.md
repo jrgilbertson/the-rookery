@@ -45,16 +45,16 @@ start a full CRM catch-up.
 ### Administrative Sweep
 
 A check of canonical records during a wind-down or weekly review. It proposes
-exactly one action that can be approved separately for every record the evidence
-shows is wrong or needs a decision. This includes overdue, follow-up-due, and
-at-risk tasks. Upcoming tasks normally feed the plan instead: tasks due tomorrow
-in Wind-down or in the coming week in Weekly. The sweep proposes an action for
-an upcoming task only when the plan cannot accommodate it. Wind-down runs the
-sweep as its first phase and applies and reads back approved actions before
-coaching or journal drafting begins. Weekly runs the sweep while reconstructing
-the week and carries its rows into the single review bundle presented at the end
-of the run. It lists nothing that is healthy and never creates a second task
-list.
+one independently approvable action for every record the evidence shows is
+wrong or needs a decision, including overdue, follow-up-due, and at-risk tasks.
+It lists nothing healthy and never creates a second task list. Upcoming tasks
+normally feed the plan; the sweep proposes an action only when the plan cannot
+accommodate them.
+
+The [owning procedure](skills/personal-chief-of-staff/references/administrative-sweep.md)
+defines each mode's dates and qualifying findings.
+[Wind-down](skills/personal-chief-of-staff/references/wind-down.md) and
+[Weekly](skills/personal-chief-of-staff/references/weekly.md) define when it runs.
 
 ### Frontier Round
 
@@ -100,7 +100,8 @@ proposal approved.
 
 What the operator approved a Coordinator to merge without them: the merge bar
 and held changes shown in the setup proposal for one coordinated batch, with
-any held change the operator pre-authorized there under a stated bar. Only
+any held change the operator pre-authorized there under a stated bar and any
+recorded operator-approved amendment to the batch, merge bar, or held changes. Only
 the operator's recorded approval of a proposal creates or changes it. It covers
 merging and nothing else.
 

@@ -32,7 +32,7 @@ Select recommendations of medium or large effort and the ten highest-leverage fi
 
 Group the selected recommendations into coherent sets; split those needing materially different context. Within that selection, include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
 
-Run `ce-pov` once on the revised selected recommendations as a whole, including review-pending items and interactions across sets. Incorporate its judgment into the final prioritized recommendations for approval, preserving evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
+Run `ce-pov` once on the revised selected recommendations as a whole, including review-pending items and interactions across sets. Use its judgment to prioritize the final list for approval while retaining every recommendation submitted to that judgment, including those it disfavors, with evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
 
 Save the final report afterward.
 ```

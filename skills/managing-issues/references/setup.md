@@ -47,8 +47,8 @@ back that batch before rendering the config. Then preview the exact
 `.agents/managing-issues.json` content for separate approval. Write only that
 displayed path, validate the config, and resume the original request with a
 fresh canonical read, complete tracker preview, and its own direct approval
-question. An incompatible config follows the same replacement path and renders
-only schema-required fields; say so in the replacement preview. State all three
+question. An incompatible config follows the same replacement path. Render
+schema-required fields and the operator's chosen optional settings in the replacement preview. State all three
 decisions explicitly:
 provider-metadata approval approves only those metadata effects, repository-
 setup approval approves only the displayed file, and the resumed tracker batch

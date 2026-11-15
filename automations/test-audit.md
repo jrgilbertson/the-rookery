@@ -11,7 +11,7 @@ Review the repository's tests, find gaps in what they protect, and recommend imp
 ```text
 Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
 
-History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `test-audit` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
+History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `test-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Use `compound-engineering:ce-simplify-code` to audit this repo's tests and recommend improvements without applying them.
 
@@ -28,7 +28,7 @@ Combine both passes, group findings by cause, include every material recommendat
 
 Group related draft recommendations into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
 
-Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Incorporate its judgment into the final prioritized recommendations for approval, preserving evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
+Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Use its judgment to prioritize the final list for approval while retaining every recommendation submitted to that judgment, including those it disfavors, with evidence, tradeoffs, uncertainty, and any pending-review labels. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
 
 Save the final report afterward.
 ```

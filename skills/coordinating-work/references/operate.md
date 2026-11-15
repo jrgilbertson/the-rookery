@@ -55,7 +55,8 @@ the worker's word because the worker runs the watch. Lines 3 and 4 are facts
 you read yourself from the pull request and the record when you decide. In a
 batch with no task workers, you run `lfg` and the continuous `ce-babysit-pr`
 watch yourself, and line 2 reads the first line of your own watch report and
-the head commit it covered.
+the head commit it covered. Apply the UX and UI work guidance in
+[Assignment briefs](../SKILL.md#assignment-briefs) to your own assignments too.
 
 1. **Approval.** The record holds the approved setup proposal and any operator-approved
    amendment to its batch, merge bar, or held changes. Together they show the

@@ -18,7 +18,8 @@ of what needs the operator.
   [Setup](references/setup.md).
 - For running an established coordinated batch, read
   [Operate](references/operate.md).
-- For interrupted collaboration, read [Revive](references/revive.md).
+- For interrupted collaboration, or to move a participant to another provider
+  or model, read [Revive](references/revive.md).
 
 ## Shape
 

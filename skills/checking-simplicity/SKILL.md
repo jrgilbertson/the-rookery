@@ -132,23 +132,21 @@ what must remain, and it ends there. It raises no question and names only
 parts the subject contains. Do not invent a concern.
 
 When simplification is needed, the readout is the simplest complete alternative,
-at most three grouped reasons with each reason's essential evidence in the
-same sentence, one sentence on protected behavior with one observable test
-for each protected behavior, and the next action. Each removal reason connects the
-machinery or scope to the current need it does not serve, and names reuse
-where it applies. For a system design or architecture, name the current and
-recommended whole-system shapes and their decision-driving contrast before the
-reasons. The next action is the caller's move on the subject: revising it, or
-handing it to the workflow that owns it.
+at most three grouped reasons, protected behavior with one observable test for
+each protected behavior, and the next action. Keep each reason's essential
+evidence alongside it, using short sentences or bullets where they aid clarity.
+Each removal reason connects the machinery or scope to the current need it does
+not serve, and names reuse where it applies. For a larger redesign, name the concrete gain and the
+additional implementation, migration, or verification work it requires.
+For a system design or architecture, name the current and recommended
+whole-system shapes and their decision-driving contrast before the reasons.
+The next action is the caller's move on the subject: revising it, or handing
+it to the workflow that owns it.
 
-The readout contains only the assessment, in plain language that reads well
-as unrendered text, with short lists where they aid scanning, a colon for a
-label and its description, and no em dashes. Process and method stay out of
-it: the comparison procedure, this skill, and whether a decision was needed are
-not mentioned, and neither is a replay of the subject, a reviewer roster, a
-commit hash, a digest, or a status code. Detailed evidence is available on
-request. The reviewer returns the readout without revising the subject,
-editing repository files, committing, or approving shipping.
+The reviewer returns only the assessment, without process narration, a replay
+of the subject, or review metadata. Detailed evidence is available on request.
+The reviewer does not revise the subject, edit repository files, commit, or
+approve shipping.
 
 ## Boundaries
 

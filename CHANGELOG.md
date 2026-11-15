@@ -63,6 +63,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-simplicity` readouts allow evidence and protected behavior to use
+  clear sentences or short lists, and name the gain and additional work of
+  larger redesigns. The compact clean result, three grouped reasons, and
+  observable tests for protected behavior remain. Duplicated prose-style rules
+  are removed; assessment-only boundaries remain.
 - Automations stop and report a missing or unloadable required skill. Skill
   and plugin installation and updates are outside their scope; setup notes
   no longer include installation commands.

@@ -63,6 +63,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The final `ce-pov` review in each automation judges every recommendation as
+  its own decision. The approval list keeps only the recommendations it
+  supports, most impactful first; each one it rejects appears in one line with
+  its reason, outside the list, so nothing is dropped silently.
 - Automation setup uses Chat mode and explicit model and effort selections
   guided by `ROUTING.md`; the Design system audit follows its Design/taste row.
 - `checking-simplicity` readouts allow evidence and protected behavior to use

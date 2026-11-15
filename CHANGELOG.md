@@ -63,6 +63,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` requires Impeccable within LFG for assignments that
+  create or improve UX and UI, including assignments the Coordinator executes
+  itself.
 - `coordinating-work` requires new task worker workspaces, including later
   waves, to be direct children of the Coordinator workspace and verifies the
   recorded parent after creation, preserving explicit placement and existing

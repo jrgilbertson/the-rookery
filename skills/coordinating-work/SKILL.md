@@ -2,7 +2,7 @@
 name: coordinating-work
 description: "Establish, run, or revive a coordinated batch in Orca: one Coordinator and its task workers delivering a list of issues unattended. Use when explicitly asked to set up a Coordinator or team, to let one run without the operator, or to recover one after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows."
 license: MIT
-compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov. Workers also use checking-simplicity, and the Coordinator managing-issues, when installed."
+compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov. UX and UI assignments also require impeccable. Workers also use checking-simplicity, and the Coordinator managing-issues, when installed."
 ---
 
 # Coordinating Work
@@ -159,6 +159,11 @@ belongs in a brief only when that condition holds for the assignment.
   instructions can forbid them unless the task asks.
   Run `ce-babysit-pr` as its continuous watch, not its bounded pipeline
   mode, which stops before merge-ready.
+- **UX and UI work.** When an assignment involves creating or improving a
+  user-facing interface or interaction, use `impeccable` within the LFG
+  workflow for the relevant design, implementation, and visual verification
+  work. Carry any approved design direction and constraints in the brief.
+  Route questions through the Coordinator under the existing decision rules.
 - **Link the issue.** The pull request links its issue the way the project's
   instructions say. Where the project has no rule, it refers to the issue
   without the tracker's closing keywords. When a verification criterion of the

@@ -29,6 +29,13 @@ concurrency, supervision, merging, and the batch's record. Each
 task worker owns one assignment, normally one worktree and one pull request.
 Give each assignment one current writer.
 
+Create each new task worker's Orca workspace as a direct child of the
+Coordinator workspace, including later waves, through the current runtime
+guide's supported placement operation. This workspace hierarchy is separate
+from Git branch ancestry and tracker parent issues. Explicit operator-directed
+placement takes precedence; adopted or reused workspaces keep their placement
+unless a move is explicitly authorized.
+
 The skill describes this shape only. Leave any other participant running as
 you found it.
 
@@ -245,6 +252,13 @@ Account for every intended participant as responsive, idle awaiting assignment,
 waiting on a named dependency, explicitly held, or blocked. These are report
 descriptions, not invented native status values. Identify excluded completed
 workers or unresolved candidates when they affect the outcome.
+
+After creating a task worker workspace, verify its recorded parent identity
+against the intended parent. A successful launch alone does not establish the
+hierarchy. If the parent is wrong, cannot be read back, or the runtime cannot
+preserve the intended hierarchy, report the exception, preserve successful
+launch effects, and use the guide's supported recovery without duplicating
+workers or silently reparenting adopted work.
 
 Confirm the participant's current assignment or deliberate disposition and
 applicable recent decisions, a working return path to the current Coordinator,

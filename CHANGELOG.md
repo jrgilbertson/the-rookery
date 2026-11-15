@@ -63,6 +63,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` requires new task worker workspaces, including later
+  waves, to be direct children of the Coordinator workspace and verifies the
+  recorded parent after creation, preserving explicit placement and existing
+  workspaces while reporting unsupported hierarchy as an exception.
 - The final `ce-pov` review in each automation judges every recommendation as
   its own decision. The approval list keeps only the recommendations it
   supports, most impactful first; each one it rejects appears in one line with

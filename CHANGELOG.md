@@ -63,6 +63,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-simplicity` also triggers before a third fix round for the same
+  kind of problem in one mechanism, extending the existing coordinated-work
+  trigger to other development sessions.
 - Checking Simplicity asks for evidence appropriate to the subject, including
   current implementation or source material for non-code work.
 - Automation prompts read private history before assessment and save their

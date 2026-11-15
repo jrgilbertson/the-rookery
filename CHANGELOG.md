@@ -63,6 +63,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Automation setup uses Chat mode and explicit model and effort selections
+  guided by `ROUTING.md`; the Design system audit follows its Design/taste row.
 - `checking-simplicity` readouts allow evidence and protected behavior to use
   clear sentences or short lists, and name the gain and additional work of
   larger redesigns. The compact clean result, three grouped reasons, and

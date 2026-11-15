@@ -28,7 +28,10 @@ your work.
 ## Set up a scheduled review
 
 Create an automation in Orca and select the target repository and agent. Set
-the schedule and paste the prompt from its file. The selected agent needs the
+the schedule and paste the prompt from its file. Select Chat mode and save an
+explicit model and effort, using [ROUTING.md](../ROUTING.md) to match the work.
+Keep the saved selections in Orca; changing the routing guide does not update
+existing jobs. The selected agent needs the
 named skills and access to the sources the review requires. If a required skill
 is missing or cannot load, the automation reports it and stops. Skill and plugin
 installation and updates are outside the automation. For Sessions audit,

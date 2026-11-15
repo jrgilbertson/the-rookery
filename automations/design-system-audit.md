@@ -8,7 +8,7 @@ Review every page of the interface against its design system, find drift and rep
 
 ## Setup
 
-Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. The run needs the strongest model you have, because judging taste is the job. Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only project names, paths, and commands swapped out.
+Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. Choose the model and effort from the Design/taste row in [ROUTING.md](../ROUTING.md). Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only project names, paths, and commands swapped out.
 
 ## Prompt
 

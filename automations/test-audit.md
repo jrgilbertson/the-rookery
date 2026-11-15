@@ -9,6 +9,8 @@ Review the repository's tests, find gaps in what they protect, and recommend imp
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `test-audit` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Use `compound-engineering:ce-simplify-code` to audit this repo's tests and recommend improvements without applying them.

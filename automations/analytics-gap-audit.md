@@ -16,6 +16,8 @@ Replace each bracketed placeholder with your own project's value. This is the pr
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `analytics-gap-audit` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Audit [product] for analytics gaps and recommend fixes that follow PostHog's `instrument-product-analytics` skill. Load it through the PostHog MCP: `learn posthog:instrument-product-analytics`. If the skill does not load, report the run as failed and stop. Assess the application and issue tracker read-only; the audit report is the only persistent write.

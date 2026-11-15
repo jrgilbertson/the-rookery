@@ -28,13 +28,14 @@ your work.
 ## Set up a scheduled review
 
 Create an automation in Orca and select the target repository and agent. Set
-the schedule and paste the prompt from its file. Install any named skills,
-including `checking-simplicity` and `ce-pov` for the recommendation review,
-and give the agent access to the sources the review requires. For Sessions audit,
+the schedule and paste the prompt from its file. The selected agent needs the
+named skills and access to the sources the review requires. If a required skill
+is missing or cannot load, the automation reports it and stops. Skill and plugin
+installation and updates are outside the automation. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
-Sessions audit invokes `ce-retro` on each host separately. Install its required
-skills on both hosts before scheduling both jobs. The remote job runs first and
+Sessions audit invokes `ce-retro` on each host separately, with required skills
+available to the selected agent on each host. The remote job runs first and
 the local job merges both hosts' findings into one list; see
 [Consolidation](sessions-audit.md#consolidation).
 
@@ -76,8 +77,7 @@ its own prompt. Selected recommendations receive independent simplicity review i
 related sets, followed by a final `ce-pov` judgment. In paired Sessions audits,
 the local job owns that final judgment after combining both hosts. The history
 repository stores reports and owner decisions, not a shared assessment workflow.
-Its README documents storage and helper usage. Install `checking-simplicity` and
-`ce-pov` for each agent and host running these prompts.
+Its README documents storage and helper usage.
 
 Copy the storage template below into your private repository's README. If it
 provides a history helper, document how to use it for these operations.

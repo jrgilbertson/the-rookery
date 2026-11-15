@@ -63,6 +63,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Automations stop and report a missing or unloadable required skill. Skill
+  and plugin installation and updates are outside their scope; setup notes
+  no longer include installation commands.
 - Automation definitions use a consistent opening, with setup instructions
   before the prompt and longer operating notes after it. Sessions audit keeps
   separate remote, local, and single-host instructions. Executable prompts

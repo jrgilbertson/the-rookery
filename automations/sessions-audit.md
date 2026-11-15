@@ -26,6 +26,8 @@ here. Keep the installed plugin unchanged.
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 Review this host's AI sessions from the past 24 hours alongside The Rookery's skills, workflows, guidance, and configuration. Widen the window after missed runs to cover the gap. This scheduled request authorizes the named host-wide session reads. This assessment ends with a report and recorded owner decisions. Issue creation, implementation, PR publication, and configuration changes are separate work through their owning workflows after an explicit instruction; do not start them from a finding decision in this run.
 
 1. Read history first. Clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Follow its README's storage instructions, using its helper when available or its documented Git steps otherwise. Read `sessions-audit` owner decisions and recent runs, plus this host's latest report even if it is older than the three newest reports overall. Inherit only this host's still-unread sessions from that report, including when it contains both hosts. Resolve known host-name changes from existing host metadata and history; disclose uncertain identity instead of silently choosing a different host. Distinguish unavailable history from no prior history and report any resulting limits on deduplication, grading, or unread-session carry-forward. An earlier report without an unread list leaves that coverage unknown. Revisit declined findings only with materially new evidence, labeled as previously declined.

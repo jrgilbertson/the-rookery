@@ -13,6 +13,8 @@ Use a repository-specific slug in the prompt. Keep the automation paused while v
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `design-system-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined or deferred findings only with new evidence, such as the pattern reaching more pages or getting worse.
 
 Audit [product]'s interface against its design system with the `impeccable` skill and recommend fixes for approval. [design contract] is the contract; [sidecar file] is its sidecar. Run impeccable `context` once from the repository root, then read the contract in full.

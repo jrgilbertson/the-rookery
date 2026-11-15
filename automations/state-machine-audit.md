@@ -13,6 +13,8 @@ Use a repository-specific slug in the prompt. Keep the automation paused while v
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `state-machine-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Assess whether the application's behavior matches its intended rules over time.

@@ -8,9 +8,8 @@ Survey the whole codebase with shadcn's `improve` skill and recommend improvemen
 
 ## Setup
 
-Before scheduling, install the skill for the agent selected in Orca with
-`npx skills add shadcn/improve`. Use a repository-specific slug in the prompt,
-and keep the automation paused while validating its first manual run.
+Use a repository-specific slug in the prompt, and keep the automation paused
+while validating its first manual run.
 
 The skill covers correctness, security, performance, tests, tech debt,
 dependencies, developer experience, docs, and direction, and it returns many
@@ -21,6 +20,8 @@ one.
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `improve-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Use `improve` to audit this repository and recommend improvements. Run the skill as written, at its default effort and across all of its categories; other tools and automations covering an area do not narrow its scope.

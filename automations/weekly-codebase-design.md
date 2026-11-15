@@ -6,16 +6,11 @@ Review the codebase design and recommend improvements.
 - **Timezone:** America/Los_Angeles.
 - **Requires:** Matt Pocock's [`codebase-design` skill](https://github.com/mattpocock/skills/tree/main/skills/engineering/codebase-design), this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
-## Setup
-
-Before scheduling, install the skill for the agent selected in Orca. Follow the
-[upstream installation instructions](https://github.com/mattpocock/skills#installation-30-second-setup)
-for that agent, or run `npx skills@latest add mattpocock/skills` and select
-`codebase-design`.
-
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `weekly-codebase-design` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Use `codebase-design` to review this repository and recommend improvements grounded in its current design and needs.

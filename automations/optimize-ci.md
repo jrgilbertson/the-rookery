@@ -21,6 +21,8 @@ each host outside any repository, and each host rebuilds it.
 ## Prompt
 
 ```text
+Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `optimize-ci` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Use `ce-optimize` to assess CI and recommend improvements. CI includes local Verify as well as hosted runs. Keep experiments within its approval requirements; recommendations do not authorize issue creation, implementation, or PR publication.

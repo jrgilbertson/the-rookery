@@ -118,8 +118,8 @@ decision stays open.
 
 For a decision, recommend the simplest complete solution the
 evidence supports. For missing evidence, recommend the smallest set that
-completes the decision frame: the stated goal, the behavior and constraints
-that must be preserved, the actual callers, and the relevant current code.
+completes the decision frame and makes the subject inspectable, including the
+relevant current implementation or source material.
 
 ## Readout
 

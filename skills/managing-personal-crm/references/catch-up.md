@@ -1,8 +1,32 @@
 # Catch-up
 
-Read this reference only for a one-time Person-note cleanup, triage,
-reconstruction, merge, deletion, or migration request. Catch-up stays in one
+Read this reference for a one-time Person-note cleanup, triage, reconstruction,
+merge, deletion, or migration request, and every visible continuation of it.
+Catch-up stays in one
 visible conversation; it is not a background workflow.
+
+## Continue the visible stage
+
+A confirmation or revision of the required inventory, dispositions such as
+`1 active, 2 merge`, a confirmation or correction of the current person's
+interpretation, an answer to its focused question, or a request to resume that
+person's deferred reconstruction continues the exact visible catch-up stage.
+Preserve the recap and current person. Stage-two replies start neither a new
+inventory nor a new triage bundle, and approve no Person, Task, cleanup, or
+other destination effect. Perform no write unless the user later approves an exact separately proposed
+effect. Handle that decision through the skill's
+[exact-effect path](../SKILL.md#resolve-the-mode), including its required reads.
+
+Inventory decisions authorize only the confirmed preflight scope. Stage-one
+dispositions are reviewed classifications, not permission to change a Person
+note or perform cleanup. Retain them in the visible recap without destructive
+action. A deferred numbered action instead returns to the skill's deferred-action
+path for a new decision; resuming it grants no write, source or destination
+recheck, or new discovery.
+
+Read [source-behavior.md](source-behavior.md) before a source query or identity
+judgment. Load [apple-messages-cli.md](apple-messages-cli.md) before Messages
+queries when `imsg` is configured. X is outside catch-up inventory.
 
 ## Confirm and prove the source inventory
 
@@ -29,6 +53,21 @@ before stage one begins.
 
 Completion: every confirmed source has an honest breadth result, all required
 sources passed, and omitted optional coverage is explicit.
+
+## Read the relationship contract before Person inspection
+
+After required preflight passes, read
+[relationship-contract.md](relationship-contract.md) before inspecting any
+Person note for a first or later stage-one bundle or inspecting or reconstructing
+the current person in stage two. This includes continuation after inventory
+confirmation, prior-bundle dispositions, an interpretation correction, a focused
+answer, or deferred reconstruction. A blocked inventory-only turn need not load
+it. Use its target schema, conditional tier requirements, monotonic last-contact
+rule, durable-meaning boundary, and legacy mappings, including `next_touch`.
+
+Stage one performs triage only. Defer rich history reconstruction, durable-meaning
+changes, cadence effects, and all person-level effect preparation until stage
+two reaches a retained person. End each turn at the stage ending below.
 
 ## Stage one: triage every Person note
 

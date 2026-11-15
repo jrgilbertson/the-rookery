@@ -231,7 +231,7 @@ waiting for the user, prepares its proposal from canonical role reads alone.
 Before proposing or applying any source change, read
 [action-application.md](action-application.md); private map changes instead
 follow the preview and approval path in
-[source-bindings.md](source-bindings.md#save-an-approved-binding).
+[source-setup.md](source-setup.md#save-an-approved-binding).
 
 Completion: every write traces to one exact user approval of its displayed
 effect.

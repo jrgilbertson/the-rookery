@@ -57,9 +57,10 @@ batch with no task workers, you run `lfg` and the continuous `ce-babysit-pr`
 watch yourself, and line 2 reads the first line of your own watch report and
 the head commit it covered.
 
-1. **Approval.** The record holds the setup proposal the operator approved, it
-   shows a merge bar and held changes, and this pull request's issue is in
-   its batch or inside an approved class of incidental work. Every condition
+1. **Approval.** The record holds the approved setup proposal and any operator-approved
+   amendment to its batch, merge bar, or held changes. Together they show the
+   current merge bar and held changes, and this pull request's issue is in
+   the approved batch or inside an approved class of incidental work. Every condition
    the approved merge bar adds beyond this list is true for this pull
    request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
@@ -181,8 +182,8 @@ worker alone.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing
-else reports. Each time, read the table against live state and act on what
-changed:
+else reports. Read mail with the guide's read that leaves the inbox as it is.
+Each time, read the table against live state and act on what changed:
 
 - answer any question still unanswered;
 - note pull requests the code host shows opened or merged since the last

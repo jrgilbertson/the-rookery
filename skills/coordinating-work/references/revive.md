@@ -115,8 +115,8 @@ changes do not authorize execution.
 
 Go ahead without a new approval in two cases. The first is when every row
 keeps an approval already in the record and the only change is the
-Coordinator's own account, with the operator's confirmation from step 1 when
-the session is new. The second is when the operator has
+Coordinator's own account, with the operator's confirmation from
+"Start with the Coordinator" when the session is new. The second is when the operator has
 switched an account and asked to continue or recover, and every row resumes the same
 conversation under the newly selected account with the same provider, model,
 and effort. Replacing a worker, changing its provider or settings, or a fresh

@@ -7,7 +7,7 @@ outcome requirements.
 ## Establish the intended coordinated batch
 
 Use the invoking session as Coordinator unless the operator requested another
-coordinated batch. Establish its actual runtime identity and supported coordination
+Coordinator. Establish its actual runtime identity and supported coordination
 authority; do not launch a duplicate Coordinator because this one lacks a
 terminal handle.
 

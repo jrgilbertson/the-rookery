@@ -13,10 +13,11 @@ repository integration; it does not show that an agent obeys the skill.
 
 The ten scenarios below describe what the skill exists to protect, from the
 Coordinator's seat. They are plain situations, not quotes of the skill, so
-rewording a rule does not change them. Run them through the
-[evaluation workflow](../../SKILLS.md#evaluation-workflow), which says how to
-run a case and where results go. Name the candidate, host, provider, and
-surface for any observed result; unavailable evidence remains Unmeasured.
+rewording a rule does not change them. For behavioral evaluation, follow the
+[evaluation workflow](../../SKILLS.md#evaluation-workflow) for routing,
+approvals, and the required evidence record. Also name the agent surface for
+any observed result. Unavailable evidence remains
+[Unmeasured](../../CONCEPTS.md#unmeasured).
 
 | # | Situation | What a reviewer should see |
 | -- | -- | -- |

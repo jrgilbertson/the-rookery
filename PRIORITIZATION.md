@@ -9,47 +9,60 @@ leverage = (impact × confidence) ÷ (effort × fix-risk)
 ```
 
 This is the ICE score that product and growth teams use (Impact, Confidence,
-Ease), with one factor added: the risk that the fix itself breaks something.
-Dividing by effort does the same job as multiplying by ease.
+Ease), with two changes for work that agents do. Effort measures how hard the
+result is to verify, not how long it takes to build. A fourth factor,
+fix-risk, covers the chance that the fix itself breaks something. Dividing by
+effort does the same job as multiplying by ease.
 
 ## The four factors
 
 Each factor gets a score from 1 to 3.
 
-| Factor | Question | 1 | 3 |
-|---|---|---|---|
-| Impact | What gets better, or what goes wrong if I leave it? | A small annoyance | Users, data, security, or a lot of future work |
-| Confidence | How strong is the evidence? | A hunch that needs investigation | I read the code or reproduced the problem |
-| Effort | How much work is it to finish, including tests and review? | Hours | Several days |
-| Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared state, data, access, or hard to reverse |
+| Factor | Question | 1 | 2 | 3 |
+|---|---|---|---|---|
+| Impact | What gets better, or what goes wrong if I leave it? | A small annoyance | A cost someone pays regularly | Users, data, security, or a lot of future work |
+| Confidence | How strong is the evidence? | A hunch that needs investigation | A strong signal I haven't confirmed | I read the code or reproduced the problem |
+| Effort | How hard is it to confirm the result is right? | Existing tests, types, or CI prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
+| Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code that tests cover, still easy to revert | Shared state, data, access, or hard to reverse |
 
 Impact already covers the risk of doing nothing. A security hole or a
 data-loss bug scores high on impact. Fix-risk covers only the change.
 
 Two examples:
 
-- A serious bug with a clear reproduction and a one-line, isolated fix:
+- A serious bug with a clear reproduction and a one-line, isolated fix. The
+  reproduction becomes a test that proves the fix:
   (3 × 3) ÷ (1 × 1) = **9**.
-- A valuable refactor I'm fairly sure about that takes days and touches shared
-  state: (3 × 2) ÷ (3 × 3) = **0.67**.
+- A valuable refactor I'm fairly sure about, in code no tests cover, that
+  touches shared state: (3 × 2) ÷ (2 × 3) = **1**.
 
-## Why fix-risk
+## Why effort means verification
 
 Agents changed what effort costs me. They write the code, run the checks, and
 work in parallel worktrees, sometimes unattended from plan to pull request (see
-[Build](WORKFLOWS.md#build)). The hours a change takes matter less than they
-used to.
+[Build](WORKFLOWS.md#build)). A change that would take me days can take an
+agent far less, so hours are a poor measure.
 
-What still costs me is attention: how closely I have to read the result before
-I trust it. A low-risk change with good checks can run on its own and still be
-safe to merge. A high-risk change needs a close read, and some changes, such as
-access, money, or deletion, wait for my approval however good the checks are.
-Fix-risk measures that difference. Without it, a quick but dangerous change
-would rank near the top just because an agent can make it fast.
+What still costs me is confirming the result is right. When existing tests or
+CI prove a change, I can let it run and read the result quickly. When no check
+can prove it, I have to judge it myself, however fast the agent was.
 
-Risk can also come down. Tests and other checks make a risky change safer
-([Testing with agents](TESTING.md)), so the tests that make a refactor safe
-often rank above the refactor itself.
+## Why fix-risk
+
+Verification and fix-risk answer different questions. Verification is the
+cost of finding out a change is wrong. Fix-risk is the cost if it ships wrong.
+A CSS tweak with no visual tests is hard to verify but low risk. A change to
+access permissions that the tests fully cover is easy to verify but high risk.
+
+Fix-risk decides how much I can hand off. A low-risk change with good checks
+can run on its own and still be safe to merge. Some changes, such as access,
+money, or deletion, wait for my approval however good the checks are. Without
+fix-risk, a dangerous change would rank near the top just because tests cover
+it.
+
+Both scores can come down. New tests make a change easier to verify and safer
+to ship ([Testing with agents](TESTING.md)), so the tests that make a refactor
+safe often rank above the refactor itself.
 
 ## Breaking ties
 
@@ -58,7 +71,6 @@ When two items score about the same:
 1. Work that unblocks other items goes first, such as tests a later change
    depends on.
 2. A security finding with strong evidence goes above other findings.
-3. A change with a clear way to verify it goes above one without.
 
 ## Use the score to decide
 

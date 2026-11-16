@@ -13,9 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- `PRIORITIZATION.md` explains how the maintainer ranks work: leverage, the
-  ICE score with the risk of the fix added, and why that risk matters when
-  agents can do the work unattended.
+- `PRIORITIZATION.md` explains how the maintainer ranks work by leverage: the
+  ICE score with effort measured as how hard the result is to verify, plus the
+  risk of the fix, and why both matter when agents do the work unattended.
 - `INSTALLED-SKILLS.md` lists the skills the maintainer installs on every
   machine, with install commands by source and a check that compares a
   machine's lock file against the list.

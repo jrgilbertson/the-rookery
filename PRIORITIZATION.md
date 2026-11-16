@@ -19,9 +19,9 @@ ways for AI development:
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it. The easier a change is to undo, the more freely I can let an
   agent do it on its own. My
-  [`coordinating-work`](skills/coordinating-work/SKILL.md) skill runs this
-  way: its Coordinator merges routine changes without me and holds the ones
-  that are hard to undo, such as access, money, and data deletion.
+  [`coordinating-work`](skills/coordinating-work/SKILL.md) skill works on the
+  same idea: an agent merges routine pull requests without me and holds
+  sensitive ones for my approval.
 
 ## The four factors
 
@@ -157,3 +157,5 @@ dependencies between items, and move an item when the score misses something.
 
 When an agent ranks work for me, I want the whole list in leverage order, highest
 first, with each item's scores. Items it would skip stay on the list with a one-line reason.
+Above the list, it names every item that scores 3 on impact, wherever that
+item ranks, so a low leverage score can't hide something important.

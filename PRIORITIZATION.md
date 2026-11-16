@@ -13,8 +13,8 @@ Ease), changed in two ways for work that agents do:
 
 - Verification effort replaces ease. It measures how hard the result is to
   verify, not how long it takes to build.
-- Fix-risk is added. It covers the chance that the fix itself breaks
-  something.
+- Fix-risk is added. It covers what the fix itself could break and whether a
+  revert can undo it.
 
 ## The four factors
 
@@ -25,7 +25,7 @@ Each factor gets a score from 1 to 3.
 | Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
 | Confidence | How sure am I that we can do this and it will deliver the impact? | A guess. The problem or the approach is unproven | Good reasons to expect it, but nothing confirmed | Confirmed. I verified the problem, or the approach has worked before |
 | Verification effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
-| Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code, still easy to revert | Shared state, data, access, or hard to reverse |
+| Fix-risk | What could the change break, and can a revert undo it? | Two-way door, contained. It touches one place, and a revert undoes it | Two-way door, wide. Many callers or users are affected, but a revert undoes it | One-way door. A revert can't undo it: deleted or migrated data, money moved, messages sent, access exposed, a published contract |
 
 Impact already covers the harm of doing nothing. A security hole or a
 data-loss bug scores high on impact, because users can't trust the product
@@ -47,13 +47,13 @@ Three examples:
 
 - A bug that loses saved work, with a reproduction I already have and a
   one-line, isolated fix: (3 × 3) ÷ (1 × 1) = **9**.
-- A refactor that a planned feature needs, in code that touches shared state
-  and has no tests. The feature is a clear improvement to something users do
-  often: (2 × 3) ÷ (2 × 3) = **1**.
+- A refactor that a planned feature needs, in code many callers use and no
+  tests cover. The feature is a clear improvement to something users do
+  often: (2 × 3) ÷ (2 × 2) = **1.5**.
 - The tests for that code. They take the same impact and confidence, CI
   proves them, and they change no product code: (2 × 3) ÷ (1 × 1) = **6**.
   Once they merge, the refactor's verification effort drops to 1 and it scores
-  2.
+  3.
 
 ## Why verification effort, not build time
 
@@ -88,11 +88,11 @@ it ships wrong. A CSS tweak with no visual tests is hard to verify but low
 risk. A change to access permissions that the tests fully cover is easy to
 verify but high risk.
 
-Fix-risk decides how much I can hand off. An agent can make a low-risk change
-with good checks on its own, and the change is still safe to merge. Changes
-that touch access or money, or that delete data, wait for my approval however
-good the checks are. Without fix-risk, a dangerous change would rank near the
-top just because tests cover it.
+Fix-risk decides how much I can hand off. An agent can take a two-way door on
+its own: if the change is wrong, a revert undoes it. A one-way door waits for
+my approval however good the checks are, because a revert can't bring back
+deleted data or unsend a message. Without fix-risk, a one-way door would rank
+near the top just because tests cover it.
 
 Verification effort can come down. New tests make a change easier to verify
 ([Testing with agents](TESTING.md)), which is why the tests in the example

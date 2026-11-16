@@ -63,6 +63,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` builds amendments, as well as briefs and replies, from
+  the project's own instructions and the installed guides, so an amendment
+  also names only commands confirmed on the worker's host and prefers the
+  project's existing helpers to ad hoc tools.
 - `coordinating-work` briefs end a worker's assignment and its pull request
   watch, including a delegated watch, on any reply that holds the pull
   request, and no watch runs on a held pull request. A worker waits on its

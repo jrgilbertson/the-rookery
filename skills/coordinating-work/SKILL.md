@@ -135,8 +135,8 @@ work. When unsure, leave the worktree in place and name what you are unsure of.
 
 ## Assignment briefs
 
-Build each brief and reply from the project's own instructions and the
-installed guides. Name only commands and helpers you have confirmed on the
+Build each brief, amendment, and reply from the project's own instructions and
+the installed guides. Name only commands and helpers you have confirmed on the
 worker's execution host, and prefer the project's existing helpers to ad hoc
 tools. A reply never tells a worker to skip or shorten a gate the repository
 requires. Carry the operator's current decisions from the record.

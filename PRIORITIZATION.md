@@ -9,10 +9,12 @@ leverage = (impact × confidence) ÷ (effort × fix-risk)
 ```
 
 This is the ICE score that product and growth teams use (Impact, Confidence,
-Ease), with two changes for work that agents do. Effort measures how hard the
-result is to verify, not how long it takes to build. A fourth factor,
-fix-risk, covers the chance that the fix itself breaks something. Dividing by
-effort does the same job as multiplying by ease.
+Ease), changed in two ways for work that agents do:
+
+- Effort replaces ease. It measures how hard the result is to verify, not how
+  long it takes to build.
+- Fix-risk is added. It covers the chance that the fix itself breaks
+  something.
 
 ## The four factors
 
@@ -34,22 +36,23 @@ that includes the developers and agents who use it.
 
 Tests, CI, refactoring, and a repo's internal tooling usually change nothing
 users see. I score that work by the user-facing result it protects or makes
-possible: a test on the save path scores like a bug in saving, and a refactor
-scores like the change it clears the way for. Confidence then asks whether
-that result is coming. It is 3 when the change is planned or already on the
-list, or the failure has happened before, and 1 when it is only possible
-someday. Work that leads to no such result scores 1 on impact.
+possible. A test that protects saving gets the impact a bug in saving would
+have. A refactor gets the impact of the change it makes possible. Confidence
+then asks how likely that result is. It is 3 when the change is planned or
+already on the list, or the failure has happened before. It is 1 when the
+change or the failure is only possible someday. Work that leads to no such
+result scores 1 on impact.
 
 Three examples:
 
-- A bug that loses saved work, with a reproduction in hand and a one-line,
-  isolated fix: (3 × 3) ÷ (1 × 1) = **9**.
-- A refactor that a planned feature needs, in shared-state code no tests
-  cover. The feature is a clear improvement to something users do often:
-  (2 × 3) ÷ (2 × 3) = **1**.
-- The tests for that code. Same impact and confidence, CI proves them, and
-  they change no product code: (2 × 3) ÷ (1 × 1) = **6**. Once they land, the
-  refactor's effort drops to 1 and it scores 2.
+- A bug that loses saved work, with a reproduction I already have and a
+  one-line, isolated fix: (3 × 3) ÷ (1 × 1) = **9**.
+- A refactor that a planned feature needs, in code that touches shared state
+  and has no tests. The feature is a clear improvement to something users do
+  often: (2 × 3) ÷ (2 × 3) = **1**.
+- The tests for that code. They take the same impact and confidence, CI
+  proves them, and they change no product code: (2 × 3) ÷ (1 × 1) = **6**.
+  Once they merge, the refactor's effort drops to 1 and it scores 2.
 
 ## Why effort means verification
 
@@ -58,7 +61,8 @@ hours, days, story points, or T-shirt sizes. I don't measure it that way.
 Agents write the code, run the checks, and work in parallel worktrees,
 sometimes unattended from plan to pull request (see
 [Build](WORKFLOWS.md#build)). Work a person would size at several days can
-take an agent far less, so build time ranks agent work badly.
+take an agent far less, so build time says little about what the work costs
+me.
 
 What still takes my time is confirming the result is right. When existing
 tests or CI prove a change, I can let it run and read the result quickly. When
@@ -68,29 +72,29 @@ people handed off tasks that were easy to check. One engineer called Claude
 "absolutely amazing for everything where validation effort isn't large in
 comparison to creation effort."
 
-I considered two other measures. Human attention, meaning all the time I spend
-specifying, steering, and reviewing, is closest to the real cost, but it is
-hard to estimate before the work starts. Decision load, meaning the open
-questions only I can answer, catches vague work but misses clear work that is
-hard to check. Verification difficulty is the easiest of the three to score up
-front, and checking the result is where much of my attention goes.
+I considered two other measures. Human attention is all the time I spend
+specifying, steering, and reviewing. It is closest to the real cost, but it is
+hard to estimate before the work starts. Decision load is the number of open
+questions only I can answer. It catches vague work but misses clear work that
+is hard to check. Verification difficulty is the easiest of the three to score
+up front, and checking the result is where much of my attention goes.
 
 ## Why fix-risk
 
-Verification and fix-risk answer different questions. Verification is the
-cost of finding out a change is wrong. Fix-risk is the cost if it ships wrong.
-A CSS tweak with no visual tests is hard to verify but low risk. A change to
-access permissions that the tests fully cover is easy to verify but high risk.
+Effort and fix-risk answer different questions. Effort is the cost of finding
+out a change is wrong. Fix-risk is the cost if it ships wrong. A CSS tweak
+with no visual tests is hard to verify but low risk. A change to access
+permissions that the tests fully cover is easy to verify but high risk.
 
-Fix-risk decides how much I can hand off. A low-risk change with good checks
-can run on its own and still be safe to merge. Some changes, such as access,
-money, or deletion, wait for my approval however good the checks are. Without
-fix-risk, a dangerous change would rank near the top just because tests cover
-it.
+Fix-risk decides how much I can hand off. An agent can make a low-risk change
+with good checks on its own, and the change is still safe to merge. Changes
+that touch access or money, or that delete data, wait for my approval however
+good the checks are. Without fix-risk, a dangerous change would rank near the
+top just because tests cover it.
 
 Effort can come down. New tests make a change easier to verify
 ([Testing with agents](TESTING.md)), which is why the tests in the example
-above outrank the refactor they protect.
+above rank higher than the refactor they protect.
 
 ## Breaking ties
 

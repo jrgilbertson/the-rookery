@@ -87,6 +87,13 @@ names the gap that remains, and returns a better question to Research. It is
 distinct from the Repository Learning Loop because it improves the operator's
 understanding rather than the repository's safeguards and procedures.
 
+### Leverage
+
+The order for work to choose from: value to users and confidence, divided by
+verification effort and undo cost. Verification effort is how hard a result is
+to confirm, and undo cost is what it takes to reverse a change that turns out
+wrong. [PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
+
 ## Coordinating work
 
 ### Coordinated Batch

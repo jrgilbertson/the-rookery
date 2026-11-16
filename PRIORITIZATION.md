@@ -17,7 +17,11 @@ ways for AI development:
   hours, or sometimes minutes. How hard the result is to verify is easier to
   estimate, and it is more often what holds a change up.
 - Undo cost is added. It covers what the change could break and what it takes
-  to undo it.
+  to undo it. The easier a change is to undo, the more freely I can let an
+  agent do it on its own. My
+  [`coordinating-work`](skills/coordinating-work/SKILL.md) skill runs this
+  way: its Coordinator merges routine changes without me and holds the ones
+  that are hard to undo, such as access, money, and data deletion.
 
 I can estimate both before the work starts, which is no longer true of the
 build itself.

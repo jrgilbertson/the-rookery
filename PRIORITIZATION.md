@@ -23,7 +23,7 @@ Each factor gets a score from 1 to 3.
 | Factor | Question | 1 | 2 | 3 |
 |---|---|---|---|---|
 | Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
-| Confidence | How strong is the evidence? | A hunch that needs investigation | A strong signal I haven't confirmed | I read the code or reproduced the problem |
+| Confidence | How sure am I that we can do this and it will deliver the impact? | A guess. The problem or the approach is unproven | Good reasons to expect it, but nothing confirmed | Confirmed. I verified the problem, or the approach has worked before |
 | Effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
 | Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code, still easy to revert | Shared state, data, access, or hard to reverse |
 

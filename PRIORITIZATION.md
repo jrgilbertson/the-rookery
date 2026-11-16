@@ -11,15 +11,16 @@ leverage = (impact × confidence) ÷ (verification effort × undo cost)
 This is the traditional ICE score (impact, confidence, ease), modified in two
 ways for AI development:
 
-- Verification effort replaces ease. Ease means build time, and with AI build
-  time is hard to predict: work that took a person weeks can take an agent
+- Verification effort replaces ease. Ease asks how much it takes to do the
+  work: the time, the people, the cost, and the complexity. With AI that is
+  hard to predict, because work that took a person weeks can take an agent
   hours, or sometimes minutes. How hard the result is to verify is easier to
   estimate, and it is more often what holds a change up.
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it.
 
-I can estimate both before the work starts, which is no longer true of build
-time.
+I can estimate both before the work starts, which is no longer true of the
+build itself.
 
 ## The four factors
 
@@ -63,15 +64,16 @@ Three examples:
   started at all, but it is a guess, only people can judge the result, and it
   reaches every new user: (3 × 1) ÷ (3 × 2) = **0.5**.
 
-## Why verification effort, not build time
+## Why verification effort, not build effort
 
-Effort usually means the time needed to build something, counted in hours,
-days, story points, or T-shirt sizes. That worked when people did the
-building, because a build estimate covered the whole job. The person writing
-the code was also testing it as they went.
+Effort usually means how much it takes to build something: the time, the
+people, the cost, and the complexity. Teams count it in hours, days, story
+points, or T-shirt sizes. That worked when people did the building, because a
+build estimate covered the whole job. The person writing the code was also
+testing it as they went.
 
-AI changed that in two ways. Building still takes time, but the time is hard
-to predict. Work that took a person weeks can take an agent hours, and
+AI changed that in two ways. Building still takes real work, but how much is
+hard to predict. Work that took a person weeks can take an agent hours, and
 sometimes minutes, and I often can't tell which in advance.
 
 Building is also less of the bottleneck than it was. In a
@@ -89,7 +91,7 @@ report called human attention "a constant bottleneck."
 What I can estimate is how hard the result is to verify. Two changes can take
 an agent the same time to build. If existing tests prove the first one, it's
 done when the build is. If the second needs a person to try it and judge the
-result, it takes as long as that judgment takes. Build time would score the
+result, it takes as long as that judgment takes. Build effort would score the
 two the same, and verification effort tells them apart. In
 [Anthropic's study of its own staff](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic),
 one engineer called Claude "absolutely amazing for everything where validation

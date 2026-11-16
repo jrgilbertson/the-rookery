@@ -11,10 +11,9 @@ leverage = (impact × confidence) ÷ (verification effort × undo cost)
 This is the traditional ICE score (impact, confidence, ease), modified in two
 ways for AI development:
 
-- Verification effort replaces ease. It measures how hard the result is to
-  verify, not how long it takes to build. Hour estimates break down with AI,
-  for a person or an agent, because build time depends on which model does the
-  work and how many agents run at once.
+- Verification effort replaces ease. Ease means build time, and AI has made
+  building the fast part of almost any change. What decides how long a change
+  really takes now is how hard the result is to verify.
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it.
 
@@ -62,21 +61,26 @@ Three examples:
 
 ## Why verification effort, not build time
 
-Effort usually means the time a person needs to build something, counted in
-hours, days, story points, or T-shirt sizes. I don't measure it that way.
-Agents write the code, run the checks, and work in parallel worktrees,
-sometimes unattended from plan to pull request (see
-[Build](WORKFLOWS.md#build)). Work a person would size at several days can
-take an agent far less, so build time says little about what the work costs
-me.
+Effort usually means the time needed to build something, counted in hours,
+days, story points, or T-shirt sizes. That worked when people did the
+building, because a build estimate covered the whole job. The person writing
+the code was also testing it as they went.
 
-What still takes my time is confirming the result is right. When existing
-tests or CI prove a change, I can let it run and read the result quickly. When
-no check can prove it, I have to judge it myself, however fast the agent was.
-In [Anthropic's study of its own staff](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic),
-people handed off tasks that were easy to check. One engineer called Claude
-"absolutely amazing for everything where validation effort isn't large in
-comparison to creation effort."
+AI changed where the time goes. Agents write code fast, so building is now the
+short part of almost any change. Checking hasn't sped up the same way. In a
+[Harvard study of 655 companies](https://fion.ac/jellyfish.pdf), lines of code
+rose 44% after teams adopted agents, but issues resolved rose about 14%. The
+authors' summary: "Code review becomes the bottleneck." In
+[Anthropic's study of its own staff](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic),
+one engineer called Claude "absolutely amazing for everything where validation
+effort isn't large in comparison to creation effort."
+
+So the time a change takes from start to finish now depends mostly on how hard
+the result is to verify. Two changes can each take an agent ten minutes to
+build. If existing tests prove the first one, it's done. If the second needs a
+person to try it and judge the result, it takes as long as that judgment
+takes. Build time would score the two the same, and verification effort tells
+them apart.
 
 Verification effort can come down. Good tests and CI make every later change
 easier to verify ([Testing with agents](TESTING.md)).

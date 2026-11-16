@@ -108,8 +108,9 @@ A parked item that is only about a reviewer or tool being unavailable, such
 as a review bot out of quota, says nothing about the change. Log it, answer
 the worker with the default, and let the checklist decide.
 
-A held pull request is left as it is. Bringing one current, or applying an open
-finding on it, is work to assign when the operator asks.
+A held pull request is left as it is, and no watch runs on it. Bringing one
+current, or applying an open finding on it, is work to assign when the
+operator asks.
 
 After a merge lands, record it and reply merged. Then read the issue and record
 its state. When the pull request finished it and the tracker left it open,

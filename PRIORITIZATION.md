@@ -5,14 +5,14 @@ it done safely. When I sort a list of findings, ideas, or tasks, I use this
 order.
 
 ```text
-leverage = (impact × confidence) ÷ (effort × fix-risk)
+leverage = (impact × confidence) ÷ (verification effort × fix-risk)
 ```
 
 This is the ICE score that product and growth teams use (Impact, Confidence,
 Ease), changed in two ways for work that agents do:
 
-- Effort replaces ease. It measures how hard the result is to verify, not how
-  long it takes to build.
+- Verification effort replaces ease. It measures how hard the result is to
+  verify, not how long it takes to build.
 - Fix-risk is added. It covers the chance that the fix itself breaks
   something.
 
@@ -24,7 +24,7 @@ Each factor gets a score from 1 to 3.
 |---|---|---|---|---|
 | Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
 | Confidence | How sure am I that we can do this and it will deliver the impact? | A guess. The problem or the approach is unproven | Good reasons to expect it, but nothing confirmed | Confirmed. I verified the problem, or the approach has worked before |
-| Effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
+| Verification effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
 | Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code, still easy to revert | Shared state, data, access, or hard to reverse |
 
 Impact already covers the harm of doing nothing. A security hole or a
@@ -52,9 +52,10 @@ Three examples:
   often: (2 × 3) ÷ (2 × 3) = **1**.
 - The tests for that code. They take the same impact and confidence, CI
   proves them, and they change no product code: (2 × 3) ÷ (1 × 1) = **6**.
-  Once they merge, the refactor's effort drops to 1 and it scores 2.
+  Once they merge, the refactor's verification effort drops to 1 and it scores
+  2.
 
-## Why effort means verification
+## Why verification effort, not build time
 
 Effort usually means the time a person needs to build something, counted in
 hours, days, story points, or T-shirt sizes. I don't measure it that way.
@@ -76,15 +77,16 @@ I considered two other measures. Human attention is all the time I spend
 specifying, steering, and reviewing. It is closest to the real cost, but it is
 hard to estimate before the work starts. Decision load is the number of open
 questions only I can answer. It catches vague work but misses clear work that
-is hard to check. Verification difficulty is the easiest of the three to score
-up front, and checking the result is where much of my attention goes.
+is hard to check. Verification effort is the easiest of the three to score up
+front, and checking the result is where much of my attention goes.
 
 ## Why fix-risk
 
-Effort and fix-risk answer different questions. Effort is the cost of finding
-out a change is wrong. Fix-risk is the cost if it ships wrong. A CSS tweak
-with no visual tests is hard to verify but low risk. A change to access
-permissions that the tests fully cover is easy to verify but high risk.
+Verification effort and fix-risk answer different questions. Verification
+effort is the cost of finding out a change is wrong. Fix-risk is the cost if
+it ships wrong. A CSS tweak with no visual tests is hard to verify but low
+risk. A change to access permissions that the tests fully cover is easy to
+verify but high risk.
 
 Fix-risk decides how much I can hand off. An agent can make a low-risk change
 with good checks on its own, and the change is still safe to merge. Changes
@@ -92,7 +94,7 @@ that touch access or money, or that delete data, wait for my approval however
 good the checks are. Without fix-risk, a dangerous change would rank near the
 top just because tests cover it.
 
-Effort can come down. New tests make a change easier to verify
+Verification effort can come down. New tests make a change easier to verify
 ([Testing with agents](TESTING.md)), which is why the tests in the example
 above rank higher than the refactor they protect.
 

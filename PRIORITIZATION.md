@@ -8,11 +8,13 @@ ideas, or tasks, I use this order.
 leverage = (impact × confidence) ÷ (verification effort × undo cost)
 ```
 
-This is the ICE score that product and growth teams use (Impact, Confidence,
-Ease), changed in two ways for work that agents do:
+This is the traditional ICE score (impact, confidence, ease), modified in two
+ways for AI development:
 
 - Verification effort replaces ease. It measures how hard the result is to
-  verify, not how long it takes to build.
+  verify, not how long it takes to build. Hour estimates break down with AI,
+  for a person or an agent, because build time depends on which model does the
+  work and how many agents run at once.
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it.
 
@@ -34,14 +36,17 @@ with their work. Undo cost covers only the change.
 Users are whoever the product is for. When the product is a tool or a skill,
 that includes the developers and agents who use it.
 
-Tests, CI, refactoring, and a repo's internal tooling usually change nothing
-users see. I score that work by the user-facing result it protects or makes
-possible. A test that protects saving gets the impact a bug in saving would
-have. A refactor gets the impact of the change it makes possible. Confidence
-then asks how likely that result is. It is 3 when the change is planned or
-already on the list, or the failure has happened before. It is 1 when the
-change or the failure is only possible someday. Work that leads to no such
-result scores 1 on impact.
+Some work changes nothing users see: a refactor, a CI fix, or tests for code
+that has none. I score it by the user-facing result it protects or makes
+possible. If the save feature has no tests, adding them protects users from
+losing work, so they score the same impact as a bug that loses work. A
+refactor that a planned feature needs scores the impact of that feature.
+Confidence then asks how likely that result is. It is 3 when the feature is
+planned or the failure has happened before. It is 1 when either is only
+possible someday. Work that leads to no such result scores 1 on impact.
+
+A change includes its own tests. Tests count as separate work only when they
+cover code that already exists.
 
 Three examples:
 
@@ -49,11 +54,11 @@ Three examples:
   one-line, isolated fix: (3 × 3) ÷ (1 × 1) = **9**.
 - A refactor that a planned feature needs, in code many callers use and no
   tests cover. The feature is a clear improvement to something users do
-  often: (2 × 3) ÷ (2 × 2) = **1.5**.
-- The tests for that code. They take the same impact and confidence, CI
-  proves them, and they change no product code: (2 × 3) ÷ (1 × 1) = **6**.
-  Once they merge, the refactor's verification effort drops to 1 and it scores
-  3.
+  often, and the refactor needs new tests as part of the work:
+  (2 × 3) ÷ (2 × 2) = **1.5**.
+- An idea to redesign onboarding. It could change whether new users get
+  started at all, but it is a guess, only people can judge the result, and it
+  reaches every new user: (3 × 1) ÷ (3 × 2) = **0.5**.
 
 ## Why verification effort, not build time
 
@@ -73,9 +78,8 @@ people handed off tasks that were easy to check. One engineer called Claude
 "absolutely amazing for everything where validation effort isn't large in
 comparison to creation effort."
 
-Verification effort can come down. New tests make a change easier to verify
-([Testing with agents](TESTING.md)), which is why the tests in the example
-above rank higher than the refactor they protect.
+Verification effort can come down. Good tests and CI make every later change
+easier to verify ([Testing with agents](TESTING.md)).
 
 I considered two other measures. Human attention is all the time I spend
 specifying, steering, and reviewing. It is closest to the real cost, but it is

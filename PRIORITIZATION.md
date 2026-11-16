@@ -23,9 +23,6 @@ ways for AI development:
   way: its Coordinator merges routine changes without me and holds the ones
   that are hard to undo, such as access, money, and data deletion.
 
-I can estimate both before the work starts, which is no longer true of the
-build itself.
-
 ## The four factors
 
 Each factor gets a score from 1 to 3.
@@ -44,14 +41,17 @@ with their work. Undo cost covers only the change.
 Users are whoever the product is for. When the product is a tool or a skill,
 that includes the developers and agents who use it.
 
-Some work changes nothing users see: a refactor, a CI fix, or tests for code
-that has none. I score it by the user-facing result it protects or makes
-possible. If the save feature has no tests, adding them protects users from
-losing work, so they score the same impact as a bug that loses work. A
-refactor that a planned feature needs scores the impact of that feature.
-Confidence then asks how likely that result is. It is 3 when the feature is
-planned or the failure has happened before. It is 1 when either is only
-possible someday. Work that leads to no such result scores 1 on impact.
+Some work changes nothing users see, such as a refactor, a CI fix, or tests
+for code that has none. I score it by what it eventually does for users:
+
+- **Impact** is the impact of the problem it prevents or the feature it
+  unblocks. Tests for an untested save feature prevent lost work, so they
+  score 3. A refactor that a planned feature needs gets that feature's score.
+- **Confidence** is how likely that benefit is. It scores 3 if the feature is
+  already planned or the problem has happened before, and 1 if it only might
+  happen someday.
+
+If I can't name a benefit for users, impact is 1.
 
 A change includes its own tests. Tests count as separate work only when they
 cover code that already exists.
@@ -134,8 +134,9 @@ cover is easy to verify, but exposed access can't be undone.
 Undo cost decides how much I can hand off. A two-way door is a change a revert
 undoes, so an agent can make it on its own. A one-way door is a change a
 revert can't undo, such as deleting data or sending a message. It waits for my
-approval however good the checks are. Without undo cost, a one-way door would
-rank near the top just because tests cover it.
+approval however good the checks are. Without undo cost in
+the formula, a change that deletes data could rank near the top just because
+it is easy to verify.
 
 One-way doors are also rare, so stopping for them costs little. When
 [Anthropic measured about a million agent actions](https://www.anthropic.com/research/measuring-agent-autonomy),

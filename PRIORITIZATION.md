@@ -1,8 +1,8 @@
 # How I prioritize
 
-I rank work by leverage: how much good a change does for what it costs to get
-it done safely. When I sort a list of findings, ideas, or tasks, I use this
-order.
+I rank work by leverage: how much good a change does, weighed against what it
+costs to check and what it would take to undo. When I sort a list of findings,
+ideas, or tasks, I use this order.
 
 ```text
 leverage = (impact × confidence) ÷ (verification effort × undo cost)
@@ -73,6 +73,10 @@ people handed off tasks that were easy to check. One engineer called Claude
 "absolutely amazing for everything where validation effort isn't large in
 comparison to creation effort."
 
+Verification effort can come down. New tests make a change easier to verify
+([Testing with agents](TESTING.md)), which is why the tests in the example
+above rank higher than the refactor they protect.
+
 I considered two other measures. Human attention is all the time I spend
 specifying, steering, and reviewing. It is closest to the real cost, but it is
 hard to estimate before the work starts. Decision load is the number of open
@@ -83,20 +87,16 @@ front, and checking the result is where much of my attention goes.
 ## Why undo cost
 
 Verification effort and undo cost answer different questions. Verification
-effort is the cost of finding out a change is wrong. Undo cost is what it
-takes to undo it. A CSS tweak with no visual tests is hard to verify but cheap
-to undo. A change to access permissions that the tests fully cover is easy to
-verify, but exposed access can't be undone.
+effort is the cost of finding out a change is wrong. Undo cost is the cost of
+reversing it after it ships. A CSS tweak with no visual tests is hard to
+verify but cheap to undo. A change to access permissions that the tests fully
+cover is easy to verify, but exposed access can't be undone.
 
-Undo cost decides how much I can hand off. An agent can take a two-way door on
-its own: if the change is wrong, a revert undoes it. A one-way door waits for
-my approval however good the checks are, because a revert can't bring back
-deleted data or unsend a message. Without undo cost, a one-way door would rank
-near the top just because tests cover it.
-
-Verification effort can come down. New tests make a change easier to verify
-([Testing with agents](TESTING.md)), which is why the tests in the example
-above rank higher than the refactor they protect.
+Undo cost decides how much I can hand off. A two-way door is a change a revert
+undoes, so an agent can make it on its own. A one-way door is a change a
+revert can't undo, such as deleting data or sending a message. It waits for my
+approval however good the checks are. Without undo cost, a one-way door would
+rank near the top just because tests cover it.
 
 ## Breaking ties
 
@@ -111,5 +111,5 @@ The scores are coarse. They put a list in a sensible order so I can see
 everything at once and choose. I still read the top of the list, check for
 dependencies between items, and move an item when the score misses something.
 
-When an agent ranks work for me, I want the whole list in leverage order, with
-each item's scores. Items it would skip stay on the list with a one-line reason.
+When an agent ranks work for me, I want the whole list in leverage order, highest
+first, with each item's scores. Items it would skip stay on the list with a one-line reason.

@@ -63,6 +63,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` briefs end a worker's assignment and its pull request
+  watch, including a delegated watch, on any reply that holds the pull
+  request, and no watch runs on a held pull request. A worker waits on its
+  watch the way `ce-babysit-pr` says, and ends its turn on any other job only
+  when something it armed will wake it.
 - `coordinating-work` requires Impeccable within LFG for assignments that
   create or improve UX and UI, including assignments the Coordinator executes
   itself.

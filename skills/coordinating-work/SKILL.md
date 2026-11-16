@@ -182,8 +182,11 @@ belongs in a brief only when that condition holds for the assignment.
   report covered. Evidence belongs in the pull request body, not in the
   message. If the head moved after the report, the worker waits for a report on
   the new head before asking. It stays open for the reply: merged, held for the
-  operator, or findings to fix. A worker told its pull request is held has
-  finished its assignment.
+  operator, or findings to fix.
+- **A hold ends the assignment.** Any Coordinator reply that holds the pull
+  request for the operator finishes the worker's assignment: the worker stops
+  its watch, including any watch it delegated, and finishes. A parked item the
+  Coordinator answers itself does not end the watch.
 - **Unapplied review findings.** Before asking, the worker settles each
   unticked item `lfg` left in the pull request body and ticks it with the
   outcome beside it: fixed in the branch, no change and why, or a follow-up
@@ -191,13 +194,16 @@ belongs in a brief only when that condition holds for the assignment.
   and it holds the pull request for the operator.
 - **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a
   human, or a check it could not fix, the worker reports it to the Coordinator
-  immediately, with the full item, and keeps the watch running.
+  immediately, with the full item.
 - **A choice is a question.** A blocker that offers options for the
   Coordinator to choose between is sent as a `question`. An `escalation` is
   for a blocker the worker cannot frame as a choice.
-- **How to wait.** A worker waiting on a long-running check or watch ends its
-  turn with a last line that names the running job. When a helper skill
-  returns, the worker continues to the next step of its assignment.
+- **How to wait.** The worker waits on its watch the way `ce-babysit-pr`
+  says. For any other long-running job, it ends its turn only when something
+  it armed will wake it, and names that job in its last line; otherwise it
+  waits inside its turn, using the longest wait each call allows. When a
+  helper skill returns, the worker continues to the next step of its
+  assignment.
 - **Verification currency.** Bring the branch up to date with the latest
   default branch before each run of the repository's verification gate,
   following that repository's merge policy, so verification tests the fixes

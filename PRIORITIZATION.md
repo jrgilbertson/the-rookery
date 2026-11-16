@@ -5,7 +5,7 @@ it done safely. When I sort a list of findings, ideas, or tasks, I use this
 order.
 
 ```text
-leverage = (impact × confidence) ÷ (verification effort × fix-risk)
+leverage = (impact × confidence) ÷ (verification effort × undo cost)
 ```
 
 This is the ICE score that product and growth teams use (Impact, Confidence,
@@ -13,8 +13,8 @@ Ease), changed in two ways for work that agents do:
 
 - Verification effort replaces ease. It measures how hard the result is to
   verify, not how long it takes to build.
-- Fix-risk is added. It covers what the fix itself could break and whether a
-  revert can undo it.
+- Undo cost is added. It covers what the change could break and what it takes
+  to undo it.
 
 ## The four factors
 
@@ -25,11 +25,11 @@ Each factor gets a score from 1 to 3.
 | Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
 | Confidence | How sure am I that we can do this and it will deliver the impact? | A guess. The problem or the approach is unproven | Good reasons to expect it, but nothing confirmed | Confirmed. I verified the problem, or the approach has worked before |
 | Verification effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
-| Fix-risk | What could the change break, and can a revert undo it? | Two-way door, contained. It touches one place, and a revert undoes it | Two-way door, wide. Many callers or users are affected, but a revert undoes it | One-way door. A revert can't undo it: deleted or migrated data, money moved, messages sent, access exposed, a published contract |
+| Undo cost | If this change is wrong, what does it take to undo it? | Two-way door, contained. It touches one place, and a revert undoes it | Two-way door, wide. Many callers or users are affected, but a revert undoes it | One-way door. A revert can't undo it: deleted or migrated data, money moved, messages sent, access exposed, a published contract |
 
 Impact already covers the harm of doing nothing. A security hole or a
 data-loss bug scores high on impact, because users can't trust the product
-with their work. Fix-risk covers only the change.
+with their work. Undo cost covers only the change.
 
 Users are whoever the product is for. When the product is a tool or a skill,
 that includes the developers and agents who use it.
@@ -80,18 +80,18 @@ questions only I can answer. It catches vague work but misses clear work that
 is hard to check. Verification effort is the easiest of the three to score up
 front, and checking the result is where much of my attention goes.
 
-## Why fix-risk
+## Why undo cost
 
-Verification effort and fix-risk answer different questions. Verification
-effort is the cost of finding out a change is wrong. Fix-risk is the cost if
-it ships wrong. A CSS tweak with no visual tests is hard to verify but low
-risk. A change to access permissions that the tests fully cover is easy to
-verify but high risk.
+Verification effort and undo cost answer different questions. Verification
+effort is the cost of finding out a change is wrong. Undo cost is what it
+takes to undo it. A CSS tweak with no visual tests is hard to verify but cheap
+to undo. A change to access permissions that the tests fully cover is easy to
+verify, but exposed access can't be undone.
 
-Fix-risk decides how much I can hand off. An agent can take a two-way door on
+Undo cost decides how much I can hand off. An agent can take a two-way door on
 its own: if the change is wrong, a revert undoes it. A one-way door waits for
 my approval however good the checks are, because a revert can't bring back
-deleted data or unsend a message. Without fix-risk, a one-way door would rank
+deleted data or unsend a message. Without undo cost, a one-way door would rank
 near the top just because tests cover it.
 
 Verification effort can come down. New tests make a change easier to verify

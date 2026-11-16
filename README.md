@@ -57,7 +57,7 @@ permissions, end-to-end tests, and independent checks protect the result. Use it
 when setting up your own environment and deciding where safeguards belong.
 [How I prioritize](PRIORITIZATION.md) ranks findings, ideas, and tasks by
 leverage: impact and confidence weighed against how hard the result is to
-verify and the risk of the fix.
+verify and what it takes to undo.
 [SKILLS.md](SKILLS.md) covers skill validation and evaluation.
 
 ## The skills

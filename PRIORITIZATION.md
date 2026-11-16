@@ -11,11 +11,15 @@ leverage = (impact × confidence) ÷ (verification effort × undo cost)
 This is the traditional ICE score (impact, confidence, ease), modified in two
 ways for AI development:
 
-- Verification effort replaces ease. Ease means build time, and AI has made
-  building the fast part of almost any change. What decides how long a change
-  really takes now is how hard the result is to verify.
+- Verification effort replaces ease. Ease means build time, and with AI build
+  time is hard to predict: work that took a person weeks can take an agent
+  hours, or sometimes minutes. How hard the result is to verify is easier to
+  estimate, and it is more often what holds a change up.
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it.
+
+I can estimate both before the work starts, which is no longer true of build
+time.
 
 ## The four factors
 
@@ -66,24 +70,45 @@ days, story points, or T-shirt sizes. That worked when people did the
 building, because a build estimate covered the whole job. The person writing
 the code was also testing it as they went.
 
-AI changed where the time goes. Agents write code fast, so building is now the
-short part of almost any change. Checking hasn't sped up the same way. In a
+AI changed that in two ways. Building still takes time, but the time is hard
+to predict. Work that took a person weeks can take an agent hours, and
+sometimes minutes, and I often can't tell which in advance.
+
+Building is also less of the bottleneck than it was. In a
 [Harvard study of 655 companies](https://fion.ac/jellyfish.pdf), lines of code
 rose 44% after teams adopted agents, but issues resolved rose about 14%. The
-authors' summary: "Code review becomes the bottleneck." In
+authors' summary: "Code review becomes the bottleneck." Anthropic reports the
+same about its own engineers. In
+[March 2026](https://claude.com/blog/code-review) it said code output per
+engineer had grown 200% in a year and that "Code review has become a
+bottleneck." By
+[October](https://www.anthropic.com/research/employment-at-anthropic), commits
+per engineer were five times what they had been six months earlier, and its
+report called human attention "a constant bottleneck."
+
+What I can estimate is how hard the result is to verify. Two changes can take
+an agent the same time to build. If existing tests prove the first one, it's
+done when the build is. If the second needs a person to try it and judge the
+result, it takes as long as that judgment takes. Build time would score the
+two the same, and verification effort tells them apart. In
 [Anthropic's study of its own staff](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic),
 one engineer called Claude "absolutely amazing for everything where validation
 effort isn't large in comparison to creation effort."
 
-So the time a change takes from start to finish now depends mostly on how hard
-the result is to verify. Two changes can each take an agent ten minutes to
-build. If existing tests prove the first one, it's done. If the second needs a
-person to try it and judge the result, it takes as long as that judgment
-takes. Build time would score the two the same, and verification effort tells
-them apart.
+Judgment is the expensive end of the scale, and a sign-off is a weak check
+there. In an
+[Anthropic experiment with 50 analysts](https://www.anthropic.com/research/agents-judgment-calls),
+each agent's lean on a judgment call was set by a coin flip, and the analysts
+"went with their agent's lean 86% of the time."
 
-Verification effort can come down. Good tests and CI make every later change
-easier to verify ([Testing with agents](TESTING.md)).
+Verification effort can come down. Give the agent something it can run that
+comes back pass or fail, and it can check its own work and keep going
+([Anthropic's agent guidance](https://code.claude.com/docs/en/best-practices)
+makes the same point). Good tests and CI do that for every later change
+([Testing with agents](TESTING.md)). My
+[durability ladder](WORKFLOWS.md#maintain) follows the same idea: prefer a
+check that runs automatically, and fall back to a written instruction only
+when nothing stronger fits.
 
 I considered two other measures. Human attention is all the time I spend
 specifying, steering, and reviewing. It is closest to the real cost, but it is
@@ -105,6 +130,10 @@ undoes, so an agent can make it on its own. A one-way door is a change a
 revert can't undo, such as deleting data or sending a message. It waits for my
 approval however good the checks are. Without undo cost, a one-way door would
 rank near the top just because tests cover it.
+
+One-way doors are also rare, so stopping for them costs little. When
+[Anthropic measured about a million agent actions](https://www.anthropic.com/research/measuring-agent-autonomy),
+"only 0.8% of actions appear to be irreversible."
 
 ## Breaking ties
 

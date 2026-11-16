@@ -20,13 +20,14 @@ Each factor gets a score from 1 to 3.
 
 | Factor | Question | 1 | 2 | 3 |
 |---|---|---|---|---|
-| Impact | What gets better, or what goes wrong if I leave it? | A small annoyance | A cost someone pays regularly | Users, data, security, or a lot of future work |
+| Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
 | Confidence | How strong is the evidence? | A hunch that needs investigation | A strong signal I haven't confirmed | I read the code or reproduced the problem |
 | Effort | How hard is it to confirm the result is right? | Existing tests, types, or CI prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
 | Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code that tests cover, still easy to revert | Shared state, data, access, or hard to reverse |
 
-Impact already covers the risk of doing nothing. A security hole or a
-data-loss bug scores high on impact. Fix-risk covers only the change.
+Impact already covers the harm of doing nothing. A security hole or a
+data-loss bug scores high on impact, because users can't trust the product
+with their work. Fix-risk covers only the change.
 
 Two examples:
 

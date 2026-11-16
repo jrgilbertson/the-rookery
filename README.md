@@ -55,6 +55,8 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 [Testing with agents](TESTING.md) explains how I give agents room to work while
 permissions, end-to-end tests, and independent checks protect the result. Use it
 when setting up your own environment and deciding where safeguards belong.
+[How I prioritize](PRIORITIZATION.md) ranks findings, ideas, and tasks by
+leverage: impact and confidence weighed against effort and the risk of the fix.
 [SKILLS.md](SKILLS.md) covers skill validation and evaluation.
 
 ## The skills

@@ -38,14 +38,27 @@ Two examples:
 
 ## Why effort means verification
 
-Agents changed what effort costs me. They write the code, run the checks, and
-work in parallel worktrees, sometimes unattended from plan to pull request (see
-[Build](WORKFLOWS.md#build)). A change that would take me days can take an
-agent far less, so hours are a poor measure.
+Effort usually means the time a person needs to build something, counted in
+hours, days, story points, or T-shirt sizes. I don't measure it that way.
+Agents write the code, run the checks, and work in parallel worktrees,
+sometimes unattended from plan to pull request (see
+[Build](WORKFLOWS.md#build)). Work a person would size at several days can
+take an agent far less, so build time ranks agent work badly.
 
-What still costs me is confirming the result is right. When existing tests or
-CI prove a change, I can let it run and read the result quickly. When no check
-can prove it, I have to judge it myself, however fast the agent was.
+What still takes my time is confirming the result is right. When existing
+tests or CI prove a change, I can let it run and read the result quickly. When
+no check can prove it, I have to judge it myself, however fast the agent was.
+In [Anthropic's study of its own staff](https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic),
+people handed off tasks that were easy to check. One engineer called Claude
+"absolutely amazing for everything where validation effort isn't large in
+comparison to creation effort."
+
+I considered two other measures. Human attention, meaning all the time I spend
+specifying, steering, and reviewing, is closest to the real cost, but it is
+hard to estimate before the work starts. Decision load, meaning the open
+questions only I can answer, catches vague work but misses clear work that is
+hard to check. Verification difficulty is the easiest of the three to score up
+front, and checking the result is where much of my attention goes.
 
 ## Why fix-risk
 

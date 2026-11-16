@@ -22,20 +22,34 @@ Each factor gets a score from 1 to 3.
 |---|---|---|---|---|
 | Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
 | Confidence | How strong is the evidence? | A hunch that needs investigation | A strong signal I haven't confirmed | I read the code or reproduced the problem |
-| Effort | How hard is it to confirm the result is right? | Existing tests, types, or CI prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
-| Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code that tests cover, still easy to revert | Shared state, data, access, or hard to reverse |
+| Effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
+| Fix-risk | What could the change break, and how hard is it to undo? | Isolated and easy to revert | Shared code, still easy to revert | Shared state, data, access, or hard to reverse |
 
 Impact already covers the harm of doing nothing. A security hole or a
 data-loss bug scores high on impact, because users can't trust the product
 with their work. Fix-risk covers only the change.
 
-Two examples:
+Users are whoever the product is for. When the product is a tool or a skill,
+that includes the developers and agents who use it.
 
-- A serious bug with a clear reproduction and a one-line, isolated fix. The
-  reproduction becomes a test that proves the fix:
-  (3 × 3) ÷ (1 × 1) = **9**.
-- A valuable refactor I'm fairly sure about, in code no tests cover, that
-  touches shared state: (3 × 2) ÷ (2 × 3) = **1**.
+Tests, CI, refactoring, and a repo's internal tooling usually change nothing
+users see. I score that work by the user-facing result it protects or makes
+possible: a test on the save path scores like a bug in saving, and a refactor
+scores like the change it clears the way for. Confidence then asks whether
+that result is coming. It is 3 when the change is planned or already on the
+list, or the failure has happened before, and 1 when it is only possible
+someday. Work that leads to no such result scores 1 on impact.
+
+Three examples:
+
+- A bug that loses saved work, with a reproduction in hand and a one-line,
+  isolated fix: (3 × 3) ÷ (1 × 1) = **9**.
+- A refactor that a planned feature needs, in shared-state code no tests
+  cover. The feature is a clear improvement to something users do often:
+  (2 × 3) ÷ (2 × 3) = **1**.
+- The tests for that code. Same impact and confidence, CI proves them, and
+  they change no product code: (2 × 3) ÷ (1 × 1) = **6**. Once they land, the
+  refactor's effort drops to 1 and it scores 2.
 
 ## Why effort means verification
 
@@ -74,16 +88,15 @@ money, or deletion, wait for my approval however good the checks are. Without
 fix-risk, a dangerous change would rank near the top just because tests cover
 it.
 
-Both scores can come down. New tests make a change easier to verify and safer
-to ship ([Testing with agents](TESTING.md)), so the tests that make a refactor
-safe often rank above the refactor itself.
+Effort can come down. New tests make a change easier to verify
+([Testing with agents](TESTING.md)), which is why the tests in the example
+above outrank the refactor they protect.
 
 ## Breaking ties
 
-When two items score about the same:
+When items tie:
 
-1. Work that unblocks other items goes first, such as tests a later change
-   depends on.
+1. An item that another item on the list depends on goes first.
 2. A security finding with strong evidence goes above other findings.
 
 ## Use the score to decide

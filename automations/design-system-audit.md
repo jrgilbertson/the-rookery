@@ -27,20 +27,20 @@ Review every page, public and signed-in, each run:
 
 Report, in this order:
 
-- The top five issues by impact.
+- Every issue in leverage order, highest first, with its four scores.
 - This run's counts beside the last run's: validator and detector findings, duplicate-pattern clusters, extraction candidates, sidecar mismatches, and pages rendered versus reviewed from code.
-- The remaining drift, grouped by cause. Label each token, pattern, or rule drift, or a complexity problem, with its page, file and line, the contract rule it breaks, and a fix using existing components and tokens.
+- The drift detail, grouped by cause. Label each token, pattern, or rule drift, or a complexity problem, with its page, file and line, the contract rule it breaks, and a fix using existing components and tokens.
 - Extractions: shared components or page templates for patterns used three or more times with the same intent, from `extract`'s planning steps.
 - The exact sidecar patch.
 - Premium bar: contract revisions that raise the craft toward [reference products], kept apart from drift. The contract's own identity wins over theirs.
 - Recurring findings: for any finding that appeared in two or more earlier reports, recommend a fix for the underlying cause, then any safeguard still needed to protect the corrected behavior. Recommend a lint rule or validator when it can reliably check that behavior; otherwise name the design judgment or review that remains.
 - The questions impeccable would have asked, and what was not assessed.
 
-Keep screenshots only for the top issues and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
+Keep screenshots only for issues that score 3 on impact and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
 
 Group related draft recommendations into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
 
-Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, most impactful first, each with its evidence, tradeoffs, uncertainty, and any pending-review label. List each recommendation it rejects in one line with its reason, outside the approval list. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
+Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, uncertainty, and any pending-review label. List each recommendation it rejects in one line with its reason, outside the approval list. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
 
 Save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder.
 ```

@@ -60,27 +60,38 @@ Discover the exact workspace, team, workflow states, labels, members, and
 projects needed for the requested effect through the selected transport.
 Require one workspace and one team matching the normalized target. Prefer stable IDs; accept a name
 only when it matches exactly and uniquely within its provider scope. Linear
-config stores the canonical priority names `none`, `urgent`, `high`, `medium`,
-and `low`, not a transport-specific argument. At the MCP boundary, translate
-the chosen name with the runtime schema's documented mapping. For the current
-Linear MCP schema that is `none` to `0`, `urgent` to `1`, `high` to `2`,
-`medium` to `3`, and `low` to `4`; pass the resulting number, never the config
+config maps each priority name `urgent`, `high`, `medium`, and `low` to itself,
+not to a transport-specific argument, and the validator rejects any other
+value. At the MCP boundary, translate the chosen name with the runtime
+schema's documented mapping. For the current Linear MCP schema that is
+`urgent` to `1`, `high` to `2`, `medium` to `3`, and `low` to `4`, and `0`
+means no priority is set; pass the resulting number, never the config
 string, when the schema requires a number. If the runtime schema differs or
 does not document an exact conversion, stop before preview rather than guess.
 For Orca, use the version-matched guide's documented representation. Estimates
 apply only to implementation leaves; readiness uses an exact discovered label
 identity, never workflow status.
 
-During first-use setup, present the native priority and estimate choices and
-exact existing labels beside the Linear starter recommendations. Recommend a
-workspace-scoped readiness group named `readiness` with kebab-case children
-`needs-discovery`, `needs-planning`, and `ready`. Offer the team's members as
-default-assignee candidates and store the chosen member's stable user ID. The
-operator chooses the mappings. Do not change the team's native priority or
-estimation scheme.
+During first-use setup, present the native estimate choices and exact existing
+labels beside the Linear starter recommendations, and show the four priority
+mappings as fixed. Recommend a workspace-scoped readiness group named
+`readiness` with kebab-case children `needs-discovery`, `needs-planning`, and
+`ready`. Offer the team's members as default-assignee candidates and store the
+chosen member's stable user ID. The operator chooses every mapping except
+priority. Do not change the team's native priority or estimation scheme.
+
+The four scores are labels in single-select label groups, one group per
+factor. Recommend workspace-scoped groups named `impact`, `confidence`,
+`verification-effort`, and `undo-cost`, each with three children named for the
+factor and the score: `impact-1` to `impact-3`, `confidence-1` to
+`confidence-3`, `verification-effort-1` to `verification-effort-3`, and
+`undo-cost-1` to `undo-cost-3`. Name each child for its factor because
+Linear's GitHub sync mirrors a child under its own name with no group prefix.
+Offer existing single-select groups with three children beside these
+recommendations.
 
 When a chosen general label is absent, offer a flat label create. When a chosen
-readiness child is absent, offer the group-then-children recipe: create the
+readiness or score child is absent, offer the group-then-children recipe: create the
 workspace group if it is absent, then any missing children, then rediscover
 each chosen child. Apply a child, never the parent. Store a unique child name,
 or the label UUID when the name is not unique. Missing group-create must not
@@ -88,15 +99,18 @@ block creating a general label such as `bug`.
 
 Offer any of those creates only if the selected transport exposes an exact
 label-create and label-readback path. For connected MCP this is normally the
-runtime `create_issue_label` and `list_issue_labels` surface; for Orca it must
+runtime `save_issue_label` and `list_issue_labels` surface; for Orca it must
 come from the loaded guide. The current MCP schema creates a workspace group
-with `isGroup` true and no `teamId`, and children with `parent` set to the
-group name and no `teamId`. If the runtime schema differs, follow it. If the
+with `isGroup` true, `groupType` `singleSelect`, and no `teamId`, and children
+with `parent` set to the group name and no `teamId`. The current Orca guide
+has no label create, so a session on that transport that still needs one
+stops as the next sentences describe. If the runtime schema differs, follow it. If the
 approved batch still needs a workspace-scoped group or child create the
 selected path cannot express, stop setup without a config write and name the
 missing capability. Do not fall through to Orca.
 
-MCP cannot update or delete labels. Preview the exact provider effects, apply
+The current MCP schema can update, retire, and restore a label but cannot
+delete one, and setup never changes an existing label. Preview the exact provider effects, apply
 each approved create once, then rediscover every chosen child by exact stable
 identity before rendering the config. A failed or partial create uses the
 shared first-stop: later effects stay unapplied, config is not written, and
@@ -133,6 +147,13 @@ native project field. Prefer label add/remove to whole-set replacement. If only 
 can express an approved effect, reread the complete current set immediately
 before writing and show the exact resulting set in the preview; any drift stops
 the batch.
+
+Read an issue's scores from its labels: a score is present when the issue
+carries exactly one of that factor's three mapped children. No child is an
+absent score, and more than one makes that score unreadable. A label read that failed or was capped makes the scores unreadable.
+Linear rejects a second child from one single-select group, so change a score
+in one update that removes the old child and adds the new one, and show both
+in the preview. Set the scores on a create with the create's own labels.
 
 A create may set approved node metadata atomically when the selected transport
 supports it. Managing Issues attaches no graph edges at create, but the provider

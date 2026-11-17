@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "provider": "github",
+  "target": "ExampleOrg/Project",
+  "mappings": {
+    "priority": {
+      "urgent": "priority:urgent",
+      "high": "priority:high",
+      "medium": "priority:medium",
+      "low": "priority:low"
+    },
+    "leaf_estimate": {
+      "1": "estimate:1",
+      "2": "estimate:2",
+      "3": "estimate:3",
+      "5": "estimate:5",
+      "8": "estimate:8"
+    },
+    "labels": {
+      "bug": "bug",
+      "feature": "feature"
+    },
+    "readiness": {
+      "needs-discovery": "readiness:discovery",
+      "needs-planning": "readiness:planning",
+      "ready": "readiness:ready"
+    }
+  }
+}

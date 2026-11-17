@@ -172,9 +172,9 @@ settled, and unanswered questions remain open rather than assumed resolved.
 ## Decide what deserves attention
 
 Surface an item only when the user's judgment or presence could change its
-outcome. Weigh strategic impact, urgency, risk, current opportunity cost,
-calendar context, and sustainable capacity as judgment factors, not a scoring
-formula. Optimize for durable value across the review horizon rather than the
+outcome. Weigh strategic impact, urgency, risk, how hard a choice is to undo,
+current opportunity cost, calendar context, and sustainable capacity as
+judgment factors, not a scoring formula. Optimize for durable value across the review horizon rather than the
 largest count of completed tasks.
 
 Interpret calendar evidence through the event's purpose, participants,

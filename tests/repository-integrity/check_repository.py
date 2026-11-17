@@ -145,6 +145,44 @@ def check_link_scanning(repository: Path) -> None:
     malformed.unlink()
 
 
+def check_rule_copies(repository: Path) -> None:
+    heading = "## Rank by leverage"
+    rule = f"{heading}\n\nOrder work by leverage, highest first.\n\n- Impact: 1 to 3.\n"
+    source = repository / "PRIORITIZATION.md"
+    global_copy = repository / "GLOBAL-AGENTS.md"
+    skill_copy = repository / "skills/managing-issues/references/prioritization.md"
+    skill_copy.parent.mkdir(parents=True)
+
+    def write(source_rule: str = rule, global_rule: str = rule, skill_rule: str | None = rule) -> None:
+        source.write_text(f"# How I prioritize\n\nWhy.\n\n## Breaking ties\n\nTies.\n\n{source_rule}", encoding="utf-8")
+        global_copy.write_text(f"# Guidance\n\n## Work clearly\n\nBe clear.\n\n{global_rule}\n## Write plainly\n\nPlainly.\n", encoding="utf-8")
+        if skill_rule is None:
+            skill_copy.unlink(missing_ok=True)
+        else:
+            skill_copy.write_text(f"# Prioritization\n\nMaintainers: a copy.\n\n{skill_rule}\n## Derived values\n\n| a | b |\n|---|---|\n| 1 | 1 |\n", encoding="utf-8")
+
+    write()
+    clean = run_checker(repository)
+    require(clean.returncode == 0, f"matching rule copies failed: {clean.stderr}")
+    changed = rule.replace("highest first", "lowest first")
+    for arguments, diagnostic in (
+        ({"global_rule": changed}, "GLOBAL-AGENTS.md: '## Rank by leverage' section differs"),
+        ({"skill_rule": changed},
+         "skills/managing-issues/references/prioritization.md: '## Rank by leverage' section differs"),
+        ({"source_rule": rule.replace(heading, "## Rank by value")},
+         "PRIORITIZATION.md: expected exactly one '## Rank by leverage' section"),
+        ({"skill_rule": None}, "skills/managing-issues/references/prioritization.md: missing"),
+    ):
+        write(**arguments)
+        result = run_checker(repository)
+        require(result.returncode == 1 and diagnostic in result.stderr,
+                f"rule copy check did not report {diagnostic!r}: {result.stderr}")
+    shutil.rmtree(repository / "skills")
+    source.unlink()
+    global_copy.unlink()
+    require(run_checker(repository).returncode == 0, "repository without the rule failed")
+
+
 def check_yaml_arguments(repository: Path, temporary_root: Path) -> None:
     # Only workflow discovery is unrelated to this disposable YAML fixture.
     tools = temporary_root / "lint-tools"
@@ -316,6 +354,7 @@ def main() -> int:
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
         check_home_paths(repository)
         check_link_scanning(repository)
+        check_rule_copies(repository)
 
         invalid_text = repository / "invalid-text.txt"
         for contents, diagnostic in (

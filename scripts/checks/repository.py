@@ -80,6 +80,14 @@ HOME_PATH_EXAMPLES = {
 }
 
 
+RULE_HEADING = "## Rank by leverage"
+RULE_SOURCE = "PRIORITIZATION.md"
+RULE_COPIES = (
+    "GLOBAL-AGENTS.md",
+    "skills/managing-issues/references/prioritization.md",
+)
+
+
 def candidate_files() -> list[Path]:
     result = subprocess.run(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
@@ -226,9 +234,48 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
             errors.append(f"{path.relative_to(ROOT)}:{line}: broken relative link: {target}")
 
 
+def rule_section(text: str) -> str | None:
+    lines = text.splitlines()
+    if lines.count(RULE_HEADING) != 1:
+        return None
+    start = lines.index(RULE_HEADING)
+    end = next(
+        (index for index in range(start + 1, len(lines)) if re.match(r"#{1,2} ", lines[index])),
+        len(lines),
+    )
+    return "\n".join(lines[start:end]).rstrip()
+
+
+def check_rule_copies(errors: list[str]) -> None:
+    source = ROOT / RULE_SOURCE
+    copies = [ROOT / copy for copy in RULE_COPIES]
+    if not any(path.exists() for path in (source, *copies)):
+        return
+
+    def section_of(path: Path) -> str | None:
+        relative = path.relative_to(ROOT)
+        if path.is_symlink():
+            return None  # main() reports the symbolic link itself
+        if not path.is_file():
+            errors.append(f"{relative}: missing; it must hold the '{RULE_HEADING}' section")
+            return None
+        text = readable_text(path)
+        section = rule_section(text) if text is not None else None
+        if section is None:
+            errors.append(f"{relative}: expected exactly one '{RULE_HEADING}' section")
+        return section
+
+    source_section = section_of(source)
+    for copy, path in zip(RULE_COPIES, copies):
+        section = section_of(path)
+        if source_section is not None and section is not None and section != source_section:
+            errors.append(f"{copy}: '{RULE_HEADING}' section differs from {RULE_SOURCE}")
+
+
 def main() -> int:
     errors: list[str] = []
     check_tracked_transient_paths(errors)
+    check_rule_copies(errors)
     for path in candidate_files():
         if not safe_regular_file(path, errors):
             continue

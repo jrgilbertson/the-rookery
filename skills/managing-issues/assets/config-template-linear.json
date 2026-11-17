@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "provider": "linear",
   "target": {
     "workspace": "REPLACE_WITH_CONNECTED_WORKSPACE_ID",
@@ -30,6 +30,28 @@
       "needs-discovery": "needs-discovery",
       "needs-planning": "needs-planning",
       "ready": "ready"
+    },
+    "scores": {
+      "impact": {
+        "1": "impact-1",
+        "2": "impact-2",
+        "3": "impact-3"
+      },
+      "confidence": {
+        "1": "confidence-1",
+        "2": "confidence-2",
+        "3": "confidence-3"
+      },
+      "verification_effort": {
+        "1": "verification-effort-1",
+        "2": "verification-effort-2",
+        "3": "verification-effort-3"
+      },
+      "undo_cost": {
+        "1": "undo-cost-1",
+        "2": "undo-cost-2",
+        "3": "undo-cost-3"
+      }
     }
   },
   "assignee": {

@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `PRIORITIZATION.md` explains how the maintainer ranks work by leverage: the
+  ICE score with verification effort in place of ease, plus the cost of
+  undoing the change, and why both matter when agents do the work unattended.
+  Its "Rank by leverage" section is the short rule agents apply. The global
+  agent guidance and `managing-issues` each carry a copy, and the repository
+  check fails when a copy differs.
 - `INSTALLED-SKILLS.md` lists the skills the maintainer installs on every
   machine, with install commands by source and a check that compares a
   machine's lock file against the list.
@@ -37,8 +43,8 @@ looked" surface. GitHub Releases mirror its entries.
   that keep recurring.
 - An Improve audit automation. Each week it surveys the whole codebase with
   shadcn's `improve` skill, run as written across all of its categories, and
-  stops at vetted, prioritized findings. The recommendation review covers
-  medium and large recommendations and the ten highest-leverage findings.
+  returns every vetted finding in leverage order. Independent review runs
+  only on the findings the owner picks in reply.
 
 ### Removed
 
@@ -81,7 +87,7 @@ looked" surface. GitHub Releases mirror its entries.
   workspaces while reporting unsupported hierarchy as an exception.
 - The final `ce-pov` review in each automation judges every recommendation as
   its own decision. The approval list keeps only the recommendations it
-  supports, most impactful first; each one it rejects appears in one line with
+  supports, in leverage order; each one it rejects appears in one line with
   its reason, outside the list, so nothing is dropped silently.
 - Automation setup uses Chat mode and explicit model and effort selections
   guided by `ROUTING.md`; the Design system audit follows its Design/taste row.
@@ -169,8 +175,9 @@ looked" surface. GitHub Releases mirror its entries.
 - The Analytics gap audit loads `instrument-product-analytics` through the
   PostHog MCP instead of an installed plugin skill.
 - Automation prompts review related recommendations together with
-  `checking-simplicity`, then use `ce-pov` for the final judgment. Selected
-  recommendations receive fresh review each run, including Improve; empty
+  `checking-simplicity`, then use `ce-pov` for the final judgment.
+  Recommendations receive fresh review each run, and Improve reviews the ones
+  the owner picks; empty
   sets skip simplicity review, and missing reviews remain explicit. The skill
   clarifies coverage of every recommendation in a submitted set and their
   interactions while preserving its independent reviewer and compact readout.
@@ -189,8 +196,23 @@ looked" surface. GitHub Releases mirror its entries.
 - Global agent guidance permits Compound Engineering reviews through existing
   sign-in accounts after naming the model, while excluding credentials and
   personal data.
-- Test audit recommendations are prioritized by risk and impact without a fixed
-  finding limit, so material findings are not omitted to keep the report small.
+- Test audit recommendations have no fixed finding limit, so material findings
+  are not omitted to keep the report small.
+- Design system audit lists every issue in leverage order instead of the top
+  five, and State-machine audit ranks its fixes by leverage.
+- `personal-chief-of-staff` weighs how hard a choice is to undo among its
+  judgment factors for deciding what deserves attention.
+- `managing-issues` scores every issue it drafts or updates on impact,
+  confidence, verification effort, and undo cost, shows the scores in the
+  approval preview, and stores them in the tracker: Number issue fields on
+  GitHub and single-select label groups on Linear. Priority and a leaf's
+  estimate are derived from the scores, and derivation never sets, changes, or
+  clears urgent. The Ready Frontier is listed in leverage order.
+  `.agents/managing-issues.json` moves to version 3: it adds a `scores`
+  mapping and fixes the priority and estimate names, so neither may be empty.
+  On Linear each priority name maps to itself.
+  A version 2 config is not migrated. Reads and drafts keep working, and the
+  first write asks for setup to replace the file.
 - Global agent guidance lets an agent merge a pull request when the user asked
   for the merge, in the task or in standing instructions, and its required
   checks pass with no open review thread. Deploying and force-pushing still

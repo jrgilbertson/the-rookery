@@ -13,9 +13,10 @@ distinct sub-outcome that itself needs several leaves. This is the shallowest
 useful graph; it has no fixed depth limit.
 
 Any node with children is a parent, including a nested sub-outcome, and carries
-no estimate. When the config maps estimates, only childless implementation
-leaves receive them, at every readiness. Every node still receives its own Problem, Scope, Verification,
-priority, labels, readiness, project, assignee, and native graph position.
+no estimate. Only childless implementation leaves receive one, at every
+readiness. Every node still receives its own Problem, Scope, Verification,
+four scores, priority, labels, readiness, project, assignee, and native graph
+position.
 
 ## Establish complete coverage
 
@@ -23,7 +24,9 @@ Start at the requested canonical issue. Walk its parent chain to the top of the
 family, then read every descendant and every internal `blocks` or `blocked-by`
 edge. For an edge crossing the family boundary, read the one external endpoint
 needed to decide whether it remains an unresolved blocker. Do not adopt that
-external issue's family.
+external issue's family. In the same traversal, read each implementation
+leaf's four scores through the provider reference's score read. A failed score
+read makes that leaf's scores unreadable. It does not make coverage partial.
 
 Track canonical provider identities in a visited set, count each identity once,
 preserve cycles as edges, and never revisit a node. Stop at 250 identities,
@@ -64,6 +67,18 @@ never enter it. Neither do completed or canceled leaves,
 blocked leaves, unknown-readiness leaves, or members of an unresolved blocker
 cycle. Report it only from complete current coverage, name the set explicitly,
 and list an unattached intended node separately as unresolved topology.
+
+List the Ready Frontier in leverage order, highest first, showing each leaf's
+four scores. Leverage is (impact × confidence) ÷ (verification effort × undo
+cost), worked out for the listing from the scores read in this traversal and
+never stored. Above the listing, name every ready leaf that scores 3 on
+impact, wherever it ranks. A ready leaf with any score absent, unresolved, or
+unreadable goes after the ranked leaves, flagged with which of the three
+applies to which score; never give it default scores. List leaves that tie on
+leverage together in tracker identifier order and say that they tie. List the
+flagged leaves in tracker identifier order. Order changes only the
+listing. The membership rules above stay as they are, and every qualifying
+leaf appears.
 
 ## Preview and apply topology
 
@@ -120,5 +135,6 @@ relationships is ordinary readback, not inspection of an unreported effect.
 Never use a closing keyword as completion authority.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
-Ready Frontier, exact effect outcomes, and Verification evidence or gaps. Do
-not add implementation recommendations or persist an execution handoff.
+the ordered Ready Frontier, exact effect outcomes, and Verification evidence
+or gaps. Do not add implementation recommendations or persist an execution
+handoff.

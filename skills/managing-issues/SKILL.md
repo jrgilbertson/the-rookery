@@ -17,7 +17,9 @@ delivery orchestration belong to the workflows that consume those issues.
 Use this step for a draft, create, or requested decomposition. For a read,
 surgical update, relationship or readiness change, completion check, or
 reversible lifecycle change, preserve the existing issue shape unless the
-operator asks to restructure it and continue at step 2.
+operator asks to restructure it and continue at step 2. An update to an
+issue's own content or scores still follows “Score every issue” below. A
+relationship, readiness, comment, or lifecycle change does not.
 
 Read the supplied request, referenced plan, and relevant existing issues and
 comments. Use the operator's request and repository instructions as authority.
@@ -57,23 +59,66 @@ five rules above before previewing tracker effects.
 
 Create a parent only when it owns a distinct whole outcome delivered by several
 children. Keep the graph as shallow as the outcomes allow. Parents have no
-estimate. When the config maps estimates, estimate every childless
-implementation leaf, whatever its readiness. A leaf that still needs discovery
-or planning gets a best-guess
-estimate at creation, and planning revises it. Readiness is
+estimate. Every childless implementation leaf has one, whatever its readiness,
+derived from its scores once all four are present. Until then its estimate
+stays empty, and the preview says which score is missing. Readiness is
 `needs-discovery`, `needs-planning`, or `ready` and describes whether the
 issue has enough information for its role, not a named agent or workflow.
 
-Analyze priority, relevant labels, estimate, readiness, project, and assignee
-for every issue from the request and evidence instead of applying a default.
-As the one exception, assign the configured default assignee unless the
-request names someone else. Every issue belongs to a project. Leave the project or
+### Score every issue
+
+Score every issue you draft, create, or update, parents included, on the four
+leverage factors: impact, confidence, verification effort, and undo cost, each
+1 to 3. Load `references/prioritization.md` for the scales and the lookup
+tables. On an update, keep each stored score unless the request, or evidence
+new in this update, changes it, and fill any score that is absent. Score a
+leaf that still needs discovery or planning on what is known now; planning
+revises the scores.
+
+Analyze the four scores, relevant labels, readiness, project, and assignee for
+every issue from the request and evidence instead of applying a default. As
+the one exception, assign the configured default assignee unless the request
+names someone else. Every issue belongs to a project. Leave the project or
 assignee empty only with a stated reason, and never leave the project empty
 when the config requires one.
 
-When the request and evidence do not settle one of those inputs, ask before
-the preview. Name the field, the candidates, and the one you lean to, then
-wait. Do not ask about an input the evidence settles. Ask whoever made the
+Priority and estimate follow from the scores; do not choose either one
+directly. Look both up in the tables in `references/prioritization.md`:
+priority from all four scores, and a leaf's estimate from verification effort
+and undo cost.
+
+- Derive them on every create and on every update this section covers, in the
+  same previewed batch, whether or not a score changed.
+- Derive them only when all four scores are present, each one read from the
+  tracker or written in this batch. Otherwise leave priority and estimate as
+  they are.
+- Derivation never sets, overwrites, or clears urgent. Urgent is the value
+  mapped under `mappings.priority.urgent`. When the request asks for urgent,
+  write urgent: that is the owner setting it. When the tracker's current
+  priority for the issue is already that value, leave it. In both cases only
+  the estimate is derived. Decide this from those two facts, not from whether
+  the work seems time-sensitive. An urgent issue is still scored.
+- When the request removes urgent, the owner has cleared it. Derive priority
+  as for any other issue and show urgent as the old value.
+- An issue with no priority set gets the derived one. When the current
+  priority cannot be read, or the issue carries more than one priority value,
+  derive no priority and name the problem in the preview.
+- When the request names any other priority, or an estimate, do not write it
+  and do not bend a score to reach it. Show the derived value beside the
+  requested one and ask which scores should change.
+
+Store the four scores in the canonical tracker's mapped score fields and
+nowhere else. Store no leverage value, and put no score or score rationale in
+an issue body.
+
+When the request and evidence do not settle one of the analyzed inputs, ask
+before the preview. Name the field, the candidates, and the one you lean to,
+then wait. Do not ask about an input the evidence settles. Thin evidence about
+the work settles impact and confidence at 1 instead of leaving them open:
+confidence 1 means a guess, and impact 1 means no benefit to users can be
+named. When the evidence leaves verification effort or undo cost between two
+values, take the higher. Ask about a score only when you still cannot choose
+between two values. Ask whoever made the
 request; a calling agent or workflow answers or passes the question to its own
 requester. A scheduled or headless run may have no way to ask, and a question
 may come back unanswered. In either case, apply your lean and mark it
@@ -83,13 +128,13 @@ unresolved, and an unresolved required project makes the create
 non-executable.
 
 For an existing family or any proposed relationship, load
-`references/graph-and-completion.md`. Its native coverage, readiness, frontier,
-and completion rules govern the graph.
+`references/graph-and-completion.md`. Its native coverage, readiness, Ready
+Frontier membership and order, and completion rules govern the graph.
 
 Completion: every proposed issue owns a distinct outcome, every leaf is
 independently verifiable, every blocker is necessary, and every metadata
-choice is supported by the evidence, answered by the requester, marked
-`best guess`, or named as unresolved.
+choice is supported by the evidence, derived from the scores, answered by the
+requester, marked `best guess`, or named as unresolved.
 
 ## 2. Resolve the tracker and current facts
 
@@ -141,8 +186,9 @@ is `complete` only when the selected path exposes every operation needed by the
 whole proposed batch. Missing required MCP tools or a missing or incompatible
 Orca guide stops command construction.
 
-Read the canonical issue before every update. A missing field is unknown, not
-empty. For relationships, readiness, or completion, obtain the complete native
+Read the canonical issue before every update, with its current priority, and
+read its four scores through the provider reference's score read. A missing field is
+unknown, not empty. For relationships, readiness, or completion, obtain the complete native
 coverage required by the graph reference. Never permanently delete an issue;
 offer close or cancel instead. Redact likely secrets, and stop when redaction
 would conceal a material effect.
@@ -163,12 +209,20 @@ ordered effect. For each effect show exact changed fields, metadata, lifecycle
 change, relationship, and rendered content. For a whole-set replacement, show
 the exact resulting set. If one requested field remains unresolved, still render
 every resolved effect and show that field as `unresolved — non-writable`; never
-invent its content or hide the rest of the batch behind it.
+invent its content or hide the rest of the batch behind it. Show a score the
+same way when its mapped field or label is missing, of the wrong type, or
+unreadable, and never write that score anywhere else, such as another label or
+the issue body. An issue's four scores are written together or not at all:
+when one is unresolved, show the values you would have written for the other
+three, write none of them, and name the field or label that blocks them. Say
+that rerunning setup restores the mapping; do not start setup unasked.
 
-A create preview shows each new issue's project and assignee, and each new
-leaf's estimate when the config maps estimates. If any of them is empty without
-a stated reason, or the project is empty when the config requires one, the
-create is not executable. Settle the field under step 1 first.
+Every create or update preview shows each issue's four scores and its
+priority, and every priority or estimate the batch changes with its old and
+new value. A create preview also shows each new issue's project and assignee
+and each new leaf's estimate. If any of those three is empty without a stated
+reason, or the project is empty when the config requires one, the create is
+not executable. An unresolved score is a stated reason for an empty estimate. Settle the field under step 1 first.
 
 Before labeling a preview executable, show the provider gate evidence:
 successful authentication, exact target and issue matchback, and required

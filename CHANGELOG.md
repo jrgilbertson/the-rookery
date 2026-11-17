@@ -72,8 +72,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `managing-issues` and the leverage rule settle the passages agents guessed
   at when scoring and creating issues. Undo cost is defined as whether a
   change can be put back as it was, with no git verb in any copy of the rule.
-  Impact counts as users whoever uses what the repository ships, including
-  the owner when it ships the owner's own tools. An agent takes the higher
+  For impact, users are whoever uses what the repository ships, including the
+  owner when it ships the owner's own tools. An agent takes the higher
   value only for undo cost, and scores verification effort by the evidence,
   marked `best guess` when torn. Urgent issues are scored with the same care
   as any other. Only an implementation leaf gets an estimate, so a research,

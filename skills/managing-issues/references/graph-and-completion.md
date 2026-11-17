@@ -17,7 +17,7 @@ no estimate. Only implementation leaves receive one, at every readiness; a
 childless issue whose deliverable is research, a decision, or a person's action
 is not a leaf. Every node still receives its own Problem, Scope, Verification,
 four scores, priority, labels, readiness, project, assignee, and native graph
-position.
+position, with a project or assignee left empty only as `SKILL.md` allows.
 
 ## Establish complete coverage
 

@@ -44,11 +44,15 @@ to an issue.
 
 The starter templates also carry two optional settings. `assignee.default`
 names one exact identity from the discovered members, a GitHub login or a
-Linear user. It is the only default the skill applies to an issue.
+Linear user. It is the only configured default the skill applies to an issue.
 `project.required` set to `true` means no issue may be created without a
 project. The operator may keep, change, or remove either one. Without
-`assignee.default`, the assignee comes from the request and evidence. Without
-`project.required`, a project may stay empty with a stated reason.
+`assignee.default`, a create assigns the person the request names, or else the
+requester, and a run with no human requester leaves the assignee empty with a
+stated reason. A team that wants every new issue to have an owner, including
+issues from scheduled runs, sets `assignee.default` to the person who triages
+new work. Without `project.required`, a project may stay empty with a stated
+reason.
 
 If the chosen representations do not exist, show their exact provider metadata
 effects as a complete setup batch with its own direct approval. Apply and read

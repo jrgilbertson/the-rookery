@@ -78,12 +78,21 @@ new in this update, changes it, and fill any score that is absent. Score a
 leaf that still needs discovery or planning on what is known now; planning
 revises the scores.
 
-Analyze the four scores, relevant labels, readiness, project, and assignee for
-every issue from the request and evidence instead of applying a default. As
-the one exception, assign the configured default assignee unless the request
-names someone else. Every issue belongs to a project. Leave the project or
-assignee empty only with a stated reason, and never leave the project empty
-when the config requires one.
+Analyze the four scores, relevant labels, readiness, and project for every
+issue from the request and evidence instead of applying a default. For the
+project, recommend the open project that fits best among the ones you
+discover. When none fits, say so and suggest creating one instead of forcing
+a poor fit. When the target has no open projects, leave the project empty and
+say why in the preview. When the config requires a project and none fits or
+none is open, the create waits until the person picks or creates one.
+
+The assignee follows a fixed order instead. On a create, assign the person the
+request names; otherwise the config's `assignee.default`; otherwise the person
+who made the request. The requester is the human who asked, not the account
+the run authenticates as. A scheduled or headless run with no human requester
+and no `assignee.default` leaves the assignee empty and says so. If the person
+the order selects cannot be assigned on the target, do not skip to the next
+one: leave the assignee empty and name who could not be assigned and why.
 
 Priority and estimate follow from the scores; do not choose either one
 directly. Look both up in the tables in `references/prioritization.md`:
@@ -126,8 +135,8 @@ confidence 1 means a guess, and impact 1 means no benefit to users can be
 named. When the evidence leaves undo cost between two values, take the
 higher. When it leaves verification effort between two values, score the value
 the evidence most supports and mark it `best guess` in the preview and the
-result. Ask whoever made the request; a calling agent or workflow answers or passes the question to its own
-requester. A scheduled or headless run may have no way to ask, and a question
+result. Ask whoever made the request; a calling agent or workflow answers or
+passes the question to its own requester. A scheduled or headless run may have no way to ask, and a question
 may come back unanswered. In either case, apply your lean and mark it
 `best guess` in the preview and the result so a person can correct it. A lean
 is always one of the discovered candidates. With no candidate, the field stays

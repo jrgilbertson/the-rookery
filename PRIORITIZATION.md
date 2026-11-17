@@ -142,6 +142,18 @@ One-way doors are also rare, so stopping for them costs little. When
 [Anthropic measured about a million agent actions](https://www.anthropic.com/research/measuring-agent-autonomy),
 "only 0.8% of actions appear to be irreversible."
 
+## Why not urgency
+
+Leverage doesn't measure deadlines. Some scoring methods add a time factor,
+and I leave it out for two reasons. A deadline belongs to the calendar, not to
+the work. The four scores stay true until the work changes, but an urgency
+score would go stale as the date gets closer. Most of what I rank also has no
+deadline, so the factor would score 1 almost everywhere and rarely change the
+order.
+
+When an item does have a deadline, the agent gives the date with the item and
+scores it the same as it would without one. I move it up myself.
+
 ## Breaking ties
 
 When items tie:

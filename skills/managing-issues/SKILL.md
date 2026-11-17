@@ -59,9 +59,12 @@ five rules above before previewing tracker effects.
 
 Create a parent only when it owns a distinct whole outcome delivered by several
 children. Keep the graph as shallow as the outcomes allow. Parents have no
-estimate. Every childless implementation leaf has one, whatever its readiness,
-derived from its scores once all four are present. Until then its estimate
-stays empty, and the preview says which score is missing. Readiness is
+estimate. Every implementation leaf has one, whatever its readiness, derived
+from its scores once all four are present. Until then its estimate stays
+empty, and the preview says which score is missing. A childless issue is not
+an implementation leaf by that fact alone: an issue whose deliverable is
+research, a decision, or a person's action gets no estimate, and one whose
+Verification allows an outcome that ships a pull request does. Readiness is
 `needs-discovery`, `needs-planning`, or `ready` and describes whether the
 issue has enough information for its role, not a named agent or workflow.
 
@@ -75,12 +78,22 @@ new in this update, changes it, and fill any score that is absent. Score a
 leaf that still needs discovery or planning on what is known now; planning
 revises the scores.
 
-Analyze the four scores, relevant labels, readiness, project, and assignee for
-every issue from the request and evidence instead of applying a default. As
-the one exception, assign the configured default assignee unless the request
-names someone else. Every issue belongs to a project. Leave the project or
-assignee empty only with a stated reason, and never leave the project empty
-when the config requires one.
+Analyze the four scores, relevant labels, readiness, and project for every
+issue from the request and evidence instead of applying a default. For the
+project, recommend the open project that fits best among the ones you
+discover. When none fits, say so and suggest creating one instead of forcing
+a poor fit. When the target has no open projects, leave the project empty and
+say why in the preview. When the config requires a project and none fits or
+none is open, the create waits until the person picks or creates one.
+
+The assignee follows a fixed order instead. On a create, assign the person the
+request names; otherwise the config's `assignee.default`; otherwise the person
+who made the request. The requester is the human who asked, not the account
+the run authenticates as. When the request names no one, a scheduled or
+headless run with no human requester and no `assignee.default` leaves the
+assignee empty and says so. If the person
+the order selects cannot be assigned on the target, do not skip to the next
+one: leave the assignee empty and name who could not be assigned and why.
 
 Priority and estimate follow from the scores; do not choose either one
 directly. Look both up in the tables in `references/prioritization.md`:
@@ -97,7 +110,11 @@ and undo cost.
   write urgent: that is the owner setting it. When the tracker's current
   priority for the issue is already that value, leave it. In both cases only
   the estimate is derived. Decide this from those two facts, not from whether
-  the work seems time-sensitive. An urgent issue is still scored.
+  the work seems time-sensitive. An urgent issue still gets all four scores,
+  with the same care as any other issue and a question about any score the
+  evidence does not settle. Urgency is never a reason to skip or rush scoring.
+  A request that sets urgent and also names an estimate gets the same
+  question as any named estimate, below.
 - When the request removes urgent, the owner has cleared it. Derive priority
   as for any other issue and show urgent as the old value.
 - An issue with no priority set gets the derived one. When the current
@@ -116,12 +133,12 @@ before the preview. Name the field, the candidates, and the one you lean to,
 then wait. Do not ask about an input the evidence settles. Thin evidence about
 the work settles impact and confidence at 1 instead of leaving them open:
 confidence 1 means a guess, and impact 1 means no benefit to users can be
-named. When the evidence leaves verification effort or undo cost between two
-values, take the higher. Ask about a score only when you still cannot choose
-between two values. Ask whoever made the
-request; a calling agent or workflow answers or passes the question to its own
-requester. A scheduled or headless run may have no way to ask, and a question
-may come back unanswered. In either case, apply your lean and mark it
+named. When the evidence leaves undo cost between two values, take the
+higher. When it leaves verification effort between two values, score the value
+the evidence most supports and mark it `best guess` in the preview and the
+result. Ask whoever made the request; a calling agent or workflow answers or
+passes the question to its own requester. A scheduled or headless run may have
+no way to ask, and a question may come back unanswered. In either case, apply your lean and mark it
 `best guess` in the preview and the result so a person can correct it. A lean
 is always one of the discovered candidates. With no candidate, the field stays
 unresolved, and an unresolved required project makes the create

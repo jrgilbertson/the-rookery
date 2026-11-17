@@ -135,7 +135,10 @@ issue or stops. An issue in another tracker is not a second write target.
 One issue whose deliverable and Verification boundary fit one independently
 deliverable, reviewable pull request. A stacked PR series is one leaf only when
 no PR in the stack delivers independently observable behavior; otherwise each
-such PR is its own leaf. A single-leaf change needs no artificial parent.
+such PR is its own leaf. A single-leaf change needs no artificial parent. An
+issue whose deliverable is research, a decision, or a person's action is not an
+implementation leaf and gets no estimate; one whose Verification allows an
+outcome that ships a pull request is a leaf and gets one.
 
 ### Ready Frontier
 

@@ -25,7 +25,7 @@ approvals, and the required evidence record. Unavailable evidence remains
 | # | Situation | What a reviewer should see |
 | -- | -- | -- |
 | 1. Show before writing | You ask it to create or change an issue. You approved the plan behind it, but you have not said yes to these tracker changes. | It shows every change it is about to make and waits for your yes before writing anything. |
-| 2. Ask when unsure | Nothing says which project or person the issue belongs to. | It asks, naming the choices and the one it leans to. If nobody can answer, it uses its lean and marks it "best guess". |
+| 2. Ask when unsure | Nothing says which project the issue belongs to. | It asks, naming the open projects that could fit and the one it leans to. If nobody can answer, it uses its lean and marks it "best guess". |
 | 3. Expected side effect | After you approve, the tracker adds a link on its own because the text mentioned another issue. | It carries on with the rest and reports the link. |
 | 4. Not what you approved | After you approve, something does not match: the issue changed in the meantime, the tracker added something nobody asked for, or a change cannot be confirmed as saved. | It stops, does not try again on its own, leaves the later steps undone, says what it saw, and asks again. |
 | 5. Done means checked | You ask it to close an issue as finished. | It checks each Verification line first, and leaves the issue open if a line is unmet or it could not see everything it needed to check. |

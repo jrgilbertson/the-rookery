@@ -206,6 +206,7 @@ looked" surface. GitHub Releases mirror its entries.
   clears urgent. The Ready Frontier is listed in leverage order.
   `.agents/managing-issues.json` moves to version 3: it adds a `scores`
   mapping and fixes the priority and estimate names, so neither may be empty.
+  On Linear each priority name maps to itself.
   A version 2 config is not migrated. Reads and drafts keep working, and the
   first write asks for setup to replace the file.
 - Global agent guidance lets an agent merge a pull request when the user asked

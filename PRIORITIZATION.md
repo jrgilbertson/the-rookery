@@ -32,14 +32,15 @@ Each factor gets a score from 1 to 3.
 | Impact | How much better does this make things for users? | Users would barely notice | A clear improvement to something users do often | Changes whether most users can do a core task, or whether they can trust the product with their work |
 | Confidence | How sure am I that we can do this and it will deliver the impact? | A guess. The problem or the approach is unproven | Good reasons to expect it, but nothing confirmed | Confirmed. I verified the problem, or the approach has worked before |
 | Verification effort | How hard is it to confirm the result is right? | Existing tests, types, CI, or a reproduction I already have prove it | It needs new tests or one targeted manual check | No check can prove it, so it needs judgment, such as taste, UX, performance under real load, or behavior across systems |
-| Undo cost | If this change is wrong, what does it take to undo it? | Two-way door, contained. It touches one place, and a revert undoes it | Two-way door, wide. Many callers or users are affected, but a revert undoes it | One-way door. A revert can't undo it: deleted or migrated data, money moved, messages sent, access exposed, a published contract |
+| Undo cost | If this change is wrong, what does it take to undo it? | Two-way door, contained. It touches one place, and it can be put back as it was | Two-way door, wide. Many callers or users are affected, but it can be put back as it was | One-way door. The earlier state is lost, or the effect has already reached someone: deleted or migrated data, money moved, messages sent, access exposed, a published contract |
 
 Impact already covers the harm of doing nothing. A security hole or a
 data-loss bug scores high on impact, because users can't trust the product
 with their work. Undo cost covers only the change.
 
-Users are whoever the product is for. When the product is a tool or a skill,
-that includes the developers and agents who use it.
+Users are whoever uses what the repository ships. When the repository ships
+my own tools, I count as a user. Maintainers count only through what their
+work unblocks.
 
 Some work changes nothing users see, such as a refactor, a CI fix, or tests
 for code that has none. I score it by what it eventually does for users:
@@ -131,9 +132,10 @@ reversing it after it ships. A CSS tweak with no visual tests is hard to
 verify but cheap to undo. A change to access permissions that the tests fully
 cover is easy to verify, but exposed access can't be undone.
 
-Undo cost decides how much I can hand off. A two-way door is a change a revert
-undoes, so an agent can make it on its own. A one-way door is a change a
-revert can't undo, such as deleting data or sending a message. It waits for my
+Undo cost decides how much I can hand off. A two-way door is a change that
+can be put back as it was, such as a code change or an issue field whose old
+value is known, so an agent can make it on its own. A one-way door is a change
+that can't, such as deleting data or sending a message. It waits for my
 approval however good the checks are. Without undo cost in
 the formula, a change that deletes data could rank near the top just because
 it is easy to verify.
@@ -189,7 +191,7 @@ When you rank findings, ideas, or tasks for me to choose from, order them by lev
 - Impact, how much better it makes things for users: 1 is barely noticed, 2 is a clear improvement to something users do often, 3 changes whether most users can do a core task or trust the product with their work. Work users don't see takes the impact of the problem it prevents or the feature it unblocks.
 - Confidence, how sure we are that we can do it and it will deliver: 1 is a guess, 2 is good reasons but nothing confirmed, 3 is confirmed.
 - Verification effort, how hard the result is to confirm: 1 means existing checks prove it, 2 means it needs new tests or one manual check, 3 means only human judgment can.
-- Undo cost, what it takes to undo: 1 is contained and a revert undoes it, 2 is wide but a revert undoes it, 3 means a revert can't undo it.
+- Undo cost, what it takes to undo: 1 is contained and can be put back as it was, 2 is wide but can be put back as it was, 3 means it can't, because the earlier state is lost or the effect has already reached someone.
 
 Return the whole list with each item's scores. Keep items you would skip, with a one-line reason. Name every item that scores 3 on impact above the list. When an item has a deadline, give the date beside it and score it as if it had none.
 

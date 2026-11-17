@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "provider": "github",
   "target": "REPLACE_WITH_OWNER/REPLACE_WITH_REPOSITORY",
   "mappings": {
@@ -27,6 +27,12 @@
       "needs-discovery": "readiness:needs-discovery",
       "needs-planning": "readiness:needs-planning",
       "ready": "readiness:ready"
+    },
+    "scores": {
+      "impact": "Impact",
+      "confidence": "Confidence",
+      "verification_effort": "Verification effort",
+      "undo_cost": "Undo cost"
     }
   },
   "assignee": {

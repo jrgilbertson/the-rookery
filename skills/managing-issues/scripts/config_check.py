@@ -18,11 +18,23 @@ MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
 TOP_LEVEL_FIELDS = {"version", "provider", "target", "mappings"}
 OPTIONAL_TOP_LEVEL_FIELDS = {"assignee", "project"}
-MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
+CONFIG_VERSION = 3
+# Each key in these families maps to one provider value.
+FLAT_MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
+MAPPING_FIELDS = (*FLAT_MAPPING_FIELDS, "scores")
 READINESS_FIELDS = {
     "needs-discovery",
     "needs-planning",
     "ready",
+}
+SCORE_FACTORS = {"impact", "confidence", "verification_effort", "undo_cost"}
+SCORE_LEVELS = {"1", "2", "3"}
+# Families whose keys are fixed; only `labels` is free-form.
+FIXED_MAPPING_KEYS = {
+    "priority": {"urgent", "high", "medium", "low"},
+    "leaf_estimate": {"1", "2", "3", "5", "8"},
+    "readiness": READINESS_FIELDS,
+    "scores": SCORE_FACTORS,
 }
 LINEAR_TARGET_FIELDS = {"workspace", "team"}
 LINEAR_PRIORITIES = {"none", "low", "medium", "high", "urgent"}
@@ -248,6 +260,24 @@ def normalize_mapping(
     return dict(sorted(result.items()))
 
 
+def normalize_scores(provider: str, value: dict[str, Any]) -> dict[str, Any]:
+    """GitHub maps a factor to an issue field name; Linear maps it to one label per level."""
+    result: dict[str, Any] = {}
+    for factor in sorted(value):
+        label = f"mappings.scores.{factor}"
+        if provider == "github":
+            result[factor] = require_concrete_text(value[factor], label)
+            continue
+        levels = value[factor]
+        require(isinstance(levels, dict), f"{label} must be an object")
+        require_exact_fields(levels, SCORE_LEVELS, SCORE_LEVELS, label)
+        result[factor] = {
+            level: require_concrete_text(levels[level], f"{label}.{level}")
+            for level in sorted(levels)
+        }
+    return result
+
+
 def require_unique_values(mapping: dict[str, str | int], label: str) -> None:
     seen: set[str | int] = set()
     for value in mapping.values():
@@ -256,32 +286,36 @@ def require_unique_values(mapping: dict[str, str | int], label: str) -> None:
 
 
 def require_unique_label_representations(provider: str, mappings: dict[str, Any]) -> None:
-    label_fields = MAPPING_FIELDS if provider == "github" else ("labels", "readiness")
+    label_fields = FLAT_MAPPING_FIELDS if provider == "github" else ("labels", "readiness")
     provider_name = "GitHub" if provider == "github" else "Linear"
+    labels = [value for field in label_fields for value in mappings[field].values()]
+    if provider == "linear":
+        labels += [value for levels in mappings["scores"].values() for value in levels.values()]
     seen: set[str] = set()
-    for field in label_fields:
-        for value in mappings[field].values():
-            comparison_value = value.casefold() if provider == "github" else value
-            require(
-                comparison_value not in seen,
-                f"{provider_name} label {value} is mapped more than once",
-            )
-            seen.add(comparison_value)
+    for value in labels:
+        comparison_value = value.casefold() if provider == "github" else value
+        require(
+            comparison_value not in seen,
+            f"{provider_name} label {value} is mapped more than once",
+        )
+        seen.add(comparison_value)
 
 
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     version = value.get("version")
-    if isinstance(version, int) and not isinstance(version, bool) and version == 1:
+    if isinstance(version, int) and not isinstance(version, bool) and 1 <= version < CONFIG_VERSION:
         raise ConfigError(
-            "config version 1 is unsupported; run Managing Issues setup to create version 2"
+            f"config version {version} is unsupported; run Managing Issues setup to create "
+            f"version {CONFIG_VERSION}, or update the branch from the default branch when the "
+            "configuration has already moved there"
         )
     require_exact_fields(
         value, TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS | OPTIONAL_TOP_LEVEL_FIELDS, "config"
     )
     version = value["version"]
     require(
-        isinstance(version, int) and not isinstance(version, bool) and version == 2,
-        "version must be 2",
+        isinstance(version, int) and not isinstance(version, bool) and version == CONFIG_VERSION,
+        f"version must be {CONFIG_VERSION}",
     )
     provider = value["provider"]
     require(
@@ -291,14 +325,17 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     mappings = value["mappings"]
     require(isinstance(mappings, dict), "mappings must be an object")
     require_exact_fields(mappings, set(MAPPING_FIELDS), set(MAPPING_FIELDS), "mappings")
-    readiness = mappings["readiness"]
-    require(isinstance(readiness, dict), "mappings.readiness must be an object")
-    require_exact_fields(readiness, READINESS_FIELDS, READINESS_FIELDS, "mappings.readiness")
-    normalized_mappings = {
-        field: normalize_mapping(provider, field, mappings[field]) for field in MAPPING_FIELDS
+    for field, keys in FIXED_MAPPING_KEYS.items():
+        require(isinstance(mappings[field], dict), f"mappings.{field} must be an object")
+        require_exact_fields(mappings[field], keys, keys, f"mappings.{field}")
+    normalized_mappings: dict[str, Any] = {
+        field: normalize_mapping(provider, field, mappings[field]) for field in FLAT_MAPPING_FIELDS
     }
-    for field in MAPPING_FIELDS:
+    normalized_mappings["scores"] = normalize_scores(provider, mappings["scores"])
+    for field in FLAT_MAPPING_FIELDS:
         require_unique_values(normalized_mappings[field], f"mappings.{field}")
+    if provider == "github":
+        require_unique_values(normalized_mappings["scores"], "mappings.scores")
     require_unique_label_representations(provider, normalized_mappings)
 
     normalized: dict[str, Any] = {

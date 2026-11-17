@@ -1,16 +1,33 @@
 {
-  "version": 2,
+  "version": 3,
   "provider": "github",
   "provider": "linear",
   "target": "ExampleOrg/Project",
   "mappings": {
-    "priority": {},
-    "leaf_estimate": {},
+    "priority": {
+      "urgent": "priority:urgent",
+      "high": "priority:high",
+      "medium": "priority:medium",
+      "low": "priority:low"
+    },
+    "leaf_estimate": {
+      "1": "estimate:1",
+      "2": "estimate:2",
+      "3": "estimate:3",
+      "5": "estimate:5",
+      "8": "estimate:8"
+    },
     "labels": {},
     "readiness": {
       "needs-discovery": "readiness:discovery",
       "needs-planning": "readiness:planning",
       "ready": "readiness:ready"
+    },
+    "scores": {
+      "impact": "Impact",
+      "confidence": "Confidence",
+      "verification_effort": "Verification effort",
+      "undo_cost": "Undo cost"
     }
   }
 }

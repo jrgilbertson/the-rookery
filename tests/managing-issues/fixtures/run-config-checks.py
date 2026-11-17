@@ -24,11 +24,32 @@ TEMPLATE_GITHUB = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-
 ACTIVE_CONFIG_RELATIVE = Path(".agents") / "managing-issues.json"
 MAX_BYTES = 64 * 1024
 READINESS_KEYS = {"needs-discovery", "needs-planning", "ready"}
-RECOMMENDED_KEYS = {
-    "priority": {"urgent", "high", "medium", "low"},
-    "leaf_estimate": {"1", "2", "3", "5", "8"},
+PRIORITY_KEYS = ("urgent", "high", "medium", "low")
+ESTIMATE_KEYS = ("1", "2", "3", "5", "8")
+SCORE_FACTORS = ("impact", "confidence", "verification_effort", "undo_cost")
+SCORE_LEVELS = ("1", "2", "3")
+TEMPLATE_KEYS = {
+    "priority": set(PRIORITY_KEYS),
+    "leaf_estimate": set(ESTIMATE_KEYS),
     "labels": {"bug", "feature", "maintenance", "research", "documentation"},
     "readiness": READINESS_KEYS,
+    "scores": set(SCORE_FACTORS),
+}
+GITHUB_SCORE_FIELDS = {
+    "impact": "Impact",
+    "confidence": "Confidence",
+    "verification_effort": "Verification effort",
+    "undo_cost": "Undo cost",
+}
+TEMPLATE_LINEAR_SCORE_LABELS = {
+    "impact": {"1": "impact-1", "2": "impact-2", "3": "impact-3"},
+    "confidence": {"1": "confidence-1", "2": "confidence-2", "3": "confidence-3"},
+    "verification_effort": {
+        "1": "verification-effort-1",
+        "2": "verification-effort-2",
+        "3": "verification-effort-3",
+    },
+    "undo_cost": {"1": "undo-cost-1", "2": "undo-cost-2", "3": "undo-cost-3"},
 }
 FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS = {
     "ftplib",
@@ -249,29 +270,42 @@ def check_cli_surface(repo_root: Path) -> None:
 
 def base_config(provider: str = "github") -> dict[str, Any]:
     target: str | dict[str, str]
+    priority: dict[str, str]
+    leaf_estimate: dict[str, str] | dict[str, int]
+    scores: dict[str, str] | dict[str, dict[str, str]]
     if provider == "github":
         target = "ExampleOrg/Project"
+        priority = {key: f"priority:{key}" for key in PRIORITY_KEYS}
+        leaf_estimate = {key: f"estimate:{key}" for key in ESTIMATE_KEYS}
         readiness = {
             "needs-discovery": "readiness:discovery",
             "needs-planning": "readiness:planning",
             "ready": "readiness:ready",
         }
+        scores = dict(GITHUB_SCORE_FIELDS)
     else:
         target = {"workspace": "workspace-fixture", "team": "ENG"}
+        priority = {key: key for key in PRIORITY_KEYS}
+        leaf_estimate = {key: int(key) for key in ESTIMATE_KEYS}
         readiness = {
             "needs-discovery": "label-readiness-discovery",
             "needs-planning": "label-readiness-planning",
             "ready": "label-readiness-ready",
         }
+        scores = {
+            factor: {level: f"label-{factor}-{level}" for level in SCORE_LEVELS}
+            for factor in SCORE_FACTORS
+        }
     return {
-        "version": 2,
+        "version": 3,
         "provider": provider,
         "target": target,
         "mappings": {
-            "priority": {},
-            "leaf_estimate": {},
+            "priority": priority,
+            "leaf_estimate": leaf_estimate,
             "labels": {},
             "readiness": readiness,
+            "scores": scores,
         },
     }
 
@@ -375,10 +409,15 @@ def check_templates(repo_root: Path) -> None:
             and template["project"] == {"required": True},
             f"{provider} template assignee or project recommendation differs",
         )
-        require(template["version"] == 2 and template["provider"] == provider, f"{provider} template identity differs")
-        require(set(template["mappings"]) == {"priority", "leaf_estimate", "labels", "readiness"}, f"{provider} template mapping shape differs")
-        for family, keys in RECOMMENDED_KEYS.items():
+        require(template["version"] == 3 and template["provider"] == provider, f"{provider} template identity differs")
+        require(set(template["mappings"]) == set(TEMPLATE_KEYS), f"{provider} template mapping shape differs")
+        for family, keys in TEMPLATE_KEYS.items():
             require(set(template["mappings"][family]) == keys, f"{provider} template {family} recommendations differ")
+        require(
+            template["mappings"]["scores"]
+            == (GITHUB_SCORE_FIELDS if provider == "github" else TEMPLATE_LINEAR_SCORE_LABELS),
+            f"{provider} template score representations differ",
+        )
         expected_readiness = (
             {
                 "needs-discovery": "readiness:needs-discovery",
@@ -409,6 +448,115 @@ def check_templates(repo_root: Path) -> None:
             expected["target"] = "exampleorg/project"
         expect_valid(resolved, repo_root, expected)
 
+
+def check_fixed_vocabularies(repo_root: Path) -> None:
+    for provider, family, key, value in (
+        ("github", "priority", "normal", "priority:normal"),
+        ("linear", "priority", "normal", "none"),
+        ("github", "leaf_estimate", "small", "size:s"),
+        ("github", "leaf_estimate", "medium", "size:m"),
+        ("linear", "leaf_estimate", "small", 13),
+        ("linear", "leaf_estimate", "medium", 21),
+    ):
+        extra = base_config(provider)
+        extra["mappings"][family][key] = value
+        expect_invalid(extra, repo_root, f"mappings.{family} has unexpected key: {key}")
+
+    for provider in ("github", "linear"):
+        for family, key in (("priority", "urgent"), ("leaf_estimate", "8")):
+            missing = base_config(provider)
+            del missing["mappings"][family][key]
+            expect_invalid(missing, repo_root, f"mappings.{family} missing key: {key}")
+        for family, first_missing in (("priority", "high"), ("leaf_estimate", "1")):
+            empty = base_config(provider)
+            empty["mappings"][family] = {}
+            expect_invalid(empty, repo_root, f"mappings.{family} missing key: {first_missing}")
+
+
+def check_scores(repo_root: Path) -> None:
+    no_scores = base_config()
+    del no_scores["mappings"]["scores"]
+    expect_invalid(no_scores, repo_root, "mappings missing key: scores")
+    scores_list = base_config()
+    scores_list["mappings"]["scores"] = list(GITHUB_SCORE_FIELDS.values())
+    expect_invalid(scores_list, repo_root, "mappings.scores must be an object")
+
+    for provider in ("github", "linear"):
+        for factor in SCORE_FACTORS:
+            missing = base_config(provider)
+            del missing["mappings"]["scores"][factor]
+            expect_invalid(missing, repo_root, f"mappings.scores missing key: {factor}")
+        fifth = base_config(provider)
+        fifth["mappings"]["scores"]["urgency"] = fifth["mappings"]["scores"]["impact"]
+        expect_invalid(fifth, repo_root, "mappings.scores has unexpected key: urgency")
+
+    # A GitHub score is an issue field name, not a label: label CSV syntax and
+    # label uniqueness do not apply to it.
+    comma_field = base_config()
+    comma_field["mappings"]["scores"]["impact"] = 'Impact, "expected"'
+    expected_comma_field = copy.deepcopy(comma_field)
+    expected_comma_field["target"] = "exampleorg/project"
+    expect_valid(comma_field, repo_root, expected_comma_field)
+    field_named_like_label = base_config()
+    field_named_like_label["mappings"]["labels"] = {"impact": "Impact"}
+    expected_field_named_like_label = copy.deepcopy(field_named_like_label)
+    expected_field_named_like_label["target"] = "exampleorg/project"
+    expect_valid(field_named_like_label, repo_root, expected_field_named_like_label)
+
+    shared_field = base_config()
+    shared_field["mappings"]["scores"]["confidence"] = "Impact"
+    expect_invalid(shared_field, repo_root, "mappings.scores: provider value Impact is mapped more than once")
+    for value, message in (
+        ("", "mappings.scores.impact must be nonempty trimmed text"),
+        (GITHUB_SCORE_FIELDS, "mappings.scores.impact must be text"),
+        ("REPLACE_WITH_FIELD_NAME", "mappings.scores.impact has an unresolved REPLACE_WITH placeholder"),
+    ):
+        invalid = base_config()
+        invalid["mappings"]["scores"]["impact"] = value
+        expect_invalid(invalid, repo_root, message)
+
+    fourth_level = base_config("linear")
+    fourth_level["mappings"]["scores"]["impact"]["4"] = "label-impact-4"
+    expect_invalid(fourth_level, repo_root, "mappings.scores.impact has unexpected key: 4")
+    missing_level = base_config("linear")
+    del missing_level["mappings"]["scores"]["impact"]["2"]
+    expect_invalid(missing_level, repo_root, "mappings.scores.impact missing key: 2")
+    flat_factor = base_config("linear")
+    flat_factor["mappings"]["scores"]["impact"] = "label-impact"
+    expect_invalid(flat_factor, repo_root, "mappings.scores.impact must be an object")
+    empty_option = base_config("linear")
+    empty_option["mappings"]["scores"]["impact"]["1"] = ""
+    expect_invalid(empty_option, repo_root, "mappings.scores.impact.1 must be nonempty trimmed text")
+
+    # Linear score options are labels, so they share one namespace with each
+    # other and with the general and readiness labels.
+    reuses_readiness = base_config("linear")
+    reuses_readiness["mappings"]["scores"]["undo_cost"]["3"] = "label-readiness-ready"
+    expect_invalid(reuses_readiness, repo_root, "Linear label label-readiness-ready is mapped more than once")
+    reuses_general_label = base_config("linear")
+    reuses_general_label["mappings"]["labels"] = {"bug": "label-bug"}
+    reuses_general_label["mappings"]["scores"]["impact"]["1"] = "label-bug"
+    expect_invalid(reuses_general_label, repo_root, "Linear label label-bug is mapped more than once")
+    reuses_other_factor = base_config("linear")
+    reuses_other_factor["mappings"]["scores"]["confidence"]["1"] = "label-impact-1"
+    expect_invalid(reuses_other_factor, repo_root, "Linear label label-impact-1 is mapped more than once")
+    reuses_own_level = base_config("linear")
+    reuses_own_level["mappings"]["scores"]["impact"]["2"] = "label-impact-1"
+    expect_invalid(reuses_own_level, repo_root, "Linear label label-impact-1 is mapped more than once")
+
+
+def check_tracked_repository_config() -> None:
+    completed = invoke_validator(REPO_ROOT, REPO_ROOT / ACTIVE_CONFIG_RELATIVE)
+    require(
+        completed.returncode == 0,
+        f"this repository's {ACTIVE_CONFIG_RELATIVE} is invalid: {completed.stderr.strip()}",
+    )
+    require(
+        json.loads(completed.stdout).get("status") == "valid",
+        f"this repository's {ACTIVE_CONFIG_RELATIVE} is missing",
+    )
+
+
 def main() -> int:
     check_script_surface()
     with tempfile.TemporaryDirectory(prefix="managing-issues-config-") as temporary:
@@ -436,8 +584,6 @@ def main() -> int:
         check_cli_surface(repo_root)
 
         github = base_config("github")
-        github["mappings"]["priority"] = {"high": "priority:high", "normal": "priority:normal"}
-        github["mappings"]["leaf_estimate"] = {"medium": "size:m", "small": "size:s"}
         github["mappings"]["labels"] = {"bug": "Bug", "feature": "Feature"}
         expected_github = copy.deepcopy(github)
         expected_github["target"] = "exampleorg/project"
@@ -445,14 +591,18 @@ def main() -> int:
         second = expect_valid(github, repo_root, expected_github)
         require(first == second, "valid config normalization is not deterministic")
 
-        github_empty = base_config("github")
-        expected_github_empty = copy.deepcopy(github_empty)
-        expected_github_empty["target"] = "exampleorg/project"
-        expect_valid(github_empty, repo_root, expected_github_empty)
+        github_no_labels = base_config("github")
+        expected_github_no_labels = copy.deepcopy(github_no_labels)
+        expected_github_no_labels["target"] = "exampleorg/project"
+        expect_valid(github_no_labels, repo_root, expected_github_no_labels)
+        fixture_github = json.loads((CONFIGS / "valid-github.json").read_text(encoding="utf-8"))
+        expect_valid(
+            CONFIGS / "valid-github.json",
+            repo_root,
+            {**fixture_github, "target": "exampleorg/project"},
+        )
 
         linear = base_config("linear")
-        linear["mappings"]["priority"] = {"high": "high", "normal": "medium"}
-        linear["mappings"]["leaf_estimate"] = {"medium": 3, "small": 1}
         linear["mappings"]["labels"] = {"bug": "label-bug", "feature": "label-feature"}
         expect_valid(linear, repo_root, linear)
         expect_valid(base_config("linear"), repo_root, base_config("linear"))
@@ -464,7 +614,22 @@ def main() -> int:
         require(file_digest(marker) == before, "validator changed repository content")
 
         expect_invalid(CONFIGS / "duplicate-key.json", repo_root, "duplicate key 'provider'")
-        expect_invalid(CONFIGS / "legacy-v1.json", repo_root, "run Managing Issues setup to create version 2")
+        # An older config is refused on its version alone, before its fields are
+        # read: both fixtures would otherwise fail on a field first.
+        expect_invalid(
+            CONFIGS / "legacy-v1.json",
+            repo_root,
+            "config version 1 is unsupported; run Managing Issues setup to create version 3",
+        )
+        for guidance in (
+            "config version 2 is unsupported",
+            "run Managing Issues setup to create version 3",
+            "update the branch from the default branch",
+        ):
+            expect_invalid(CONFIGS / "legacy-v2.json", repo_root, guidance)
+        newer_version = base_config()
+        newer_version["version"] = 4
+        expect_invalid(newer_version, repo_root, "version must be 3")
 
         control_key = temporary_root / "control-key.json"
         control_key.write_text(
@@ -494,8 +659,12 @@ def main() -> int:
             expect_invalid(invalid, repo_root, f"mappings has unexpected key: {key}")
 
         mapping_default = base_config()
-        mapping_default["mappings"]["priority"] = {"default": "priority:normal"}
-        expect_invalid(mapping_default, repo_root, "cannot define a default, preferred, or fallback value")
+        mapping_default["mappings"]["labels"] = {"default": "bug"}
+        expect_invalid(
+            mapping_default,
+            repo_root,
+            "mappings.labels.default cannot define a default, preferred, or fallback value",
+        )
 
         missing_readiness = base_config()
         del missing_readiness["mappings"]["readiness"]["needs-planning"]
@@ -523,14 +692,14 @@ def main() -> int:
         bad_provider["provider"] = "jira"
         expect_invalid(bad_provider, repo_root, "provider must be github or linear")
         bad_github_value = base_config()
-        bad_github_value["mappings"]["leaf_estimate"] = {"small": 1}
-        expect_invalid(bad_github_value, repo_root, "mappings.leaf_estimate.small must be text")
+        bad_github_value["mappings"]["leaf_estimate"]["1"] = 1
+        expect_invalid(bad_github_value, repo_root, "mappings.leaf_estimate.1 must be text")
         bad_linear_priority = base_config("linear")
-        bad_linear_priority["mappings"]["priority"] = {"normal": 3}
-        expect_invalid(bad_linear_priority, repo_root, "mappings.priority.normal must be one of")
+        bad_linear_priority["mappings"]["priority"]["medium"] = 3
+        expect_invalid(bad_linear_priority, repo_root, "mappings.priority.medium must be one of")
         bad_linear_estimate = base_config("linear")
-        bad_linear_estimate["mappings"]["leaf_estimate"] = {"small": "1"}
-        expect_invalid(bad_linear_estimate, repo_root, "mappings.leaf_estimate.small must be a nonnegative integer")
+        bad_linear_estimate["mappings"]["leaf_estimate"]["1"] = "1"
+        expect_invalid(bad_linear_estimate, repo_root, "mappings.leaf_estimate.1 must be a nonnegative integer")
 
         duplicate_label = base_config()
         duplicate_label["mappings"]["labels"] = {"ready": "readiness:ready"}
@@ -542,7 +711,7 @@ def main() -> int:
         duplicate_linear_label["mappings"]["labels"] = {"ready": "label-readiness-ready"}
         expect_invalid(duplicate_linear_label, repo_root, "Linear label label-readiness-ready is mapped more than once")
         duplicate_priority = base_config("linear")
-        duplicate_priority["mappings"]["priority"] = {"high": "high", "urgent": "high"}
+        duplicate_priority["mappings"]["priority"]["urgent"] = "high"
         expect_invalid(duplicate_priority, repo_root, "mappings.priority: provider value high is mapped more than once")
 
         for label in ("Bug,Feature", 'Bug"'):
@@ -566,7 +735,10 @@ def main() -> int:
         check_active_config_filesystem_cases(repo_root, outside)
         check_assignee_and_project(repo_root)
         check_templates(repo_root)
+        check_fixed_vocabularies(repo_root)
+        check_scores(repo_root)
 
+    check_tracked_repository_config()
     print("PASS: managing-issues config contract")
     return 0
 

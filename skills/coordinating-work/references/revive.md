@@ -57,6 +57,8 @@ it in the middle of a paid run. The guide's safety rules govern what silence,
 a timeout, or an unreachable host prove. A participant stopped by a usage
 limit is not dead work: jobs it started in the background may still finish, so
 check them before reassigning.
+Resume that participant's conversation under the newly selected account before
+considering a replacement, and replace it only if the resume fails.
 
 Recover applicable recent decisions, unread messages, unresolved questions and
 approvals, and needed monitoring. History supplies evidence and task context;

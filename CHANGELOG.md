@@ -69,6 +69,18 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-issues` and the leverage rule settle the passages agents guessed
+  at when scoring and creating issues. Undo cost is defined as whether a
+  change can be put back as it was, with no git verb in any copy of the rule.
+  Impact counts as users whoever uses what the repository ships, including
+  the owner when it ships the owner's own tools. An agent takes the higher
+  value only for undo cost, and scores verification effort by the evidence,
+  marked `best guess` when torn. Urgent issues are scored with the same care
+  as any other. Only an implementation leaf gets an estimate, so a research,
+  decision, or action issue gets none even without children. A create
+  recommends the open project that fits best instead of forcing one, and the
+  assignee follows a fixed order: the person the request names, then
+  `assignee.default`, then the human requester.
 - `coordinating-work` builds amendments, as well as briefs and replies, from
   the project's own instructions and the installed guides, so an amendment
   also names only commands confirmed on the worker's host and prefers the
@@ -326,18 +338,19 @@ looked" surface. GitHub Releases mirror its entries.
   change, ordered by priority, instead of applying fixes. The README lists
   Analytics gap audit. CI no longer installs PyYAML, which no
   Python check imports.
-- `managing-issues` analyzes project and assignee for every issue with
-  priority, labels, estimate, and readiness. It leaves either one empty only
-  with a stated reason. When the request and evidence do not settle an input,
-  it asks the requester, naming the field, the candidates, and its lean. A run
-  that cannot ask applies the lean and marks it `best guess` for a person to
-  correct. A leaf gets a best-guess estimate whatever its readiness, and a
-  create preview is not executable while a leaf's estimate, the project, or the
-  assignee is empty without a stated reason.
+- `managing-issues` analyzes the project for every issue with priority,
+  labels, estimate, and readiness, and fills the assignee in a fixed order.
+  It leaves either one empty only with a stated reason. When the request and
+  evidence do not settle an input, it asks the requester, naming the field,
+  the candidates, and its lean. A run that cannot ask applies the lean and
+  marks it `best guess` for a person to correct. An implementation leaf gets
+  an estimate whatever its readiness, and a create preview is not executable
+  while a leaf's estimate, the project, or the assignee is empty without a
+  stated reason.
   `.agents/managing-issues.json` accepts two optional keys,
   `"assignee": { "default": "<login or user>" }` and
   `"project": { "required": true }`. A config without them stays valid; no
-  default assignee applies and a project is not required.
+  configured default assignee applies and a project is not required.
 - The Optimize CI prompt counts local Verify as part of CI. Each report now
   carries a hosted section, pull-request runner minutes per merged pull request
   by one fixed method, and a local section, Verify duration per suite, reuse of

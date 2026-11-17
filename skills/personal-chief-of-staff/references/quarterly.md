@@ -148,11 +148,9 @@ every interpretation that shapes a commitment has a user disposition.
 
 ## Collaborate on strategy
 
-Invite the user's interpretation and approval of causal lessons, tradeoffs,
-and commitments. Read relevant calendar and capacity evidence alongside current
-obligations before proposing a new commitment or deadline, then test outcomes
-against strategy, relationships, health, recovery, opportunity cost, and this
-quarter's evidence.
+Invite the user's interpretation and approval of causal lessons, tradeoffs, and
+commitments. Test outcomes against strategy, relationships, health, recovery,
+opportunity cost, and this quarter's evidence.
 
 Choose a few observable outcomes, supporting principles or experiments, and
 explicit boundaries. Advance a writing idea only when it supports real

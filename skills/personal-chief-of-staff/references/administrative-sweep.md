@@ -1,13 +1,13 @@
 # Administrative Sweep
 
 Wind-down and Weekly sweep the configured canonical open tasks and the records
-their review touches.
-Quarterly runs no sweep. Surface records that evidence shows need correction
-or a decision, plus tasks due in the planning window. Omit other sweep-discovered
-tasks from the response, including outcomes and capacity explanations, unless
-the user selected them or a separately evidenced review priority requires them.
-Spare capacity alone does not make a task relevant. Report sweep coverage in
-aggregate: "None of three open tasks qualified." Zero findings is valid.
+their review touches. Quarterly runs no sweep. Surface records that evidence
+shows need correction or a decision, plus tasks due in the planning window.
+Omit other sweep-discovered tasks from the response, including outcomes and
+capacity explanations, unless the user selected them or a separately evidenced
+review priority requires them. Spare capacity alone does not make a task
+relevant. Report sweep coverage in aggregate: "None of three open tasks
+qualified." Zero findings is valid.
 
 ## Set the dates
 

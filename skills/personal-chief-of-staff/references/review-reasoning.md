@@ -22,12 +22,11 @@ proposed change bound to the source that owns it.
 For each new Wind-down, Weekly, or Quarterly review, resolve the private map
 through [source-bindings.md](source-bindings.md#resolve-before-recommending),
 then read its configured strategy, durable learning, and bounded current task
-commitments for the review's window before making recommendations. These three
-baseline roles apply in every mode. Inspect returned current content for
-applicability under
-[Judge what returned evidence supports](source-access.md#judge-what-returned-evidence-supports).
-Keep the configured task owner as the source of task state; neither the review
-nor this map is a second task store.
+commitments for the review's window before making recommendations. Inspect
+returned current content for applicability under [Judge what returned evidence
+supports](source-access.md#judge-what-returned-evidence-supports). Keep the
+configured task owner as the source of task state; neither the review nor this
+map is a second task store.
 
 The mode reference then names its incremental reads: its current record,
 template, and useful prior review as directed by
@@ -163,16 +162,16 @@ settled, and unanswered questions remain open rather than assumed resolved.
 Surface an item only when the user's judgment or presence could change its
 outcome. Weigh strategic impact, urgency, risk, how hard a choice is to undo,
 current opportunity cost, calendar context, and sustainable capacity as
-judgment factors, not a scoring formula. Optimize for durable value across the review horizon rather than the
-largest count of completed tasks.
+judgment factors, not a scoring formula. Optimize for durable value across
+the review horizon rather than the largest count of completed tasks.
 
 Interpret calendar evidence through the event's purpose, participants,
-flexibility, and surrounding commitments. Use health evidence as context with uncertainty; do not
-diagnose, reproduce a synthetic readiness score, or let one signal
-mechanically control the calendar. Begin a causal or correlation analysis only
-when the user names a decision to improve, agrees on an observation window,
-and the available evidence could change an action. Stop when further analysis
-can no longer change that decision.
+flexibility, and surrounding commitments. Use health evidence as context with
+uncertainty; do not diagnose, reproduce a synthetic readiness score, or let one
+signal mechanically control the calendar. Begin a causal or correlation
+analysis only when the user names a decision to improve, agrees on an
+observation window, and the available evidence could change an action. Stop
+when further analysis can no longer change that decision.
 
 Completion: each foreground item explains why it matters now and why the
 user's attention could improve the outcome.

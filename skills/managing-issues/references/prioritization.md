@@ -1,9 +1,10 @@
 # Prioritization
 
-Maintainers: the `Rank by leverage` section below is a copy of the section with
-the same heading in the repository's root PRIORITIZATION.md, kept here so the
-skill stands alone. Change the root file first, then copy its section here
-unchanged, so the two stay identical byte for byte.
+Note for maintainers of this skill, not an instruction for using it: the
+`Rank by leverage` section below is a copy of the section with the same
+heading in PRIORITIZATION.md at the root of this skill's source repository,
+kept here so the skill stands alone. Change that file first, then copy its
+section here unchanged, so the two stay identical byte for byte.
 
 ## Rank by leverage
 

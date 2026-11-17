@@ -762,9 +762,15 @@ def main() -> int:
         duplicate_linear_label = base_config("linear")
         duplicate_linear_label["mappings"]["labels"] = {"ready": "label-readiness-ready"}
         expect_invalid(duplicate_linear_label, repo_root, "Linear label label-readiness-ready is mapped more than once")
-        duplicate_priority = base_config("linear")
-        duplicate_priority["mappings"]["priority"]["urgent"] = "high"
-        expect_invalid(duplicate_priority, repo_root, "mappings.priority: provider value high is mapped more than once")
+        # Linear's priority names are fixed, so a derived priority can never be
+        # written as urgent through a swapped mapping.
+        swapped_priority = base_config("linear")
+        swapped_priority["mappings"]["priority"]["urgent"] = "high"
+        swapped_priority["mappings"]["priority"]["high"] = "urgent"
+        expect_invalid(swapped_priority, repo_root, "mappings.priority.urgent must be urgent")
+        renamed_priority = base_config("linear")
+        renamed_priority["mappings"]["priority"]["low"] = "none"
+        expect_invalid(renamed_priority, repo_root, "mappings.priority.low must be low")
 
         for label in ("Bug,Feature", 'Bug"'):
             csv_label = base_config()

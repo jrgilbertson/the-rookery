@@ -248,6 +248,8 @@ def normalize_mapping(
                 isinstance(provider_value, str) and provider_value in LINEAR_PRIORITIES,
                 f"{entry_label} must be one of none, low, medium, high, urgent",
             )
+            # Linear's priority names are fixed, so each key maps to its own name.
+            require(provider_value == key, f"{entry_label} must be {key}")
             result[key] = provider_value
         else:
             require(

@@ -100,9 +100,9 @@ gh api graphql --hostname github.com -f query=ISSUE_FIELDS_QUERY -f owner=OWNER 
 ```
 
 Use the fixed query
-`query($owner:String!,$name:String!,$endCursor:String){repository(owner:$owner,name:$name){issueFields(first:100,after:$endCursor){nodes{__typename ... on IssueFieldNumber{id name}}pageInfo{hasNextPage endCursor}}}}`,
+`query($owner:String!,$name:String!,$endCursor:String){repository(owner:$owner,name:$name){issueFields(first:100,after:$endCursor){nodes{... on Node{id} ... on IssueFieldCommon{name dataType}}pageInfo{hasNextPage endCursor}}}}`,
 with the same paging and stop conditions as issue types. Resolve each mapped
-field by exact name and require its type to be `IssueFieldNumber`. The config
+field by exact name and require its `dataType` to be `NUMBER`. The config
 stores the field name only; resolve the field ID from this list each time it
 is needed. A mapped field that is absent, duplicated, or of another type makes
 its score `unresolved — non-writable`.
@@ -190,7 +190,7 @@ Use the fixed mutation
 `mutation($issue:ID!,$impact:ID!,$confidence:ID!,$verification:ID!,$undo:ID!,$i:Float!,$c:Float!,$v:Float!,$u:Float!){setIssueFieldValue(input:{issueId:$issue,issueFields:[{fieldId:$impact,numberValue:$i},{fieldId:$confidence,numberValue:$c},{fieldId:$verification,numberValue:$v},{fieldId:$undo,numberValue:$u}]}){issue{number}}}`.
 It sets all four values, including ones that have not changed, so pass the
 current value for an unchanged score. Write scores only when all four are
-resolved. Read the scores back with the score read and require each value to
+resolved; with one unresolved, the batch has no score effect for that issue. Read the scores back with the score read and require each value to
 match the preview.
 
 ## Reversible lifecycle

@@ -148,8 +148,8 @@ before writing and show the exact resulting set in the preview; any drift stops
 the batch.
 
 Read an issue's scores from its labels: a score is present when the issue
-carries exactly one child of that factor's mapped group. No child is an absent
-score. A label read that failed or was capped makes the scores unreadable.
+carries exactly one of that factor's three mapped children. No child is an
+absent score, and more than one makes that score unreadable. A label read that failed or was capped makes the scores unreadable.
 Linear rejects a second child from one single-select group, so change a score
 in one update that removes the old child and adds the new one, and show both
 in the preview. Set the scores on a create with the create's own labels.

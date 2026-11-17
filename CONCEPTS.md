@@ -142,7 +142,8 @@ such PR is its own leaf. A single-leaf change needs no artificial parent.
 The implementation leaves in a requested issue family whose derived readiness
 is `ready` and whose current native blockers and declared prerequisites are
 satisfied. It is determined from a fresh read of the canonical tracker before a
-handoff. It is never stored as a separate record of work status.
+handoff and listed in [Leverage](#leverage) order, highest first. It is never
+stored as a separate record of work status.
 
 ## Shipping and verification
 

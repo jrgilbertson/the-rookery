@@ -11,6 +11,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from fractions import Fraction
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,7 @@ CONFIGS = HERE / "config"
 TEMPLATE_LINEAR = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-template-linear.json"
 TEMPLATE_GITHUB = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-template-github.json"
 ACTIVE_CONFIG_RELATIVE = Path(".agents") / "managing-issues.json"
+DERIVATION_TABLES = REPO_ROOT / "skills" / "managing-issues" / "references" / "prioritization.md"
 MAX_BYTES = 64 * 1024
 READINESS_KEYS = {"needs-discovery", "needs-planning", "ready"}
 PRIORITY_KEYS = ("urgent", "high", "medium", "low")
@@ -557,6 +559,56 @@ def check_tracked_repository_config() -> None:
     )
 
 
+def table_rows(text: str, header: str) -> list[list[str]]:
+    """Return the body rows of the Markdown table that starts with this header line."""
+    lines = text.splitlines()
+    require(lines.count(header) == 1, f"expected one table headed {header!r}")
+    rows: list[list[str]] = []
+    for line in lines[lines.index(header) + 2:]:
+        if not line.startswith("|"):
+            break
+        rows.append([cell.strip() for cell in line.strip("|").split("|")])
+    return rows
+
+
+def derivation_table_errors(text: str) -> list[str]:
+    """Compare the shipped lookup tables with the rule they stand for.
+
+    Priority follows leverage, (impact x confidence) / (verification effort x undo cost):
+    3 or higher is high, at least 1 is medium, and anything lower is low. A leaf's
+    estimate follows verification effort x undo cost on the 1, 2, 3, 5, 8 scale.
+    """
+    products = sorted({first * second for first in (1, 2, 3) for second in (1, 2, 3)})
+    errors: list[str] = []
+    priority = table_rows(text, "| impact × confidence | " + " | ".join(map(str, products)) + " |")
+    if [row[0] for row in priority] != [str(product) for product in products]:
+        errors.append("priority table rows are not the six impact × confidence products")
+    for row in priority:
+        for denominator, cell in zip(products, row[1:], strict=True):
+            leverage = Fraction(int(row[0]), denominator)
+            expected = "high" if leverage >= 3 else "medium" if leverage >= 1 else "low"
+            if cell != expected:
+                errors.append(f"priority for {row[0]} over {denominator} is {cell}, expected {expected}")
+    estimate = table_rows(text, "| verification effort × undo cost | estimate |")
+    expected_estimates = dict(zip(products, (1, 2, 3, 5, 5, 8), strict=True))
+    if {int(row[0]): int(row[1]) for row in estimate} != expected_estimates or len(estimate) != 6:
+        errors.append("estimate table does not map 1, 2, 3, 4, 6, 9 to 1, 2, 3, 5, 5, 8")
+    return errors
+
+
+def check_derivation_tables() -> None:
+    text = DERIVATION_TABLES.read_text(encoding="utf-8")
+    errors = derivation_table_errors(text)
+    require(not errors, "derivation tables differ from the rule: " + "; ".join(errors))
+    # The comparison must bite: one wrong cell in either table is reported.
+    wrong_priority = text.replace("| 3 | high | medium | medium |", "| 3 | high | high | medium |")
+    require(wrong_priority != text and derivation_table_errors(wrong_priority),
+            "a wrong priority cell was not reported")
+    wrong_estimate = text.replace("| 6 | 5 |", "| 6 | 8 |")
+    require(wrong_estimate != text and derivation_table_errors(wrong_estimate),
+            "a wrong estimate was not reported")
+
+
 def main() -> int:
     check_script_surface()
     with tempfile.TemporaryDirectory(prefix="managing-issues-config-") as temporary:
@@ -739,6 +791,7 @@ def main() -> int:
         check_scores(repo_root)
 
     check_tracked_repository_config()
+    check_derivation_tables()
     print("PASS: managing-issues config contract")
     return 0
 

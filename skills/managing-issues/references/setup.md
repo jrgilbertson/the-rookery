@@ -18,20 +18,25 @@ canonical provider, exact target, and metadata mappings.
 Load the selected provider's starter config from
 [GitHub starter](../assets/config-template-github.json) or
 [Linear starter](../assets/config-template-linear.json).
-Discover that target's current priority, estimate, label, and readiness
-choices, its assignable members and projects, and the capability to create any
-missing metadata.
+Discover that target's current priority, estimate, label, readiness, and
+score choices, its assignable members and projects, and the capability to
+create any missing metadata.
 
 Present every recommended key and provider representation from the selected
 starter template beside exact discovered alternatives; list each one rather
 than summarizing a family. Linear recommends an exclusive readiness group;
 GitHub recommends prefixed flats, because Linear groups enforce one child and
-GitHub labels have no grouping surface. For each family, let the operator accept the
+GitHub labels have no grouping surface. The four scores map to Number issue
+fields on GitHub and to single-select label groups on Linear, as each provider
+reference describes. For each family, let the operator accept the
 recommendations, map selected existing values, or define custom representations;
 never treat existing metadata as the preferred answer.
-The operator may leave priority, estimate, or general-label mappings empty, but
-readiness always maps `needs-discovery`, `needs-planning`, and `ready`. These are
-available choices, never defaults applied to an issue.
+The operator may leave general-label mappings empty. Every other family is
+fixed: priority maps `urgent`, `high`, `medium`, and `low`; estimate maps `1`,
+`2`, `3`, `5`, and `8`; readiness maps `needs-discovery`, `needs-planning`, and
+`ready`; and scores map `impact`, `confidence`, `verification_effort`, and
+`undo_cost`. The operator chooses each one's provider representation. These
+are available choices, never defaults applied to an issue.
 
 The starter templates also carry two optional settings. `assignee.default`
 names one exact identity from the discovered members, a GitHub login or a

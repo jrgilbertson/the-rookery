@@ -101,7 +101,7 @@ Before moving on:
 - **The inputs and tools are known.** We know which sources, systems, and repositories the work needs.
 - **The result is named.** The work will produce a merged PR, a findings document, or a decision someone can act on.
 
-When a plan needs issues, [`managing-issues`](skills/managing-issues/SKILL.md) manages parent, sub-issue, and blocker relationships in GitHub or Linear. It reports which required open issues have no required sub-issues and are ready to start. Build still decides the models, worktrees, stacked branches, and order of work.
+When a plan needs issues, [`managing-issues`](skills/managing-issues/SKILL.md) manages parent, sub-issue, and blocker relationships in GitHub or Linear. It reports which required open issues have no required sub-issues and are ready to start, listed by [leverage](PRIORITIZATION.md) with the highest first, which suggests what is best to pick up next. Build still decides how the work runs: the models, worktrees, and stacked branches.
 
 ### Do I save plans?
 

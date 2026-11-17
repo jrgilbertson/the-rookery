@@ -219,9 +219,7 @@ Use [Ask on the evidence frontier](review-reasoning.md#ask-on-the-evidence-front
 after the broad reflection. Ask only what tomorrow's plan, coaching, or
 commitments turn on. If an answer changes the plan, revise it before coaching.
 
-Completion: every question asked could have changed the plan, the coaching
-judgment, or a commitment, and an unanswered question stayed open rather than
-being resolved by assumption.
+Completion: any answer that changed the plan was applied before coaching.
 
 ## Phase 2: Coach
 

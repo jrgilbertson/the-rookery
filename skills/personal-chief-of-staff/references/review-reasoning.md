@@ -141,30 +141,19 @@ alternative; unsupported patterns produce narrower claims or no intervention.
 
 ## Ask on the evidence frontier
 
-Follow-up questions arrive as **Frontier Rounds**: after the broad reflection
-in Wind-down, and after initial synthesis in Weekly and Quarterly.
+Ask a follow-up only if its answer could materially change a plan,
+recommendation, or interpretation. Look up source-held facts and reuse settled
+decisions instead of asking. When evidence fits two behaviors with different
+recommendations, ask which is present. When evidence is missing, name it and
+keep the affected recommendation conditional. Overdue-task relevance belongs to
+its sweep row, not a question.
 
-A question qualifies only if its answer could materially change a plan,
-recommendation, or interpretation. Retrieve source-held facts and reuse
-settled decisions instead of asking again. When evidence fits two behaviors
-with different recommendations, ask which is present before choosing an
-inference. If evidence is missing, name it and any existing mechanism being
-compared; keep the affected recommendation conditional. Overdue-task relevance
-belongs to its sweep row with a proposed resolution, not a coaching question.
-
-Ask only questions whose prerequisites are answered. If one recommended answer
-depends on another open answer, hold it for a later round. For mutually
-dependent candidates, ask the one that would change the recommendation most
-first.
-
-Present at most **five numbered questions in plain chat**, ordered by impact.
-Put each recommended answer on the line beneath its question, with bounded
-options when applicable. Ask for one reply covering the round and interpret it
-by number. Use no host question or form tool.
-
-Keep over-cap and unanswered questions open for the next round. Admit newly
-raised questions only under the same entry and dependency rules. Zero questions
-is valid when evidence supports a recommendation or an honest null.
+A **Frontier Round** asks at most five numbered questions in plain chat, each
+with its recommended answer on the next line. Interpret the one reply by
+number. Use no host question or form tool. Ask only questions whose
+prerequisites are settled. If more than five qualify, ask those whose answers
+could change the recommendation most. The rest, and any left unanswered, stay
+open for the next round. A round with no questions is valid.
 
 Completion: every question could change the decision, prerequisites were
 settled, and unanswered questions remain open rather than assumed resolved.

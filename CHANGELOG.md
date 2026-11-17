@@ -69,6 +69,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `personal-chief-of-staff` keeps only the Frontier Round rules a review
+  needs. Questions keep their own order, those whose answers could change the
+  recommendation most, rather than leverage order, because a round is not a
+  list of work to choose from. A prose pass across the skill removes
+  sentences that restated a rule another loaded file owns and clarifies two
+  unclear passages, with no change to any rule, limit, order, or approval
+  boundary.
 - `managing-issues` and the leverage rule settle the passages agents guessed
   at when scoring and creating issues. Undo cost is defined as whether a
   change can be put back as it was, with no git verb in any copy of the rule.

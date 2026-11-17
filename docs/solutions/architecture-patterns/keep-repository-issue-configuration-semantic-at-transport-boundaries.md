@@ -34,7 +34,7 @@ Persisting it would make repository state depend on whichever client happened
 to be available when setup ran.
 
 Managing Issues applies that separation directly. Its validator accepts only
-`version`, `provider`, `target`, four metadata mapping families, and two
+`version`, `provider`, `target`, five metadata mapping families, and two
 optional team choices: a default assignee and whether a project is required.
 There is no transport or integration-posture field
 (`skills/managing-issues/scripts/config_check.py`). The Linear starter
@@ -89,10 +89,11 @@ current facts”). Setup does not ask about or record any integration posture.
 Show starter recommendations beside discovered provider alternatives. For each
 mapping family, let the operator accept the recommendations, map selected
 existing values, or define custom representations. Existing tracker metadata
-is evidence, not an automatic preference. Priority, estimate, and general-label
-mappings may be empty, but readiness retains the three canonical choices
-`needs-discovery`, `needs-planning`, and `ready` so issue state remains
-intelligible across repositories
+is evidence, not an automatic preference. General-label mappings may be empty.
+Every other family keeps fixed names so issue state remains intelligible
+across repositories: readiness has `needs-discovery`, `needs-planning`, and
+`ready`, priority and estimate have the names derivation looks up, and scores
+have the four leverage factors
 (`skills/managing-issues/references/setup.md`;
 `skills/managing-issues/scripts/config_check.py`).
 

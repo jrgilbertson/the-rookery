@@ -31,9 +31,9 @@ Measure with the harness in the history clone's `optimize-ci/harness/`; its READ
 
 Every report has two measured sections:
 - Hosted: pull-request runner minutes per merged pull request for the reviewed week, from the harness's pull-request minutes command, beside earlier weeks. Name the method of any other hosted figure, and do not compare figures measured by different methods.
-- Local: Verify duration per suite, reuse of saved results, and failed attempts, from the harness's local command, with the baseline window its README names beside it when this host has those rows. Name the host; numbers from different hosts are not comparable.
+- Local: Verify duration per suite, reuse of saved results, and failed attempts, from the harness's local command, with the baseline window its README names beside it when this host has those rows. Name the host; numbers from different hosts are not comparable. Local timings move with machine load and with verifies that overlap, so say so when a before-and-after rests on them.
 
-What earlier fixes taught: most local Verify time went to checks forced to run alone without a recorded reason and to reruns of work whose inputs had already passed. A saved result is safe only when its cache key covers everything the check reads. A hosted pull-request job that repeats a check the local Verify already passed can move to the merge queue. Cheap static failures belong in a quick check that runs before Verify. Local timings move with machine load and with verifies that overlap, so say so when a before-and-after rests on them.
+Look for where Verify and hosted time goes: checks run serially, work rerun on unchanged inputs, hosted jobs that repeat local checks, and failures caught later than a cheaper check could catch them. Any recommendation to reuse a saved result shows that its cache key covers every input the check reads.
 
 Group related draft recommendations into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
 
@@ -54,8 +54,3 @@ Each report measures two things:
   records no run id, so it groups tasks into runs by time gaps. Another host
   has its own history, so its numbers are reported as that host's and are not
   compared with the first host's.
-
-The lessons paragraph in the prompt comes from a series of local Verify fixes:
-checks forced to run alone, reruns of passed work, cache keys that missed what a
-check reads, hosted jobs that repeated a passed local Verify, and failures a
-quick check would have caught sooner.

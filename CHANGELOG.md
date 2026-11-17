@@ -69,6 +69,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Automation prompts say what to look for and leave earlier findings to the
+  history repository. Optimize CI no longer carries a paragraph of lessons
+  from past fixes, which could steer a run toward the answers it was given,
+  and the automations README states the rule.
 - `personal-chief-of-staff` keeps only the Frontier Round rules a review
   needs. Questions keep their own order, those whose answers could change the
   recommendation most, rather than leverage order, because a round is not a

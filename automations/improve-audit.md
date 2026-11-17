@@ -26,7 +26,7 @@ History: clone or update <your private automation-state repository> at `~/.local
 
 Use `improve` to audit this repository and recommend improvements. Run the skill as written, at its default effort and across all of its categories; other tools and automations covering an area do not narrow its scope.
 
-Assessment only: stop after the vetted, prioritized findings and direction options. Plan files, `execute`, `--issues`, issue creation, implementation, and PR publication require separate approval. Approved plans go in the repository's ignored working path for plans, not a tracked `plans/` folder.
+Assessment only: stop after the vetted, prioritized findings and direction options. Plan files, `execute`, `--issues`, issue creation, implementation, and PR publication require separate approval. Approved plans go in the repository's ignored working path for plans.
 
 List every vetted finding in leverage order, highest first. Score each with the four leverage factors, not with `improve`'s own Effort and Risk columns, and keep each finding's title stable between runs. Mark every finding `not reviewed`, save the report, and stop. The owner picks which findings to review; do not pick for them.
 

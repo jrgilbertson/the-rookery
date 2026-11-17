@@ -44,7 +44,8 @@ the local job merges both hosts' findings into one list; see
 
 Some prompts invoke an existing skill; others describe the review directly.
 Orca runs the prompt on a schedule; an invoked skill tells the agent how to do
-the work. Copy the definitions into Orca manually. To change an existing job,
+the work. Prompts say what to look for and how to run; findings, lessons, and
+earlier measurements live only in the history repository. Copy the definitions into Orca manually. To change an existing job,
 edit it in Orca too.
 
 The prompts ask for recommendations in leverage order without defining it. The
@@ -62,8 +63,7 @@ excerpts and other private review evidence stay outside this public repository.
 Orca starts each run in a fresh worktree, and the same kind of project work
 runs on more than one machine; Sessions audit, for example, runs on a laptop
 and on a dev server. Local files would leave each run blind to what earlier
-runs found and what the owner already decided. The 2026-11-02 retro's declined
-items were applied anyway for exactly this reason. Every automation therefore
+runs found and what the owner already decided. Every automation therefore
 reads and writes one private Git repository, cloned to
 `~/.local/state/automation-runs` on each host.
 

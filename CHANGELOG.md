@@ -69,6 +69,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Automation prompts say what to look for and leave earlier findings to the
+  history repository. Optimize CI no longer carries a paragraph of lessons
+  from past fixes, which could steer a run toward the answers it was given,
+  and the automations README states the rule.
 - `coordinating-work` brings in the default branch's merged fixes before
   verification only as the repository's merge policy allows, with examples
   for unpushed and pushed branches.

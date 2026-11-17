@@ -30,7 +30,7 @@ Report, in this order:
 - Every issue in leverage order, highest first, with its four scores.
 - This run's counts beside the last run's: validator and detector findings, duplicate-pattern clusters, extraction candidates, sidecar mismatches, and pages rendered versus reviewed from code.
 - The drift detail, grouped by cause. Label each token, pattern, or rule drift, or a complexity problem, with its page, file and line, the contract rule it breaks, and a fix using existing components and tokens.
-- Extractions: shared components or page templates for patterns used three or more times with the same intent, from `extract`'s planning steps.
+- Extractions: shared components or page templates, from `extract`'s planning steps.
 - The exact sidecar patch.
 - Premium bar: contract revisions that raise the craft toward [reference products], kept apart from drift. The contract's own identity wins over theirs.
 - Recurring findings: for any finding that appeared in two or more earlier reports, recommend a fix for the underlying cause, then any safeguard still needed to protect the corrected behavior. Recommend a lint rule or validator when it can reliably check that behavior; otherwise name the design judgment or review that remains.

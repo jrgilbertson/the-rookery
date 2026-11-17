@@ -47,6 +47,11 @@ Orca runs the prompt on a schedule; an invoked skill tells the agent how to do
 the work. Copy the definitions into Orca manually. To change an existing job,
 edit it in Orca too.
 
+The prompts ask for recommendations in leverage order without defining it. The
+definition is the [Rank by leverage](../PRIORITIZATION.md#rank-by-leverage)
+section of `PRIORITIZATION.md`. Add that section to the selected agent's
+instructions so it scores findings the same way.
+
 Keep local paths, repository selections, account identifiers, and enabled
 status in Orca. Run findings and the owner's decisions go in the shared run
 state below. Review findings before deciding which changes to pursue. Session
@@ -76,8 +81,9 @@ reads and writes one private Git repository, cloned to
 Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
 Each automation contains its assessment instructions and authority limits in
-its own prompt. Selected recommendations receive independent simplicity review in
-related sets, followed by a final `ce-pov` judgment. In paired Sessions audits,
+its own prompt. Recommendations receive independent simplicity review in
+related sets, followed by a final `ce-pov` judgment. Improve audit returns
+every finding and reviews only the ones the owner picks from its report. In paired Sessions audits,
 the local job owns that final judgment after combining both hosts. The history
 repository stores reports and owner decisions, not a shared assessment workflow.
 Its README documents storage and helper usage.

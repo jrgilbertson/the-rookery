@@ -149,7 +149,8 @@ its sweep row, not a question.
 
 A **Frontier Round** asks at most five numbered questions in plain chat, each
 with its recommended answer on the next line. Interpret the one reply by
-number. Use no host question or form tool. Ask only questions whose
+number. A round's answers approve no bundle action. Use no host question or
+form tool. Ask only questions whose
 prerequisites are settled. If more than five qualify, ask those whose answers
 could change the recommendation most. The rest, and any left unanswered, stay
 open for the next round. A round with no questions is valid.

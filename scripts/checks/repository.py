@@ -80,7 +80,6 @@ HOME_PATH_EXAMPLES = {
 }
 
 
-# The short ranking rule has one source and two copies that must match it.
 RULE_HEADING = "## Rank by leverage"
 RULE_SOURCE = "PRIORITIZATION.md"
 RULE_COPIES = (
@@ -236,7 +235,6 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
 
 
 def rule_section(text: str) -> str | None:
-    """Return the rule section, from its heading to the next heading of its level or higher."""
     lines = text.splitlines()
     if lines.count(RULE_HEADING) != 1:
         return None
@@ -249,23 +247,28 @@ def rule_section(text: str) -> str | None:
 
 
 def check_rule_copies(errors: list[str]) -> None:
-    paths = [ROOT / RULE_SOURCE, *(ROOT / copy for copy in RULE_COPIES)]
-    if not (paths[0].exists() or paths[-1].exists()):
+    source = ROOT / RULE_SOURCE
+    copies = [ROOT / copy for copy in RULE_COPIES]
+    if not any(path.exists() for path in (source, *copies)):
         return
-    sections: list[str | None] = []
-    for path in paths:
+
+    def section_of(path: Path) -> str | None:
         relative = path.relative_to(ROOT)
+        if path.is_symlink():
+            return None  # main() reports the symbolic link itself
         if not path.is_file():
             errors.append(f"{relative}: missing; it must hold the '{RULE_HEADING}' section")
-            sections.append(None)
-            continue
-        section = rule_section(path.read_text(encoding="utf-8"))
+            return None
+        text = readable_text(path)
+        section = rule_section(text) if text is not None else None
         if section is None:
             errors.append(f"{relative}: expected exactly one '{RULE_HEADING}' section")
-        sections.append(section)
-    source = sections[0]
-    for copy, section in zip(RULE_COPIES, sections[1:]):
-        if source is not None and section is not None and section != source:
+        return section
+
+    source_section = section_of(source)
+    for copy, path in zip(RULE_COPIES, copies):
+        section = section_of(path)
+        if source_section is not None and section is not None and section != source_section:
             errors.append(f"{copy}: '{RULE_HEADING}' section differs from {RULE_SOURCE}")
 
 

@@ -19,7 +19,6 @@ MAX_INTEGER = 2_147_483_647
 TOP_LEVEL_FIELDS = {"version", "provider", "target", "mappings"}
 OPTIONAL_TOP_LEVEL_FIELDS = {"assignee", "project"}
 CONFIG_VERSION = 3
-# Each key in these families maps to one provider value.
 FLAT_MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
 MAPPING_FIELDS = (*FLAT_MAPPING_FIELDS, "scores")
 READINESS_FIELDS = {
@@ -29,7 +28,6 @@ READINESS_FIELDS = {
 }
 SCORE_FACTORS = {"impact", "confidence", "verification_effort", "undo_cost"}
 SCORE_LEVELS = {"1", "2", "3"}
-# Families whose keys are fixed; only `labels` is free-form.
 FIXED_MAPPING_KEYS = {
     "priority": {"urgent", "high", "medium", "low"},
     "leaf_estimate": {"1", "2", "3", "5", "8"},
@@ -263,7 +261,6 @@ def normalize_mapping(
 
 
 def normalize_scores(provider: str, value: dict[str, Any]) -> dict[str, Any]:
-    """GitHub maps a factor to an issue field name; Linear maps it to one label per level."""
     result: dict[str, Any] = {}
     for factor in sorted(value):
         label = f"mappings.scores.{factor}"

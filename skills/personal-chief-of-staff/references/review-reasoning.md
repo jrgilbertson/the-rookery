@@ -22,12 +22,11 @@ proposed change bound to the source that owns it.
 For each new Wind-down, Weekly, or Quarterly review, resolve the private map
 through [source-bindings.md](source-bindings.md#resolve-before-recommending),
 then read its configured strategy, durable learning, and bounded current task
-commitments for the review's window before making recommendations. These three
-baseline roles apply in every mode. Inspect returned current content for
-applicability under
-[Judge what returned evidence supports](source-access.md#judge-what-returned-evidence-supports).
-Keep the configured task owner as the source of task state; neither the review
-nor this map is a second task store.
+commitments for the review's window before making recommendations. Inspect
+returned current content for applicability under [Judge what returned evidence
+supports](source-access.md#judge-what-returned-evidence-supports). Keep the
+configured task owner as the source of task state; neither the review nor this
+map is a second task store.
 
 The mode reference then names its incremental reads: its current record,
 template, and useful prior review as directed by
@@ -141,30 +140,20 @@ alternative; unsupported patterns produce narrower claims or no intervention.
 
 ## Ask on the evidence frontier
 
-Follow-up questions arrive as **Frontier Rounds**: after the broad reflection
-in Wind-down, and after initial synthesis in Weekly and Quarterly.
+Ask a follow-up only if its answer could materially change a plan,
+recommendation, or interpretation. Look up source-held facts and reuse settled
+decisions instead of asking. When evidence fits two behaviors with different
+recommendations, ask which is present. When evidence is missing, name it and
+keep the affected recommendation conditional. Overdue-task relevance belongs to
+its sweep row, not a question.
 
-A question qualifies only if its answer could materially change a plan,
-recommendation, or interpretation. Retrieve source-held facts and reuse
-settled decisions instead of asking again. When evidence fits two behaviors
-with different recommendations, ask which is present before choosing an
-inference. If evidence is missing, name it and any existing mechanism being
-compared; keep the affected recommendation conditional. Overdue-task relevance
-belongs to its sweep row with a proposed resolution, not a coaching question.
-
-Ask only questions whose prerequisites are answered. If one recommended answer
-depends on another open answer, hold it for a later round. For mutually
-dependent candidates, ask the one that would change the recommendation most
-first.
-
-Present at most **five numbered questions in plain chat**, ordered by impact.
-Put each recommended answer on the line beneath its question, with bounded
-options when applicable. Ask for one reply covering the round and interpret it
-by number. Use no host question or form tool.
-
-Keep over-cap and unanswered questions open for the next round. Admit newly
-raised questions only under the same entry and dependency rules. Zero questions
-is valid when evidence supports a recommendation or an honest null.
+A **Frontier Round** asks at most five numbered questions in plain chat, each
+with its recommended answer on the next line. Interpret the one reply by
+number. A round's answers approve no bundle action. Use no host question or
+form tool. Ask only questions whose
+prerequisites are settled. If more than five qualify, ask those whose answers
+could change the recommendation most. The rest, and any left unanswered, stay
+open for the next round. A round with no questions is valid.
 
 Completion: every question could change the decision, prerequisites were
 settled, and unanswered questions remain open rather than assumed resolved.
@@ -174,16 +163,16 @@ settled, and unanswered questions remain open rather than assumed resolved.
 Surface an item only when the user's judgment or presence could change its
 outcome. Weigh strategic impact, urgency, risk, how hard a choice is to undo,
 current opportunity cost, calendar context, and sustainable capacity as
-judgment factors, not a scoring formula. Optimize for durable value across the review horizon rather than the
-largest count of completed tasks.
+judgment factors, not a scoring formula. Optimize for durable value across
+the review horizon rather than the largest count of completed tasks.
 
 Interpret calendar evidence through the event's purpose, participants,
-flexibility, and surrounding commitments. Use health evidence as context with uncertainty; do not
-diagnose, reproduce a synthetic readiness score, or let one signal
-mechanically control the calendar. Begin a causal or correlation analysis only
-when the user names a decision to improve, agrees on an observation window,
-and the available evidence could change an action. Stop when further analysis
-can no longer change that decision.
+flexibility, and surrounding commitments. Use health evidence as context with
+uncertainty; do not diagnose, reproduce a synthetic readiness score, or let one
+signal mechanically control the calendar. Begin a causal or correlation
+analysis only when the user names a decision to improve, agrees on an
+observation window, and the available evidence could change an action. Stop
+when further analysis can no longer change that decision.
 
 Completion: each foreground item explains why it matters now and why the
 user's attention could improve the outcome.

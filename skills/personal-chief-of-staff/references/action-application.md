@@ -21,17 +21,17 @@ current bundle so the user can approve, edit, defer, or skip them independently.
 An edit creates a revised proposal that needs approval; approval of one action
 does not authorize another.
 
-The initial action surface is deliberately narrow. Reply text written in the
-conversation is not a Gmail draft and creates no external change. Creating or
-updating a Gmail draft is its own proposed external action with an acting
-identity, thread, recipients, and complete content. Sending that draft or any
-message is a separate action requiring separate approval and a verified send
-interface. Make destructive calendar changes and production interventions
-manual unless the user explicitly approves a bounded action and the active
-interface can re-read, apply, and verify it. For repository work, show the
-repository visibility, exact target, and proposed content before approval. For
-any other source, propose only a write verb supported by its current interface.
-Label an unsupported write as manual instead of implying it can be applied.
+Reply text written in the conversation is not a Gmail draft and creates no
+external change. Creating or updating a Gmail draft is its own proposed
+external action with an acting identity, thread, recipients, and complete
+content. Sending that draft or any message is a separate action requiring
+separate approval and a verified send interface. Make destructive calendar
+changes and production interventions manual unless the user explicitly approves
+a bounded action and the active interface can re-read, apply, and verify it.
+For repository work, show the repository visibility, exact target, and proposed
+content before approval. For any other source, propose only a write verb
+supported by its current interface. Label an unsupported write as manual
+instead of implying it can be applied.
 
 Completion: approval identifies one exact effect, identity, and target without
 relying on conversational inference.

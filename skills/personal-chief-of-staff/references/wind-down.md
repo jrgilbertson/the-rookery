@@ -107,8 +107,8 @@ handles unresolved; no write performed.
 ## Begin with one broad reflection
 
 Present a short evidence-based reconstruction that includes Daily CRM Scan
-findings when the companion ran, then ask one broad invitation such as: “What
-stands out about today, including anything the sources would miss?” Wait for
+findings when the companion ran, then ask one broad invitation such as: "What
+stands out about today, including anything the sources would miss?" Wait for
 the user's free-form response before targeted follow-ups. Do not open with a
 template questionnaire.
 
@@ -149,8 +149,7 @@ outcome does not block Phase 2.
 
 A zero-row sweep needs only a brief report before continuing. A scheduled run
 with the user absent instead ends **Paused**, even with zero rows, and applies
-nothing. Prepare from canonical role reads; target write-interface rereads
-wait for exact action approval.
+nothing.
 
 When the user replies, apply [the resume rule](source-access.md#end-and-resume-honestly)
 before applying actions, then continue into Phase 2. On a later-day resume,
@@ -164,8 +163,8 @@ unconfirmed actions separately. Phase 2 begins from the re-read state.
 ## Phase 2: Prepare tomorrow
 
 Plan from Phase 1's resulting state, re-reading values its actions changed.
-The initial journal and Daily CRM Scan reads are already complete; the top
-phase boundary governs resumption as well.
+The initial journal and Daily CRM Scan reads are already complete; the phase
+boundary at the top of this file also governs resumption.
 
 Read each relevant visible personal and work calendar separately for the next
 day, retaining its identity, plus relevant active tasks, strategy, and
@@ -219,14 +218,12 @@ Use [Ask on the evidence frontier](review-reasoning.md#ask-on-the-evidence-front
 after the broad reflection. Ask only what tomorrow's plan, coaching, or
 commitments turn on. If an answer changes the plan, revise it before coaching.
 
-Completion: every question asked could have changed the plan, the coaching
-judgment, or a commitment, and an unanswered question stayed open rather than
-being resolved by assumption.
+Completion: any answer that changed the plan was applied before coaching.
 
 ## Phase 2: Coach
 
-After evidence, user reflection, and prepare-tomorrow inputs are available—and
-**before** Meaningful Commitments are finalized—deliver one short coaching
+After evidence, user reflection, and prepare-tomorrow inputs are available,
+and **before** Meaningful Commitments are finalized, deliver one short coaching
 judgment. Test whether one relevant rule from the configured strategy or
 learning roles, or one supported current hypothesis, should change tomorrow's
 actual choice. Apply at most one; do not force a rule or hypothesis merely to
@@ -263,7 +260,7 @@ capacity without adding a quota. Each commitment states, in natural sentences,
 the shared
 [current basis, outcome, and closure evidence](review-reasoning.md#make-every-intention-verifiable),
 plus a short user-approved reason tied to strategy, an obligation, or an avoided
-cost. Refine activity labels such as “development” or “meetings” into concrete
+cost. Refine activity labels such as "development" or "meetings" into concrete
 outcomes. Every outcome, finish line, and rationale must trace to the user's
 words or an approved draft; label new candidates as awaiting approval.
 
@@ -294,7 +291,7 @@ separate from the journal action.
 Preserve all manual content, frontmatter, links, embeds, views, and unrelated
 journal structure. Removing a user edit requires explicit approval. Revalidate
 the section immediately before writing, including the template-drift check
-under “Phase 2: Review, write, and verify.”
+under "Phase 2: Review, write, and verify."
 
 Completion: the configured section follows the live template's count, format
 and purpose, with reviewed commitments and quality checks applied; explicitly
@@ -363,13 +360,11 @@ strategy action the coaching beat produced, the meaningful-commitments edit,
 and any other Phase 2 effect.
 
 A reply deciding the Phase 1 bundle resolves those actions and then continues
-this run into Phase 2. It is not an action-only response and needs no separate
-review request. A reply deciding this Phase 2 bundle ends the run.
-
-When this response both applies Phase 1 actions and reads Phase 2 sources,
-render one Source Access Audit separating **Action access** from **Review
-discovery**, covering both phases' current reads. This is not an action-only
-response.
+this run into Phase 2 with no separate review request. When that response both
+applies Phase 1 actions and reads Phase 2 sources, it is not an action-only
+response: render one Source Access Audit separating **Action access** from
+**Review discovery**, covering both phases' current reads. A reply deciding
+this Phase 2 bundle ends the run.
 
 Continue action numbering from Phase 1 and omit actions already proposed there.
 Use the shared [bundle](review-reasoning.md#prepare-one-review-bundle) and

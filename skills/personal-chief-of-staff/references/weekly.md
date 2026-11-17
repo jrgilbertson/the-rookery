@@ -158,8 +158,6 @@ patterns, tradeoffs, blind spots, experiments, and ranked outcomes. The agent
 may propose a synthesis, but the user supplies or explicitly approves the
 lesson, strategic judgment, and forward commitment.
 
-Before proposing a new commitment or deadline, read relevant calendar and
-capacity evidence alongside current obligations under the shared source rule.
 Test proposed outcomes against strategy, calendar reality, active obligations,
 relationships, health and recovery, and opportunity cost. Optimize for
 sustainable value across the whole system rather than maximizing task volume.

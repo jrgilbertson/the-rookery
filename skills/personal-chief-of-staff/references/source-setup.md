@@ -154,17 +154,17 @@ or detection of changes that the host tools cannot observe.
 
 For added or changed access, after the saved binding reads back, follow
 [Resolve harness access](source-bindings.md#resolve-harness-access), then read
-the approved
-bounded source through the selected interface and report that result
-separately, naming the access description actually exercised. A successful
-read verifies only that description. When an edited override belongs to another
-harness, or edited shared access is hidden by the current harness's override,
-report the change as saved but its access unverified; setup remains Partial
-until a relevant harness selects and successfully reads that route. Preserve
-current-runtime selection rather than reading another harness's override to
-satisfy this check. A successful map write does not establish source access. If the
-native read fails, retain the approved binding, mark setup incomplete for that role, and retry its read on
-the next relevant session without repeating settled ownership questions.
+the approved bounded source through the selected interface and report that
+result separately, naming the access description actually exercised. A
+successful read verifies only that description. When an edited override belongs
+to another harness, or edited shared access is hidden by the current harness's
+override, report the change as saved but its access unverified; setup remains
+Partial until a relevant harness selects and successfully reads that route.
+Preserve current-runtime selection rather than reading another harness's
+override to satisfy this check. A successful map write does not establish
+source access. If the native read fails, retain the approved binding, mark
+setup incomplete for that role, and retry its read on the next relevant session
+without repeating settled ownership questions.
 
 Report the saved location. When establishing or changing it, preview the exact
 map-location and pointer or caller changes for approval, including what

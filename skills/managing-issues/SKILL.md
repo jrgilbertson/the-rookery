@@ -94,14 +94,15 @@ and undo cost.
   they are.
 - Derivation never sets, overwrites, or clears urgent. Urgent is the value
   mapped under `mappings.priority.urgent`. When the request asks for urgent,
-  or the tracker's current priority for the issue is that value, priority
-  stays as the owner set it and only the estimate is derived. Decide this from
-  those two facts, not from whether the work seems time-sensitive. An urgent
-  issue is still scored.
+  write urgent: that is the owner setting it. When the tracker's current
+  priority for the issue is already that value, leave it. In both cases only
+  the estimate is derived. Decide this from those two facts, not from whether
+  the work seems time-sensitive. An urgent issue is still scored.
 - When the request removes urgent, the owner has cleared it. Derive priority
   as for any other issue and show urgent as the old value.
-- When the current priority cannot be read as exactly one value, derive no
-  priority and name the conflict in the preview.
+- An issue with no priority set gets the derived one. When the current
+  priority cannot be read, or the issue carries more than one priority value,
+  derive no priority and name the problem in the preview.
 - When the request names any other priority, or an estimate, do not write it
   and do not bend a score to reach it. Show the derived value beside the
   requested one and ask which scores should change.

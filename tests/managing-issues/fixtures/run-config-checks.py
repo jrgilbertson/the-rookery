@@ -805,6 +805,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (CheckFailure, json.JSONDecodeError, OSError, SyntaxError) as error:
+    except (CheckFailure, json.JSONDecodeError, OSError, SyntaxError, ValueError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

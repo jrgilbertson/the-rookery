@@ -204,10 +204,11 @@ belongs in a brief only when that condition holds for the assignment.
   waits inside its turn, using the longest wait each call allows. When a
   helper skill returns, the worker continues to the next step of its
   assignment.
-- **Verification currency.** Bring the branch up to date with the latest
-  default branch before each run of the repository's verification gate,
-  following that repository's merge policy, so verification tests the fixes
-  already merged. After merging the base into an open pull request itself, the
+- **Verification currency.** Before each run of the repository's verification
+  gate, bring in the default branch's merged fixes only as the repository's
+  merge policy allows, so verification tests those fixes. For example, rebase
+  an unpushed branch; merge into a pushed branch only when the policy permits.
+  After merging the base into an open pull request itself, the
   worker takes a fresh watch report on that head and says in its question that
   the base merge was its own.
 - **Repeated review findings.** When two review rounds in a row on the pull

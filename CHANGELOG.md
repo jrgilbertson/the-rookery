@@ -69,6 +69,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` brings in the default branch's merged fixes before
+  verification only as the repository's merge policy allows, with examples
+  for unpushed and pushed branches.
 - `personal-chief-of-staff` keeps only the Frontier Round rules a review
   needs. Questions keep their own order, those whose answers could change the
   recommendation most, rather than leverage order, because a round is not a

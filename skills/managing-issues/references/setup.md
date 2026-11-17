@@ -48,8 +48,8 @@ Linear user. It is the only configured default the skill applies to an issue.
 `project.required` set to `true` means no issue may be created without a
 project. The operator may keep, change, or remove either one. Without
 `assignee.default`, a create assigns the person the request names, or else the
-requester, and a run with no human requester leaves the assignee empty with a
-stated reason. A team that wants every new issue to have an owner, including
+requester, and a run whose request names no one and has no human requester
+leaves the assignee empty with a stated reason. A team that wants every new issue to have an owner, including
 issues from scheduled runs, sets `assignee.default` to the person who triages
 new work. Without `project.required`, a project may stay empty with a stated
 reason.

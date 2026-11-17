@@ -61,10 +61,10 @@ Create a parent only when it owns a distinct whole outcome delivered by several
 children. Keep the graph as shallow as the outcomes allow. Parents have no
 estimate. Every implementation leaf has one, whatever its readiness, derived
 from its scores once all four are present. Until then its estimate stays
-empty, and the preview says which score is missing. A childless issue is not a
-leaf by that fact alone: an issue whose deliverable is research, a decision,
-or a person's action gets no estimate, and one whose Verification allows an
-outcome that ships a pull request does. Readiness is
+empty, and the preview says which score is missing. A childless issue is not
+an implementation leaf by that fact alone: an issue whose deliverable is
+research, a decision, or a person's action gets no estimate, and one whose
+Verification allows an outcome that ships a pull request does. Readiness is
 `needs-discovery`, `needs-planning`, or `ready` and describes whether the
 issue has enough information for its role, not a named agent or workflow.
 
@@ -89,8 +89,9 @@ none is open, the create waits until the person picks or creates one.
 The assignee follows a fixed order instead. On a create, assign the person the
 request names; otherwise the config's `assignee.default`; otherwise the person
 who made the request. The requester is the human who asked, not the account
-the run authenticates as. A scheduled or headless run with no human requester
-and no `assignee.default` leaves the assignee empty and says so. If the person
+the run authenticates as. When the request names no one, a scheduled or
+headless run with no human requester and no `assignee.default` leaves the
+assignee empty and says so. If the person
 the order selects cannot be assigned on the target, do not skip to the next
 one: leave the assignee empty and name who could not be assigned and why.
 

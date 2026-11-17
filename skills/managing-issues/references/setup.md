@@ -30,13 +30,17 @@ GitHub labels have no grouping surface. The four scores map to Number issue
 fields on GitHub and to single-select label groups on Linear, as each provider
 reference describes. For each family, let the operator accept the
 recommendations, map selected existing values, or define custom representations;
-never treat existing metadata as the preferred answer.
+never treat existing metadata as the preferred answer. Linear priority is the
+one exception: Linear fixes its priority names, so `urgent`, `high`, `medium`,
+and `low` each map to the Linear priority of the same name and the operator has
+nothing to choose there.
 The operator may leave general-label mappings empty. Every other family is
 fixed: priority maps `urgent`, `high`, `medium`, and `low`; estimate maps `1`,
 `2`, `3`, `5`, and `8`; readiness maps `needs-discovery`, `needs-planning`, and
 `ready`; and scores map `impact`, `confidence`, `verification_effort`, and
-`undo_cost`. The operator chooses each one's provider representation. These
-are available choices, never defaults applied to an issue.
+`undo_cost`. Apart from Linear priority, the operator chooses each one's
+provider representation. These are available choices, never defaults applied
+to an issue.
 
 The starter templates also carry two optional settings. `assignee.default`
 names one exact identity from the discovered members, a GitHub login or a

@@ -60,24 +60,25 @@ Discover the exact workspace, team, workflow states, labels, members, and
 projects needed for the requested effect through the selected transport.
 Require one workspace and one team matching the normalized target. Prefer stable IDs; accept a name
 only when it matches exactly and uniquely within its provider scope. Linear
-config stores the canonical priority names `none`, `urgent`, `high`, `medium`,
-and `low`, not a transport-specific argument. At the MCP boundary, translate
-the chosen name with the runtime schema's documented mapping. For the current
-Linear MCP schema that is `none` to `0`, `urgent` to `1`, `high` to `2`,
-`medium` to `3`, and `low` to `4`; pass the resulting number, never the config
+config maps each priority name `urgent`, `high`, `medium`, and `low` to itself,
+not to a transport-specific argument, and the validator rejects any other
+value. At the MCP boundary, translate the chosen name with the runtime
+schema's documented mapping. For the current Linear MCP schema that is
+`urgent` to `1`, `high` to `2`, `medium` to `3`, and `low` to `4`, and `0`
+means no priority is set; pass the resulting number, never the config
 string, when the schema requires a number. If the runtime schema differs or
 does not document an exact conversion, stop before preview rather than guess.
 For Orca, use the version-matched guide's documented representation. Estimates
 apply only to implementation leaves; readiness uses an exact discovered label
 identity, never workflow status.
 
-During first-use setup, present the native priority and estimate choices and
-exact existing labels beside the Linear starter recommendations. Recommend a
-workspace-scoped readiness group named `readiness` with kebab-case children
-`needs-discovery`, `needs-planning`, and `ready`. Offer the team's members as
-default-assignee candidates and store the chosen member's stable user ID. The
-operator chooses the mappings. Do not change the team's native priority or
-estimation scheme.
+During first-use setup, present the native estimate choices and exact existing
+labels beside the Linear starter recommendations, and show the four priority
+mappings as fixed. Recommend a workspace-scoped readiness group named
+`readiness` with kebab-case children `needs-discovery`, `needs-planning`, and
+`ready`. Offer the team's members as default-assignee candidates and store the
+chosen member's stable user ID. The operator chooses every mapping except
+priority. Do not change the team's native priority or estimation scheme.
 
 The four scores are labels in single-select label groups, one group per
 factor. Recommend workspace-scoped groups named `impact`, `confidence`,

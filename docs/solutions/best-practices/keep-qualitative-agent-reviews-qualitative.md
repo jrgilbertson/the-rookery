@@ -1,7 +1,7 @@
 ---
 title: Keep qualitative agent reviews qualitative
 date: 2026-08-28
-last_updated: 2026-11-14
+last_updated: 2026-11-18
 category: best-practices
 module: skill-instruction-review
 problem_type: best_practice
@@ -17,6 +17,13 @@ tags: [skills, simplicity, qualitative-review, system-design, architecture, deci
 ---
 
 # Keep qualitative agent reviews qualitative
+
+`checking-simplicity` was retired on 2026-11-18. Its one-subagent dispatch,
+readout shape, and examples below describe the historical skill, which Git
+history keeps at `0a370618:skills/checking-simplicity/`. Agents now apply the
+"Simplicity first" ladder in the [global agent guidance](../../../GLOBAL-AGENTS.md#simplicity-first)
+directly, and `ce-pov` gives an independent verdict when one is wanted. The
+general lessons still apply to qualitative reviews in maintained instructions.
 
 ## Context
 

@@ -3,7 +3,7 @@ title: "Define the abstract qualifiers that the delete test misses"
 category: best-practices
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-11-14
+last_updated: 2026-11-18
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -94,6 +94,12 @@ deliverable is...` and names the qualifying research artifacts before it
 describes evidence comparison or decision support
 (`skills/storm-research/SKILL.md:3`).
 
+`checking-simplicity`, the worked example in this passage and in "The
+subject-bound entry and clean-exit fix" below, was retired on 2026-11-18.
+Those examples describe the historical skill. Simplicity guidance now lives in
+the [global agent guidance](../../../GLOBAL-AGENTS.md#simplicity-first), and the
+three routing boundaries still apply to maintained skills.
+
 Some skills are selected by workflow state and subject, not only by requested
 deliverable. Define three routing boundaries for those descriptions:
 
@@ -111,8 +117,8 @@ deliverable. Define three routing boundaries for those descriptions:
    (`skills/checking-simplicity/SKILL.md:3`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
-   next planner or executor. The current skill places this rule in
-   [Dispatch](../../../skills/checking-simplicity/SKILL.md#dispatch).
+   next planner or executor. The skill placed this rule in its Dispatch
+   section (`0a370618:skills/checking-simplicity/SKILL.md`).
 
 When a description change needs evaluation, follow the
 [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
@@ -203,8 +209,8 @@ completion observable instead of relying on broad quality words.
 
 **Current location (2026-11-14).** The example above records the earlier
 description. [PR #245](https://github.com/jrgilbertson/the-rookery/pull/245)
-removed the clean-exit rule from the description; the current rule is in
-[Dispatch](../../../skills/checking-simplicity/SKILL.md#dispatch).
+removed the clean-exit rule from the description and moved it to the skill's
+Dispatch section (`0a370618:skills/checking-simplicity/SKILL.md`).
 
 ## Related
 

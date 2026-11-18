@@ -48,6 +48,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `creating-portable-skills`'s `references/evaluation.md` and its routing to
+  the evals plugin. Installed copies keep the file until they are updated.
+- The scenario tables in the `coordinating-work` and `managing-issues` test
+  READMEs, and the `tests/coordinating-work/` folder. The rows restated each
+  skill's rules, none came from an observed failure, and none was ever run.
+  Nothing replaces them: the guard is the skill text plus pull request review.
 - Matt Pocock's `retro` from the installed-skills list.
 - `repo-gardener`; recurring repository reviews now use Orca automations, and
   approved changes use the existing Compound Engineering workflow.
@@ -57,8 +63,7 @@ looked" surface. GitHub Releases mirror its entries.
   review prompt directly.
 - The custom `creating-portable-skills` evaluation harness, exporter, dedicated
   tests, and runner-specific instructions, along with the speculative cases
-  and judges. Behavioral evaluation uses the evals plugin's `evals-start`
-  routing and selects a runner when needed.
+  and judges.
 - The global agent guidance rule requiring an independent review from a
   different model family for changes to authorization, approval,
   destructive-action guards, money, data deletion, privacy boundaries, or
@@ -69,6 +74,20 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `creating-portable-skills` replaces its evaluation workflow with one short
+  section, "Improve from real use". The first time a failure appears, the
+  author fixes the instruction and the commit says what was observed. A
+  pass/fail case is kept only when the same failure returns after that fix.
+  Checks test observable behavior, never wording. A skill whose wrong run
+  would be costly can get one forward test from a fresh agent, and no runner
+  is required. The skill opens with its purpose, working the same across
+  harnesses and agents, and credits Anthropic's and Codex's `skill-creator`
+  skills. Its audit checklist reports a behavioral case that cannot name the
+  failure it came from. `SKILLS.md` asks for trigger validation only after an
+  observed routing failure.
+- The Test audit prompt no longer reports a rule that lives only in skill or
+  guidance prose as a test gap. Helper scripts and deterministic checks stay
+  in scope. A saved Orca job needs the updated prompt pasted in.
 - Automation prompts say what to look for and leave earlier findings to the
   history repository. Optimize CI no longer carries a paragraph of lessons
   from past fixes, which could steer a run toward the answers it was given,
@@ -178,7 +197,7 @@ looked" surface. GitHub Releases mirror its entries.
   check only when the tracker left it open. Workers settle every unapplied
   review finding before asking for a merge, leaving only product or design
   calls for the operator, and the setup proposal names the tracker closing
-  the issue among what a merge starts. Five new scenarios cover the change.
+  the issue among what a merge starts.
 - Global agent guidance keeps a pause or hold in force until whoever set it
   lifts it, attributes to the user only their own quoted words and decisions,
   and gives times in the user's named local time zone.
@@ -189,9 +208,8 @@ looked" surface. GitHub Releases mirror its entries.
   changes to access, money, deletion, privacy, email, and release gates open,
   along with any PR that carries unapplied review findings. It never waits for
   an answer, keeps one record on its own host, and resumes conversations after
-  a same-provider account switch. The Planner role is removed, a new
-  `references/operate.md` covers running the batch, and five plain scenarios
-  describe what a reviewer should see.
+  a same-provider account switch. The Planner role is removed, and a new
+  `references/operate.md` covers running the batch.
 - Sessions audit uses Compound Engineering's `ce-retro` assessment-only path,
   with host-wide discovery and private shared history owned by the automation.
   It reads history before assessment, carries unread sessions forward, confirms
@@ -302,11 +320,6 @@ looked" surface. GitHub Releases mirror its entries.
   and to report a merge-queue enqueue instead of polling it. The paid-call
   exception for live browser testing moves to the repositories that grant it;
   the rule to mock models in automated tests stays global.
-- Evaluation policy allows targeted synthetic discovery, precise-constraint
-  checks, and useful regression coverage while keeping evaluator investment
-  proportional to observed failures and cost. New skill delivery does not
-  require an invented corpus, grader, or case count. Concrete eval work retains
-  input/grading approval and execution limits.
 - Repository agent guidance points skill changes to the package and evaluation
   policy, and directs implementation and debugging to relevant prior solutions.
 - Managing Issues explicitly checks a newly created Linear issue's parent,
@@ -324,8 +337,8 @@ looked" surface. GitHub Releases mirror its entries.
 - Creating Portable Skills reviews flag opaque prose: instructions a new reader
   cannot follow, internal classifications, and security jargon.
 - Managing Issues tests no longer match the skill's text. The phrase checks and
-  the graph and lifecycle case rows are replaced by nine plain scenarios, and
-  the configuration validator test stays.
+  the graph and lifecycle case rows are removed, and the configuration
+  validator test stays.
 - `GLOBAL-AGENTS.md` matches the maintainer's current global guidance.
   Non-trivial work names a verifiable end state without a completion
   template. Long work uses the workflow's durable task state, and scratch
@@ -338,9 +351,8 @@ looked" surface. GitHub Releases mirror its entries.
   re-scoping its open issues in the same change.
 - Personal Chief of Staff fixture checks validate the shipped source-map
   sample directly instead of a test-only copy of the schema.
-- Repository docs keep one owner per rule. `creating-portable-skills`'s
-  `references/evaluation.md` owns evaluation policy, and the other docs link to
-  it; `SKILLS.md` keeps only this repository's evidence rules. `CONCEPTS.md`
+- Repository docs keep one owner per rule. `creating-portable-skills` owns
+  evaluation policy, and the other docs link to it; `SKILLS.md` keeps only this repository's evidence rules. `CONCEPTS.md`
   drops ten terms used in at most one other file and states what checks
   Installation Parity. Stale pointers, a restated sync-script header, and a
   duplicate `checking-simplicity` summary are gone. `SKILLS.md` notes that

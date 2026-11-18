@@ -37,13 +37,15 @@ Codex's validator to flag the field.
 
 ## Descriptions and triggering
 
-Validate triggering through the evaluation workflow below.
+When a routing failure has been observed, check the description change against
+the requests that misrouted, following the evaluation workflow below.
 
 ## Evaluation workflow
 
-[`references/evaluation.md`](skills/creating-portable-skills/references/evaluation.md)
-in `creating-portable-skills` owns evaluation policy and routing. This
-repository adds these evidence rules:
+The "Improve from real use" section of
+[`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) owns
+evaluation policy: when a failure earns a kept case, what a check may test, and
+which runs need approval. This repository adds these evidence rules:
 
 - Record the exact skill revision, host, provider, inputs, and behavior
   observed for each claim.

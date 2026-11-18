@@ -51,7 +51,9 @@ looked" surface. GitHub Releases mirror its entries.
 - `checking-simplicity`. In blind tests it added nothing over the global agent
   guidance, and every use started an extra subagent. Agents apply the global
   "Simplicity first" ladder directly, and `ce-pov` gives an independent
-  verdict when one is wanted. Uninstall installed copies with
+  verdict when one is wanted. Update every saved automation job to the new
+  prompts first, because a job that still lists the skill as required stops
+  when it is missing. Then uninstall installed copies with
   `npx skills remove checking-simplicity -g`.
 - `creating-portable-skills`'s `references/evaluation.md` and its routing to
   the evals plugin. Installed copies keep the file until they are updated.

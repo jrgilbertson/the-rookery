@@ -26,7 +26,7 @@ The workflows need three things:
 
 - **A repository for the work.** I use repositories such as GitHub for code and knowledge. Branches let agents work in parallel, version control records changes, and backups help protect the work.
 - **A lasting home for personal knowledge.** Obsidian, Notion, or plain Markdown files can hold knowledge outside an AI provider's memory. Point each agent at the same source so every tool can read it. Turning off an agent's built-in memory is a separate choice; it keeps knowledge from collecting somewhere only one provider can reach.
-- **One shared set of agent instructions.** Every agent in every project on my machine reads the same file before the repository's own `AGENTS.md`. It contains habits that apply everywhere: choose the best complete solution, reproduce a bug before fixing it, and keep working until the result is verified. Each project adds its own rules. I change the shared file rarely and deliberately because it affects every run.
+- **One shared set of agent instructions.** Every agent in every project on my machine reads the same file before the repository's own `AGENTS.md`. It contains habits that apply everywhere: put simplicity first, reproduce a bug before fixing it, and keep working until the result is verified. Each project adds its own rules. I change the shared file rarely and deliberately because it affects every run.
 
 My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them through a single `@~/.codex/AGENTS.md` line in `~/.claude/CLAUDE.md`, so Codex and Claude Code follow the same rules.
 
@@ -79,7 +79,7 @@ Agents that were not in the planning session review the plan against the current
 - `ce-debug`. Finds the cause of a bug before proposing a fix. Use it when the work starts with broken or unexpected behavior.
 - `ce-pov`. Answers a focused planning question using the project's evidence. Use it when one decision blocks the plan and more research would add little.
 
-Simplicity has no separate step. Every agent follows the "Simplicity first" ladder in my [global agent guidance](GLOBAL-AGENTS.md#simplicity-first) while it plans and builds, and answers “can this be simpler?” in the same session. When I want an independent verdict on whether something can be simpler, I ask `ce-pov`.
+Planning has no separate simplicity check. Every agent follows the "Simplicity first" ladder in my [global agent guidance](GLOBAL-AGENTS.md#simplicity-first) while it plans and builds, and answers “can this be simpler?” in the same session. When I want an independent verdict on whether something can be simpler, I ask `ce-pov`.
 
 Sometimes the remaining questions depend on one another. I consider a focused grilling session when a decision is costly to reverse, affects a large part of the system, determines later answers, or would otherwise leave the agent guessing how to judge completion. For example, who owns authentication may determine how long sessions last and who can access data. Settle that first. Unrelated open questions stay in `ce-brainstorm`; clear requirements and ordinary, reversible decisions go to `ce-plan`.
 

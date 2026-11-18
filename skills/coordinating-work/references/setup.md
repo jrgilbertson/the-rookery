@@ -20,15 +20,20 @@ for a batch, is a participant to adopt. When the guide cannot attach a
 supervised Task to it, keep it as a message-assigned worker reached through the
 guide's reference lookup, and include it in the check.
 
-Propose only the initial assignments the requested work needs. Dispatch from
-the canonical tracker's ready issues, with the issue as the source of each
-brief. Setup does not create a competing roadmap, issue database, or mandatory
-outer plan for an ordinary CE task. Staffing, isolation, concurrency, and
-resource use follow the native workflow and the operator's existing limits. On
-a shared execution host, limit concurrent heavy jobs, such as verification,
-builds, and browser runs, by measured CPU and memory rather than by
-participant count. Each brief names the project's own metering helper, or,
-when the project has none, a host command confirmed to measure CPU and memory.
+Plan the batch with the operator from the tracker. Its scope is the issues and
+epics the operator hands over, and its order is the Ready Frontier
+`managing-issues` lists, with each issue the source of its brief. When part of
+the objective is not yet an issue, draft it and create it through
+`managing-issues` under that skill's own approval. Check each issue's
+Verification as the entry skill describes before dispatching it. When the
+tracker cannot be read through `managing-issues`, report the batch blocked.
+Propose only the initial assignments the work needs. Staffing, isolation,
+concurrency, and resource use follow the native workflow and the operator's
+existing limits. On a shared execution host, limit concurrent heavy jobs, such
+as verification, builds, and browser runs, by measured CPU and memory rather
+than by participant count. Each brief names the project's own metering helper,
+or, when the project has none, a host command confirmed to measure CPU and
+memory.
 
 ## Propose before establishing
 
@@ -48,12 +53,14 @@ Present the entry skill's proposal, including reused participants, their task
 ownership, and initial workers to start. The proposal also states, so that one
 approval covers them:
 
-- **The batch.** List the issues this coordinated batch may dispatch. The
-  Coordinator dispatches nothing outside it, except incidental work inside an
-  approved class.
-- **Incidental work**, when the operator wants it. Name a class of work the
-  Coordinator may dispatch without an amended proposal, such as flaky tests
-  seen in workers' verification runs or tooling that blocks the batch.
+- **The batch.** List the issues and epics in scope, with each issue's four
+  scores. The Coordinator dispatches nothing outside the recorded scope.
+- **Issue edits.** State the standing instruction that lets the Coordinator
+  edit Scope and Verification on issues in scope as the entry skill's
+  [Changing an issue](../SKILL.md#changing-an-issue) allows, with stored
+  scores kept, and close an issue whose pull request merged through the
+  checklist. `managing-issues` applies neither without that recorded
+  instruction.
 - **What a merge starts.** State what merging to the default branch triggers
   here, such as a deploy, a release, a migration, a paid job, or the tracker
   closing the linked issue.
@@ -61,13 +68,13 @@ approval covers them:
   usage-limit prompt. The default is no.
 
 - **The merge bar and the held changes.** Show the defaults from
-  [Operate](operate.md). When the project's own guidance defines a merge bar
-  or held changes, show those instead and say where they came from. The
-  operator may edit either. Mark each listed issue that touches a held change,
-  and each later issue it would block. Ask the operator directly whether to
-  hold those for review or pre-authorize merging them under a stated bar.
-  With no answer, they are held. The answer goes in the record and is part of
-  the merge approval.
+  [Operate](operate.md). When the project's own guidance defines a merge bar or
+  held changes, show those instead and say where they came from. The operator
+  may edit either. Mark each listed issue that touches a held change or is
+  scored 3 on verification effort, and each later issue it would block. Ask the
+  operator directly whether to hold those for review or pre-authorize merging
+  them under a stated bar. With no answer, they are held. The answer goes in
+  the record and is part of the merge approval.
 - **The standing instruction not to wait.** State it as the operator's
   instruction: the Coordinator never stops for an answer, decides a default
   as Operate describes, and logs the question. An installed guide that says

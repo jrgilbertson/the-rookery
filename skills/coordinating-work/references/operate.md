@@ -23,12 +23,19 @@ feedback assessment, including justified declines and follow-up handling.
 - privacy;
 - outbound email;
 - release gates;
-- the project's agent instructions, and its merge and review policy.
+- the project's agent instructions, and its merge and review policy;
+- work only the operator's judgment can verify: any issue scored 3 on
+  verification effort.
 
 The approved proposal governs. It may replace either default with the
-project's own guidance or the operator's edits. Updating this skill does not
-widen an existing batch's merge approval; only the operator's recorded approval
-of an amended proposal can do that.
+project's own guidance or the operator's edits; the judgment hold stays unless
+the operator's own edit removes it. Updating this skill does not widen an
+existing batch's merge approval; only the operator's recorded approval can do
+that.
+
+The stored score governs the judgment hold. Bring such an issue's work to the
+point its Verification says the operator will look at, list it with a link to
+the evidence, and keep other work moving.
 
 ## Running the batch
 
@@ -38,49 +45,55 @@ that assignment. Revive covers the prompt a resumed worker's new account
 raises. Recover any other failed start through the guide, and put what it
 cannot recover on the ready-for-operator list.
 
-After every decision, dispatch the next ready issue in the batch the approved
-proposal lists, in the order and at the concurrency you judge best. Measure the
-whole host before a heavy job. When it is busy, leave the issue for the next
-check. When a merge changes what a later issue should assume, say so in that
-issue's brief. When no issue remains, note on the ready-for-operator list that
-the batch is finished. Adding issues takes an amended proposal the operator
-approves, except incidental work inside a class the approved proposal names.
-Dispatch each such item as its own pull request.
+After every decision, dispatch the next issue from the batch's Ready Frontier
+that the batch has not yet assigned, in its leverage order unless host
+capacity or the operator's instruction says otherwise, and at the concurrency
+you judge best. Dispatch
+only an issue that has its four scores, and list an unscored one for the
+operator. Measure the whole host before a heavy job. When it is busy, leave
+the issue for the next check. When a merge changes what a later issue should
+assume, say so in that issue's brief. When nothing is ready, say so on the
+ready-for-operator list with what each remaining issue waits on; the batch is
+finished only when every issue in scope is done or the operator ends it. Scope
+grows only as the entry skill's [Shape](../SKILL.md#shape) says. When work
+outside scope would help the batch, such as a flaky test that blocks merges,
+draft it as an issue and list it for the operator.
 
 ## The merge checklist
 
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
-only when every line below is true. Line 2 is the worker's report, taken on
-the worker's word because the worker runs the watch. Lines 3 and 4 are facts
-you read yourself from the pull request and the record when you decide. In a
-batch with no task workers, you run `lfg` and the continuous `ce-babysit-pr`
-watch yourself, and line 2 reads the first line of your own watch report and
-the head commit it covered. Apply the UX and UI work guidance in
-[Assignment briefs](../SKILL.md#assignment-briefs) to your own assignments too.
+only when every line below is true. Line 2 is the worker's report, taken on the
+worker's word because the worker runs the watch. Lines 3 and 4 are facts you
+read yourself from the pull request, the issue, and the record when you decide.
+In a batch with no task workers, you run `lfg` and the continuous
+`ce-babysit-pr` watch yourself, and line 2 reads the first line of your own
+watch report and the head commit it covered. Apply the UX and UI work guidance
+in [Assignment briefs](../SKILL.md#assignment-briefs) to your own assignments
+too.
 
-1. **Approval.** The record holds the approved setup proposal and any operator-approved
-   amendment to its batch, merge bar, or held changes. Together they show the
-   current merge bar and held changes, and this pull request's issue is in
-   the approved batch or inside an approved class of incidental work. Every condition
-   the approved merge bar adds beyond this list is true for this pull
-   request.
+1. **Approval.** The record holds the approved setup proposal and any change
+   the operator made to the scope, merge bar, or held changes. Together they
+   show the current merge bar and held changes, and this pull request's issue
+   is in the batch's recorded scope. Every condition the approved merge bar
+   adds beyond this list is true for this pull request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
    under the approved merge bar, with no other condition such as a position in a
    stack, and the worker gave the head commit that report covered. For a
    cautious report, read the other external review on that head yourself.
    A closing phrase that leaves the merge to the reader is not a condition.
-3. **Routine.** The diff touches no held change, except one the record shows
-   the operator pre-authorized for this issue, under a bar this pull request
-   meets. A change that relates to a held change at all, wording and tests
-   included, touches it. The pull request body has no unticked item under
-   `lfg`'s unapplied review findings. The record shows no item, at any point,
-   that `ce-babysit-pr` parked for a human about the change itself. Merging
-   it starts only what the proposal showed. Where a merge closes the issue,
-   the pull request body sets evidence beside each of the issue's
-   verification criteria as written, or the pull request links the issue as
-   unfinished. Compare and do not interpret. A criterion met in part, with an
-   exception, or in other words is unproven.
+3. **Routine and done.** The diff touches no held change and the issue is not
+   scored 3 on verification effort. The exceptions are a held change the record
+   shows the operator pre-authorized for this issue, under a bar this pull
+   request meets, and a pull request the operator has told you, in their own
+   recorded words, to merge. A change that relates to a held change at all,
+   wording and tests included, touches it. The pull request body has no
+   unticked item under `lfg`'s unapplied review findings. The record shows no
+   item, at any point, that `ce-babysit-pr` parked for a human about the change
+   itself. Merging it starts only what the proposal showed. The pull request
+   body sets evidence beside each of the issue's verification criteria as the
+   issue reads now. Compare and do not interpret. A criterion met in part, with
+   an exception, or in other words is unproven.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code
@@ -104,6 +117,15 @@ So does any situation this list does not describe. Then:
   with the line that failed, and reply that it is held for the operator. A
   pull request that will be held anyway is held straight away.
 
+A deviation the worker declared in the pull request body is yours to judge.
+When the result still solves the issue's Problem, accept it by editing the
+issue as [Changing an issue](../SKILL.md#changing-an-issue) allows, then run
+the checklist against the edited text. Otherwise reply with what to fix, or
+hold the pull request. A criterion that is unmet and undeclared is a false
+line: reply with what to fix, and leave the issue as it is. In a batch with no
+task workers, a deviation in your own work is not yours to accept; hold the
+pull request for the operator.
+
 A parked item that is only about a reviewer or tool being unavailable, such
 as a review bot out of quota, says nothing about the change. Log it, answer
 the worker with the default, and let the checklist decide.
@@ -112,19 +134,20 @@ A held pull request is left as it is, and no watch runs on it. Bringing one
 current, or applying an open finding on it, is work to assign when the
 operator asks.
 
-After a merge lands, record it and reply merged. Then read the issue and record
-its state. When the pull request finished it and the tracker left it open,
-close it through the `managing-issues` completion check. An issue still open
-after its merge goes on the ready-for-operator list with the reason: an
-unfinished link, a gap the check found, or a missing `managing-issues`.
+After a merge lands, record it and reply merged. An issue whose pull request
+you merged is done: read the issue, and when the tracker left it open, close
+it through `managing-issues`. An issue you could not close goes on the
+ready-for-operator list with the reason.
 
 ## Never wait for an answer
 
-Keep the batch moving without the operator, whether or not they are present.
-Put every question in the record with a default, and leave blocking question
-dialogs unused. The skill asks the operator for exactly two things, and those
-are the only waits: approval of a proposal, and a new session's confirmation
-that the previous Coordinator has ended.
+Keep the batch moving whether or not the operator is present. Put every
+question in the record with the default you took, and leave blocking question
+dialogs unused. When the operator is talking to you, raise what is open then.
+You wait only for the operator's own approvals: of a proposal, of a tracker
+write `managing-issues` needs approved, and a new session's confirmation that
+the previous Coordinator has ended. Each holds only the work that depends on
+it.
 
 On a judgment call the brief, the record, and the standing rules do not settle,
 decide a default and write the question and that default to the record. A
@@ -135,11 +158,10 @@ approval, run `ce-pov` for the default, log it, and hold only the work that
 depends on the answer. When a worker's question offers options that all
 deliver its issue as briefed, default to the option that resolves the cause,
 even when it is the wider fix. When an option adds an outcome the issue does
-not name or changes a constraint in the brief, answer with an in-scope
-option that completes the issue; if none does, hold the dependent work. Put
-the proposed addition or constraint change on the ready-for-operator list
-as a proposed follow-up. Adding it takes an amended proposal the operator
-approves.
+not name or changes a constraint in the brief, treat it as an issue edit:
+change the issue's Scope when solving its Problem needs the change, and
+otherwise answer with an in-scope option and list the addition as a proposed
+follow-up.
 
 A logged question, a held pull request, or a parked item stops only the work
 that depends on it. So does an outside service that is down, such as the
@@ -152,19 +174,24 @@ by holding its work, so each worker always has its reply.
 
 Give the operator one list, complete and unfiltered, read from the record's
 log and table, with every report and whenever they ask for open questions or
-an update:
+an update. Lead with a short Progress, Plans, Problems summary, then what
+needs the operator first:
 
 - every held pull request, with the checklist line that held it and any
   unticked review items;
 - every open question, and every decision you made by default since the last
   report, each with the default taken and what proceeded on it;
+- every issue edit, with the old text, the new text, and why, and each
+  follow-up it proposes;
+- every relayed message you acted on or refused;
+- every unscored issue, and every new child of a handed epic that is not in
+  scope;
 - every parked item awaiting the operator, with the pull request it blocks;
 - every worker or chat that needs the operator: one to move, replace, or
   re-account, one waiting at a prompt, and one only the operator can close;
 - every merge made, with the pull request and the head merged, and each
   follow-up its worker proposed;
-- every incidental item dispatched, with its class and pull request;
-- every batch issue still open after its pull request merged, with the reason.
+- every issue you could not close after its merge, with the reason.
 
 ## Standing rules
 
@@ -202,15 +229,17 @@ Each time, read the table against live state and act on what changed:
   Held changes and merge decisions stay held;
 - tell a worker to continue when its assignment is open, as the entry skill
   defines it, with nothing it is waiting on;
-- dispatch an issue left for this check when the host now has room;
+- read the Ready Frontier again, and dispatch an issue that became ready or
+  was left for this check when the host now has room;
 - list for the operator a worker that has not acknowledged its last reply
   by the following check.
 
 The check belongs to the Coordinator's own session. It ends with that session,
 or when no assignment is open or waiting at a prompt the operator can answer,
-no batch issue is still to dispatch, and no recorded write is pending. The
-record says how to stop it. A scheduler that starts a new agent session is a
-second Coordinator, so the check uses the session's own timer.
+nothing in scope is left to dispatch or waiting on anything but the operator,
+and no recorded write is pending. The record says how to stop it. A scheduler
+that starts a new agent session is a second Coordinator, so the check uses the
+session's own timer.
 
 Moving, replacing, or switching the account of a worker happens only in
 Revive, at the operator's request.

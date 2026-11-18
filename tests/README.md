@@ -1,16 +1,11 @@
 # Repository tests
 
 This directory holds deterministic tests of shipped skill helpers and the
-repository checks. Behavioral evaluation follows the
-[SKILLS.md evaluation workflow](../SKILLS.md#evaluation-workflow). The
+repository checks. The
 [Creating Portable Skills checks](creating-portable-skills/README.md) exercise
-its shipped signal scanner. Report native host behavior separately from
-repository checks.
-The [Coordinating Work scenarios](coordinating-work/README.md) describe ten
-situations and what a reviewer should see, for evaluation runs.
-The [Managing Issues checks](managing-issues/README.md) run its configuration
-validator and describe nine situations and what a reviewer should see, for
-evaluation runs.
+its shipped signal scanner. The
+[Managing Issues checks](managing-issues/README.md) run its configuration
+validator. Report native host behavior separately from repository checks.
 
 Run the complete repository gate:
 

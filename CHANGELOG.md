@@ -107,6 +107,11 @@ looked" surface. GitHub Releases mirror its entries.
   `ce-babysit-pr` already give, and declares where Orca, the Compound
   Engineering skills, and `impeccable` come from, plus the timer that wakes
   the Coordinator's own session.
+- `coordinating-work` revive states its default first: each participant resumes
+  where it is, with the same workspace, conversation, provider, model, and
+  effort. It calls an account change a resume rather than a move, and lets a
+  participant stopped by a short limit continue on its own unless the wait
+  costs more than a restart.
 - The global agent guidance replaces "Choose the best complete solution" with
   "Simplicity first": a three-rung ladder that removes the need first
   (retiring a whole skill, script, workflow, or document you would not add

@@ -4,6 +4,10 @@ Read this after the operator manually starts a replacement Coordinator or asks
 to recover an interrupted coordinated batch. The entry skill owns shape, shared
 approval, worker lifetime, the record, and completion requirements.
 
+Revive resumes each participant where it is: same workspace, same
+conversation, same provider, model, and effort. It changes nothing else unless
+the operator asks.
+
 A planned move of a participant to another provider or model, such as to spare
 an account's quota, uses this reference for that participant only. Skip "Start
 with the Coordinator", propose the fresh-handoff row, and move the participant
@@ -53,13 +57,16 @@ effective provider/model/effort where available. Include ongoing members
 awaiting another assignment when the account change affects them; preserve
 that idle disposition after recovery. Preserve healthy work that needs no
 approved transition and explicit human holds. Healthy work with a running job,
-such as a long check or a paid run, moves at its next idle point; never exit
-it in the middle of a paid run. The guide's safety rules govern what silence,
+such as a long check or a paid run, is resumed under the new account at its
+next idle point; never exit it in the middle of a paid run. The guide's safety rules govern what silence,
 a timeout, or an unreachable host prove. A participant stopped by a usage
 limit is not dead work: jobs it started in the background may still finish, so
 check them before reassigning.
 Resume that participant's conversation under the newly selected account before
-considering a replacement, and replace it only if the resume fails.
+considering a replacement, and replace it only if the resume fails. A
+participant stopped by a short limit that will continue on its own may be left
+to do so, even on the old account; resume it under the new account only when
+the wait costs more than the restart, or when the operator asks.
 
 Recover applicable recent decisions, unread messages, unresolved questions and
 approvals, and needed monitoring. History supplies evidence and task context;
@@ -86,11 +93,16 @@ First read each participant's effective account from its running agent. The
 runtime may already have carried a participant to the newly selected account
 with its conversation intact. This has been observed for agents running as
 chats, while agents running in terminals kept the account they were launched
-with. A participant already on the new account needs no move: confirm from
-its own reply that it has its latest instructions, and leave it running.
+with; selecting an account in Orca applies to new agent launches. Resume under
+the new account in this order:
 
-Move each participant still on the old account by hand. Check first, without
-changing anything:
+1. A participant the runtime already carried over: confirm from its own reply
+   that it has its latest instructions, and leave it running.
+2. A participant still on the old account: restart it in the same workspace
+   and resume its conversation, as below.
+
+For each participant still on the old account, check first, without changing
+anything:
 
 - which account is now selected on the participant's host;
 - that the new account can open the participant's conversation;

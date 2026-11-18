@@ -62,7 +62,6 @@ verify and what it takes to undo.
 
 ## The skills
 
-- [checking-simplicity](skills/checking-simplicity/SKILL.md). Find the simplest complete design for the current need, judging the system left behind rather than the size of the change. Ask “can this be simpler?”, “is this simple enough?”, or “check for simplicity,” including during a build, or when the next step adds durable machinery that isn't tied to that need.
 - [coordinating-work](skills/coordinating-work/SKILL.md). Set up, run, or revive one Orca Coordinator that leads its task workers through the issues and epics you hand it. One approved proposal is its merge approval: it merges routine PRs once their issue is proven done, leaves held changes such as billing, access, or work only you can judge open, and keeps one list of what needs you.
 - [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a skill package that works the same across harnesses and agents. It follows the [Agent Skills](https://agentskills.io) specification and draws on Anthropic's and Codex's `skill-creator` skills. Use it to deliver a self-contained package.
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.

@@ -78,7 +78,8 @@ Agents that were not in the planning session review the plan against the current
 - `ce-plan`. Records decisions, parts of the work, files, tests, and risks in one plan. It does not implement the work. Use it when the outcome is clear enough to plan how to deliver it.
 - `ce-debug`. Finds the cause of a bug before proposing a fix. Use it when the work starts with broken or unexpected behavior.
 - `ce-pov`. Answers a focused planning question using the project's evidence. Use it when one decision blocks the plan and more research would add little.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Judges simplicity by the system left behind, including whether a wider root-cause fix removes more complexity than a small patch. Use it for questions such as “can this be simpler?” or “check for simplicity,” including during a build, or before adding lasting machinery that the current problem does not need.
+
+Simplicity has no separate step. Every agent follows the "Simplicity first" ladder in my [global agent guidance](GLOBAL-AGENTS.md#simplicity-first) while it plans and builds, and answers “can this be simpler?” in the same session. When I want an independent verdict on whether something can be simpler, I ask `ce-pov`.
 
 Sometimes the remaining questions depend on one another. I consider a focused grilling session when a decision is costly to reverse, affects a large part of the system, determines later answers, or would otherwise leave the agent guessing how to judge completion. For example, who owns authentication may determine how long sessions last and who can access data. Settle that first. Unrelated open questions stay in `ce-brainstorm`; clear requirements and ordinary, reversible decisions go to `ce-plan`.
 

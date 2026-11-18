@@ -30,8 +30,8 @@ unresolved attribution unverified and preserve required host judgments.
 The description follows the Agent Skills specification: 1–1024 characters
 stating what the skill does and when to use it. The scope matches the package's
 actual job. Invocation controls specific to a harness belong in its optional
-adapter. When a description change addresses routing failures, evaluate the
-relevant user requests and near misses through the upstream evaluation workflow.
+adapter. When a description change addresses an observed routing failure, check
+it against the requests that misrouted and their near misses.
 
 ## Information hierarchy
 
@@ -79,14 +79,8 @@ preserving existing exact formats and authority boundaries.
 ## Evidence integrity
 
 Inspect outputs directly. A judgment cites evidence for the outcome rather than
-a heading or claimed filename. Checks measure the visible contract, permit
-valid alternative implementations, and distinguish behavior failures from
-assertion errors and capture gaps. Keep original grades when recording a
-correction. Taste remains human feedback rather than a mechanical verdict.
-
-The host owns required independent review and release judgments. Author
-inspection does not replace those judgments. The upstream evaluation guides
-own case construction, grader validation, and measurement.
+a heading or claimed filename. A behavioral case names the observed failure it
+came from; report one that cannot as a finding.
 
 ## Portability
 

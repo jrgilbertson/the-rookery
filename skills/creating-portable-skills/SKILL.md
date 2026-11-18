@@ -7,8 +7,9 @@ license: MIT
 # Creating Portable Skills
 
 Produce an installable package that does the user's reusable job and follows the
-[Agent Skills specification](https://agentskills.io/specification). Add behavioral
-evals when observed failures warrant them under the host's evaluation policy.
+[Agent Skills specification](https://agentskills.io/specification). A portable
+skill works the same in any harness and with any agent that supports the
+specification, so prefer the specification over one harness's conventions.
 
 For a read-only audit, apply [references/review-checklist.md](references/review-checklist.md)
 and return prioritized findings with file evidence and a verdict. For authorized
@@ -38,7 +39,7 @@ Apply [references/review-checklist.md](references/review-checklist.md) while
 drafting. Preserve user authority, exact formats, privacy requirements, and
 fragile operation order; leave reasoning and implementation choices open.
 
-## Validate and evaluate
+## Validate
 
 Use `skills-ref validate <skill-directory>` from an available trusted install.
 If it is unavailable, check the specification's frontmatter rules, name-directory
@@ -47,20 +48,41 @@ bundled helpers with realistic inputs in disposable storage outside the host
 project; preserve existing inputs and outputs.
 
 Package checks, helper tests, and applicable authorized smoke checks run for
-every package. For behavioral evaluation, follow
-[references/evaluation.md](references/evaluation.md).
+every package.
+
+## Improve from real use
+
+Improve a skill from real use and demonstrated failures. The first time a
+failure appears, fix the instruction and say what was observed in the fix's
+commit message. Keep a repeatable pass/fail case only when the same failure
+returns after that fix. Write a check before any failure only when code can
+decide the rule and the check has been seen to fail once. Check observable
+behavior, never wording, headings, or text patterns. Correct one failure with a
+narrow fix rather than a universal requirement.
+
+When a wrong run of the skill would be costly, such as one that merges,
+deletes, spends, or sends, run a forward test: give a fresh agent a realistic
+request and the skill, without the expected answer, in a disposable workspace,
+then read what it did. One forward test inside the current session with no
+outside effects needs no separate approval. A batch of runs, a run billed per
+call, or a run against a live system needs the skill owner's approval first.
+
+No runner is required. When a kept case needs rerunning, a plain script or
+[Promptfoo](https://www.promptfoo.dev/) is enough.
 
 ## Deliver
 
-Check the final package's local links, dependencies, host conventions, and
-applicable evaluation evidence. Report the package location, observed checks,
-and anything unverified. For public migrations, replace private examples with
-synthetic inputs that preserve the behavior and difficulty being tested, and
-inspect the whole copy for leaks. Keep answers and grading material outside the
-runtime instructions. Follow the host's release and installation process.
+Check the final package's local links, dependencies, and host conventions.
+Report the package location, the checks observed, and anything unverified, and
+claim only what was observed. For public migrations, replace private examples
+with synthetic inputs that preserve the behavior and difficulty being tested,
+and inspect the whole copy for leaks. Keep the expected result of any kept case
+outside the runtime instructions. Follow the host's release and installation
+process.
 
 ## Sources
 
 The [Agent Skills specification](https://agentskills.io/specification) owns the
-package format. [references/evaluation.md](references/evaluation.md) owns
-evaluation and names the upstream workflows it uses.
+package format. The approach draws on Anthropic's `skill-creator` and Codex's
+`skill-creator`. Where either differs from the specification or from this
+package, this package governs.

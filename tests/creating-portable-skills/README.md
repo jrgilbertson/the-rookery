@@ -15,5 +15,4 @@ lefthook run pre-push --force
 ```
 
 These checks make no model calls and do not establish skill activation or task
-quality. For behavioral evaluation, follow the
-[SKILLS.md evaluation workflow](../../SKILLS.md#evaluation-workflow).
+quality.

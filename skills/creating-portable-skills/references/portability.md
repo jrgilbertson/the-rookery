@@ -31,9 +31,8 @@ adapter supported by that harness. The canonical package should remain useful
 without that adapter. Do not replace real authorization boundaries with tool
 pre-approval metadata.
 
-An installed companion skill is a convenience, not a prerequisite for reading a
-public workflow guide. When a guide or required tool cannot be accessed, report
-the unavailable step rather than claiming it ran.
+When a required tool or dependency cannot be accessed, report the unavailable
+step rather than claiming it ran.
 
 ## What validation establishes
 

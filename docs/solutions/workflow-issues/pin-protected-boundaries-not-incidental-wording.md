@@ -1,6 +1,7 @@
 ---
 title: "Pin protected boundaries, not incidental wording, in prose skills"
 date: 2026-10-09
+last_updated: 2026-11-17
 category: workflow-issues
 module: "skills/checking-merge-readiness, skills/checking-pr-readiness"
 problem_type: workflow_issue
@@ -30,11 +31,19 @@ independently. Guidance item 2 describes the historical sentence-pin approach;
 it is not the current testing policy.
 
 On 2026-11-13, `coordinating-work` and `managing-issues` dropped their
-sentence pins for plain scenario rows in their test READMEs
-(`tests/coordinating-work/README.md`, since removed, and
-[managing-issues](../../../tests/managing-issues/README.md)): the pins broke on
+sentence pins for plain scenario rows in their test READMEs: the pins broke on
 every rewording, grew with every new rule, and never showed that an agent obeys
-a rule. Do not add sentence pins back for either skill.
+a rule.
+
+On 2026-11-17, the scenario rows were removed too. They restated each skill's
+rules as situations, grew with each rule change, and were never run. None came
+from an observed failure. Nothing replaces them. The guard is the skill text
+plus the independent review every pull request already gets
+([WORKFLOWS.md](../../../WORKFLOWS.md#ship)). Do not add sentence pins or
+scenario rows back for either skill. A behavioral case is kept only when a
+failure returns after its fix, as
+[`creating-portable-skills`](../../../skills/creating-portable-skills/SKILL.md)
+describes.
 
 ## Context
 

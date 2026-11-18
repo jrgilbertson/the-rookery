@@ -102,8 +102,7 @@ One Coordinator, its task workers, and its record, working the issues and epics
 the operator handed it. An epic brings the child issues it had when handed
 over. The operator adds scope by telling the Coordinator, which records the
 operator's words, or by approving an issue the Coordinator drafted. The
-Coordinator dispatches nothing outside that scope, except incidental work
-inside a class the operator approved. The batch ends when its scope is done or
+Coordinator dispatches nothing outside that scope. The batch ends when its scope is done or
 the operator ends it.
 
 ### Merge Approval

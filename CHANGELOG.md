@@ -52,6 +52,8 @@ looked" surface. GitHub Releases mirror its entries.
   A behavioral eval for the skill will be built from real failure traces.
 - Two `coordinating-work` worker-brief rules, on repeated review findings and
   security re-review. Each traced to one incident or none.
+- The `coordinating-work` incidental-work class. The Coordinator drafts work
+  outside the batch's scope as an issue and lists it for the operator.
 - Matt Pocock's `retro` from the installed-skills list.
 - `repo-gardener`; recurring repository reviews now use Orca automations, and
   approved changes use the existing Compound Engineering workflow.

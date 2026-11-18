@@ -54,9 +54,9 @@ the issue for the next check. When a merge changes what a later issue should
 assume, say so in that issue's brief. When nothing is ready, say so on the
 ready-for-operator list with what each remaining issue waits on; the batch is
 finished only when every issue in scope is done or the operator ends it. Scope
-grows only as the entry skill's [Shape](../SKILL.md#shape) says, except
-incidental work inside a class the approved proposal names. Dispatch each such
-item as its own pull request.
+grows only as the entry skill's [Shape](../SKILL.md#shape) says. When work
+outside scope would help the batch, such as a flaky test that blocks merges,
+draft it as an issue and list it for the operator.
 
 ## The merge checklist
 
@@ -73,9 +73,8 @@ too.
 1. **Approval.** The record holds the approved setup proposal and any change
    the operator made to the scope, merge bar, or held changes. Together they
    show the current merge bar and held changes, and this pull request's issue
-   is in the batch's recorded scope or inside an approved class of incidental
-   work. Every condition the approved merge bar adds beyond this list is true
-   for this pull request.
+   is in the batch's recorded scope. Every condition the approved merge bar
+   adds beyond this list is true for this pull request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
    under the approved merge bar, with no other condition such as a position in a
@@ -191,7 +190,6 @@ needs the operator first:
   re-account, one waiting at a prompt, and one only the operator can close;
 - every merge made, with the pull request and the head merged, and each
   follow-up its worker proposed;
-- every incidental item dispatched, with its class and pull request;
 - every issue you could not close after its merge, with the reason.
 
 ## Standing rules

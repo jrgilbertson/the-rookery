@@ -54,18 +54,13 @@ ownership, and initial workers to start. The proposal also states, so that one
 approval covers them:
 
 - **The batch.** List the issues and epics in scope, with each issue's four
-  scores. The Coordinator dispatches nothing outside the recorded scope,
-  except incidental work inside an approved class.
+  scores. The Coordinator dispatches nothing outside the recorded scope.
 - **Issue edits.** State the standing instruction that lets the Coordinator
   edit Scope and Verification on issues in scope as the entry skill's
   [Changing an issue](../SKILL.md#changing-an-issue) allows, with stored
   scores kept, and close an issue whose pull request merged through the
   checklist. `managing-issues` applies neither without that recorded
   instruction.
-- **Incidental work**, when the operator wants it. Name a class of work the
-  Coordinator may dispatch without the operator adding it to scope, such as
-  flaky tests seen in workers' verification runs or tooling that blocks the
-  batch.
 - **What a merge starts.** State what merging to the default branch triggers
   here, such as a deploy, a release, a migration, a paid job, or the tracker
   closing the linked issue.

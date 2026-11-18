@@ -2,7 +2,7 @@
 name: coordinating-work
 description: "Establish, run, or revive a coordinated batch in Orca: one Coordinator leading its task workers through the issues and epics the operator hands it. Use when explicitly asked to set up a Coordinator or team, to let one run without the operator, or to recover one after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows."
 license: MIT
-compatibility: "Requires Orca, access to its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, the managing-issues skill, and the Compound Engineering skills lfg, ce-babysit-pr, and ce-pov. UX and UI assignments also require impeccable."
+compatibility: "Requires Orca (github.com/stablyai/orca) with its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and a timer that can wake the Coordinator's own session. Also requires this repository's managing-issues skill and the Compound Engineering plugin's lfg, ce-babysit-pr, and ce-pov (github.com/EveryInc/compound-engineering-plugin). UX and UI assignments also require impeccable (github.com/pbakaus/impeccable)."
 ---
 
 # Coordinating Work
@@ -210,14 +210,13 @@ belongs in a brief only when that condition holds for the assignment.
   without the tracker's closing keywords.
 - **Merging belongs to the Coordinator.** The worker never merges, enqueues,
   or arms auto-merge, whatever another instruction allows.
-- **No person answers in the worker's session.** The worker runs `lfg` as it
-  runs with no human present, and sends every question to the Coordinator,
-  never to a user.
-- **Decide and declare.** The worker contacts the Coordinator only where `lfg`
-  or `ce-babysit-pr` would stop or park for a human, and at merge-ready.
-  Everything else it decides: it takes the most reversible choice closest to
-  the issue's intent, keeps going, and declares the choice in the pull request
-  body.
+- **Decide, or ask the Coordinator.** No person answers in the worker's
+  session, so `lfg` runs as it does with no human present. The worker contacts
+  the Coordinator, never a user, only at merge-ready and where `lfg` or
+  `ce-babysit-pr` would stop or park for a human, including a check it could
+  not fix; it reports that item at once, in full. Everything else it decides:
+  it takes the most reversible choice closest to the issue's intent, keeps
+  going, and declares the choice in the pull request body.
 - **The issue's Verification.** The worker treats each criterion as a
   requirement of the work source `lfg` uses. Before asking to merge, the pull
   request body lists the evidence beside each criterion and declares each
@@ -243,18 +242,12 @@ belongs in a brief only when that condition holds for the assignment.
   outcome beside it: fixed in the branch, no change and why, or a follow-up
   proposed there and not filed. Only a product or design call stays unticked,
   and it holds the pull request for the operator.
-- **Parked items go at once.** When `ce-babysit-pr` parks an item that needs a
-  human, or a check it could not fix, the worker reports it to the Coordinator
-  immediately, with the full item.
 - **A choice is a question.** A blocker that offers options for the
   Coordinator to choose between is sent as a `question`. An `escalation` is
   for a blocker the worker cannot frame as a choice.
 - **How to wait.** The worker waits on its watch the way `ce-babysit-pr`
-  says. For any other long-running job, it ends its turn only when something
-  it armed will wake it, and names that job in its last line; otherwise it
-  waits inside its turn, using the longest wait each call allows. When a
-  helper skill returns, the worker continues to the next step of its
-  assignment.
+  says, and continues to the next step of its assignment when a helper skill
+  returns.
 - **Verification currency.** Before each run of the repository's verification
   gate, bring in the default branch's merged fixes only as the repository's
   merge policy allows, so verification tests those fixes. For example, rebase

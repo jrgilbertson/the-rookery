@@ -254,8 +254,10 @@ through stdin so the content remains literal.
 Every non-empty batch needs operator authorization. For routine reversible
 status changes or comments recording an already-agreed decision, an existing
 explicit instruction to apply that bookkeeping is sufficient when it binds the
-canonical target, issues, intended result, and relevant conditions. Name that
-instruction beside the complete preview and proceed without asking again only
+canonical target, issues, intended result, and relevant conditions. A recorded
+standing instruction for a coordinated batch is also sufficient, without
+naming each edit in advance, for edits to the Scope and Verification of issues
+in that batch's scope, with their stored scores kept. Name that instruction beside the complete preview and proceed without asking again only
 when every effect fits it and governing policy permits it. Approval of the
 underlying work or decision alone does not authorize a tracker write.
 
@@ -276,7 +278,8 @@ provider added it. Include a complete preview of the effect that removes the
 relationship; it needs fresh approval like any other effect.
 
 For any effect outside that narrow authorization, show a fresh complete preview
-and obtain direct approval. This includes changes to scope, relationships,
+and obtain direct approval. This includes changes to an issue's scope that the
+standing instruction above does not cover, relationships,
 security-sensitive information, or destructive effects. Setup and recovery
 retain their separate approval requirements. Never truncate a batch or hide
 tracker content that affects it. When approval is missing, end the preview with

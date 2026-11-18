@@ -1,7 +1,7 @@
 ---
 title: "skills CLI @ref targeting silently scans the default branch"
 date: 2026-07-16
-last_updated: 2026-11-06
+last_updated: 2026-11-18
 category: integration-issues
 module: "skills CLI install probe (creating-portable-skills)"
 problem_type: integration_issue
@@ -21,6 +21,12 @@ tags: [skills-cli, vercel-labs, git-ref, default-branch, false-positive, install
 ---
 
 # skills CLI `@ref` targeting silently scans the default branch
+
+`creating-portable-skills` was retired on 2026-11-18. Skills are now written with
+each harness's own `skill-creator` and checked with
+[`checking-skill-portability`](../../../skills/checking-skill-portability/SKILL.md).
+The verification work below describes the historical skill; the general
+lessons still apply.
 
 ## Problem
 

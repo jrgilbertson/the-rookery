@@ -3,10 +3,27 @@
 This file defines how this repository packages skills, evaluates them, and
 records evidence. It follows the [Agent Skills standard](https://agentskills.io)
 and adds vendor guidance. Where sources conflict, a **Conflict:** note names the
-conflict and the choice made. The `creating-portable-skills` skill owns the
-portable authoring workflow and evaluation policy. This document owns the
-repository's package conventions and evidence rules. It is not bundled with the
+conflict and the choice made. This document owns the repository's package
+conventions, evaluation policy, and evidence rules. It is not bundled with any
 skill.
+
+## Authoring
+
+Write and revise skills with the harness's own `skill-creator`, then check the
+package with [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md)
+before it ships.
+
+- **Claude Code:** `anthropic-skills:skill-creator`, which claude.ai syncs and
+  keeps current. The copy in `anthropics/skills` on GitHub is older, so do not
+  install it with `npx skills add`.
+- **Codex:** the built-in `skill-creator`, which updates with `codex-cli`. Its
+  starter adds `agents/openai.yaml`; keep that file out of the canonical package
+  as the package format below requires.
+
+Anthropic's creator offers to write eval cases before anything has failed.
+Skip those and follow the evaluation policy below. When a case is kept, its
+case-folder layout is fine; it lives under `tests/<skill>/`, not inside the
+package.
 
 ## Package format
 
@@ -42,10 +59,31 @@ the requests that misrouted, following the evaluation workflow below.
 
 ## Evaluation workflow
 
-The "Improve from real use" section of
-[`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) owns
-evaluation policy: when a case is kept, what a check may test, and
-which runs need approval. This repository adds these evidence rules:
+Improve a skill from real use and demonstrated failures. The first time a
+failure appears, fix the instruction and say what was observed in the fix's
+commit message. Keep a repeatable pass/fail case only when the same failure
+returns after that fix. Write a check before any failure only when code can
+decide the rule and the check has been seen to fail once. Check observable
+behavior, never wording, headings, or text patterns. Correct one failure with a
+narrow fix rather than a universal requirement.
+
+When a wrong run of the skill would be costly, such as one that merges,
+deletes, spends, or sends, run a forward test: give a fresh agent a realistic
+request and the skill, without the expected answer, in a disposable workspace,
+then read what it did. One forward test inside the current session with no
+outside effects needs no separate approval. A batch of runs, a run billed per
+call, or a run against a live system needs the skill owner's approval first.
+No runner is required; when a kept case needs rerunning, a plain script or
+`claude plugin eval` is enough.
+
+### Evidence integrity
+
+Inspect outputs directly. A judgment cites evidence for the outcome rather than
+a heading or claimed filename. A behavioral case names the observed failure it
+came from; one that cannot is a finding.
+
+### Evidence rules
+
 
 - Record the exact skill revision, host, provider, inputs, and behavior
   observed for each claim.

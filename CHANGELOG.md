@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `checking-skill-portability`, a read-only check that a skill package works
+  the same in any harness and with any agent that supports the Agent Skills
+  specification. It runs the specification's reference validator, then checks
+  for single-harness tool names, required harness-only files, missing
+  dependencies, and anything tied to the author's machine.
 - `PRIORITIZATION.md` explains how the maintainer ranks work by leverage: the
   ICE score with verification effort in place of ease, plus the cost of
   undoing the change, and why both matter when agents do the work unattended.
@@ -48,6 +53,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `creating-portable-skills`, its signal scanner, and the scanner's tests.
+  Claude Code's and Codex's own `skill-creator` now write and revise skills,
+  and `checking-skill-portability` keeps the cross-harness check they lack. Its
+  evaluation policy and the evidence-integrity rule moved to `SKILLS.md`.
+  Uninstall installed copies with
+  `npx skills remove creating-portable-skills -g`.
 - `checking-simplicity`. In blind tests it added nothing over the global agent
   guidance, and every use started an extra subagent. Agents apply the global
   "Simplicity first" ladder directly, and `ce-pov` gives an independent
@@ -87,6 +98,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `SKILLS.md` owns authoring, evaluation policy, and evidence rules. It names
+  the `skill-creator` to use in each harness, warns that the `anthropics/skills`
+  copy on GitHub is older than the one claude.ai syncs, and keeps eval cases out
+  of the shipped package until a failure returns.
 - The global agent guidance replaces "Choose the best complete solution" with
   "Simplicity first": a three-rung ladder that removes the need first
   (retiring a whole skill, script, workflow, or document you would not add

@@ -1,7 +1,7 @@
 ---
 title: "Prove which skill loaded in cross-harness dogfood runs"
 date: 2026-07-16
-last_updated: 2026-10-09
+last_updated: 2026-11-18
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -23,6 +23,12 @@ related_components:
 ---
 
 # Prove which skill loaded in cross-harness dogfood runs
+
+`creating-portable-skills` was retired on 2026-11-18. Skills are now written with
+each harness's own `skill-creator` and checked with
+[`checking-skill-portability`](../../../skills/checking-skill-portability/SKILL.md).
+The verification work below describes the historical skill; the general
+lessons still apply.
 
 ## Context
 

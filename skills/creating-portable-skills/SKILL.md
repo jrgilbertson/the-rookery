@@ -57,8 +57,8 @@ failure appears, fix the instruction and say what was observed in the fix's
 commit message. Keep a repeatable pass/fail case only when the same failure
 returns after that fix. Write a check before any failure only when code can
 decide the rule and the check has been seen to fail once. Check observable
-behavior, never wording, headings, or text patterns, and do not turn one past
-failure into a universal requirement.
+behavior, never wording, headings, or text patterns. Correct one failure with a
+narrow fix rather than a universal requirement.
 
 When a wrong run of the skill would be costly, such as one that merges,
 deletes, spends, or sends, run a forward test: give a fresh agent a realistic
@@ -68,8 +68,7 @@ outside effects needs no separate approval. A batch of runs, a run billed per
 call, or a run against a live system needs the skill owner's approval first.
 
 No runner is required. When a kept case needs rerunning, a plain script or
-[Promptfoo](https://www.promptfoo.dev/) is enough. This package ships no runner
-configuration.
+[Promptfoo](https://www.promptfoo.dev/) is enough.
 
 ## Deliver
 

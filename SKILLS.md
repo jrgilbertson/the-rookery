@@ -44,7 +44,7 @@ the requests that misrouted, following the evaluation workflow below.
 
 The "Improve from real use" section of
 [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) owns
-evaluation policy: when a failure earns a kept case, what a check may test, and
+evaluation policy: when a case is kept, what a check may test, and
 which runs need approval. This repository adds these evidence rules:
 
 - Record the exact skill revision, host, provider, inputs, and behavior

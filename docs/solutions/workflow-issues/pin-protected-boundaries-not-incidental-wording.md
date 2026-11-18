@@ -37,7 +37,7 @@ a rule.
 
 On 2026-11-17, the scenario rows were removed too. They restated each skill's
 rules as situations, grew with each rule change, and were never run. None came
-from an observed failure. Nothing replaces them: the guard is the skill text
+from an observed failure. Nothing replaces them. The guard is the skill text
 plus the independent review every pull request already gets
 ([WORKFLOWS.md](../../../WORKFLOWS.md#ship)). Do not add sentence pins or
 scenario rows back for either skill. A behavioral case is kept only when a

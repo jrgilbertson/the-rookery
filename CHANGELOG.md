@@ -53,7 +53,7 @@ looked" surface. GitHub Releases mirror its entries.
 - The scenario tables in the `coordinating-work` and `managing-issues` test
   READMEs, and the `tests/coordinating-work/` folder. The rows restated each
   skill's rules, none came from an observed failure, and none was ever run.
-  Nothing replaces them: the guard is the skill text plus pull request review.
+  Nothing replaces them. The guard is the skill text plus pull request review.
 - Matt Pocock's `retro` from the installed-skills list.
 - `repo-gardener`; recurring repository reviews now use Orca automations, and
   approved changes use the existing Compound Engineering workflow.

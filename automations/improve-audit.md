@@ -4,7 +4,7 @@ Survey the whole codebase with shadcn's `improve` skill and recommend improvemen
 
 - **Cadence:** Tuesday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** shadcn's [`improve` skill](https://github.com/shadcn/improve), this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** shadcn's [`improve` skill](https://github.com/shadcn/improve), `ce-pov`, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Setup
 
@@ -30,9 +30,7 @@ Assessment only: stop after the vetted, prioritized findings and direction optio
 
 List every vetted finding in leverage order, highest first. Score each with the four leverage factors, not with `improve`'s own Effort and Risk columns, and keep each finding's title stable between runs. Mark every finding `not reviewed`, save the report, and stop. The owner picks which findings to review; do not pick for them.
 
-When the owner replies with the findings they picked, group those into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
-
-Then run `ce-pov` once on the revised picked recommendations as a whole, including review-pending items and interactions across sets. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, uncertainty, and any pending-review label. List each recommendation it rejects in one line with its reason, outside the approval list. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
+When the owner replies with the findings they picked, run `ce-pov` once on the picked recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
 
 Save the updated report afterward.
 ```

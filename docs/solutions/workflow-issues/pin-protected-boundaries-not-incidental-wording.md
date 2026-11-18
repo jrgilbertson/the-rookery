@@ -31,7 +31,7 @@ it is not the current testing policy.
 
 On 2026-11-13, `coordinating-work` and `managing-issues` dropped their
 sentence pins for plain scenario rows in their test READMEs
-([coordinating-work](../../../tests/coordinating-work/README.md),
+(`tests/coordinating-work/README.md`, since removed, and
 [managing-issues](../../../tests/managing-issues/README.md)): the pins broke on
 every rewording, grew with every new rule, and never showed that an agent obeys
 a rule. Do not add sentence pins back for either skill.

@@ -48,6 +48,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- The `coordinating-work` scenarios file, `tests/coordinating-work/README.md`.
+  A behavioral eval for the skill will be built from real failure traces.
+- Two `coordinating-work` worker-brief rules, on repeated review findings and
+  security re-review. Each traced to one incident or none.
+- The `coordinating-work` incidental-work class. The Coordinator drafts work
+  outside the batch's scope as an issue and lists it for the operator.
 - Matt Pocock's `retro` from the installed-skills list.
 - `repo-gardener`; recurring repository reviews now use Orca automations, and
   approved changes use the existing Compound Engineering workflow.
@@ -69,6 +75,20 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` describes the Coordinator as a team lead the operator
+  talks to. It plans from the tracker's Ready Frontier, makes sure each
+  issue's Verification can be proven before dispatch, and may add, replace, or
+  narrow an issue's Scope and Verification, listing every edit. A merged pull
+  request means its issue is done, so partial work no longer merges with the
+  issue left open. An issue scored 3 on verification effort is a held change.
+  Workers decide reversible questions themselves and declare deviations in
+  the pull request body. A Coordinator acts on another Coordinator's message
+  only when it could decide the action alone. Scope is what the operator
+  handed over, and a later child of an epic enters it only when the operator
+  names or approves it. `managing-issues` is now required.
+- `managing-issues` accepts a recorded standing instruction for a coordinated
+  batch as authorization for Scope and Verification edits, with stored scores
+  kept.
 - Automation prompts say what to look for and leave earlier findings to the
   history repository. Optimize CI no longer carries a paragraph of lessons
   from past fixes, which could steer a run toward the answers it was given,

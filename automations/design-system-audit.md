@@ -4,7 +4,7 @@ Review every page of the interface against its design system, find drift and rep
 
 - **Cadence:** Wednesday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The [`impeccable`](https://github.com/pbakaus/impeccable) skill, this repository's [`checking-simplicity`](../skills/checking-simplicity/SKILL.md) skill, `ce-pov`, a browser tool the agent can drive, and a local development stack that can start unattended with Docker and seed a fictional signed-in account. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** The [`impeccable`](https://github.com/pbakaus/impeccable) skill, a browser tool the agent can drive, and a local development stack that can start unattended with Docker and seed a fictional signed-in account. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Setup
 
@@ -38,9 +38,7 @@ Report, in this order:
 
 Keep screenshots only for issues that score 3 on impact and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
 
-Group related draft recommendations into coherent sets; split those needing materially different context. Include recommendations to leave a confirmed finding unchanged. Each run, invoke `checking-simplicity` afresh on each set, covering every recommendation and their interactions. Skip it for an empty set; incomplete assessment remains a coverage gap. If independent review cannot finish, retain the assessment and label affected recommendations `review pending`; do not substitute self-review.
-
-Run `ce-pov` once on the revised recommendations as a whole, including review-pending items and interactions across sets. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, uncertainty, and any pending-review label. List each recommendation it rejects in one line with its reason, outside the approval list. If either review cannot finish, save useful assessment work and name the missing review; without a completed `ce-pov`, keep the list provisional.
+Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder.
 ```

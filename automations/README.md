@@ -81,11 +81,11 @@ reads and writes one private Git repository, cloned to
 Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
 Each automation contains its assessment instructions and authority limits in
-its own prompt. Recommendations receive independent simplicity review in
-related sets, followed by a final `ce-pov` judgment. Improve audit returns
-every finding and reviews only the ones the owner picks from its report. In paired Sessions audits,
-the local job owns that final judgment after combining both hosts. The history
-repository stores reports and owner decisions, not a shared assessment workflow.
+its own prompt and judges its own recommendations. Improve audit returns every
+finding and judges only the ones the owner picks from its report. In paired
+Sessions audits, the local job owns that judgment after combining both hosts.
+The history repository stores reports and owner decisions, not a shared
+assessment workflow.
 Its README documents storage and helper usage.
 
 Copy the storage template below into your private repository's README. If it

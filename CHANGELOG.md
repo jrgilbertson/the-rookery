@@ -48,6 +48,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `checking-simplicity`. In blind tests it added nothing over the global agent
+  guidance, and every use started an extra subagent. Agents apply the global
+  "Simplicity first" ladder directly, and `ce-pov` gives an independent
+  verdict when one is wanted. Update every saved automation job to the new
+  prompts first, because a job that still lists the skill as required stops
+  when it is missing. Then uninstall installed copies with
+  `npx skills remove checking-simplicity -g`.
 - `creating-portable-skills`'s `references/evaluation.md` and its routing to
   the evals plugin. Installed copies keep the file until they are updated.
 - The scenario table in the `managing-issues` test README. Like the
@@ -80,6 +87,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The global agent guidance replaces "Choose the best complete solution" with
+  "Simplicity first": a three-rung ladder that removes the need first
+  (retiring a whole skill, script, workflow, or document you would not add
+  today), then uses what exists without extending tech debt, then builds the
+  clearest design, judged by the system left behind rather than its size.
+- Automations judge their own recommendations and keep the same approval
+  list, without a simplicity review per set or a final `ce-pov` call. One
+  `ce-pov` call could not reliably return a separate verdict for each
+  recommendation in a list.
 - `creating-portable-skills` replaces its evaluation workflow with one short
   section, "Improve from real use". The first time a failure appears, the
   author fixes the instruction and the commit says what was observed. A

@@ -92,8 +92,10 @@ looked" surface. GitHub Releases mirror its entries.
   (retiring a whole skill, script, workflow, or document you would not add
   today), then uses what exists without extending tech debt, then builds the
   clearest design, judged by the system left behind rather than its size.
-- Every automation runs `ce-pov` as its one independent review of its
-  recommendations, without a separate simplicity review per set.
+- Automations judge their own recommendations and keep the same approval
+  list, without a simplicity review per set or a final `ce-pov` call. One
+  `ce-pov` call could not reliably return a separate verdict for each
+  recommendation in a list.
 - `creating-portable-skills` replaces its evaluation workflow with one short
   section, "Improve from real use". The first time a failure appears, the
   author fixes the instruction and the commit says what was observed. A

@@ -4,7 +4,7 @@ Review every page of the interface against its design system, find drift and rep
 
 - **Cadence:** Wednesday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The [`impeccable`](https://github.com/pbakaus/impeccable) skill, `ce-pov`, a browser tool the agent can drive, and a local development stack that can start unattended with Docker and seed a fictional signed-in account. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** The [`impeccable`](https://github.com/pbakaus/impeccable) skill, a browser tool the agent can drive, and a local development stack that can start unattended with Docker and seed a fictional signed-in account. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Setup
 
@@ -38,7 +38,7 @@ Report, in this order:
 
 Keep screenshots only for issues that score 3 on impact and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
 
-Run `ce-pov` once on the draft recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
+Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder.
 ```

@@ -4,7 +4,7 @@ Review continuous integration and recommend improvements.
 
 - **Cadence:** Saturday at 09:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The Compound Engineering `ce-optimize` skill, `ce-pov`, and access to the target repository's CI configuration. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state). The prompt expects a measurement harness in that repository's `optimize-ci/harness/` folder, with a README naming its commands.
+- **Requires:** The Compound Engineering `ce-optimize` skill and access to the target repository's CI configuration. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state). The prompt expects a measurement harness in that repository's `optimize-ci/harness/` folder, with a README naming its commands.
 
 ## Setup
 
@@ -35,7 +35,7 @@ Every report has two measured sections:
 
 Look for where Verify and hosted time goes: checks run serially, work rerun on unchanged inputs, hosted jobs that repeat local checks, and failures caught later than a cheaper check could catch them. Any recommendation to reuse a saved result shows that its cache key covers every input the check reads.
 
-Run `ce-pov` once on the draft recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
+Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

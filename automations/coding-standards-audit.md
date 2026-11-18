@@ -4,7 +4,7 @@ Review coding standards against repository evidence and current primary sources.
 
 - **Cadence:** Saturday at 07:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** `ce-pov`, access to the target repository, its PR and review history, and current primary sources. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** Access to the target repository, its PR and review history, and current primary sources. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 If `CODING_STANDARDS.md` is missing, the prompt asks the agent to propose a first edition.
 
@@ -25,7 +25,7 @@ For each recommendation, give the exact edit, evidence and benefit, dated source
 
 Assessment only: do not modify repository files, install tools, change configuration, create or update issues, or publish PRs without separate approval.
 
-Run `ce-pov` once on the draft recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
+Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

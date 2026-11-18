@@ -4,7 +4,7 @@ Assess whether application lifecycles follow their intended rules, including und
 
 - **Cadence:** Sunday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** `ce-pov` and access to the target repository and its tests. Complex or concurrent areas also require TLA+ and the TLC model checker. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** Access to the target repository and its tests. Complex or concurrent areas also require TLA+ and the TLC model checker. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Setup
 
@@ -27,7 +27,7 @@ Recommend the simplest complete fix for the underlying cause, judging the result
 
 Assessment only: run existing tests and isolated scratch reproductions. Keep reports, models, and debugging artifacts outside the application checkout. Do not modify application files, create or update issues, or publish PRs; implementation and issue creation require separate approval.
 
-Run `ce-pov` once on the draft recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
+Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

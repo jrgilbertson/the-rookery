@@ -4,7 +4,7 @@ Find user actions that shipped without analytics tracking, and tracked events th
 
 - **Cadence:** Monday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill, loaded through the PostHog MCP with `learn posthog:instrument-product-analytics`, and `ce-pov`. Access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** PostHog's [`instrument-product-analytics`](https://github.com/PostHog/ai-plugin/blob/main/skills/instrument-product-analytics/SKILL.md) skill, loaded through the PostHog MCP with `learn posthog:instrument-product-analytics`. Access to GitHub, the production PostHog project, the Vercel production aliases, Linear, and read-only access to the production Supabase database. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Setup
 
@@ -35,7 +35,7 @@ Assign stable keys: `analytics-gap-key: missing:<file>#<handler, component, or r
 
 Report source availability, PRs in the window versus reviewed, proposed work, existing issues, and cases awaiting evidence. Do not create or update issues, implement fixes, or publish PRs without separate approval.
 
-Run `ce-pov` once on the draft recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
+Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

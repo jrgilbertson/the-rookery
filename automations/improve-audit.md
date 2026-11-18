@@ -4,7 +4,7 @@ Survey the whole codebase with shadcn's `improve` skill and recommend improvemen
 
 - **Cadence:** Tuesday at 04:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** shadcn's [`improve` skill](https://github.com/shadcn/improve), `ce-pov`, and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
+- **Requires:** shadcn's [`improve` skill](https://github.com/shadcn/improve) and access to the target repository. Each run also needs a clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state).
 
 ## Setup
 
@@ -14,7 +14,7 @@ while validating its first manual run.
 The skill covers correctness, security, performance, tests, tech debt,
 dependencies, developer experience, docs, and direction, and it returns many
 more findings than the other reviews. The scheduled run therefore returns
-every finding in leverage order and stops. Independent review runs only on the
+every finding in leverage order and stops. Judgment runs only on the
 findings you pick when you reply in that chat.
 
 ## Prompt
@@ -30,7 +30,7 @@ Assessment only: stop after the vetted, prioritized findings and direction optio
 
 List every vetted finding in leverage order, highest first. Score each with the four leverage factors, not with `improve`'s own Effort and Risk columns, and keep each finding's title stable between runs. Mark every finding `not reviewed`, save the report, and stop. The owner picks which findings to review; do not pick for them.
 
-When the owner replies with the findings they picked, run `ce-pov` once on the picked recommendations as a whole, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. Have it judge each recommendation as its own decision against current evidence. The approval list holds only the recommendations it supports, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation it rejects in one line with its reason, outside the approval list. If `ce-pov` cannot finish, save useful assessment work, name the missing review, and keep the list provisional.
+When the owner replies with the findings they picked, judge each picked recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
 
 Save the updated report afterward.
 ```

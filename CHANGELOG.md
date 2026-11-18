@@ -85,9 +85,6 @@ looked" surface. GitHub Releases mirror its entries.
   skills. Its audit checklist reports a behavioral case that cannot name the
   failure it came from. `SKILLS.md` asks for trigger validation only after an
   observed routing failure.
-- The Test audit prompt no longer reports a rule that lives only in skill or
-  guidance prose as a test gap. Helper scripts and deterministic checks stay
-  in scope. A saved Orca job needs the updated prompt pasted in.
 - Automation prompts say what to look for and leave earlier findings to the
   history repository. Optimize CI no longer carries a paragraph of lessons
   from past fixes, which could steer a run toward the answers it was given,

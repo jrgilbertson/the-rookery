@@ -22,7 +22,7 @@ Then map material high-risk behaviors and invariants to the tests protecting the
 - executed: test run and result observed.
 - falsified: a safe, reverted break made the test fail.
 
-Treat risks without inspected evidence as gaps or unknowns. A rule that lives only in instructions an agent reads, such as skill or guidance prose, is not a test gap. A helper script or deterministic check shipped beside those instructions still needs inspected evidence. Coverage, test count, and pass rate are diagnostic signals, not proof of protection. Recommend the cheapest test layer that exercises the real boundary.
+Treat risks without inspected evidence as gaps or unknowns. Coverage, test count, and pass rate are diagnostic signals, not proof of protection. Recommend the cheapest test layer that exercises the real boundary.
 
 Combine both passes, group findings by cause, include every material recommendation, and state what remains unassessed. Repository edits are limited to temporary, reverted test falsification. Issue creation, implementation, and PR publication require separate approval.
 

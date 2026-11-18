@@ -98,28 +98,33 @@ wrong. [PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
 
 ### Coordinated Batch
 
-One Coordinator, its task workers, and its record, working one approved list of
-issues without the operator. Adding issues to the list takes an amended
-proposal the operator approves, except incidental work inside a class the
-proposal approved.
+One Coordinator, its task workers, and its record, working the issues and epics
+the operator handed it. An epic brings the child issues it had when handed
+over. The operator adds scope by telling the Coordinator, which records the
+operator's words, or by approving an issue the Coordinator drafted. The
+Coordinator dispatches nothing outside that scope, except incidental work
+inside a class the operator approved. The batch ends when its scope is done or
+the operator ends it.
 
 ### Merge Approval
 
 What the operator approved a Coordinator to merge without them: the merge bar
-and held changes shown in the setup proposal for one coordinated batch, with
-any held change the operator pre-authorized there under a stated bar and any
-recorded operator-approved amendment to the batch, merge bar, or held changes. Only
-the operator's recorded approval of a proposal creates or changes it. It covers
-merging and nothing else.
+and held changes shown in the setup proposal for one coordinated batch, applied
+to the batch's scope, with any held change the operator pre-authorized under a
+stated bar and any change the operator made in recorded words to the scope,
+merge bar, or held changes. Only the operator's recorded approval creates or
+changes it. It covers merging and nothing else.
 
 ### Held Changes
 
 The kinds of change that wait for the operator, however clean the pull
-request, unless the operator pre-authorized them at setup: by default access
+request, unless the operator pre-authorized them: by default access
 and authorization, money, data deletion, privacy, outbound email, release
-gates, and the project's agent instructions and merge and review policy. A
-project's own guidance or the operator's edit to a proposal can replace the
-list.
+gates, and the project's agent instructions and merge and review policy. An
+issue scored 3 on verification effort, which only the operator's judgment can
+verify, is held the same way. A project's own guidance or the operator's edit
+to a proposal can replace the list; only the operator's own edit removes the
+judgment hold.
 
 ## Issue management
 

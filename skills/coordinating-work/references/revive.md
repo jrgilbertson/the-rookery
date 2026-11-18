@@ -19,8 +19,9 @@ in this order, before any new dispatch:
 1. A session that is new to the batch asks the operator to confirm the
    previous Coordinator has ended, and waits for that answer. A Coordinator
    continuing its own conversation skips this step.
-2. Read the record: the approved proposal, the standing rules, the table, and
-   the tail of the log, where open questions sit. Read mail with the guide's
+2. Read the record: the approved proposal, the standing rules, the table with
+   the batch's current scope, and the tail of the log, where open questions
+   sit. Read mail with the guide's
    read that leaves the inbox as it is.
 3. Take each worker's latest amendment from its last report. Ask a worker
    only when the record leaves it unclear.

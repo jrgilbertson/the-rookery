@@ -218,4 +218,4 @@ Dispatch section (`0a370618:skills/checking-simplicity/SKILL.md`).
   separate fresh-context and exact loaded-copy checks needed for trustworthy
   cross-harness skill evidence.
 - [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
-  owns the current artifact-inspection and bounded-claim guidance.
+  owns the current guidance on inspecting outputs and citing evidence.

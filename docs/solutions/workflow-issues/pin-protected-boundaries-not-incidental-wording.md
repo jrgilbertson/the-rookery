@@ -126,4 +126,4 @@ has_text "independence: an involved session dispatches a fresh reviewer" "$WORK/
 - [Ship bundled skill helpers with an executable falsifiability contract](falsifiability-contracts-need-executable-tests.md): the executable-test rule for helper scripts.
 - [Loosening a test checklist during grading removes the check](loosening-a-checklist-during-grading-removes-the-check.md): a check that stops discriminating.
 - [Put the test seam in the environment, not in the shipped skill](../conventions/keep-the-test-seam-out-of-the-shipped-skill.md): test the shipped artifact, not a copy.
-- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity): author inspection does not replace required independent judgments.
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity): inspect outputs directly and cite evidence for each judgment.

@@ -125,5 +125,5 @@ Keep every revision and review artifact.
 ## Related
 
 - [Falsifiability contracts need executable tests](../workflow-issues/falsifiability-contracts-need-executable-tests.md) gives the general rule that an adversarial case must be able to fail for the intended reason.
-- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity) covers direct artifact inspection and required independent judgments; its Portability section bounds claims to the revisions, cases, models, and harnesses checked.
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity) requires inspecting outputs directly and citing evidence for each judgment; the evidence rules beside it record the revision, host, provider, and inputs behind each claim.
 - [Allow honest nulls in mandatory novelty fields](allow-honest-nulls-in-mandatory-novelty-fields.md) is a related example of making the tempting positive answer provably wrong from the supplied evidence.

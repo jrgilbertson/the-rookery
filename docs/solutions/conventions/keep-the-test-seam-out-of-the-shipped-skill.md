@@ -402,8 +402,8 @@ marked unavailable with its cap recorded."
   was the intended beneficiary of the hole. Both produce green output that
   certifies nothing.
 - [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
-  owns direct artifact inspection, required independent review, and bounded
-  claims. Here, a reviewer outside the authoring context asked what the clause
+  requires inspecting outputs directly and citing evidence for each judgment.
+  Here, a reviewer outside the authoring context asked what the clause
   meant for a caller who was not the harness.
 - `../best-practices/cross-harness-dogfood-testing.md` covers the analogous
   requirement to prove which skill copy and harness path actually ran. A

@@ -22,8 +22,14 @@ uvx --from "git+https://github.com/agentskills/agentskills@f130f348f502d9804278a
 ```
 
 It checks the name, the directory match, and the frontmatter fields. If it
-cannot run, check those rules against the specification by hand and say the
-validator did not run.
+cannot run, check these rules by hand and say the validator did not run:
+
+- `name`: 1–64 lowercase letters, digits, and hyphens, with no leading,
+  trailing, or doubled hyphen, and equal to the directory name.
+- `description`: 1–1024 characters.
+- `compatibility`, when present: at most 500 characters.
+- No frontmatter fields other than `name`, `description`, `license`,
+  `compatibility`, `metadata`, and `allowed-tools`.
 
 ## Check what the validator cannot
 

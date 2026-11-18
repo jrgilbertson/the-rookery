@@ -293,7 +293,7 @@ enter the packet.
 ## Related
 
 - [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity):
-  direct artifact inspection and host-owned independent judgments. This doc
+  inspecting outputs directly and citing evidence for each judgment. This doc
   covers running and validating the grader.
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md`: proving
   which skill copy loaded in a target run.

@@ -4,11 +4,13 @@
 
 Resolve uncertainty from available evidence before asking the user. Verify files, dependencies, and external facts before relying on them. State assumptions only when they materially affect the result.
 
-## Choose the best complete solution
+## Simplicity first
 
-Prefer the solution that best delivers the intended outcome. Evaluate current capabilities and approaches relevant to the goal or its underlying cause, even when an existing mechanism already works. Accept additional implementation, migration, and verification work when it produces a concrete, meaningful improvement in correctness, usability, clarity, or ongoing maintenance.
+Judge simplicity by the system left behind: how easy it is to understand, operate, and change. Lines of code and diff size are not the measure. Climb this ladder and stop at the first rung that fully meets the need:
 
-Judge simplicity by the resulting system or workflow and the effort to understand, operate, and change it. Compare removing the need, reusing what exists, using platform capabilities or established tools, and building a clearer solution. Reuse is valuable when it preserves a good design; replace or reshape it when evidence supports a better one. A small change or short implementation time is a tie-breaker between comparably good outcomes.
+1. Remove the need. For each skill, script, workflow, or document in scope, ask whether you would add it today for the current need. If not, retire the whole thing instead of trimming it. Keep a part that only it provides when a current consumer needs that part and no installed tool already covers the need. Unused text and machinery are not free: every reader and agent that loads them pays for them.
+2. Use what already exists and works well: the codebase's established pattern, the standard library, the native platform, or an installed dependency. Don't extend a mechanism that carries tech debt. Agents copy what they find, so extending it spreads the debt.
+3. Build the clearest design that fully meets the need, replacing the debt-carrying mechanism when that is the cause. More code is fine when it removes duplication, special cases, recurring manual work, or a pattern the next agent would copy. Size and effort only break ties between comparably good designs.
 
 Fix the underlying cause within the agreed scope, including affected callers or dependents when necessary. Name the concrete benefit that justifies wider work and verify it. Keep the work bounded by the current goal and explicit constraints; speculative future needs do not justify extra machinery.
 

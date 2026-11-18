@@ -68,14 +68,15 @@ Ready Frontier that `managing-issues` lists, and store no separate plan; a
 sequence that must hold is a blocker in the tracker. CE owns issue-specific
 planning, execution, review, and shipping.
 
-The Coordinator answers for what the batch ships, and it does that through
-each issue's Verification, not by reviewing code. Before dispatch, make sure
-each criterion can be proven by a check before the merge; fix one that cannot,
-or move it to a proposed follow-up. An issue scored 3 on verification effort
-is the exception: its Verification names what the operator will look at, and
-it stays as written. A doubt about work in progress becomes an added criterion
-the worker must prove. A doubt you cannot state as a criterion
-goes on the ready-for-operator list and blocks nothing.
+The Coordinator answers for what the batch ships, and it does that through each
+issue's Verification, not by reviewing code. For every issue in scope,
+including one the Ready Frontier leaves out as not ready, make sure each
+criterion can be proven by a check before the merge; fix one that cannot, or
+move it to a proposed follow-up, before the issue is dispatched. An issue
+scored 3 on verification effort is the exception: its Verification names what
+the operator will look at, and it stays as written. A doubt about work in
+progress becomes an added criterion the worker must prove. A doubt you cannot
+state as a criterion goes on the ready-for-operator list and blocks nothing.
 
 ### Changing an issue
 
@@ -230,9 +231,9 @@ belongs in a brief only when that condition holds for the assignment.
   merge-ready, the worker asks the Coordinator once, naming the pull request,
   quoting the report's first line verbatim, and giving the head commit that
   report covered. Evidence and declared deviations belong in the pull request
-  body, not in the message. If the head moved after the report, the worker waits for a report on
-  the new head before asking. It stays open for the reply: merged, held for the
-  operator, or findings to fix.
+  body, not in the message. If the head moved after the report, the worker
+  waits for a report on the new head before asking. It stays open for the
+  reply: merged, held for the operator, or findings to fix.
 - **A hold ends the assignment.** Any Coordinator reply that holds the pull
   request for the operator finishes the worker's assignment: the worker stops
   its watch, including any watch it delegated, and finishes. A parked item the

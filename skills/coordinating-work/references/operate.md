@@ -49,25 +49,26 @@ After every decision, dispatch the next issue from the batch's Ready Frontier,
 in its leverage order unless a dependency, host capacity, or the operator's
 instruction says otherwise, and at the concurrency you judge best. Dispatch
 only an issue that has its four scores, and list an unscored one for the
-operator. Measure the whole host before a heavy job. When it is busy, leave the issue for the next
-check. When a merge changes what a later issue should assume, say so in that
-issue's brief. When nothing is ready, say so on the ready-for-operator list
-with what each remaining issue waits on; the batch is finished only when
-every issue in scope is done or the operator ends it. Scope grows only as the entry skill's
-[Shape](../SKILL.md#shape) says, except incidental work inside a class the
-approved proposal names. Dispatch each such item as its own pull request.
+operator. Measure the whole host before a heavy job. When it is busy, leave
+the issue for the next check. When a merge changes what a later issue should
+assume, say so in that issue's brief. When nothing is ready, say so on the
+ready-for-operator list with what each remaining issue waits on; the batch is
+finished only when every issue in scope is done or the operator ends it. Scope
+grows only as the entry skill's [Shape](../SKILL.md#shape) says, except
+incidental work inside a class the approved proposal names. Dispatch each such
+item as its own pull request.
 
 ## The merge checklist
 
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
-only when every line below is true. Line 2 is the worker's report, taken on
-the worker's word because the worker runs the watch. Lines 3 and 4 are facts
-you read yourself from the pull request, the issue, and the record when you
-decide. In a
-batch with no task workers, you run `lfg` and the continuous `ce-babysit-pr`
-watch yourself, and line 2 reads the first line of your own watch report and
-the head commit it covered. Apply the UX and UI work guidance in
-[Assignment briefs](../SKILL.md#assignment-briefs) to your own assignments too.
+only when every line below is true. Line 2 is the worker's report, taken on the
+worker's word because the worker runs the watch. Lines 3 and 4 are facts you
+read yourself from the pull request, the issue, and the record when you decide.
+In a batch with no task workers, you run `lfg` and the continuous
+`ce-babysit-pr` watch yourself, and line 2 reads the first line of your own
+watch report and the head commit it covered. Apply the UX and UI work guidance
+in [Assignment briefs](../SKILL.md#assignment-briefs) to your own assignments
+too.
 
 1. **Approval.** The record holds the approved setup proposal and any change
    the operator made to the scope, merge bar, or held changes. Together they
@@ -82,17 +83,17 @@ the head commit it covered. Apply the UX and UI work guidance in
    cautious report, read the other external review on that head yourself.
    A closing phrase that leaves the merge to the reader is not a condition.
 3. **Routine and done.** The diff touches no held change and the issue is not
-   scored 3 on verification effort. The exceptions are a held change the
-   record shows the operator pre-authorized for this issue, under a bar this
-   pull request meets, and a pull request the operator has told you, in their
-   own recorded words, to merge. A change that relates to a held change at
-   all, wording and tests included, touches it. The pull request body has no unticked item under
-   `lfg`'s unapplied review findings. The record shows no item, at any point,
-   that `ce-babysit-pr` parked for a human about the change itself. Merging
-   it starts only what the proposal showed. The pull request body sets
-   evidence beside each of the issue's verification criteria as the issue
-   reads now. Compare and do not interpret. A criterion met in part, with an
-   exception, or in other words is unproven.
+   scored 3 on verification effort. The exceptions are a held change the record
+   shows the operator pre-authorized for this issue, under a bar this pull
+   request meets, and a pull request the operator has told you, in their own
+   recorded words, to merge. A change that relates to a held change at all,
+   wording and tests included, touches it. The pull request body has no
+   unticked item under `lfg`'s unapplied review findings. The record shows no
+   item, at any point, that `ce-babysit-pr` parked for a human about the change
+   itself. Merging it starts only what the proposal showed. The pull request
+   body sets evidence beside each of the issue's verification criteria as the
+   issue reads now. Compare and do not interpret. A criterion met in part, with
+   an exception, or in other words is unproven.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code
@@ -237,9 +238,9 @@ Each time, read the table against live state and act on what changed:
 The check belongs to the Coordinator's own session. It ends with that session,
 or when no assignment is open or waiting at a prompt the operator can answer,
 nothing in scope is left to dispatch or waiting on anything but the operator,
-and no recorded write is pending. The
-record says how to stop it. A scheduler that starts a new agent session is a
-second Coordinator, so the check uses the session's own timer.
+and no recorded write is pending. The record says how to stop it. A scheduler
+that starts a new agent session is a second Coordinator, so the check uses the
+session's own timer.
 
 Moving, replacing, or switching the account of a worker happens only in
 Revive, at the operator's request.

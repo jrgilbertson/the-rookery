@@ -46,8 +46,9 @@ raises. Recover any other failed start through the guide, and put what it
 cannot recover on the ready-for-operator list.
 
 After every decision, dispatch the next issue from the batch's Ready Frontier
-that no open assignment holds, in its leverage order unless a dependency, host capacity, or the operator's
-instruction says otherwise, and at the concurrency you judge best. Dispatch
+that the batch has not yet assigned, in its leverage order unless a dependency,
+host capacity, or the operator's instruction says otherwise, and at the
+concurrency you judge best. Dispatch
 only an issue that has its four scores, and list an unscored one for the
 operator. Measure the whole host before a heavy job. When it is busy, leave
 the issue for the next check. When a merge changes what a later issue should

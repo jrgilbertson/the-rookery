@@ -14,8 +14,8 @@ lefthook run pre-push --force
 The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
-exercise the shipped signal scan and issue configuration helper, and the
-shipped personal-chief-of-staff source-map sample
+exercise the shipped issue configuration helper and the shipped
+personal-chief-of-staff source-map sample
 against the version 3 shape in
 [source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md).
 The repository-integrity tests also exercise malformed packages and unsafe
@@ -28,6 +28,10 @@ Repository text checks also require the "Rank by leverage" section in
 Repository text checks reject concrete local home-directory paths. Generic
 placeholders and exact, file-scoped portable setup examples remain allowed;
 context-dependent privacy review is still necessary.
+
+A skill's kept model cases live in `tests/<skill>/cases/`, as
+[SKILLS.md](../SKILLS.md#creating-a-skill) describes. They call a model, so the
+gate never runs them; they run with approval when a model changes.
 
 Each fixture runner creates disposable state and requires no model calls.
 Retain synthetic fixture inputs that these tests consume. Add a runner to the

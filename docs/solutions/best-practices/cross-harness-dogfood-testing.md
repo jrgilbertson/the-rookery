@@ -153,6 +153,6 @@ cc66ee8):
   identity and native model-harness evidence.
 - Issue jrgilbertson/the-rookery#13 is the frontier-model retune that surfaced
   the same-name collision.
-- [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow)
+- [SKILLS.md evaluation rules](../../../SKILLS.md#improving-from-real-use)
   owns current evaluation routing. The identity checks above apply when a run
   must prove which copy loaded.

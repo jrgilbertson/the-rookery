@@ -40,9 +40,9 @@ rules as situations, grew with each rule change, and were never run. None came
 from an observed failure. Nothing replaces them. The guard is the skill text
 plus the independent review every pull request already gets
 ([WORKFLOWS.md](../../../WORKFLOWS.md#ship)). Do not add sentence pins or
-scenario rows back for either skill. A behavioral case is kept only when a
-failure returns after its fix, as
-[SKILLS.md](../../../SKILLS.md#evaluation-workflow) describes.
+scenario rows back for either skill. Behavioral cases come from realistic
+requests tested at creation or from a failure that returns after its fix, as
+[SKILLS.md](../../../SKILLS.md#creating-a-skill) describes.
 
 ## Context
 

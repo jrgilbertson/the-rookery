@@ -156,7 +156,7 @@ During a build, I use:
 
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates across agent tools, and supports feedback on selected elements in the browser. Use it for independent parts of a plan or direct visual iteration on an interface.
 - **Impeccable, mid-build.** Reviews and polishes visual work, checks technical quality, handles edge cases, and offers three versions of a selected element with the option to apply one. Use it to keep the interface aligned with the design brief and the project's limits.
-- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance). Supplies current browser API and CSS guidance for frontend work, alongside Impeccable's design direction and Vercel's React guidance. Compare native capabilities with existing components on the quality of the result; verify behavior and browser requirements when replacing a component. Keep telemetry disabled as described in [Installed skills](INSTALLED-SKILLS.md).
+- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance). Supplies current browser API and CSS guidance for frontend work, alongside Impeccable's design direction and Vercel's React guidance. Compare native capabilities with existing components on the quality of the result; verify behavior and browser requirements when replacing a component. Its telemetry is on; [Installed skills](INSTALLED-SKILLS.md) explains why.
 - `ce-test-browser` and `ce-dogfood`. Check the browser flows affected by a branch. Dogfood can also fix small problems, add regression tests, and commit its changes. Use `ce-test-browser` for a focused check or `ce-dogfood` for a repair pass that runs on its own.
 
 Before moving to Ship:
@@ -231,7 +231,7 @@ Choose where to keep a lesson based on how it can prevent the mistake. A test ru
 | Decision record | An architecture decision record with the choice, alternatives, and reasons | Keeps the explanation available to anyone who knows to look |
 | Written instruction | A README line, code comment, or instructions file | Depends entirely on being read and followed |
 
-When a lesson belongs in a skill, the harness's own `skill-creator` writes or revises the package, and [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md) checks the package for anything tied to one harness or one machine before it ships. That check reads the package; when a skill must behave the same in several harnesses, run it once in each. Use a skill when a recurring gap needs a reusable procedure rather than a one-time instruction. [`SKILLS.md`](SKILLS.md) defines this repository's authoring, evaluation, and evidence rules.
+When a lesson belongs in a skill, the harness's own `skill-creator` writes or revises the package, and [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md) checks the package for anything tied to one harness or one machine before it ships. That check reads the package; when a skill must behave the same in several harnesses, run it once in each. Use a skill when a recurring gap needs a reusable procedure rather than a one-time instruction. [`SKILLS.md`](SKILLS.md) gives the routines for creating a skill and for a new model, and the evaluation and evidence rules.
 
 A bug I can reproduce becomes a regression test. A convention becomes a lint rule. Lessons that fit none of the stronger options become written instructions. That is often the right choice for something we cannot automate yet.
 

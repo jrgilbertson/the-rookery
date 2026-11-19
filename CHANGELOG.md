@@ -98,6 +98,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `SKILLS.md` gives a routine for creating a skill and one for when a model
+  changes, with a table of the tools each step uses. Creating a skill now
+  tests it on three to five realistic requests with and without it, using the
+  harness's `skill-creator`, then checks portability. Those requests are kept
+  under `tests/<skill>/cases/` as the skill's baseline when a model changes.
+- Modern Web Guidance telemetry stays on, because its only switch also turns
+  off Claude Code feature flags. Supabase's Postgres guidance comes from the
+  Supabase plugin instead of a second skills-CLI copy.
 - `SKILLS.md` owns authoring, evaluation policy, and evidence rules. It names
   the `skill-creator` to use in each harness, warns that the `anthropics/skills`
   copy on GitHub is older than the one claude.ai syncs, and keeps eval cases out

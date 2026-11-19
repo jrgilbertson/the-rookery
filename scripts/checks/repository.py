@@ -210,6 +210,7 @@ MARKDOWN_SUFFIXES = frozenset({".md", ".markdown"})
 HEADING = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")
 FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 SETEXT_UNDERLINE = re.compile(r"^ {0,3}(?:=+|-+)[ \t]*$")
+CODE_SPAN = re.compile(r"(`+)(?!`).*?(?<!`)\1(?!`)", re.DOTALL)
 HTML_ANCHOR = re.compile(r"""<[^>]*\b(?:id|name)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 
 
@@ -260,15 +261,47 @@ def markdown_anchors(text: str) -> set[str]:
     return anchors
 
 
+def code_ranges(text: str) -> list[tuple[int, int]]:
+    """Return sorted offsets of fenced blocks and inline code spans, which render no links."""
+    ranges: list[tuple[int, int]] = []
+    fence = None
+    fence_start = 0
+    prose_start = 0
+    offset = 0
+    for line in text.splitlines(keepends=True):
+        opening = FENCE.match(line)
+        if opening:
+            marker = opening.group(1)
+            if fence is None:
+                ranges.extend((match.start() + prose_start, match.end() + prose_start)
+                              for match in CODE_SPAN.finditer(text[prose_start:offset]))
+                fence, fence_start = marker, offset
+            elif marker[0] == fence[0] and len(marker) >= len(fence):
+                ranges.append((fence_start, offset + len(line)))
+                fence, prose_start = None, offset + len(line)
+        offset += len(line)
+    if fence is None:
+        ranges.extend((match.start() + prose_start, match.end() + prose_start)
+                      for match in CODE_SPAN.finditer(text[prose_start:]))
+    else:
+        ranges.append((fence_start, len(text)))
+    return sorted(ranges)
+
+
 def check_links(path: Path, text: str, errors: list[str]) -> None:
     if path.suffix.lower() not in MARKDOWN_SUFFIXES:
         return
     newlines = [offset for offset, character in enumerate(text) if character == "\n"]
     anchor_cache: dict[Path, set[str]] = {}
+    code = code_ranges(text) if "#" in text else []
+    code_starts = [begin for begin, _ in code]
 
     def check_fragment(document: Path, fragment: str, start: int, shown: str) -> None:
         if not fragment or document.suffix.lower() not in MARKDOWN_SUFFIXES or not document.is_file():
             return
+        index = bisect_left(code_starts, start + 1) - 1
+        if index >= 0 and start < code[index][1]:
+            return  # A link shown inside code is an example, not a navigable link.
         if document not in anchor_cache:
             anchor_cache[document] = markdown_anchors(
                 text if document == path.resolve() else document.read_text(encoding="utf-8", errors="replace")

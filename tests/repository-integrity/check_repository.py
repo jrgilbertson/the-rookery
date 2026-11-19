@@ -133,7 +133,9 @@ def check_link_scanning(repository: Path) -> None:
         "Underlined title\n================\n\nSecond\nline\n---\n\n"
         "[same](#skill-evals--records)\n[dup](#notes-1)\n[html](#custom)\n"
         "[setext](#underlined-title)\n[multi](#second-line)\n"
-        "[cross](target.md#Target)\n",
+        "[cross](target.md#Target)\n\n"
+        "```md\n[example](#not-a-heading)\n```\n\n"
+        "Inline `[example](target.md#nowhere)` stays an example.\n",
         encoding="utf-8",
     )
     anchors = run_checker(repository)

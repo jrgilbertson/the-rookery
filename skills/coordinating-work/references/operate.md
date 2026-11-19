@@ -64,7 +64,7 @@ draft it as an issue and list it for the operator.
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
 only when every line below is true. Line 2 is the worker's report, taken on the
 worker's word because the worker runs the watch. Lines 3 and 4 are facts you
-read yourself from the pull request, the issue, and the record when you decide.
+read yourself when you decide.
 In a batch with no task workers, you run `lfg` and the continuous
 `ce-babysit-pr` watch yourself, and line 2 reads the first line of your own
 watch report and the head commit it covered. Apply the UX and UI work guidance
@@ -99,20 +99,23 @@ too.
    failing, no review thread is open, no review requests changes, and the code
    host reports it mergeable under the repository's own rules. Where the
    repository merges through a queue or enforces up-to-date branches itself,
-   that decides currency; otherwise the branch is current with its base. A
-   check that finished neutral or skipped has finished without failing.
+   that decides currency. Neutral or skipped checks count as non-failing.
+   Read the default branch's latest required checks. If any are failing,
+   route the fix or revert first. If it needs a merge to restore the default
+   branch, ask the operator to land it. Tell the worker this merge must wait,
+   record the wait, and rerun the checklist after recovery.
 5. **Merge.** Merge that head now, as an ordinary merge the repository
    accepts, with the merge conditional on the reported commit, and read the
    pull request once more to confirm it landed. Where the repository merges
    through a queue, the merge is an enqueue, and it has landed once the pull
    request reads merged.
 
-A line that is false, that you cannot read, or that is unclear means no merge.
-So does any situation this list does not describe. Then:
+False, unreadable, unclear, or unlisted conditions block merging. For blockers
+other than a default branch wait:
 
 - when the worker can make the line true, reply with what to do, such as
-  fixing a failed check, resolving a thread, updating a stale branch, or
-  running the continuous watch and asking again;
+  fixing a failed check, resolving a thread, or running the continuous watch
+  and asking again;
 - otherwise leave the pull request open, add it to the ready-for-operator list
   with the line that failed, and reply that it is held for the operator. A
   pull request that will be held anyway is held straight away.
@@ -130,9 +133,8 @@ A parked item that is only about a reviewer or tool being unavailable, such
 as a review bot out of quota, says nothing about the change. Log it, answer
 the worker with the default, and let the checklist decide.
 
-A held pull request is left as it is, and no watch runs on it. Bringing one
-current, or applying an open finding on it, is work to assign when the
-operator asks.
+Leave a held pull request as it is and stop its watch. Assign further work
+when the operator asks.
 
 After a merge lands, record it and reply merged. An issue whose pull request
 you merged is done: read the issue, and when the tracker left it open, close
@@ -203,11 +205,9 @@ A standing rule only adds a restriction on how workers operate.
 
 ## The check
 
-The record's table says what each assignment is waiting on: a named running
-job, a usage-limit reset time, a merge queue, or the operator. A report that
-a worker stopped is an event, so read the worker's live state before acting
-on it. When the stop matches what the table says it is waiting on, leave the
-worker alone.
+The table names each wait: a running job, a usage-limit reset, a merge queue,
+default branch recovery, or the operator. Read the worker's live state after
+a stop report. If it matches the recorded wait, leave the worker alone.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing

@@ -56,6 +56,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` leaves branch currency to the repository and holds
+  merges while the default branch's latest required checks are failing.
 - `CONCEPTS.md` defines one eval vocabulary, shared with Corvly: Product Eval,
   Skill Eval, Eval Case, Eval Label, Eval Record, and Baseline. They replace
   "kept case" and "run record". Tests never call a model; evals always do, so

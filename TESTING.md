@@ -207,12 +207,17 @@ gate:
 lefthook run pre-push --force
 ```
 
+Tests never call a model; evals always do. The gate runs only tests, so it
+spends nothing on model calls.
+
 [`SKILLS.md`](SKILLS.md) owns skill-validation policy. Package, helper,
 repository, and installation checks establish their specific contracts; they
-do not prove a skill's behavioral quality. Follow the
-[evidence rules](SKILLS.md#evidence-rules) to commit synthetic case run records
-and keep real-use traces, private session evidence, and generated review
-artifacts outside this public repository.
+do not prove a skill's behavioral quality. A [Skill Eval](SKILLS.md#skill-evals)
+does that, and it runs when a skill is created or revised and when a model
+changes, never on every pull request. Follow the
+[evidence rules](SKILLS.md#evidence-rules) to commit synthetic Eval Records in
+`evals/<skill>/` and keep real-use traces, private session evidence, and
+generated review artifacts outside this public repository.
 
 [`RELEASING.md`](RELEASING.md) owns release-snapshot qualification. Ordinary
 installs follow rolling `main`; snapshots are historical checkpoints.

@@ -210,7 +210,7 @@ lefthook run pre-push --force
 [`SKILLS.md`](SKILLS.md) owns skill-validation policy. Package, helper,
 repository, and installation checks establish their specific contracts; they
 do not prove a skill's behavioral quality. Behavioral evaluation follows the
-[evaluation workflow](SKILLS.md#evaluation-workflow).
+[evaluation rules](SKILLS.md#improving-from-real-use).
 
 [`RELEASING.md`](RELEASING.md) owns release-snapshot qualification. Ordinary
 installs follow rolling `main`; snapshots are historical checkpoints. Keep

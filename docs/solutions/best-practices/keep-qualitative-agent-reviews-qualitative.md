@@ -59,7 +59,7 @@ For skill changes, one independent review checks the package and evidence.
 The operator decides whether to iterate or stop; a fixed review cycle or
 iteration count is not a substitute for judgment. Behavioral evaluation
 remains a separate evidence task, run through the
-[SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
+[SKILLS.md evaluation rules](../../../SKILLS.md#improving-from-real-use).
 
 Apply this necessity test to the review process as well as the product. Build
 the decision frame from the best available evidence: the stated goal,

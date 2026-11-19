@@ -26,17 +26,16 @@ npx skills add morluto/rea -g -y --skill reverse-engineer-anything
 npx skills add mvanhorn/cli-printing-press -g -y --skill printing-press printing-press-amend printing-press-import printing-press-output-review printing-press-polish printing-press-publish printing-press-reprint printing-press-retro printing-press-score
 npx skills add mvanhorn/last30days-skill -g -y --skill last30days
 npx skills add shadcn/improve -g -y --skill improve
-npx skills add supabase/agent-skills -g -y --skill supabase-postgres-best-practices
 npx skills add tmchow/illo-skill -g -y --skill illo
 npx skills add vercel-labs/agent-skills -g -y --skill vercel-react-best-practices
 npx skills add vercel-labs/skills -g -y --skill find-skills
 npx skills add wheresryan22/anatomy -g -y --skill anatomy
 ```
 
-For Modern Web Guidance, set `DISABLE_TELEMETRY=1` in the environment used by
-the installer and coding agents. Verify that an agent-run
-`printenv DISABLE_TELEMETRY` returns `1` on each machine. This disables its
-usage telemetry, including agent-generated search queries.
+Modern Web Guidance sends anonymous usage telemetry, including the search
+queries agents write. These machines accept it. Its only switch,
+`DISABLE_TELEMETRY=1`, also turns off Claude Code's feature flags, which
+`/skill-doctor` needs.
 
 ## Installed another way
 
@@ -54,7 +53,9 @@ npx impeccable update --global
   them and matches them to the app version, so the skills CLI should not track
   them.
 - Agent plugins such as Compound Engineering, which each harness installs
-  through its own plugin manager.
+  through its own plugin manager. Supabase's Postgres guidance comes from the
+  Supabase plugin in both harnesses, which also handles sign-in, so the skills
+  CLI does not install a second copy.
 
 ## Check a machine against this list
 

@@ -112,4 +112,4 @@ The end-of-run API (menu, wait, later `1`) is a separate contract. See
 - [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md) — end-of-run API (menu and wait), not pyramid shape
 - Battery log: retired in #191; the conciseness and blind re-grade sections
   are in Git history. Current evaluation:
-  [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow)
+  [SKILLS.md evaluation rules](../../../SKILLS.md#improving-from-real-use)

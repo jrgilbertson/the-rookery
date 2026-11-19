@@ -38,5 +38,5 @@ Each fixture runner creates disposable state and requires no model calls.
 Retain synthetic fixture inputs that these tests consume. Add a runner to the
 explicit roster when adding a deterministic helper test; discovery checks that
 the roster is complete. Fixtures in this public repository must be synthetic
-and safe to publish. Private session logs and generated review artifacts belong
-outside the repository.
+and safe to publish. Keep real-use traces, private session logs, and generated
+review pages outside the repository.

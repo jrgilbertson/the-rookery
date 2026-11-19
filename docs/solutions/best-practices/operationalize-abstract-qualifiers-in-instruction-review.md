@@ -121,7 +121,7 @@ deliverable. Define three routing boundaries for those descriptions:
    section (`0a370618:skills/checking-simplicity/SKILL.md`).
 
 When a description change needs evaluation, follow the
-[SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
+[SKILLS.md evaluation rules](../../../SKILLS.md#improving-from-real-use).
 Distinguish a listing-level routing judgment from evidence that a native
 harness loaded the intended skill. If the wrong skill loads and its body later
 routes away, that correction does not establish correct initial activation.

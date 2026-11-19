@@ -37,7 +37,7 @@ The former repository protocol required an independent different-model grader.
 One grader scored both variants of a case on a target, using final answers and
 artifact or tool observations with variant names and private reasoning removed.
 That protocol and its behavioral suites were retired on 2026-10-03. Follow
-[SKILLS.md](../../../SKILLS.md#evaluation-workflow) for the current evaluation
+[SKILLS.md](../../../SKILLS.md#improving-from-real-use) for the current evaluation
 workflow; run-log paths below refer to committed Git history.
 
 The issue #134 refresh ran that protocol across two harnesses: Claude Code

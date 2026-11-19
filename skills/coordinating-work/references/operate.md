@@ -101,7 +101,8 @@ too.
    repository merges through a queue or enforces up-to-date branches itself,
    that decides currency. Neutral or skipped checks count as non-failing.
    Read the default branch's latest required checks. If any are failing,
-   route the fix or revert first. Tell the worker the merge must wait,
+   route the fix or revert first. If it needs a merge to restore the default
+   branch, ask the operator to land it. Tell the worker this merge must wait,
    record the wait, and rerun the checklist after recovery.
 5. **Merge.** Merge that head now, as an ordinary merge the repository
    accepts, with the merge conditional on the reported commit, and read the

@@ -35,6 +35,7 @@ These packages use the [Agent Skills](https://agentskills.io) format supported
 by tools including Claude Code, Codex, Cursor, and Gemini CLI. Installation and
 runtime behavior remain harness-specific. Add `-g` to install once for your
 whole machine instead of per project.
+Run `npx skills update` to get the latest changes to your installed skills.
 
 `main` is the rolling catalog and the normal install source. Semantic-version
 [Release Snapshots](CONCEPTS.md#release-snapshot) are immutable historical

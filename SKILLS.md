@@ -196,9 +196,10 @@ follow the [Skill Evals](#skill-evals) section instead.
 
 ## Retiring a skill
 
-Retire a skill in one pull request. Remove its package and dedicated tests,
-record the removal in the changelog, and mark each `docs/solutions/` learning
-about it as historical, naming what replaced it. In the same change, close or
+Retire a skill in one pull request. Remove its package, its dedicated tests,
+and its Skill Eval in `evals/<skill>/`, record the removal in the changelog,
+and mark each `docs/solutions/` learning about it as historical, naming what
+replaced it. In the same change, close or
 re-scope its open issues so the tracker offers no work against a skill that no
 longer exists. Afterward, uninstall the skill from each host where it was
 installed, such as with `npx skills remove <name>`, so no agent keeps loading a

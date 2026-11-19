@@ -102,6 +102,16 @@ looked" surface. GitHub Releases mirror its entries.
   the `skill-creator` to use in each harness, warns that the `anthropics/skills`
   copy on GitHub is older than the one claude.ai syncs, and keeps eval cases out
   of the shipped package until a failure returns.
+- `coordinating-work` gives each worker one rule for reaching the Coordinator
+  instead of three overlapping ones, trims waiting guidance that `lfg` and
+  `ce-babysit-pr` already give, and declares where Orca, the Compound
+  Engineering skills, and `impeccable` come from, plus the timer that wakes
+  the Coordinator's own session.
+- `coordinating-work` revive states its default first: each participant resumes
+  where it is, with the same workspace, conversation, provider, model, and
+  effort. It calls an account change a resume rather than a move, and lets a
+  participant stopped by a short limit continue on its own unless the wait
+  costs more than a restart.
 - The global agent guidance replaces "Choose the best complete solution" with
   "Simplicity first": a three-rung ladder that removes the need first
   (retiring a whole skill, script, workflow, or document you would not add

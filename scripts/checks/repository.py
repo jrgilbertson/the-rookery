@@ -209,6 +209,7 @@ def inline_links(text: str):
 MARKDOWN_SUFFIXES = frozenset({".md", ".markdown"})
 HEADING = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")
 FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+SETEXT_UNDERLINE = re.compile(r"^ {0,3}(?:=+|-+)[ \t]*$")
 HTML_ANCHOR = re.compile(r"""<[^>]*\b(?:id|name)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 
 
@@ -224,6 +225,14 @@ def markdown_anchors(text: str) -> set[str]:
     anchors = {match.group(1).lower() for match in HTML_ANCHOR.finditer(text)}
     seen: dict[str, int] = {}
     fence = None
+    paragraph: list[str] = []
+
+    def add(heading: str) -> None:
+        slug = heading_slug(heading)
+        count = seen.get(slug, 0)
+        seen[slug] = count + 1
+        anchors.add(slug if count == 0 else f"{slug}-{count}")
+
     for line in text.splitlines():
         opening = FENCE.match(line)
         if opening:
@@ -232,13 +241,22 @@ def markdown_anchors(text: str) -> set[str]:
                 fence = marker
             elif marker[0] == fence[0] and len(marker) >= len(fence):
                 fence = None
+            paragraph = []
             continue
-        heading = None if fence else HEADING.match(line)
+        if fence:
+            continue
+        heading = HEADING.match(line)
         if heading:
-            slug = heading_slug(heading.group(2))
-            count = seen.get(slug, 0)
-            seen[slug] = count + 1
-            anchors.add(slug if count == 0 else f"{slug}-{count}")
+            add(heading.group(2))
+            paragraph = []
+        elif paragraph and SETEXT_UNDERLINE.match(line):
+            # A paragraph followed by an === or --- underline is a Setext heading.
+            add(" ".join(paragraph))
+            paragraph = []
+        elif line.strip():
+            paragraph.append(line.strip())
+        else:
+            paragraph = []
     return anchors
 
 

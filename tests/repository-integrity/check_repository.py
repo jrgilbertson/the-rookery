@@ -130,7 +130,9 @@ def check_link_scanning(repository: Path) -> None:
     anchored.write_text(
         "# Skill `Evals` & records\n\n## Notes\n\n## Notes\n\n"
         '<a id="custom"></a>\n\n```md\n# Fenced\n```\n\n'
+        "Underlined title\n================\n\nSecond\nline\n---\n\n"
         "[same](#skill-evals--records)\n[dup](#notes-1)\n[html](#custom)\n"
+        "[setext](#underlined-title)\n[multi](#second-line)\n"
         "[cross](target.md#Target)\n",
         encoding="utf-8",
     )

@@ -32,7 +32,7 @@ My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them th
 
 [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. [`scripts/sync-global-agents.sh`](scripts/sync-global-agents.sh) documents how the copy is kept current.
 
-[INSTALLED-SKILLS.md](INSTALLED-SKILLS.md) lists the skills I install on every machine, with the commands to install them and a check that compares a machine against the list.
+[MACHINE-SETUP.md](MACHINE-SETUP.md) lists the skills, plugins, and MCP servers I install on every machine, with install commands and a drift check.
 
 The skills work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I use [Orca](https://github.com/stablyai/orca) to run several agent tools side by side in one project.
 
@@ -156,7 +156,7 @@ During a build, I use:
 
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates across agent tools, and supports feedback on selected elements in the browser. Use it for independent parts of a plan or direct visual iteration on an interface.
 - **Impeccable, mid-build.** Reviews and polishes visual work, checks technical quality, handles edge cases, and offers three versions of a selected element with the option to apply one. Use it to keep the interface aligned with the design brief and the project's limits.
-- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance). Supplies current browser API and CSS guidance for frontend work, alongside Impeccable's design direction and Vercel's React guidance. Compare native capabilities with existing components on the quality of the result; verify behavior and browser requirements when replacing a component. Its telemetry is on; [Installed skills](INSTALLED-SKILLS.md) explains why.
+- [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance). Supplies current browser API and CSS guidance for frontend work, alongside Impeccable's design direction and Vercel's React guidance. Compare native capabilities with existing components on the quality of the result; verify behavior and browser requirements when replacing a component. Its telemetry is on; [Machine setup](MACHINE-SETUP.md) explains why.
 - `ce-test-browser` and `ce-dogfood`. Check the browser flows affected by a branch. Dogfood can also fix small problems, add regression tests, and commit its changes. Use `ce-test-browser` for a focused check or `ce-dogfood` for a repair pass that runs on its own.
 
 Before moving to Ship:

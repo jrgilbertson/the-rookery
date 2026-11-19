@@ -1,7 +1,7 @@
 ---
 title: "Run blind cross-model grading through each CLI's native JSON schema flag"
 date: 2026-09-23
-last_updated: 2026-10-09
+last_updated: 2026-11-18
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -24,6 +24,12 @@ related_components:
 ---
 
 # Run blind cross-model grading through each CLI's native JSON schema flag
+
+`creating-portable-skills` was retired on 2026-11-18. Skills are now written with
+each harness's own `skill-creator` and checked with
+[`checking-skill-portability`](../../../skills/checking-skill-portability/SKILL.md).
+The verification work below describes the historical skill; the general
+lessons still apply.
 
 ## Context
 
@@ -286,8 +292,8 @@ enter the packet.
 
 ## Related
 
-- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity):
-  direct artifact inspection and host-owned independent judgments. This doc
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity):
+  inspecting outputs directly and citing evidence for each judgment. This doc
   covers running and validating the grader.
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md`: proving
   which skill copy loaded in a target run.

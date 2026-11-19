@@ -96,7 +96,7 @@ must exercise the product behavior the issue actually claims.
 This is the same claim-ceiling discipline used elsewhere in the repository:
 mechanically observable evidence cannot certify a broader behavioral outcome.
 See
-[Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
+[SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
 and
 `docs/solutions/best-practices/operationalize-abstract-qualifiers-in-instruction-review.md`.
 

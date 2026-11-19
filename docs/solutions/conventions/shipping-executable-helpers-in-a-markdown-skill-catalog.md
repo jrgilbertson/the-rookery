@@ -29,8 +29,9 @@ never been exercised here, and that the authoring conventions did not yet
 record. This work shipped in #23. The readiness helpers
 `skills/checking-pr-readiness/scripts/surface-report.sh` and
 `skills/checking-merge-readiness/scripts/fetch-pr-history.sh` are retired.
-Current helpers include `skills/creating-portable-skills/scripts/signal-scan.sh`
-and `skills/managing-issues/scripts/config_check.py`.
+`skills/creating-portable-skills/scripts/signal-scan.sh` was retired with its
+skill on 2026-11-18. The current helper is
+`skills/managing-issues/scripts/config_check.py`.
 
 ## Guidance
 

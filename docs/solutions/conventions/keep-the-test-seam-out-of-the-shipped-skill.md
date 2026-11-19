@@ -401,9 +401,9 @@ marked unavailable with its cap recorded."
   passed because nothing could make them fail; here, the suite passed because it
   was the intended beneficiary of the hole. Both produce green output that
   certifies nothing.
-- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
-  owns direct artifact inspection, required independent review, and bounded
-  claims. Here, a reviewer outside the authoring context asked what the clause
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
+  requires inspecting outputs directly and citing evidence for each judgment.
+  Here, a reviewer outside the authoring context asked what the clause
   meant for a caller who was not the harness.
 - `../best-practices/cross-harness-dogfood-testing.md` covers the analogous
   requirement to prove which skill copy and harness path actually ran. A

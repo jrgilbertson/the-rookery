@@ -39,9 +39,9 @@ tags:
 
 The delete test checks each agent instruction by asking whether the agent would
 get something wrong without it. Lines that restate default model behavior get
-cut. This repository's skill review checklist
-(`skills/creating-portable-skills/references/review-checklist.md`) applies it as
-the No-ops item, the first under Instruction economy.
+cut. This repository's former skill review checklist
+(`skills/creating-portable-skills/references/review-checklist.md`, retired on
+2026-11-18) applied it as the No-ops item, the first under Instruction economy.
 
 The test misses abstract qualifiers such as "thorough," "punchier," and
 "clean." Removing one changes behavior, so the line survives. The word still
@@ -70,7 +70,7 @@ Run the operationalize-the-qualifier check as its own named pass, separate from 
    - **Enumerated options.** Constrain the judgment to a closed set, such as
      keep, revise, or remove for an instruction's review disposition.
 
-The checklist item that encodes this lives under Instruction economy in `skills/creating-portable-skills/references/review-checklist.md`:
+The checklist item that encoded this lived under Instruction economy in that retired checklist:
 
 > Qualifiers are operationalized: abstract quality words and hedged requirements
 > have an observable meaning.
@@ -151,7 +151,7 @@ unchanged subject forward.
 ## When to Apply
 
 - Reviewing or auditing any agent instructions: skills, prompts, CLAUDE.md files, subagent task briefs.
-- Running the skill-review checklist in `skills/creating-portable-skills/references/review-checklist.md`.
+- Running any skill-review checklist.
 - Writing new instructions that reach for an adjective to describe output quality. Define it at write time rather than deferring to review.
 - Reviewing a skill that itself reviews instructions; apply the qualifier check to its own text too.
 - Writing a positive skill description for an expensive workflow whose methods or qualities overlap with routine requests.
@@ -217,5 +217,5 @@ Dispatch section (`0a370618:skills/checking-simplicity/SKILL.md`).
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
   separate fresh-context and exact loaded-copy checks needed for trustworthy
   cross-harness skill evidence.
-- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
-  owns the current artifact-inspection and bounded-claim guidance.
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
+  owns the current guidance on inspecting outputs and citing evidence.

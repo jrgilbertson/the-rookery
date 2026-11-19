@@ -125,8 +125,8 @@ All commit refs are local-branch history on
 - [Rebase silently drops changelog entries](rebase-silently-drops-changelog-entries.md)
   — sibling pattern: a git-adjacent batch operation whose implicit claims
   about preserved content must be verified mechanically, not trusted.
-- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
-  — author inspection does not replace required independent judgments; here,
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
+  — inspect outputs directly and cite evidence for each judgment; here,
   an independent review exposed assumptions that had produced the drift.
 - [Skills CLI ref not checked out](../integration-issues/skills-cli-ref-not-checked-out.md)
   — shared meta-lesson: a verification that cannot distinguish success from

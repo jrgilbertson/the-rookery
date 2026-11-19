@@ -2,8 +2,6 @@
 
 This directory holds deterministic tests of shipped skill helpers and the
 repository checks. The
-[Creating Portable Skills checks](creating-portable-skills/README.md) exercise
-its shipped signal scanner. The
 [Managing Issues checks](managing-issues/README.md) run its configuration
 validator. Report native host behavior separately from repository checks.
 

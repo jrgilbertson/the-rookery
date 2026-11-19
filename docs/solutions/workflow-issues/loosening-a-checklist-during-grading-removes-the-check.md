@@ -240,7 +240,7 @@ in the run log).
   states the general rule this case instantiates. A check that cannot fail is
   not a check, whether the hole came from a self-matching grep or from an item
   widened to fit the run in front of you.
-- [Review checklist: Evidence integrity](../../../skills/creating-portable-skills/references/review-checklist.md#evidence-integrity)
-  keeps author inspection distinct from required independent judgments. The
+- [SKILLS.md: Evidence integrity](../../../SKILLS.md#evidence-integrity)
+  requires inspecting outputs directly and citing evidence for each judgment. The
   context that authored a checklist can favor the reading that keeps grading
   moving when deciding whether a failing item was wrong.

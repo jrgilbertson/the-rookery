@@ -106,6 +106,10 @@ looked" surface. GitHub Releases mirror its entries.
 - Modern Web Guidance telemetry stays on, because its only switch also turns
   off Claude Code feature flags. Supabase's Postgres guidance comes from the
   Supabase plugin instead of a second skills-CLI copy.
+- `managing-issues` lists a missing score in the preview, rather than filling
+  it, when the caller may not write scores, as in a coordinated batch.
+  `managing-personal-crm` and `reviewing-meetings` describe their follow-up
+  triggers as one intent instead of a list of verbs.
 - `SKILLS.md` owns authoring, evaluation policy, and evidence rules. It names
   the `skill-creator` to use in each harness, warns that the `anthropics/skills`
   copy on GitHub is older than the one claude.ai syncs, and keeps eval cases out

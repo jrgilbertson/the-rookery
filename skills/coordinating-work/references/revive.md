@@ -99,7 +99,8 @@ the new account in this order:
 1. A participant the runtime already carried over: confirm from its own reply
    that it has its latest instructions, and leave it running.
 2. A participant still on the old account: restart it in the same workspace
-   and resume its conversation, as below.
+   and resume its conversation, as below, unless the short-limit exception
+   above leaves it to continue on its own.
 
 For each participant still on the old account, check first, without changing
 anything:

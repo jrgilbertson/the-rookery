@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import {auditClaude, auditCodex, draftSections, leverageScores} from './checks.mjs';
+
+const draft = '## Problem\nA bug\n## Scope\nA fix\n## Verification\nA test';
+const scores = '| Impact | 3 |\n- **Confidence:** 2\n**Verification effort**: 2\n**Undo cost:** 1';
+assert.equal(draftSections(draft), true);
+assert.equal(draftSections(draft.replace('## Verification', '## Details')), false);
+assert.equal(leverageScores(scores), true);
+assert.equal(leverageScores(scores.replace('cost:** 1', 'cost:** 10')), false);
+assert.equal(auditClaude([{name: 'Read'}, {name: 'Skill'}]), true);
+assert.equal(auditClaude([{name: 'Bash', input: {command: 'gh issue create'}}]), false);
+assert.equal(auditClaude([{name: 'mcp__linear__update_issue'}]), false);
+assert.equal(auditClaude(undefined), false);
+const command = (command) => ({type: 'command_execution', command});
+assert.equal(auditCodex([command("/bin/bash -lc 'cat .agents/skills/managing-issues/SKILL.md'")]), true);
+assert.equal(auditCodex([command("/bin/bash -lc 'gh issue create'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'cat foo; gh issue create'")]), false);
+assert.equal(auditCodex([{type: 'mcp_tool_call', tool: 'create_issue'}]), false);
+assert.equal(auditCodex(undefined), false);
+assert.equal(auditCodex([command('/usr/bin/bash -lc "rg --files --hidden\ngit remote -v\ncat skill.md"')]), true);
+assert.equal(auditCodex([command("/usr/bin/bash -lc 'rg --pre=gh foo'")]), false);
+assert.equal(auditCodex([command("/usr/bin/bash -lc \"sed -n '1w leak' skill.md\"")]), false);

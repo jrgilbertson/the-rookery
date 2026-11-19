@@ -1,0 +1,164 @@
+# Machine setup
+
+The skills, plugins, and MCP servers I install on every machine. These commands
+use each source's current version.
+
+## Install with the skills CLI
+
+Each line installs the listed skills from one source for the whole machine.
+
+```bash
+npx skills add ai-evals-course/evals-skills -g -y --skill build-review-interface error-discovery eval-audit evals-start evaluate-rag generate-synthetic-data validate-evaluator write-code-eval write-judge-prompt
+npx skills add cathrynlavery/diagram-design -g -y --skill diagram-design
+npx skills add emilkowalski/skills -g -y --skill break-ui mobile-native
+npx skills add github/gh-stack -g -y --skill gh-stack
+npx skills add GoogleChrome/modern-web-guidance -g -y --skill modern-web-guidance
+npx skills add harshaneel/humanize -g -y --skill ai-check
+npx skills add https://docs.stripe.com -g -y --skill connect-recommend connect-required-verification-information metronome stripe-apps stripe-best-practices stripe-directory stripe-docs stripe-implementation-planner stripe-pay stripe-projects
+npx skills add jrgilbertson/networked-thinking-skills -g -y --skill atomic-note atomic-note-audit managing-obsidian-tasks
+npx skills add jrgilbertson/the-rookery -g -y --skill checking-skill-portability coordinating-work managing-issues managing-personal-crm personal-chief-of-staff reviewing-meetings storm-research
+npx skills add kepano/obsidian-skills -g -y --skill defuddle json-canvas obsidian-bases obsidian-cli obsidian-markdown
+npx skills add livekit/agent-skills -g -y --skill building-livekit-agents debugging-livekit-agents operating-livekit-agents reading-livekit-docs running-livekit-simulations testing-livekit-agents writing-livekit-scenarios
+npx skills add mattpocock/skills -g -y --skill codebase-design domain-modeling grill-me grill-with-docs grilling improve-codebase-architecture setup-matt-pocock-skills writing-for-agents
+npx skills add millionco/react-doctor -g -y --skill react-doctor
+npx skills add morluto/rea -g -y --skill reverse-engineer-anything
+npx skills add mvanhorn/cli-printing-press -g -y --skill printing-press printing-press-amend printing-press-import printing-press-output-review printing-press-polish printing-press-publish printing-press-reprint printing-press-retro printing-press-score
+npx skills add mvanhorn/last30days-skill -g -y --skill last30days
+npx skills add shadcn/improve -g -y --skill improve
+npx skills add tmchow/illo-skill -g -y --skill illo
+npx skills add vercel-labs/agent-skills -g -y --skill vercel-react-best-practices
+npx skills add vercel-labs/skills -g -y --skill find-skills
+npx skills add wheresryan22/anatomy -g -y --skill anatomy
+```
+
+Modern Web Guidance sends anonymous usage telemetry, including the search
+queries agents write. These machines accept it. Its only switch,
+`DISABLE_TELEMETRY=1`, also turns off Claude Code's feature flags, which
+`/skill-doctor` needs.
+
+## Impeccable
+
+[Impeccable](https://github.com/pbakaus/impeccable) has its own installer and
+updater:
+
+```bash
+npx impeccable install --global
+npx impeccable update --global
+```
+
+## Claude Code plugins
+
+Add the Compound Engineering marketplace. The official marketplace is built
+into Claude Code. These commands install the plugins in user scope.
+
+```bash
+claude plugin marketplace add EveryInc/compound-engineering-plugin
+claude plugin install compound-engineering@compound-engineering-plugin
+claude plugin install context7@claude-plugins-official
+claude plugin install linear@claude-plugins-official
+claude plugin install playwright@claude-plugins-official
+claude plugin install pyright-lsp@claude-plugins-official
+claude plugin install security-guidance@claude-plugins-official
+claude plugin install supabase@claude-plugins-official
+claude plugin install typescript-lsp@claude-plugins-official
+claude plugin install vercel@claude-plugins-official
+```
+
+## Codex plugins
+
+```bash
+codex plugin marketplace add EveryInc/compound-engineering-plugin
+codex plugin marketplace add PostHog/ai-plugin
+codex plugin add compound-engineering@compound-engineering-plugin
+codex plugin add posthog@posthog
+```
+
+## Claude Code MCP servers
+
+Run these in addition to installing the plugins, which register their bundled
+servers. The stdio commands require `npx` and `uvx`.
+
+```bash
+claude mcp add --scope user --transport http ai-elements https://registry.ai-sdk.dev/api/mcp
+claude mcp add --scope user --transport http livekit-docs https://docs.livekit.io/mcp
+claude mcp add --scope user --transport http posthog https://mcp.posthog.com/mcp
+claude mcp add --scope user --transport stdio shadcn -- npx shadcn@latest mcp
+claude mcp add --scope user --transport stdio gemini-docs -- uvx --from git+https://github.com/philschmid/gemini-api-docs-mcp gemini-docs-mcp
+```
+
+## Codex MCP servers
+
+```bash
+codex mcp add ai-elements --url https://registry.ai-sdk.dev/api/mcp
+codex mcp add gemini-docs -- uvx --from git+https://github.com/philschmid/gemini-api-docs-mcp gemini-docs-mcp
+codex mcp add livekit-docs --url https://docs.livekit.io/mcp
+codex mcp add posthog --url https://mcp.posthog.com/mcp
+codex mcp add shadcn -- npx shadcn@latest mcp
+codex mcp add context7 -- npx -y @upstash/context7-mcp
+codex mcp add lennysdata --url https://mcp.lennysdata.com/mcp
+codex mcp add linear --url https://mcp.linear.app/mcp
+codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp
+codex mcp add playwright -- npx @playwright/mcp@latest
+codex mcp add supabase --url https://mcp.supabase.com/mcp
+codex mcp add vercel --url https://mcp.vercel.com
+```
+
+## Check a machine against this list
+
+Run this from the repository root with Python 3.9 or later and both harness
+CLIs. It prints nothing when all listed entries are present and there are no
+extra skills managed by the skills CLI or extra enabled Claude Code user plugins.
+Additional Codex plugins and MCP servers can come from the harness or local
+configuration. The check compares names without starting MCP servers.
+
+```bash
+python3 - <<'PYTHON'
+import json
+from pathlib import Path
+import subprocess
+
+home = Path.home()
+lines = Path("MACHINE-SETUP.md").read_text().splitlines()
+
+def documented(prefix):
+    return [line.removeprefix(prefix).split() for line in lines if line.startswith(prefix)]
+
+def config_json(relative_path):
+    try:
+        return json.loads((home / relative_path).read_text())
+    except FileNotFoundError:
+        return {}
+
+def cli_json(*command):
+    return json.loads(subprocess.check_output(command))
+
+def report(label, expected, installed, *, show_extra=False):
+    for name in sorted(expected - installed):
+        print(f"Missing {label}: {name}")
+    if show_extra:
+        for name in sorted(installed - expected):
+            print(f"Unlisted {label}: {name}")
+
+skill_lock = config_json(".agents/.skill-lock.json")
+claude_config = config_json(".claude.json")
+claude_plugins = cli_json("claude", "plugin", "list", "--json")
+codex_plugins = cli_json("codex", "plugin", "list", "--json")["installed"]
+codex_servers = cli_json("codex", "mcp", "list", "--json")
+
+report("skill", {name for args in documented("npx skills add ")
+                 for name in args[args.index("--skill") + 1:]},
+       set(skill_lock.get("skills", {})), show_extra=True)
+report("skill", {"impeccable"}, {"impeccable"} if
+       (home / ".agents/skills/impeccable/SKILL.md").is_file() else set())
+report("Claude Code plugin", {args[0] for args in documented("claude plugin install ")},
+       {p["id"] for p in claude_plugins if p["scope"] == "user" and p["enabled"]},
+       show_extra=True)
+report("Codex plugin", {args[0] for args in documented("codex plugin add ")},
+       {p["pluginId"] for p in codex_plugins if p["enabled"]})
+report("Claude Code MCP server",
+       {args[1] for args in documented("claude mcp add --scope user --transport ")},
+       set(claude_config.get("mcpServers", {})))
+report("Codex MCP server", {args[0] for args in documented("codex mcp add ")},
+       {server["name"] for server in codex_servers if server["enabled"]})
+PYTHON
+```

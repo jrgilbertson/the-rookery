@@ -51,6 +51,12 @@ looked" surface. GitHub Releases mirror its entries.
   returns every vetted finding in leverage order. Independent review runs
   only on the findings the owner picks in reply.
 
+### Changed
+
+- Renamed the installed skills inventory to `MACHINE-SETUP.md` and added
+  install commands and a drift check for Claude Code and Codex plugins and
+  MCP servers. Updated the Stripe skills list to match current installs.
+
 ### Removed
 
 - `creating-portable-skills`, its signal scanner, and the scanner's tests.

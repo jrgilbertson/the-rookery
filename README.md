@@ -40,6 +40,9 @@ whole machine instead of per project.
 [Release Snapshots](CONCEPTS.md#release-snapshot) are immutable historical
 checkpoints with release notes; they are not install pins.
 
+See [Machine setup](MACHINE-SETUP.md) for the full list of skills, plugins,
+and MCP servers I install on each machine.
+
 ## The workflows
 
 Everything here fits into five core jobs, Research through Ship, plus two feedback loops: Maintain and Learn. The walkthroughs in [WORKFLOWS.md](WORKFLOWS.md) are how I run that loop. The skills in this catalog plug into it and work in other editors and harnesses too.

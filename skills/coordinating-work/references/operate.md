@@ -101,15 +101,16 @@ too.
    repository merges through a queue or enforces up-to-date branches itself,
    that decides currency. Neutral or skipped checks count as non-failing.
    Read the default branch's latest required checks. If any are failing,
-   hold other merges and route the fix or revert first.
+   route the fix or revert first. Tell the worker the merge must wait,
+   record the wait, and rerun the checklist after recovery.
 5. **Merge.** Merge that head now, as an ordinary merge the repository
    accepts, with the merge conditional on the reported commit, and read the
    pull request once more to confirm it landed. Where the repository merges
    through a queue, the merge is an enqueue, and it has landed once the pull
    request reads merged.
 
-A line that is false, that you cannot read, or that is unclear means no merge.
-So does any situation this list does not describe. Then:
+False, unreadable, unclear, or unlisted conditions block merging. For blockers
+other than a default branch wait:
 
 - when the worker can make the line true, reply with what to do, such as
   fixing a failed check, resolving a thread, or running the continuous watch
@@ -203,11 +204,9 @@ A standing rule only adds a restriction on how workers operate.
 
 ## The check
 
-The record's table says what each assignment is waiting on: a named running
-job, a usage-limit reset time, a merge queue, or the operator. A report that
-a worker stopped is an event, so read the worker's live state before acting
-on it. When the stop matches what the table says it is waiting on, leave the
-worker alone.
+The table names each wait: a running job, a usage-limit reset, a merge queue,
+default branch recovery, or the operator. Read the worker's live state after
+a stop report. If it matches the recorded wait, leave the worker alone.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing

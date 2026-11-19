@@ -181,6 +181,38 @@ state of the published catalog. It is a historical checkpoint with release
 notes, not an installation pin: ordinary installs continue to follow `main`, and
 a correction receives a new release tag instead of moving an existing one.
 
+## Evaluation
+
+Tests never call a model; evals always do.
+
+### Product Eval
+
+An eval of an AI feature of an application: one prompt in, one answer out. The
+Rookery ships no AI feature, so it has no Product Evals.
+
+### Skill Eval
+
+An eval of a coding agent doing a task with a skill loaded. Each run is a
+multi-step agent run, not a single answer.
+
+### Eval Case
+
+One concrete request, with its context and its success criteria.
+
+### Eval Label
+
+A pass or fail on one output for one check, with the reason and who gave it, a
+person or a model.
+
+### Eval Record
+
+A saved run of Eval Cases with their Eval Labels, committed to the repository.
+
+### Baseline
+
+The run a result is compared against: a run with no skill, the previous
+version of the skill, or the previous model.
+
 ### Unmeasured
 
 An evaluation result that was not collected or cannot be trusted, kept distinct

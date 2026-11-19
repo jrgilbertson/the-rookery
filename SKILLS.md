@@ -15,7 +15,7 @@ skill.
 | [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md) | Validates the package against the standard and finds anything tied to one harness or one machine | Every change, before it ships |
 | `/doctor prompt-audit` (Claude Code) | Reads instruction files, skills, and agents for patterns written for older models, dead references, and contradictions | When a model changes |
 | `/skill-doctor` (Claude Code) | Reports each skill's listing cost and use | When a model changes, or when pruning |
-| `claude plugin eval` | Reruns case folders with and without a skill | Rerunning kept cases |
+| `claude plugin eval` | Reruns case folders with and without a skill | A candidate runner for Skill Evals; no runner is chosen yet |
 
 `/skill-doctor` needs Claude Code's feature flags, which
 `DISABLE_TELEMETRY=1` turns off. Its use counts include skills that were only
@@ -41,9 +41,10 @@ Otherwise build the skill with the harness's own `skill-creator`:
 Then:
 
 1. **Draft** the smallest `SKILL.md` that closes the gaps you saw.
-2. **Test it on realistic requests.** Use the baseline requests plus one
-   ambiguous or edge request, three to five in all. Run each with and without
-   the skill in a fresh context, and read the outputs and transcripts
+2. **Test it on realistic requests.** Use those requests plus one ambiguous
+   or edge request, three to five in all. Run each one twice, in a fresh
+   context each time: once with the skill and once without it. The run
+   without it is the no-skill Baseline. Read the outputs and transcripts
    yourself. Name each failure in plain words before writing any check.
 3. **Check with code only what code can decide**, such as a file written or a
    command run. Judge tone and reasoning by reading. Use the creator's blind
@@ -52,11 +53,12 @@ Then:
    and a few near misses that should not.
 5. **Check portability.** Run `checking-skill-portability`, then run one test
    request in Codex and in any other harness or model the skill must serve.
-6. **Keep the cases.** Move the test requests and their checks to
-   `tests/<skill>/cases/`, outside the package, in the creator's case-folder
-   layout. They are the skill's baseline when a model changes. Drop a case that
-   passes with and without the skill, because it measures nothing. Cases in
-   this public repository must be synthetic and safe to publish.
+6. **Keep the Eval Cases.** Move the test requests and their checks to
+   `evals/<skill>/`, outside the package, in the creator's case-folder layout.
+   They become the skill's Skill Eval, which runs again when a model changes.
+   Drop an Eval Case that passes with and without the skill, because it
+   measures nothing. Eval Cases in this public repository must be synthetic
+   and safe to publish.
 
 ## Package format
 
@@ -94,10 +96,10 @@ the requests that misrouted, as described under improving from real use below.
 
 After a skill ships, improve it from real use and demonstrated failures. The
 first time a failure appears, fix the instruction and say what was observed in
-the fix's commit message. Add a case to the skill's kept cases only when the
-same failure returns after that fix. Check observable behavior, never wording,
-headings, or text patterns. Correct one failure with a narrow fix rather than a
-universal requirement.
+the fix's commit message. Add an Eval Case to the skill's Skill Eval only when
+the same failure returns after that fix. Check observable behavior, never
+wording, headings, or text patterns. Correct one failure with a narrow fix
+rather than a universal requirement.
 
 When a wrong run of the skill would be costly, such as one that merges,
 deletes, spends, or sends, run a forward test: give a fresh agent a realistic
@@ -105,28 +107,57 @@ request and the skill, without the expected answer, in a disposable workspace,
 then read what it did. One forward test inside the current session with no
 outside effects needs no separate approval. A batch of runs, a run billed per
 call, or a run against a live system needs the skill owner's approval first.
-No runner is required; when a kept case needs rerunning, a plain script or
-`claude plugin eval` is enough.
+No runner is chosen yet. Until one is, any script that writes a complete Eval
+Record will do.
 
 ### Evidence integrity
 
 Inspect outputs directly. A judgment cites evidence for the outcome rather than
-a heading or claimed filename. A behavioral case names the observed failure it
-came from; one that cannot is a finding.
+a heading or claimed filename. An Eval Case names the observed failure it came
+from; one that cannot is a finding.
+
+## Skill Evals
+
+Tests never call a model; evals always do. The repository gate runs only
+tests, so it never spends money on a model. A Skill Eval calls a model on
+every Eval Case, so it runs when a skill is created or revised and when a
+model changes, never on every pull request. The Rookery ships no AI feature,
+so it has no Product Evals. [CONCEPTS.md](CONCEPTS.md#evaluation) defines the
+eval terms.
+
+Each skill's Skill Eval lives in `evals/<skill>/` at the repository root,
+outside the skill package. That directory holds the skill's Eval Cases and the
+Eval Records of their runs. Create it when the skill gets its first Eval Case.
+
+### Eval Records
+
+Commit an Eval Record for every run. Each record holds:
+
+- The model ID and effort for the agent, and for any judge model
+- The skill revision, as a commit
+- The Eval Case IDs and a hash of the case set
+- The Baseline arm: no skill, the previous version of the skill, or the
+  previous model
+- The date
+- The runner's name and version
+- The number of repeats, and whether the run finished
+- Tokens and cost
+- Each Eval Label, with its reason and its labeler, a person or a model
+- The full transcript, saved beside the record
+
+Raw runner output and caches stay local and never enter the repository.
 
 ### Evidence rules
 
 - Record the exact skill revision, host, provider, inputs, and behavior
   observed for each claim.
-- Run kept synthetic cases with synthetic inputs and sources. Commit each
-  run record beside its case in `tests/<skill>/cases/`. Include the model,
-  exact skill revision, pass or fail with the reason, and the transcript.
-  Read the full transcript, including tool results and session context, and
-  check that the record contains no private data before committing it.
+- Run Eval Cases with synthetic inputs and sources.
+- Read the full transcript, including tool results and session context, and
+  check that the Eval Record contains no private data before committing it.
 - Keep real-use traces, private logs, and generated review pages outside this
   public repository. Several skills read personal data. When a real-use
-  failure qualifies as a kept case, recreate it with invented data, then
-  commit the synthetic case and its run record.
+  failure qualifies as an Eval Case, rebuild it with invented data, then
+  commit the synthetic Eval Case and its Eval Record.
 - Use the user's approved execution and budget limits before paid runs.
 
 ## When a model changes
@@ -136,12 +167,15 @@ When a new model becomes the default in either harness:
 1. Read the vendor's guide for the model, such as Anthropic's
    [migration guide](https://platform.claude.com/docs/en/about-claude/models/migration-guide)
    or OpenAI's [latest-model guide](https://developers.openai.com/api/docs/guides/latest-model).
-2. Run each skill's kept cases on the new model before editing anything, with
-   the effort level set explicitly. That run is the baseline.
+2. Run each skill's Eval Cases on the new model before editing anything, with
+   the effort level set explicitly. Compare the result with the last Eval
+   Record on the previous model, which is its Baseline. This run then becomes
+   the Baseline for every fix that follows.
 3. Run `/doctor prompt-audit` in Claude Code. Codex has no equivalent, so
    review the corpus against OpenAI's guide by hand.
 4. Run `/skill-doctor` to see what the always-loaded skill listing costs.
-5. Fix one kind of problem at a time, rerun the cases, and keep what holds up.
+5. Fix one kind of problem at a time, rerun the Eval Cases, and keep what
+   holds up.
    Tuning specific to one model or vendor belongs in that harness's global
    instructions, not in a portable skill.
 6. Run `checking-skill-portability` on each changed skill, and record what
@@ -157,8 +191,8 @@ Run `lefthook run pre-push --force` before shipping. The gate validates package
 structure and catalog membership, repository text and links, secrets, and
 deterministic tests of shipped helpers. See [TESTING.md](TESTING.md) and
 [tests/README.md](tests/README.md) for the check commands and fixture boundaries.
-Behavioral cases follow the sections above; it is separate from these
-code and package checks.
+The gate never runs Skill Evals, because tests never call a model. Skill Evals
+follow the [Skill Evals](#skill-evals) section instead.
 
 ## Retiring a skill
 

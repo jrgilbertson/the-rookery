@@ -53,8 +53,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- Commit run records beside synthetic skill cases so contributors can see why
-  a case passed or failed. Keep real-use traces outside the public repository.
+- `CONCEPTS.md` defines one eval vocabulary, shared with Corvly: Product Eval,
+  Skill Eval, Eval Case, Eval Label, Eval Record, and Baseline. They replace
+  "kept case" and "run record". Tests never call a model; evals always do, so
+  Skill Evals run when a skill is created or revised and when a model changes,
+  never on every pull request. Skill Evals live in `evals/<skill>/` instead of
+  `tests/<skill>/cases/`. `SKILLS.md` lists what each Eval Record holds,
+  including models, skill revision, Baseline, cost, each Eval Label, and the
+  transcript, so contributors can see why a case passed or failed. Eval Cases
+  stay synthetic, and real-use traces stay outside the public repository.
 - Renamed the installed skills inventory to `MACHINE-SETUP.md` and added
   install commands and a drift check for Claude Code and Codex plugins and
   MCP servers. Updated the Stripe skills list to match current installs.
@@ -110,7 +117,7 @@ looked" surface. GitHub Releases mirror its entries.
   changes, with a table of the tools each step uses. Creating a skill now
   tests it on three to five realistic requests with and without it, using the
   harness's `skill-creator`, then checks portability. Those requests are kept
-  under `tests/<skill>/cases/` as the skill's baseline when a model changes.
+  as Eval Cases under `evals/<skill>/` and run again when a model changes.
 - Modern Web Guidance telemetry stays on, because its only switch also turns
   off Claude Code feature flags. Supabase's Postgres guidance comes from the
   Supabase plugin instead of a second skills-CLI copy.

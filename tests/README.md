@@ -29,10 +29,10 @@ Repository text checks reject concrete local home-directory paths. Generic
 placeholders and exact, file-scoped portable setup examples remain allowed;
 context-dependent privacy review is still necessary.
 
-A skill's kept model cases and their synthetic run records live in
-`tests/<skill>/cases/`. See the [evidence rules](../SKILLS.md#evidence-rules).
-These cases call a model, so the gate never runs them. They run with approval
-when a model changes.
+Tests never call a model; evals always do. Skill Evals live in
+`evals/<skill>/` at the repository root, not here, and the gate never runs
+them. See [Skill Evals](../SKILLS.md#skill-evals) for when they run and what
+each Eval Record holds.
 
 Each fixture runner creates disposable state and requires no model calls.
 Retain synthetic fixture inputs that these tests consume. Add a runner to the

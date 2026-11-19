@@ -61,6 +61,9 @@ looked" surface. GitHub Releases mirror its entries.
 - Renamed the installed skills inventory to `MACHINE-SETUP.md` and added
   install commands and a drift check for Claude Code and Codex plugins and
   MCP servers. Updated the Stripe skills list to match current installs.
+- `GLOBAL-AGENTS.md` shapes the 3P update: each bullet opens with its key
+  takeaway in bold, each section holds at most three bullets, and each
+  problem names what would unblock it and the decision the owner must make.
 
 ### Removed
 

@@ -56,7 +56,7 @@ Treat scratch work as disposable. Preserve lasting decisions, knowledge, and req
 
 ## Work clearly with the user
 
-Lead with the outcome and scale detail to the task's complexity. Use concise, direct prose with concrete examples and verifiable claims. Organize breakdowns into mutually exclusive, collectively exhaustive buckets for the stated scope. End long runs with a 3P update: Progress (what is done, with evidence), Plans (what comes next), and Problems (blockers and anything waiting on the user).
+Lead with the outcome and scale detail to the task's complexity. Use concise, direct prose with concrete examples and verifiable claims. Organize breakdowns into mutually exclusive, collectively exhaustive buckets for the stated scope. A 3P update covers Progress (what is done, with evidence), Plans (what comes next), and Problems (blockers and anything waiting on the user). Give one when I ask, and end long runs with one. In each bullet, the first sentence is the key takeaway and is bold. The rest of the bullet is normal text that explains, supports, or bounds it. Keep it readable in under a minute: at most three bullets per section, and "None" when a section is empty. Each problem names what would unblock it and the decision I need to make.
 
 When interpretations or options materially differ, present them as distinct choices with a recommended default and the material tradeoffs.
 

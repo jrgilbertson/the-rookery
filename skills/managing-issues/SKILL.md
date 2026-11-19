@@ -74,7 +74,9 @@ Score every issue you draft, create, or update, parents included, on the four
 leverage factors: impact, confidence, verification effort, and undo cost, each
 1 to 3. Load `references/prioritization.md` for the scales and the lookup
 tables. On an update, keep each stored score unless the request, or evidence
-new in this update, changes it, and fill any score that is absent. Score a
+new in this update, changes it, and fill any score that is absent. A caller
+that may not write scores, such as a coordinated batch, gets the missing score
+listed in the preview instead of filled. Score a
 leaf that still needs discovery or planning on what is known now; planning
 revises the scores.
 

@@ -107,11 +107,14 @@ Run this from the repository root with Python 3.9 or later and both harness
 CLIs. It prints nothing when all listed entries are present and there are no
 extra skills managed by the skills CLI or extra enabled Claude Code user plugins.
 Additional Codex plugins and MCP servers can come from the harness or local
-configuration. The check compares names without starting MCP servers.
+configuration. The check compares names without starting MCP servers. It also
+checks for `SKILL.md` in both harnesses' global skill directories for listed
+skills in the lock and for Impeccable.
 
 ```bash
 python3 - <<'PYTHON'
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -121,9 +124,9 @@ lines = Path("MACHINE-SETUP.md").read_text().splitlines()
 def documented(prefix):
     return [line.removeprefix(prefix).split() for line in lines if line.startswith(prefix)]
 
-def config_json(relative_path):
+def config_json(path):
     try:
-        return json.loads((home / relative_path).read_text())
+        return json.loads(path.read_text())
     except FileNotFoundError:
         return {}
 
@@ -137,17 +140,25 @@ def report(label, expected, installed, *, show_extra=False):
         for name in sorted(installed - expected):
             print(f"Unlisted {label}: {name}")
 
-skill_lock = config_json(".agents/.skill-lock.json")
-claude_config = config_json(".claude.json")
+xdg_state_home = os.environ.get("XDG_STATE_HOME")
+skill_lock_dir = Path(xdg_state_home) / "skills" if xdg_state_home else home / ".agents"
+skill_lock = config_json(skill_lock_dir / ".skill-lock.json")
+claude_config = config_json(home / ".claude.json")
 claude_plugins = cli_json("claude", "plugin", "list", "--json")
 codex_plugins = cli_json("codex", "plugin", "list", "--json")["installed"]
 codex_servers = cli_json("codex", "mcp", "list", "--json")
 
-report("skill", {name for args in documented("npx skills add ")
-                 for name in args[args.index("--skill") + 1:]},
-       set(skill_lock.get("skills", {})), show_extra=True)
-report("skill", {"impeccable"}, {"impeccable"} if
-       (home / ".agents/skills/impeccable/SKILL.md").is_file() else set())
+expected_skills = {name for args in documented("npx skills add ")
+                   for name in args[args.index("--skill") + 1:]}
+locked_skills = set(skill_lock.get("skills", {}))
+report("skill", expected_skills, locked_skills, show_extra=True)
+
+skills_to_check = (expected_skills & locked_skills) | {"impeccable"}
+for harness, skill_dir in (("Codex", ".agents/skills"), ("Claude Code", ".claude/skills")):
+    present = {name for name in skills_to_check
+               if (home / skill_dir / name / "SKILL.md").is_file()}
+    report(f"{harness} skill", skills_to_check, present)
+
 report("Claude Code plugin", {args[0] for args in documented("claude plugin install ")},
        {p["id"] for p in claude_plugins if p["scope"] == "user" and p["enabled"]},
        show_extra=True)

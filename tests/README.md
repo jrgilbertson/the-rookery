@@ -11,8 +11,9 @@ Run the complete repository gate:
 lefthook run pre-push --force
 ```
 
-The gate runs package/catalog validation, repository text and link checks,
-secret scanning, and the fixture roster in
+The gate runs package/catalog validation, repository text and link checks
+(including heading anchors in Markdown links), secret scanning, and the
+fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
 exercise the shipped issue configuration helper and the shipped
 personal-chief-of-staff source-map sample

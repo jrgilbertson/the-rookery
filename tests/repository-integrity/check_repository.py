@@ -119,12 +119,34 @@ def check_link_scanning(repository: Path) -> None:
     document.write_text(
         '![image](target.md)\n[outer[inner](target.md)\n[](target.md)\n'
         '[empty]()\n[multiline\nlabel](target.md)\n'
-        '[titled](<target.md> "title")\n[root](/target.md#anchor)\n'
-        '[encoded](%74arget.md?query#anchor)\n'
+        '[titled](<target.md> "title")\n[root](/target.md#target)\n'
+        '[encoded](%74arget.md?query#target)\n'
         '[reference]: target.md\n', encoding="utf-8",
     )
     valid = run_checker(repository)
     require(valid.returncode == 0, f"link syntax changed: {valid.stderr}")
+
+    anchored = repository / "anchored.md"
+    anchored.write_text(
+        "# Skill `Evals` & records\n\n## Notes\n\n## Notes\n\n"
+        '<a id="custom"></a>\n\n```md\n# Fenced\n```\n\n'
+        "[same](#skill-evals--records)\n[dup](#notes-1)\n[html](#custom)\n"
+        "[cross](target.md#Target)\n",
+        encoding="utf-8",
+    )
+    anchors = run_checker(repository)
+    require(anchors.returncode == 0, f"valid heading anchors failed: {anchors.stderr}")
+    for link, shown in (
+        ("[gone](target.md#missing)", "target.md#missing"),
+        ("[fenced](#fenced)", "#fenced"),
+        ("[third](#notes-2)", "#notes-2"),
+    ):
+        anchored.write_text(f"# Anchored\n\n## Notes\n\n## Notes\n\n```md\n# Fenced\n```\n\n{link}\n", encoding="utf-8")
+        result = run_checker(repository)
+        require(result.returncode == 1 and f"anchored.md:11: broken link anchor: {shown}" in result.stderr,
+                f"broken anchor {shown} was accepted: {result.stderr}")
+    anchored.unlink()
+
     document.write_text("[empty]()\n![outer[inner](missing.md)\n", encoding="utf-8")
     broken = run_checker(repository)
     require(broken.returncode == 1 and "syntax.markdown:2: broken relative link: missing.md" in broken.stderr,

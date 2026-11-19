@@ -206,17 +206,71 @@ def inline_links(text: str):
         position = closing + 1
 
 
+MARKDOWN_SUFFIXES = frozenset({".md", ".markdown"})
+HEADING = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.*?)(?:[ \t]+#+)?[ \t]*$")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+HTML_ANCHOR = re.compile(r"""<[^>]*\b(?:id|name)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+
+
+def heading_slug(heading: str) -> str:
+    """Approximate GitHub's heading anchor: rendered text, lowercased, punctuation dropped."""
+    heading = re.sub(r"!?\[([^\]]*)\]\([^)]*\)", r"\1", heading)
+    heading = re.sub(r"<[^>]+>", "", heading)
+    heading = re.sub(r"[^\w\- ]", "", heading.strip().lower())
+    return heading.replace(" ", "-")
+
+
+def markdown_anchors(text: str) -> set[str]:
+    anchors = {match.group(1).lower() for match in HTML_ANCHOR.finditer(text)}
+    seen: dict[str, int] = {}
+    fence = None
+    for line in text.splitlines():
+        opening = FENCE.match(line)
+        if opening:
+            marker = opening.group(1)
+            if fence is None:
+                fence = marker
+            elif marker[0] == fence[0] and len(marker) >= len(fence):
+                fence = None
+            continue
+        heading = None if fence else HEADING.match(line)
+        if heading:
+            slug = heading_slug(heading.group(2))
+            count = seen.get(slug, 0)
+            seen[slug] = count + 1
+            anchors.add(slug if count == 0 else f"{slug}-{count}")
+    return anchors
+
+
 def check_links(path: Path, text: str, errors: list[str]) -> None:
-    if path.suffix.lower() not in {".md", ".markdown"}:
+    if path.suffix.lower() not in MARKDOWN_SUFFIXES:
         return
     newlines = [offset for offset, character in enumerate(text) if character == "\n"]
+    anchor_cache: dict[Path, set[str]] = {}
+
+    def check_fragment(document: Path, fragment: str, start: int, shown: str) -> None:
+        if not fragment or document.suffix.lower() not in MARKDOWN_SUFFIXES or not document.is_file():
+            return
+        if document not in anchor_cache:
+            anchor_cache[document] = markdown_anchors(
+                text if document == path.resolve() else document.read_text(encoding="utf-8", errors="replace")
+            )
+        if unquote(fragment).lower() not in anchor_cache[document]:
+            line = bisect_left(newlines, start) + 1
+            errors.append(f"{path.relative_to(ROOT)}:{line}: broken link anchor: {shown}")
+
     for start, raw_target in chain(
         inline_links(text),
         ((match.start(), match.group(1)) for match in MARKDOWN_REFERENCE.finditer(text)),
     ):
         target = link_target(raw_target)
-        if not target or target.startswith(("#", "http://", "https://", "mailto:")):
+        if not target or target.startswith(("http://", "https://", "mailto:")):
             continue
+        fragment = target.split("#", 1)[1] if "#" in target else ""
+        if target.startswith("#"):
+            check_fragment(path.resolve(), fragment, start, target)
+            continue
+        shown = target
         target = unquote(target.split("#", 1)[0].split("?", 1)[0])
         if not target or "{" in target:
             continue
@@ -232,6 +286,8 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
         if not resolved.exists():
             line = bisect_left(newlines, start) + 1
             errors.append(f"{path.relative_to(ROOT)}:{line}: broken relative link: {target}")
+            continue
+        check_fragment(resolved, fragment, start, shown)
 
 
 def rule_section(text: str) -> str | None:

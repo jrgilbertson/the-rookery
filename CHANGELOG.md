@@ -29,6 +29,9 @@ looked" surface. GitHub Releases mirror its entries.
   machine's lock file against the list.
 - Repository text checks reject concrete local home-directory paths, with
   file-scoped exceptions for reviewed portable setup examples.
+- Repository link checks verify the heading anchor in a Markdown link, so a
+  renamed heading can no longer break links like `SKILLS.md#skill-evals`
+  while the gate stays green.
 - `coordinating-work`, an optional Orca-first skill for collaboration setup and
   revive, with editable approval, task-scoped PR workers, and recovery of
   context, communication, and supervision through existing native workflows.

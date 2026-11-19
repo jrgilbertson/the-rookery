@@ -53,6 +53,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` leaves branch currency to the repository and holds
+  merges while the default branch's latest required checks are failing.
+
 - Commit run records beside synthetic skill cases so contributors can see why
   a case passed or failed. Keep real-use traces outside the public repository.
 - Renamed the installed skills inventory to `MACHINE-SETUP.md` and added

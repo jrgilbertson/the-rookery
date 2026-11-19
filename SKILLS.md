@@ -116,12 +116,17 @@ came from; one that cannot is a finding.
 
 ### Evidence rules
 
-
 - Record the exact skill revision, host, provider, inputs, and behavior
   observed for each claim.
-- Keep private logs, generated review pages, and raw run artifacts outside this
-  public repository. Any fixtures committed here must be synthetic and safe to
-  publish.
+- Run kept synthetic cases with synthetic inputs and sources. Commit each
+  run record beside its case in `tests/<skill>/cases/`. Include the model,
+  exact skill revision, pass or fail with the reason, and the transcript.
+  Read the full transcript, including tool results and session context, and
+  check that the record contains no private data before committing it.
+- Keep real-use traces, private logs, and generated review pages outside this
+  public repository. Several skills read personal data. When a real-use
+  failure qualifies as a kept case, recreate it with invented data, then
+  commit the synthetic case and its run record.
 - Use the user's approved execution and budget limits before paid runs.
 
 ## When a model changes

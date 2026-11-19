@@ -209,10 +209,10 @@ lefthook run pre-push --force
 
 [`SKILLS.md`](SKILLS.md) owns skill-validation policy. Package, helper,
 repository, and installation checks establish their specific contracts; they
-do not prove a skill's behavioral quality. Behavioral evaluation follows the
-[evaluation rules](SKILLS.md#improving-from-real-use).
+do not prove a skill's behavioral quality. Follow the
+[evidence rules](SKILLS.md#evidence-rules) to commit synthetic case run records
+and keep real-use traces, private session evidence, and generated review
+artifacts outside this public repository.
 
 [`RELEASING.md`](RELEASING.md) owns release-snapshot qualification. Ordinary
-installs follow rolling `main`; snapshots are historical checkpoints. Keep
-private session evidence and generated review artifacts outside this public
-repository.
+installs follow rolling `main`; snapshots are historical checkpoints.

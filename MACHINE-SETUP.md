@@ -54,7 +54,6 @@ into Claude Code. These commands install the plugins in user scope.
 ```bash
 claude plugin marketplace add EveryInc/compound-engineering-plugin
 claude plugin install compound-engineering@compound-engineering-plugin
-claude plugin install context7@claude-plugins-official
 claude plugin install linear@claude-plugins-official
 claude plugin install playwright@claude-plugins-official
 claude plugin install pyright-lsp@claude-plugins-official
@@ -94,7 +93,6 @@ codex mcp add gemini-docs -- uvx --from git+https://github.com/philschmid/gemini
 codex mcp add livekit-docs --url https://docs.livekit.io/mcp
 codex mcp add posthog --url https://mcp.posthog.com/mcp
 codex mcp add shadcn -- npx shadcn@latest mcp
-codex mcp add context7 -- npx -y @upstash/context7-mcp
 codex mcp add lennysdata --url https://mcp.lennysdata.com/mcp
 codex mcp add linear --url https://mcp.linear.app/mcp
 codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp

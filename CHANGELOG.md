@@ -53,6 +53,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` records and verifies the Coordinator's workspace as the
+  cross-machine parent when Orca cannot create a remote worker workspace as
+  a child.
 - `coordinating-work` leaves branch currency to the repository and holds
   merges while the default branch's latest required checks are failing.
 - `CONCEPTS.md` defines one eval vocabulary, shared with Corvly: Product Eval,

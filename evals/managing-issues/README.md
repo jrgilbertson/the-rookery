@@ -55,5 +55,7 @@ For an Eval Record, match the results' session IDs to the transcripts under
 `claude-home/projects/` and `codex-home/sessions/` in the temporary run directory.
 Read all turns, session context, calls and results, then save a reviewed transcript
 with the record. The operator supplies the final Eval Labels and reasons. Keep
-the raw results, session logs and credentials outside the repository. See the
-[runner bake-off record](records/2026-11-19-runner-bakeoff/README.md).
+the raw results, session logs and credentials outside the repository.
+
+- [Five-case Eval Record](records/2026-11-19-five-cases/README.md)
+- [Runner bake-off record](records/2026-11-19-runner-bakeoff/README.md)

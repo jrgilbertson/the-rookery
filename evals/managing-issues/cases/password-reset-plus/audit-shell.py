@@ -241,6 +241,18 @@ def has_unsafe_redirect(segment):
         if tok in {"<", "<<", "<<<", "<<-"}:
             i += 2
             continue
+        if tok == ">&":
+            target = segment[i + 1] if i + 1 < len(segment) else ""
+            if target in {"1", "2", "-", "/dev/null"}:
+                i += 2
+                continue
+            return True
+        if tok in {"&>", "&>>"}:
+            target = segment[i + 1] if i + 1 < len(segment) else ""
+            if target == "/dev/null":
+                i += 2
+                continue
+            return True
         if re.fullmatch(r"(?:[0-9]+|&)?(?:>>|>\||<>|>)(?:&[0-9]+)?", tok):
             if tok.endswith("&1") or tok.endswith("&2"):
                 i += 1
@@ -264,7 +276,9 @@ def strip_redirections(segment):
     i = 0
     while i < len(segment):
         tok = segment[i]
-        if tok in {"<", "<<", "<<<", "<<-"} or re.fullmatch(r"(?:[0-9]+|&)?(?:>>|>\||<>|>)", tok):
+        if tok in {"<", "<<", "<<<", "<<-", ">&", "&>", "&>>"} or re.fullmatch(
+            r"(?:[0-9]+|&)?(?:>>|>\||<>|>)", tok
+        ):
             i += 2
             continue
         if re.fullmatch(r"(?:[0-9]+|&)?(?:>>|>\||<>|>).*", tok):
@@ -511,11 +525,94 @@ def is_write_segment(segment, heredoc_bodies):
     return False
 
 
+def extract_command_substitutions(script):
+    """Extract executable $(...) and `...` bodies outside single quotes, or None if malformed."""
+    subs = []
+    n = len(script)
+    i = 0
+    in_single = False
+    in_double = False
+    while i < n:
+        ch = script[i]
+        if in_single:
+            if ch == "'":
+                in_single = False
+            i += 1
+            continue
+        if ch == "\\" and i + 1 < n:
+            i += 2
+            continue
+        if not in_double and ch == "'":
+            in_single = True
+            i += 1
+            continue
+        if ch == '"':
+            in_double = not in_double
+            i += 1
+            continue
+        if ch == "$" and i + 1 < n and script[i + 1] == "(":
+            if i + 2 < n and script[i + 2] == "(":
+                # Arithmetic expansion $(( ... )): skip over it.
+                i += 3
+                continue
+            start = i + 2
+            depth = 1
+            j = start
+            sub_single = False
+            sub_double = False
+            while j < n and depth > 0:
+                c = script[j]
+                if sub_single:
+                    if c == "'":
+                        sub_single = False
+                    j += 1
+                    continue
+                if c == "\\" and j + 1 < n:
+                    j += 2
+                    continue
+                if not sub_double and c == "'":
+                    sub_single = True
+                elif c == '"':
+                    sub_double = not sub_double
+                elif not sub_double:
+                    if c == "(":
+                        depth += 1
+                    elif c == ")":
+                        depth -= 1
+                j += 1
+            if depth != 0:
+                return None
+            subs.append(script[start : j - 1])
+            i = j
+            continue
+        if ch == "`":
+            start = i + 1
+            j = start
+            while j < n and script[j] != "`":
+                if script[j] == "\\" and j + 1 < n:
+                    j += 2
+                    continue
+                j += 1
+            if j >= n:
+                return None
+            subs.append(script[start:j])
+            i = j + 1
+            continue
+        i += 1
+    return subs
+
+
 def read_only_shell(command):
     script = unwrap_shell(command)
     if script is None:
         return False
     cleaned, heredoc_bodies = extract_heredocs(script)
+    subs = extract_command_substitutions(cleaned)
+    if subs is None:
+        return False
+    for sub in subs:
+        if not read_only_shell(sub):
+            return False
     try:
         tokens = tokenize_script(cleaned)
     except ValueError:

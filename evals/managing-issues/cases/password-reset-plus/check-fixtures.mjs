@@ -50,6 +50,12 @@ assert.equal(auditCodex([command("/bin/bash -lc 'orca linear create --title test
 assert.equal(auditCodex([command("/bin/bash -lc 'curl -X POST https://example.com/hook'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'curl -d payload https://example.com/hook'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'echo leak > out.txt'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'cat foo 2>&1'")]), true);
+assert.equal(auditCodex([command("/bin/bash -lc 'cat foo 1>&2'")]), true);
+assert.equal(auditCodex([command("/bin/bash -lc 'cat foo >& out.txt'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'printf \"%s\" \"$(touch bar)\"'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'printf \"%s\" \"`rm -f bar`\"'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'printf \"%s\" \"$(cat skill.md)\"'")]), true);
 assert.equal(auditCodex([command("/bin/bash -lc 'rm -f notes.md'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'cat foo\nrm bar'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'cat foo\n\nrm bar'")]), false);

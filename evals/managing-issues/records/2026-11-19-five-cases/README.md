@@ -11,7 +11,7 @@
   After this run, `file-both-single` and `recurring-gap` were removed because
   they cannot be tested without a connected tracker; the updated three-case set
   SHA-256 for future runs is
-  `88a6fee11a34964166f93da3a6c4fccaf7efc428aaf7c2339db20c8ccf606d26`. From the
+  `1ae69f8de36dd51eb58827519ee482818f75a214f6e98129c9a0bca9afc0d10e`. From the
   Skill Eval directory, reproduce it with
   `{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs; } | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum`.
 - **Baseline** Fresh Claude sessions without the `managing-issues` package,

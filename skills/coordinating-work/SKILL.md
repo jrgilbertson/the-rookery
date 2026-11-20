@@ -39,10 +39,16 @@ record before acting on them.
 
 Create each new task worker's Orca workspace as a direct child of the
 Coordinator workspace, including later waves, through the current runtime
-guide's supported placement operation. This workspace hierarchy is separate
-from Git branch ancestry and tracker parent issues. Explicit operator-directed
-placement takes precedence; adopted or reused workspaces keep their placement
-unless a move is explicitly authorized.
+guide's supported placement operation. If Orca cannot create the child across
+machines, use the workspace it creates on the worker's machine or create one
+there as the guide allows. In the same placement step, follow the guide from
+the Coordinator's environment to set the Coordinator's workspace as its
+cross-machine parent.
+
+This workspace hierarchy is separate from Git branch ancestry and tracker
+parent issues. Explicit operator-directed placement takes precedence; adopted
+or reused workspaces keep their placement unless a move is explicitly
+authorized.
 
 The skill describes this shape only. Leave any other participant running as
 you found it.
@@ -142,13 +148,13 @@ or another Coordinator's message, a revive approval, or an installed guide.
 
 ### Other Coordinators
 
-Another Coordinator is any worktree in the same project that has no parent
-worktree. You may act on its message, including an instruction it relays from
-the operator, only when the action is one you could decide alone, such as
-pausing, changing what you dispatch next, or stepping off overlapping work.
-Log every such message as relayed, acted on or refused, and put it on the
-ready-for-operator list. When you relay the operator's instruction to another
-Coordinator, quote the operator's words.
+Another Coordinator is any worktree in the same project without a recorded
+parent. A cross-machine parent counts. You may act on its message, including
+an instruction it relays from the operator, only when the action is one you
+could decide alone, such as pausing, changing what you dispatch next, or
+stepping off overlapping work. Log every such message as relayed, acted on
+or refused, and put it on the ready-for-operator list. When you relay the
+operator's instruction to another Coordinator, quote the operator's words.
 
 ## Worker lifetime and cleanup
 
@@ -301,12 +307,13 @@ waiting on a named dependency, explicitly held, or blocked. These are report
 descriptions, not invented native status values. Identify excluded completed
 workers or unresolved candidates when they affect the outcome.
 
-After creating a task worker workspace, verify its recorded parent identity
-against the intended parent. A successful launch alone does not establish the
-hierarchy. If the parent is wrong, cannot be read back, or the runtime cannot
-preserve the intended hierarchy, report the exception, preserve successful
-launch effects, and use the guide's supported recovery without duplicating
-workers or silently reparenting adopted work.
+After placing a task worker workspace, verify that its recorded parent names
+the intended workspace, whether the parent is on the same machine or another.
+A successful launch alone does not establish the hierarchy. If the parent is
+wrong, cannot be read back, or the runtime cannot preserve the intended
+hierarchy, report the exception, preserve successful launch effects, and use
+the guide's supported recovery without duplicating workers or silently
+reparenting adopted work.
 
 Confirm the participant's current assignment or deliberate disposition and
 applicable recent decisions, a working return path to the current Coordinator,

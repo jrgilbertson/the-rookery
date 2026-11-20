@@ -11,7 +11,7 @@
   After this run, `file-both-single` and `recurring-gap` were removed because
   they cannot be tested without a connected tracker; the updated three-case set
   SHA-256 for future runs is
-  `1ae69f8de36dd51eb58827519ee482818f75a214f6e98129c9a0bca9afc0d10e`. From the
+  `314fba0c05c1a6d6638f4fa9b68a41e7684d559ed956f54ccdf8cb59a268c914`. From the
   Skill Eval directory, reproduce it with
   `{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs; } | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum`.
 - **Baseline** Fresh Claude sessions without the `managing-issues` package,
@@ -62,10 +62,15 @@ request in the matrix crossed the long-context threshold.
   score check misses. In the export case, replaying the one-section check
   with inline bold headings allowed recognized one Problem section in the
   Codex output. The shared section check still requires separate headings.
-- **The tool audit accepts a small set of reads.** Codex used commands outside
-  that set, including tool discovery, chained reads, and Python probes. The
-  transcripts show no tracker writes. The export run's in-memory CSV example
-  is visible in its transcript for the operator to assess.
+- **The tool check now verifies Codex sandbox enforcement instead of parsing
+  shell text.** During this run, the original narrow shell allowlist flagged
+  Codex for tool discovery, chained reads, and Python probes even though the
+  transcripts show no tracker writes. After this run, the shell parser was
+  removed; the Codex check now asserts the run's recorded sandbox settings
+  (`sandbox_mode` read-only or restricted read/deny filesystem permissions,
+  command networking disabled, and `approval_policy` `never`) alongside the
+  recorded Bubblewrap sandbox probe. The export run's in-memory CSV example is
+  visible in its transcript for the operator to assess.
 - **The mention check finds the identifier.** The operator can check whether
   the preview explicitly says Linear will add a related link. The create
   cases likewise need human review of approval, coverage, and any reasons

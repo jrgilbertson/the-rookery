@@ -13,7 +13,7 @@ and applying a batch are outside the run.
 - [A Linear issue mention](cases/mention-link/README.md)
 
 The current three-case set SHA-256 is
-`1ae69f8de36dd51eb58827519ee482818f75a214f6e98129c9a0bca9afc0d10e`. From this
+`314fba0c05c1a6d6638f4fa9b68a41e7684d559ed956f54ccdf8cb59a268c914`. From this
 directory, reproduce it with
 `{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs; } | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum`.
 
@@ -48,9 +48,12 @@ three issue sections (Markdown or inline bold headings), four numeric leverage
 scores (tables, lists, or prose), and the recorded tool calls. The Linear
 mention case also checks for the incident identifier in the response. Each
 case's README lists what the operator should judge by reading the response and
-transcript. The Claude tool audit enforces a read-only allowlist. The Codex
-command audit fails only calls or commands that could perform a tracker,
-network, or file write or deletion. A failed assertion can make Promptfoo exit
+transcript. The Claude tool audit enforces a read-only allowlist. The Codex tool check
+asserts the run's sandbox settings (`sandbox_mode` read-only or restricted
+read/deny filesystem permissions, command networking disabled, and
+`approval_policy` set to `never`) from the provider config or recorded run
+context, and rejects non-shell tool items rather than parsing shell text. A
+failed assertion can make Promptfoo exit
 100 even when the agent finished and the output was written. To exercise the
 checks offline—including replay checks over the recorded transcripts—run
 `node evals/managing-issues/cases/password-reset-plus/check-fixtures.mjs`.

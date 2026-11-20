@@ -56,6 +56,7 @@ module.exports = {
         model_reasoning_effort: 'high',
         working_dir: `${workspace}/codex-skill`,
         skip_git_repo_check: true,
+        sandbox_mode: 'read-only',
         approval_policy: 'never',
         network_access_enabled: false,
         web_search_mode: 'disabled',

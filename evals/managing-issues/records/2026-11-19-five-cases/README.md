@@ -19,8 +19,8 @@
 - **Model and effort** Both Claude arms used `claude-opus-5-5` at medium
   effort. The Codex arm used `gpt-6.2-sol` at high effort. The session
   metadata confirmed both settings. The owner supplied the final labels below.
-  An LLM judge (`claude-opus-5-5`) had labeled the outputs first, and the
-  owner and the judge agree on all nine kept outputs.
+  An LLM judge (`claude-opus-5-5`) also labeled the outputs, and the owner and
+  the judge agree on all nine kept outputs.
 - **Runner** Promptfoo 0.126.0 with `anthropic:claude-agent-sdk` 0.3.329
   and `openai:codex-sdk` 0.169.1. The provider sessions reported Claude
   Code 2.1.329 and Codex CLI 0.169.1.
@@ -103,9 +103,8 @@ expected to be unresolved.
 
 The owner asked for an LLM judge pass before labeling, to check that the cases
 made sense. The judge (`claude-opus-5-5`, the Team lead) read each final output
-and its tool calls against the case README. Its verdicts were summarized to the
-owner before the owner labeled, so these labels were not made blind to the
-judge. The owner and the judge agree on all nine.
+and its tool calls against the case README. The owner labeled without seeing
+the judge's verdicts. The owner and the judge agree on all nine.
 
 | Output | Label | Labeler | Reason |
 | --- | --- | --- | --- |

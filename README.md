@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-![The Rookery banner showing Huginn returning with a field dispatch to a blueprint workspace](docs/assets/the-rookery-readme-banner.webp)
+![The Rookery banner showing Huginn coming home to a treetop rookery with a sealed field note](docs/assets/the-rookery-readme-banner.webp)
 
 # The Rookery
 
@@ -8,7 +8,7 @@ A field guide to how I build with AI. It connects a practical workflow for resea
 
 A rookery is where corvids gather to nest. This one is named for Odin's ravens, Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
-![Huginn brings one more field note while Muninn makes room in an overflowing notebook. Huginn is thought; Muninn is memory.](docs/assets/huginn-and-muninn.svg)
+![Huginn waits with one more field note while Muninn pulls open a drawer in an overstuffed card cabinet to make room. Huginn is thought; Muninn is memory.](docs/assets/huginn-and-muninn.svg)
 
 ## Guiding principles
 

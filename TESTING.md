@@ -147,7 +147,7 @@ prompts, schedules, and setup instructions.
 
 ## Where safeguards belong
 
-![Muninn flies in with a learned check for the testing layer of an exploded environment, above permissions and sandboxing and beneath path-scoped rules, skills, and prose instructions](docs/assets/testing-safeguards.svg)
+![Muninn lands with a learned check for the testing layer of an exploded environment, above permissions and sandboxing and beneath path-scoped rules, skills, and prose instructions](docs/assets/testing-safeguards.svg)
 
 The [Maintain durability ladder](WORKFLOWS.md#maintain) describes the homes
 for repository learning. First fix the underlying cause within the agreed

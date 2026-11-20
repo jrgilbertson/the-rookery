@@ -18,9 +18,9 @@
   with the same requests and tracker fixtures as the treatment arms.
 - **Model and effort** Both Claude arms used `claude-opus-5-5` at medium
   effort. The Codex arm used `gpt-6.2-sol` at high effort. The session
-  metadata confirmed both settings. The owner supplied the final labels below,
-  and an LLM judge (`claude-opus-5-5`) independently reached the same labels on
-  all nine kept outputs.
+  metadata confirmed both settings. The owner supplied the final labels below.
+  An LLM judge (`claude-opus-5-5`) had labeled the outputs first, and the
+  owner and the judge agree on all nine kept outputs.
 - **Runner** Promptfoo 0.126.0 with `anthropic:claude-agent-sdk` 0.3.329
   and `openai:codex-sdk` 0.169.1. The provider sessions reported Claude
   Code 2.1.329 and Codex CLI 0.169.1.
@@ -99,9 +99,13 @@ vendor boilerplate, and runner logs stayed in the private run directory.
 ## Eval Labels
 
 The run had no Linear or GitHub connection, so sign-in and target checks were
-expected to be unresolved. An LLM judge (`claude-opus-5-5`, the Team lead,
-reading each final output and its tool calls against the case README) reached
-the same label on all 9 before the owner's labels were compared.
+expected to be unresolved.
+
+The owner asked for an LLM judge pass before labeling, to check that the cases
+made sense. The judge (`claude-opus-5-5`, the Team lead) read each final output
+and its tool calls against the case README. Its verdicts were summarized to the
+owner before the owner labeled, so these labels were not made blind to the
+judge. The owner and the judge agree on all nine.
 
 | Output | Label | Labeler | Reason |
 | --- | --- | --- | --- |
@@ -114,3 +118,7 @@ the same label on all 9 before the owner's labels were compared.
 | [mention-link-claude-skill](mention-link-claude-skill.json) | Pass | owner | All right, looks good. Captured the sections, the scores appears to be read-only, and the STORE-412 is named. |
 | [mention-link-claude-baseline](mention-link-claude-baseline.json) | Fail | owner | It did not capture the sections or the scores, but it did reference the store. |
 | [mention-link-codex-skill](mention-link-codex-skill.json) | Pass | owner | This passed because it has the sections, it has the scores, although the scores aren't in a format that seems like are readable for you. It does mention the STORE-412, and it does appear to be read-only, so I'm curious why LLM as judge thought it would think it's a failure there. |
+
+Where a reason mentions the "LLM judge" finding a score or read-only failure,
+it refers to the code-check results shown on the review page, not to the
+judge. The fixed checks now pass those outputs.

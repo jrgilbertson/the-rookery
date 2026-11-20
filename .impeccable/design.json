@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-13T23:21:12Z",
+  "generatedAt": "2026-11-20T21:46:18Z",
   "title": "Design System: The Rookery",
   "extensions": {
     "colorMeta": {
@@ -44,6 +44,20 @@
           "oklch(70% 0.02 253)",
           "oklch(83% 0.02 253)",
           "oklch(95% 0.02 253)"
+        ]
+      },
+      "chalk-paper": {
+        "role": "neutral",
+        "displayName": "Chalk Paper",
+        "tonalRamp": [
+          "oklch(15% 0.005 265)",
+          "oklch(25% 0.005 265)",
+          "oklch(35% 0.005 265)",
+          "oklch(45% 0.005 265)",
+          "oklch(58% 0.005 265)",
+          "oklch(70% 0.005 265)",
+          "oklch(83% 0.005 265)",
+          "oklch(95% 0.005 265)"
         ]
       },
       "drafting-graphite": {
@@ -93,7 +107,7 @@
   "components": [],
   "narrative": {
     "northStar": "The Returning Field Dispatch",
-    "overview": "The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should make the technical system clear while retaining the warmth and memory of a hand-kept field guide.\n\nEvery illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms make sequence, observation, and return causally legible, while one restrained orange signal marks the intervention, dispatch, or return that matters most. The exact scene may change across repository-owned explanatory visuals, but the world remains one connected system in which evidence moves forward and distinct forms of feedback make future work more useful.",
+    "overview": "The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should make the technical system clear while retaining the warmth and memory of a hand-kept field guide.\n\nEvery illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms show the order of work, where observation happens, and how feedback returns. One restrained orange signal marks the intervention, dispatch, or return that matters most. Scenes may change across repository-owned explanatory visuals. Each should show the same connected system, with evidence moving forward and distinct feedback paths improving future work.",
     "keyCharacteristics": [
       "Cool drafting paper with faint grain, registration marks, and construction geometry.",
       "Natural-history corvid engraving paired with graphite field mechanisms.",
@@ -113,6 +127,11 @@
         "section": "colors"
       },
       {
+        "name": "The Two Papers Rule",
+        "body": "Mist Paper carries a scene; Chalk Paper carries data. A figure whose job is to be read, not looked at, goes on Chalk. Text inks must reach 4.5:1 on their paper, and Drafting Graphite does on both.",
+        "section": "colors"
+      },
+      {
         "name": "The Printed-In Rule",
         "body": "Lettering must share the illustration's ink hierarchy and perspective while remaining real typography; never ask the raster artwork layer to render essential copy.",
         "section": "typography"
@@ -129,7 +148,7 @@
       },
       {
         "name": "The Causal System Rule",
-        "body": "Show the five delivery jobs as an ordered sequence and each feedback process as its own path to the stages or input it changes. Never force distinct currents into a false serial loop, and never flatten the system into repeated equal containers.",
+        "body": "Show the five delivery jobs as an ordered sequence and each feedback process as its own path to the stages or input it changes. Never force distinct feedback loops into a false serial sequence, and never flatten the system into repeated equal containers.",
         "section": "layout"
       },
       {
@@ -149,16 +168,16 @@
       }
     ],
     "dos": [
-      "Do give Huginn or Muninn a load-bearing action such as carrying a dispatch, operating a mechanism, inspecting a handoff, or returning a signal.",
+      "Do give Huginn or Muninn an action essential to the explanation, such as carrying a dispatch, operating a mechanism, inspecting a handoff, or returning a signal.",
       "Do use Route Cobalt and shape or direction together, so paths remain understandable without color.",
-      "Do distinguish the Delivery Sequence, Repository Memory Current, and Personal Learning Current by position, labels, direction, and mechanism as well as color.",
+      "Do distinguish the Delivery Sequence, Repository Learning Loop, and Personal Learning Loop by position, labels, direction, and mechanism as well as color.",
       "Do keep Signal Orange scarce and attach it to one meaningful intervention or return.",
       "Do preserve calm negative space and a strong silhouette before adding paper grain, coordinates, hatching, or registration marks.",
       "Do write meaningful alt text that states the mechanism, sequence, and return represented by the image."
     ],
     "donts": [
       "Don't turn the workflow into a generic equal-card flowchart or consulting-deck diagram.",
-      "Don't present Research, Plan, Design, Build, Ship, Maintain, and Learn as one seven-step serial loop; Maintain and Learn are distinct feedback currents with different destinations.",
+      "Don't present Research, Plan, Design, Build, Ship, Maintain, and Learn as one seven-step serial loop; Maintain and Learn are distinct feedback loops with different destinations.",
       "Don't reuse the unfolded field map as the default composition for unrelated visuals.",
       "Don't pose a raven beside an idea it is not performing; removing the bird should break the explanation.",
       "Don't use broad orange fills, multiple competing accents, glossy gradients, or interface-style shadows.",

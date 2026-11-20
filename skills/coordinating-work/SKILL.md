@@ -230,9 +230,8 @@ belongs in a brief only when that condition holds for the assignment.
   session, so `lfg` runs as it does with no human present. The worker contacts
   the Team lead, never a user, only at merge-ready and where `lfg` or
   `ce-babysit-pr` would stop or park for a human, including a check it could
-  not fix; it reports that item at once, in full. Everything else it decides:
-  it takes the most reversible choice closest to the issue's intent, keeps
-  going, and declares the choice in the pull request body.
+  not fix; it reports that item at once, in full. Otherwise it keeps going
+  and declares its choices in the pull request body.
 - **The issue's Verification.** The worker treats each criterion as a
   requirement of the work source `lfg` uses. Before asking to merge, the pull
   request body lists the evidence beside each criterion and declares each
@@ -264,13 +263,10 @@ belongs in a brief only when that condition holds for the assignment.
 - **How to wait.** The worker waits on its watch the way `ce-babysit-pr`
   says, and continues to the next step of its assignment when a helper skill
   returns.
-- **Verification currency.** Before each run of the repository's verification
-  gate, bring in the default branch's merged fixes only as the repository's
-  merge policy allows, so verification tests those fixes. For example, rebase
-  an unpushed branch; merge into a pushed branch only when the policy permits.
-  After merging the base into an open pull request itself, the
-  worker takes a fresh watch report on that head and says in its question that
-  the base merge was its own.
+- **Verification currency.** On an unpushed branch, bring in the default
+  branch's merged fixes, as the repository's merge policy allows, before
+  running the repository's verification gate. Once a pull request is open, leave
+  branch currency to `ce-babysit-pr` and the repository's merge rules.
 
 Once an assignment is dispatched, its brief is fixed. Only the Team lead
 changes it, by appending a dated amendment that names what it supersedes and

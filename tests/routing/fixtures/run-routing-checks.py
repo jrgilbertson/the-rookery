@@ -518,8 +518,6 @@ def check_charts() -> None:
     failures.extend(page_alt_text_problems())
     failures.extend(recommendation_drift(REPO_ROOT / "docs" / "routing"))
 
-    # The drift gate must catch a pick whose effort or model no longer matches the method,
-    # and must let a pick marked as judgment differ.
     with tempfile.TemporaryDirectory() as tmp:
         data = Path(tmp) / "routing"
         shutil.copytree(REPO_ROOT / "docs" / "routing", data)

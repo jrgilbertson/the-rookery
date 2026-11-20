@@ -70,6 +70,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `GLOBAL-AGENTS.md` shapes the 3P update: each bullet opens with its key
   takeaway in bold, each section holds at most three bullets, and each
   problem names what would unblock it and the decision the owner must make.
+- `CONCEPTS.md` widens Product Eval to cover a whole conversation, such as a
+  live voice practice session, as well as a single reply, matching Corvly.
 
 ### Removed
 

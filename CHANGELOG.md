@@ -114,8 +114,10 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` calls its lead session the Team lead instead of the
   Coordinator, and says up front that the Team lead is accountable for the
   quality and output of every worker. When a worker's output falls short, the
-  Team lead amends the brief, reassigns the work, or does it itself. Orca's
-  "coordinator" and older records that say Coordinator mean the same session.
+  Team lead amends the brief, reassigns the work, or does it itself, once,
+  before holding. When it does the work itself, it runs the merge-ready watch
+  on the new head. Orca's "coordinator" and older records that say
+  Coordinator mean the same session.
 
 ### Removed
 

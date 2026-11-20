@@ -61,8 +61,23 @@ $0.95.
 
 ## Eval Labels
 
-**Pending operator review for all six outputs.** The table records deterministic
-observations. There are no final pass/fail labels, reasons, or labelers yet.
+The repository owner labeled all six outputs on 2026-11-19 PST in a local
+review page that showed each transcript beside the harness's code checks. No
+model judge was used.
+
+| Output | Label | Reason |
+| --- | --- | --- |
+| [Promptfoo Claude with skill](promptfoo-claude-with-skill.json) | Pass | Has Problem, Scope and Verification with observable checks, shows all four leverage scores, and wrote nothing to a tracker. (wording proposed by the Coordinator and approved by the owner) |
+| [Promptfoo Claude Baseline](promptfoo-claude-baseline.json) | Fail | It failed because it doesn't have a problem scope verification sections along with the leverage scores. Nor does it appear to have been invoked. |
+| [Promptfoo Codex with skill](promptfoo-codex-with-skill.json) | Fail | It doesn't show the leverage scores and other metadata that's expected for the managing issues. |
+| [Native Claude with skill](native-claude-with-skill.json) | Pass | Has Problem, Scope and Verification with observable checks, shows all four leverage scores, and wrote nothing to a tracker. (wording proposed by the Coordinator and approved by the owner) |
+| [Native Claude Baseline](native-claude-baseline.json) | Fail | It failed because it doesn't have a problem scope verification sections along with the leverage scores. Nor does it appear to have been invoked. (the owner's reason for the Promptfoo run of this arm, applied with the owner's approval) |
+| [Native Codex with skill](native-codex-with-skill.json) | Fail | It doesn't show the leverage scores and other metadata that's expected for the managing issues. (the owner's reason for the Promptfoo run of this arm, applied with the owner's approval) |
+
+Both Claude runs with the skill pass, and both Baselines fail, so the skill
+changes the result on Claude. Both Codex runs invoked the skill and wrote the
+three sections but left out the four leverage scores, so they fail. The
+runner made no difference to any label.
 
 The linked transcripts have the user requests, assistant messages, tool
 arguments and results, and relevant session context. Temporary paths and one

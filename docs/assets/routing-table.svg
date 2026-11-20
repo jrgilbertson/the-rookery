@@ -16,7 +16,7 @@
 <rect x="526.7" y="168.0" width="4" height="56.0" rx="2" fill="#C15F3C"/>
 <text x="542.7" y="190.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Claude Fable 5.2</text>
 <text x="542.7" y="217.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Medium effort · Anthropic</text>
-<rect x="843.3" y="168.0" width="4" height="56.0" rx="2" fill="#10A37F"/>
+<rect x="843.3" y="168.0" width="4" height="56.0" rx="2" fill="#0E8F6E"/>
 <text x="859.3" y="190.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Astra</text>
 <text x="859.3" y="217.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Xhigh effort · OpenAI</text>
 <line x1="40" x2="1160" y1="242.0" y2="242.0" stroke="#47577A" stroke-opacity=".3"/>
@@ -24,7 +24,7 @@
 <rect x="210.0" y="260.0" width="4" height="56.0" rx="2" fill="#C15F3C"/>
 <text x="226.0" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Claude Opus 5.5 *</text>
 <text x="226.0" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Anthropic</text>
-<rect x="526.7" y="260.0" width="4" height="56.0" rx="2" fill="#10A37F"/>
+<rect x="526.7" y="260.0" width="4" height="56.0" rx="2" fill="#0E8F6E"/>
 <text x="542.7" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Sol</text>
 <text x="542.7" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Medium effort · OpenAI</text>
 <rect x="843.3" y="260.0" width="4" height="56.0" rx="2" fill="#2F6FDB"/>
@@ -38,7 +38,7 @@
 <rect x="526.7" y="352.0" width="4" height="56.0" rx="2" fill="#2F6FDB"/>
 <text x="542.7" y="374.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Gemini 4 Carbon</text>
 <text x="542.7" y="401.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Google</text>
-<rect x="843.3" y="352.0" width="4" height="56.0" rx="2" fill="#10A37F"/>
+<rect x="843.3" y="352.0" width="4" height="56.0" rx="2" fill="#0E8F6E"/>
 <text x="859.3" y="374.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Astra</text>
 <text x="859.3" y="401.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Xhigh effort · OpenAI</text>
 <line x1="40" x2="1160" y1="426.0" y2="426.0" stroke="#47577A" stroke-opacity=".3"/>
@@ -49,7 +49,7 @@
 <rect x="526.7" y="444.0" width="4" height="56.0" rx="2" fill="#2F6FDB"/>
 <text x="542.7" y="466.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Gemini 4 Neon *</text>
 <text x="542.7" y="493.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Google</text>
-<rect x="843.3" y="444.0" width="4" height="56.0" rx="2" fill="#10A37F"/>
+<rect x="843.3" y="444.0" width="4" height="56.0" rx="2" fill="#0E8F6E"/>
 <text x="859.3" y="466.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Astra</text>
 <text x="859.3" y="493.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Xhigh effort · OpenAI</text>
 <line x1="40" x2="1160" y1="518.0" y2="518.0" stroke="#47577A" stroke-opacity=".3"/>

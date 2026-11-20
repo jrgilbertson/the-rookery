@@ -108,9 +108,9 @@
 <line x1="662.0" x2="1042.0" y1="180.6" y2="180.6" stroke="#47577A" stroke-opacity=".16"/>
 <text x="654.0" y="184.6" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A" text-anchor="end">50</text>
 <rect x="662.0" y="164.0" width="380.0" height="228.0" fill="none" stroke="#47577A" stroke-opacity=".45"/>
-<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-linecap="round"/>
+<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-linecap="round"/>
 <text x="694.0" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Astra</text>
-<line x1="799.4" x2="825.4" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
+<line x1="799.4" x2="825.4" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
 <text x="831.4" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Sol</text>
 <polyline class="context" data-model="Fable 5.2" points="814.5,253.7 826.5,236.2 897.4,199.3 950.5,179.7 1032.2,189.4" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Opus 5.5" points="725.1,354.8 783.6,272.6 808.9,248.7 863.0,206.8 927.4,193.8" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
@@ -119,22 +119,22 @@
 <polyline class="context" data-model="Gemini 4 Hydrogen" points="671.8,376.3 738.5,288.6 808.3,238.9 859.8,235.8" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Gemini 4 Argon" points="844.2,317.3 869.6,307.3 879.3,291.5" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Grok 4.7" points="842.3,324.0 894.1,299.2 917.1,296.9 935.5,285.2" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="knee-halo" cx="810.2" cy="219.3" r="11" fill="#10A37F" fill-opacity=".14"/>
-<circle class="knee-halo" cx="736.5" cy="231.6" r="11" fill="#10A37F" fill-opacity=".14"/>
-<polyline class="series" data-model="GPT-6.2 Astra" data-suites="1" points="770.6,239.7 810.2,219.3 843.7,212.5 849.5,209.8 873.0,209.4" fill="none" stroke="#10A37F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="point" data-effort="low" data-x="770.6" data-y="239.7" cx="770.6" cy="239.7" r="4.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="medium" data-x="810.2" data-y="219.3" points="806.0,215.1 814.4,215.1 814.4,223.5 806.0,223.5" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="high" data-x="843.7" data-y="212.5" points="843.7,206.9 849.1,216.5 838.3,216.5" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="xhigh" data-x="849.5" data-y="209.8" points="849.5,203.8 854.7,209.8 849.5,215.8 844.3,209.8" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="max" data-x="873.0" data-y="209.4" points="873.0,202.4 874.8,206.9 879.7,207.2 876.0,210.4 877.1,215.1 873.0,212.5 868.9,215.1 870.1,210.4 866.3,207.2 871.2,206.9" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="681.1,264.2 719.0,238.7 736.5,231.6 744.5,231.3 763.9,211.5" fill="none" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="point" data-effort="low" data-x="681.1" data-y="264.2" cx="681.1" cy="264.2" r="4.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="medium" data-x="719.0" data-y="238.7" points="714.8,234.5 723.2,234.5 723.2,242.9 714.8,242.9" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="high" data-x="736.5" data-y="231.6" points="736.5,226.0 741.9,235.6 731.1,235.6" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="xhigh" data-x="744.5" data-y="231.3" points="744.5,225.3 749.7,231.3 744.5,237.3 739.3,231.3" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="max" data-x="763.9" data-y="211.5" points="763.9,204.5 765.7,209.0 770.5,209.4 766.8,212.5 768.0,217.2 763.9,214.6 759.8,217.2 760.9,212.5 757.2,209.4 762.1,209.0" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<circle class="knee" data-model="GPT-6.2 Astra" cx="810.2" cy="219.3" r="11" fill="none" stroke="#10A37F" stroke-width="1"/>
-<circle class="knee" data-model="GPT-6.2 Sol" cx="736.5" cy="231.6" r="11" fill="none" stroke="#10A37F" stroke-width="1"/>
+<circle class="knee-halo" cx="810.2" cy="219.3" r="11" fill="#0E8F6E" fill-opacity=".14"/>
+<circle class="knee-halo" cx="736.5" cy="231.6" r="11" fill="#0E8F6E" fill-opacity=".14"/>
+<polyline class="series" data-model="GPT-6.2 Astra" data-suites="1" points="770.6,239.7 810.2,219.3 843.7,212.5 849.5,209.8 873.0,209.4" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle class="point" data-effort="low" data-x="770.6" data-y="239.7" cx="770.6" cy="239.7" r="4.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="medium" data-x="810.2" data-y="219.3" points="806.0,215.1 814.4,215.1 814.4,223.5 806.0,223.5" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="high" data-x="843.7" data-y="212.5" points="843.7,206.9 849.1,216.5 838.3,216.5" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="xhigh" data-x="849.5" data-y="209.8" points="849.5,203.8 854.7,209.8 849.5,215.8 844.3,209.8" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="max" data-x="873.0" data-y="209.4" points="873.0,202.4 874.8,206.9 879.7,207.2 876.0,210.4 877.1,215.1 873.0,212.5 868.9,215.1 870.1,210.4 866.3,207.2 871.2,206.9" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="681.1,264.2 719.0,238.7 736.5,231.6 744.5,231.3 763.9,211.5" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle class="point" data-effort="low" data-x="681.1" data-y="264.2" cx="681.1" cy="264.2" r="4.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="medium" data-x="719.0" data-y="238.7" points="714.8,234.5 723.2,234.5 723.2,242.9 714.8,242.9" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="high" data-x="736.5" data-y="231.6" points="736.5,226.0 741.9,235.6 731.1,235.6" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="xhigh" data-x="744.5" data-y="231.3" points="744.5,225.3 749.7,231.3 744.5,237.3 739.3,231.3" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="max" data-x="763.9" data-y="211.5" points="763.9,204.5 765.7,209.0 770.5,209.4 766.8,212.5 768.0,217.2 763.9,214.6 759.8,217.2 760.9,212.5 757.2,209.4 762.1,209.0" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<circle class="knee" data-model="GPT-6.2 Astra" cx="810.2" cy="219.3" r="11" fill="none" stroke="#0E8F6E" stroke-width="1"/>
+<circle class="knee" data-model="GPT-6.2 Sol" cx="736.5" cy="231.6" r="11" fill="none" stroke="#0E8F6E" stroke-width="1"/>
 <text x="887.0" y="213.7" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="600" class="line-label">GPT-6.2 Astra</text>
 <text x="751.7" y="208.9" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="end" font-weight="600" class="line-label">GPT-6.2 Sol</text>
 </g>
@@ -341,18 +341,18 @@
 <text x="654.0" y="162.7" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A" text-anchor="end">94</text>
 <rect x="662.0" y="146.0" width="380.0" height="246.0" fill="none" stroke="#47577A" stroke-opacity=".45"/>
 <text x="852.0" y="430.0" font-family="Baskerville,Georgia,serif" font-size="13" fill="#47577A" text-anchor="middle">Cost per task, log scale</text>
-<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
+<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
 <text x="694.0" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Sol</text>
 <polyline class="context" data-model="Fable 5.2" points="859.3,217.6 859.0,208.3 905.9,193.8 957.3,180.0 1029.3,163.0" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Opus 5.5" points="857.8,375.0 905.4,247.6 918.4,240.5 939.5,252.7 1009.1,265.7" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="knee-halo" cx="674.7" cy="316.1" r="11" fill="#10A37F" fill-opacity=".14"/>
-<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="674.7,316.1 705.5,302.0 726.0,304.3 737.2,300.0 753.8,307.6" fill="none" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="point" data-effort="low" data-x="674.7" data-y="316.1" cx="674.7" cy="316.1" r="4.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="medium" data-x="705.5" data-y="302.0" points="701.3,297.8 709.7,297.8 709.7,306.2 701.3,306.2" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="high" data-x="726.0" data-y="304.3" points="726.0,298.7 731.4,308.3 720.6,308.3" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="xhigh" data-x="737.2" data-y="300.0" points="737.2,294.0 742.4,300.0 737.2,306.0 732.0,300.0" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="max" data-x="753.8" data-y="307.6" points="753.8,300.6 755.6,305.1 760.5,305.5 756.8,308.6 757.9,313.3 753.8,310.7 749.7,313.3 750.9,308.6 747.2,305.5 752.0,305.1" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<circle class="knee" data-model="GPT-6.2 Sol" cx="674.7" cy="316.1" r="11" fill="none" stroke="#10A37F" stroke-width="1"/>
+<circle class="knee-halo" cx="674.7" cy="316.1" r="11" fill="#0E8F6E" fill-opacity=".14"/>
+<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="674.7,316.1 705.5,302.0 726.0,304.3 737.2,300.0 753.8,307.6" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle class="point" data-effort="low" data-x="674.7" data-y="316.1" cx="674.7" cy="316.1" r="4.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="medium" data-x="705.5" data-y="302.0" points="701.3,297.8 709.7,297.8 709.7,306.2 701.3,306.2" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="high" data-x="726.0" data-y="304.3" points="726.0,298.7 731.4,308.3 720.6,308.3" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="xhigh" data-x="737.2" data-y="300.0" points="737.2,294.0 742.4,300.0 737.2,306.0 732.0,300.0" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="max" data-x="753.8" data-y="307.6" points="753.8,300.6 755.6,305.1 760.5,305.5 756.8,308.6 757.9,313.3 753.8,310.7 749.7,313.3 750.9,308.6 747.2,305.5 752.0,305.1" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<circle class="knee" data-model="GPT-6.2 Sol" cx="674.7" cy="316.1" r="11" fill="none" stroke="#0E8F6E" stroke-width="1"/>
 <text x="767.8" y="312.0" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="600" class="line-label">GPT-6.2 Sol</text>
 </g>
 </g></g>
@@ -440,9 +440,9 @@
 <line x1="662.0" x2="1042.0" y1="203.5" y2="203.5" stroke="#47577A" stroke-opacity=".16"/>
 <text x="654.0" y="207.5" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A" text-anchor="end">60</text>
 <rect x="662.0" y="164.0" width="380.0" height="228.0" fill="none" stroke="#47577A" stroke-opacity=".45"/>
-<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-linecap="round"/>
+<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-linecap="round"/>
 <text x="694.0" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Astra</text>
-<line x1="799.4" x2="825.4" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
+<line x1="799.4" x2="825.4" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
 <text x="831.4" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Sol</text>
 <polyline class="context" data-model="Fable 5.2" points="876.5,235.2 891.4,222.2 954.4,194.0 989.9,191.9 1032.0,179.7" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Opus 5.5" points="792.9,335.3 859.6,265.0 884.6,246.1 924.9,216.9 961.6,208.2" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
@@ -451,22 +451,22 @@
 <polyline class="context" data-model="Gemini 4 Hydrogen" points="705.6,376.3 778.4,301.5 840.1,251.6 878.0,235.2" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Gemini 4 Argon" points="900.5,268.2 910.8,253.6" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Grok 4.7" points="872.3,354.2 926.6,332.9 943.1,331.4" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="knee-halo" cx="861.6" cy="195.4" r="11" fill="#10A37F" fill-opacity=".14"/>
-<circle class="knee-halo" cx="795.7" cy="217.8" r="11" fill="#10A37F" fill-opacity=".14"/>
-<polyline class="series" data-model="GPT-6.2 Astra" data-suites="1" points="764.8,278.4 829.5,219.2 847.5,203.0 861.6,195.4 895.0,192.4" fill="none" stroke="#10A37F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="point" data-effort="low" data-x="764.8" data-y="278.4" cx="764.8" cy="278.4" r="4.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="medium" data-x="829.5" data-y="219.2" points="825.3,215.0 833.7,215.0 833.7,223.4 825.3,223.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="high" data-x="847.5" data-y="203.0" points="847.5,197.4 852.9,207.0 842.1,207.0" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="xhigh" data-x="861.6" data-y="195.4" points="861.6,189.4 866.8,195.4 861.6,201.4 856.4,195.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="max" data-x="895.0" data-y="192.4" points="895.0,185.4 896.8,189.8 901.7,190.2 897.9,193.3 899.1,198.0 895.0,195.5 890.9,198.0 892.0,193.3 888.3,190.2 893.2,189.8" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="672.0,305.0 729.5,241.7 753.2,230.2 763.3,225.7 795.7,217.8" fill="none" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="point" data-effort="low" data-x="672.0" data-y="305.0" cx="672.0" cy="305.0" r="4.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="medium" data-x="729.5" data-y="241.7" points="725.3,237.5 733.7,237.5 733.7,245.9 725.3,245.9" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="high" data-x="753.2" data-y="230.2" points="753.2,224.6 758.6,234.2 747.8,234.2" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="xhigh" data-x="763.3" data-y="225.7" points="763.3,219.7 768.5,225.7 763.3,231.7 758.1,225.7" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="max" data-x="795.7" data-y="217.8" points="795.7,210.8 797.5,215.3 802.4,215.7 798.7,218.8 799.8,223.5 795.7,220.9 791.6,223.5 792.8,218.8 789.1,215.7 793.9,215.3" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<circle class="knee" data-model="GPT-6.2 Astra" cx="861.6" cy="195.4" r="11" fill="none" stroke="#10A37F" stroke-width="1"/>
-<circle class="knee" data-model="GPT-6.2 Sol" cx="795.7" cy="217.8" r="11" fill="none" stroke="#10A37F" stroke-width="1"/>
+<circle class="knee-halo" cx="861.6" cy="195.4" r="11" fill="#0E8F6E" fill-opacity=".14"/>
+<circle class="knee-halo" cx="795.7" cy="217.8" r="11" fill="#0E8F6E" fill-opacity=".14"/>
+<polyline class="series" data-model="GPT-6.2 Astra" data-suites="1" points="764.8,278.4 829.5,219.2 847.5,203.0 861.6,195.4 895.0,192.4" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle class="point" data-effort="low" data-x="764.8" data-y="278.4" cx="764.8" cy="278.4" r="4.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="medium" data-x="829.5" data-y="219.2" points="825.3,215.0 833.7,215.0 833.7,223.4 825.3,223.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="high" data-x="847.5" data-y="203.0" points="847.5,197.4 852.9,207.0 842.1,207.0" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="xhigh" data-x="861.6" data-y="195.4" points="861.6,189.4 866.8,195.4 861.6,201.4 856.4,195.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="max" data-x="895.0" data-y="192.4" points="895.0,185.4 896.8,189.8 901.7,190.2 897.9,193.3 899.1,198.0 895.0,195.5 890.9,198.0 892.0,193.3 888.3,190.2 893.2,189.8" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="672.0,305.0 729.5,241.7 753.2,230.2 763.3,225.7 795.7,217.8" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle class="point" data-effort="low" data-x="672.0" data-y="305.0" cx="672.0" cy="305.0" r="4.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="medium" data-x="729.5" data-y="241.7" points="725.3,237.5 733.7,237.5 733.7,245.9 725.3,245.9" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="high" data-x="753.2" data-y="230.2" points="753.2,224.6 758.6,234.2 747.8,234.2" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="xhigh" data-x="763.3" data-y="225.7" points="763.3,219.7 768.5,225.7 763.3,231.7 758.1,225.7" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="max" data-x="795.7" data-y="217.8" points="795.7,210.8 797.5,215.3 802.4,215.7 798.7,218.8 799.8,223.5 795.7,220.9 791.6,223.5 792.8,218.8 789.1,215.7 793.9,215.3" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<circle class="knee" data-model="GPT-6.2 Astra" cx="861.6" cy="195.4" r="11" fill="none" stroke="#0E8F6E" stroke-width="1"/>
+<circle class="knee" data-model="GPT-6.2 Sol" cx="795.7" cy="217.8" r="11" fill="none" stroke="#0E8F6E" stroke-width="1"/>
 <text x="909.0" y="196.7" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="600" class="line-label">GPT-6.2 Astra</text>
 <line class="leader" x1="795.7" y1="217.8" x2="771.7" y2="211.1" stroke="#47577A" stroke-width="0.8"/>
 <text x="769.7" y="207.1" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="end" font-weight="600" class="line-label">GPT-6.2 Sol</text>
@@ -657,9 +657,9 @@
 <line x1="662.0" x2="1042.0" y1="189.2" y2="189.2" stroke="#47577A" stroke-opacity=".16"/>
 <text x="654.0" y="193.2" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A" text-anchor="end">70</text>
 <rect x="662.0" y="164.0" width="380.0" height="228.0" fill="none" stroke="#47577A" stroke-opacity=".45"/>
-<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-linecap="round"/>
+<line x1="662.0" x2="688.0" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-linecap="round"/>
 <text x="694.0" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Astra</text>
-<line x1="799.4" x2="825.4" y1="132.0" y2="132.0" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
+<line x1="799.4" x2="825.4" y1="132.0" y2="132.0" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linecap="round"/>
 <text x="831.4" y="136.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">GPT-6.2 Sol</text>
 <polyline class="context" data-model="Fable 5.2" points="987.7,179.7" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Opus 5.5" points="781.5,323.1 904.3,207.3 1023.7,193.0" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
@@ -668,16 +668,16 @@
 <polyline class="context" data-model="Gemini 4 Hydrogen" points="892.5,203.6" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Gemini 4 Argon" points="887.5,214.9 877.5,203.5 911.2,210.1" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
 <polyline class="context" data-model="Grok 4.7" points="680.3,376.3 875.4,349.7 921.8,294.6" fill="none" stroke="#47577A" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="knee-halo" cx="847.4" cy="214.9" r="11" fill="#10A37F" fill-opacity=".14"/>
-<polyline class="series" data-model="GPT-6.2 Astra" data-suites="1" points="726.6,275.6 783.5,247.1 822.7,229.1 847.4,214.9 908.9,211.1" fill="none" stroke="#10A37F" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-<circle class="point" data-effort="low" data-x="726.6" data-y="275.6" cx="726.6" cy="275.6" r="4.4" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="medium" data-x="783.5" data-y="247.1" points="779.3,242.9 787.7,242.9 787.7,251.3 779.3,251.3" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="high" data-x="822.7" data-y="229.1" points="822.7,223.5 828.1,233.1 817.3,233.1" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="xhigh" data-x="847.4" data-y="214.9" points="847.4,208.9 852.6,214.9 847.4,220.9 842.2,214.9" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polygon class="point" data-effort="max" data-x="908.9" data-y="211.1" points="908.9,204.1 910.7,208.6 915.6,208.9 911.9,212.0 913.0,216.7 908.9,214.2 904.8,216.7 906.0,212.0 902.2,208.9 907.1,208.6" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="742.8,226.6" fill="none" stroke="#10A37F" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
-<polygon class="point" data-effort="max" data-x="742.8" data-y="226.6" points="742.8,219.6 744.6,224.1 749.5,224.5 745.7,227.6 746.9,232.3 742.8,229.7 738.7,232.3 739.8,227.6 736.1,224.5 741.0,224.1" fill="#10A37F" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
-<circle class="knee" data-model="GPT-6.2 Astra" cx="847.4" cy="214.9" r="11" fill="none" stroke="#10A37F" stroke-width="1"/>
+<circle class="knee-halo" cx="847.4" cy="214.9" r="11" fill="#0E8F6E" fill-opacity=".14"/>
+<polyline class="series" data-model="GPT-6.2 Astra" data-suites="1" points="726.6,275.6 783.5,247.1 822.7,229.1 847.4,214.9 908.9,211.1" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+<circle class="point" data-effort="low" data-x="726.6" data-y="275.6" cx="726.6" cy="275.6" r="4.4" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="medium" data-x="783.5" data-y="247.1" points="779.3,242.9 787.7,242.9 787.7,251.3 779.3,251.3" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="high" data-x="822.7" data-y="229.1" points="822.7,223.5 828.1,233.1 817.3,233.1" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="xhigh" data-x="847.4" data-y="214.9" points="847.4,208.9 852.6,214.9 847.4,220.9 842.2,214.9" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polygon class="point" data-effort="max" data-x="908.9" data-y="211.1" points="908.9,204.1 910.7,208.6 915.6,208.9 911.9,212.0 913.0,216.7 908.9,214.2 904.8,216.7 906.0,212.0 902.2,208.9 907.1,208.6" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<polyline class="series" data-model="GPT-6.2 Sol" data-suites="1" points="742.8,226.6" fill="none" stroke="#0E8F6E" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round" stroke-linecap="round"/>
+<polygon class="point" data-effort="max" data-x="742.8" data-y="226.6" points="742.8,219.6 744.6,224.1 749.5,224.5 745.7,227.6 746.9,232.3 742.8,229.7 738.7,232.3 739.8,227.6 736.1,224.5 741.0,224.1" fill="#0E8F6E" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
+<circle class="knee" data-model="GPT-6.2 Astra" cx="847.4" cy="214.9" r="11" fill="none" stroke="#0E8F6E" stroke-width="1"/>
 <text x="922.9" y="215.4" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="600" class="line-label">GPT-6.2 Astra</text>
 <line class="leader" x1="742.8" y1="226.6" x2="742.8" y2="205.0" stroke="#47577A" stroke-width="0.8"/>
 <text x="742.8" y="201.0" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="600" class="line-label">GPT-6.2 Sol</text>

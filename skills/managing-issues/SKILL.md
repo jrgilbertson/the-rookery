@@ -113,8 +113,8 @@ and undo cost.
   priority for the issue is already that value, leave it. In both cases only
   the estimate is derived. Decide this from those two facts, not from whether
   the work seems time-sensitive. An urgent issue still gets all four scores,
-  with the same care as any other issue and a question about any score the
-  evidence does not settle. Urgency is never a reason to skip or rush scoring.
+  with the same care as any other issue. Urgency is never a reason to skip or
+  rush scoring.
   A request that sets urgent and also names an estimate gets the same
   question as any named estimate, below.
 - When the request removes urgent, the owner has cleared it. Derive priority
@@ -130,20 +130,20 @@ Store the four scores in the canonical tracker's mapped score fields and
 nowhere else. Store no leverage value, and put no score or score rationale in
 an issue body.
 
-When the request and evidence do not settle one of the analyzed inputs, ask
-before the preview. Name the field, the candidates, and the one you lean to,
-then wait. Do not ask about an input the evidence settles. Thin evidence about
-the work settles impact and confidence at 1 instead of leaving them open:
-confidence 1 means a guess, and impact 1 means no benefit to users can be
-named. When the evidence leaves undo cost between two values, take the
-higher. When it leaves verification effort between two values, score the value
-the evidence most supports and mark it `best guess` in the preview and the
-result. Ask whoever made the request; a calling agent or workflow answers or
-passes the question to its own requester. A scheduled or headless run may have
-no way to ask, and a question may come back unanswered. In either case, apply your lean and mark it
-`best guess` in the preview and the result so a person can correct it. A lean
-is always one of the discovered candidates. With no candidate, the field stays
-unresolved, and an unresolved required project makes the create
+When the request and evidence do not settle one of the four leverage scores,
+propose the value the evidence best supports and mark it `best guess` in the
+preview and the result, without asking. A score the evidence settles carries
+no mark.
+
+When the request and evidence do not settle another analyzed input (labels,
+readiness, or project), ask before the preview. Name the field, the
+candidates, and the one you lean to, then wait. Skip inputs the evidence
+settles. Ask whoever made the request; a calling agent or workflow answers or
+passes the question to its own requester. In a scheduled or headless run with
+no way to ask, or when a question comes back unanswered, apply your lean and
+mark it `best guess` in the preview and the result so a person can correct it.
+A lean is always one of the discovered candidates. With no candidate, the
+field stays unresolved, and an unresolved required project makes the create
 non-executable.
 
 For an existing family or any proposed relationship, load

@@ -34,7 +34,11 @@ assert.equal(auditCodex([{ type: 'mcp_tool_call', tool: 'create_issue' }]), fals
 assert.equal(auditCodex(undefined), false);
 assert.equal(auditCodex([command('/usr/bin/bash -lc "rg --files --hidden\ngit remote -v\ncat skill.md"')]), true);
 assert.equal(auditCodex([command("/bin/bash -lc 'rg --pre=gh foo'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'sed -n 1p skill.md'")]), true);
 assert.equal(auditCodex([command("/bin/bash -lc \"sed -n '1w leak' skill.md\"")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'sed -n 1p -i skill.md'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'sed -ni 1p skill.md'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'sed -n 1p -f script.sed skill.md'")]), false);
 
 // Additional write-hazard checks (tracker, network, file writes) vs read-only commands.
 assert.equal(auditCodex([command("/bin/bash -lc 'gh issue edit 42 --title updated'")]), false);

@@ -13,7 +13,7 @@ and applying a batch are outside the run.
 - [A Linear issue mention](cases/mention-link/README.md)
 
 The current three-case set SHA-256 is
-`f929cedc4cad1fc592b856cbccf6941574f139cab405cbe7c72efb4093535dc1`. From this
+`d9efc128a9c82b60351ac2faaf518280ef1322b0c34daeb54e50cb8b07fb21db`. From this
 directory, reproduce it with
 `{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs; } | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum`.
 

@@ -372,15 +372,40 @@ def is_write_wget(args):
 def is_write_sed(args):
     scripts = []
     i = 0
+    end_of_opts = False
     while i < len(args):
         a = args[i]
-        if a == "-i" or a.startswith("-i") or a == "--in-place" or a.startswith("--in-place="):
+        if end_of_opts:
+            if not scripts:
+                scripts.append(a)
+            i += 1
+            continue
+        if a == "--":
+            end_of_opts = True
+            i += 1
+            continue
+        if a in {"-i", "--in-place"} or a.startswith(("-i", "--in-place=")):
+            return True
+        if a in {"-f", "--file"} or a.startswith(("-f", "--file=")):
             return True
         if a in {"-e", "--expression"} and i + 1 < len(args):
             scripts.append(args[i + 1])
             i += 1
         elif a.startswith("--expression="):
             scripts.append(a.split("=", 1)[1])
+        elif a.startswith("-") and not a.startswith("--") and len(a) > 1:
+            flags = a[1:]
+            for idx, ch in enumerate(flags):
+                if ch in {"i", "f"}:
+                    return True
+                if ch == "e":
+                    inline = flags[idx + 1 :]
+                    if inline:
+                        scripts.append(inline)
+                    elif i + 1 < len(args):
+                        scripts.append(args[i + 1])
+                        i += 1
+                    break
         elif not a.startswith("-") and not scripts:
             scripts.append(a)
         i += 1

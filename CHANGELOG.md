@@ -57,6 +57,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` drops the worker reversibility decision rule in favor of
+  `lfg`'s headless behavior, and leaves open-PR branch currency to
+  `ce-babysit-pr` and the repository's merge rules.
 - The routing checks fail when an Executor or Team lead pick in
   `recommendations.csv` names a different model or effort from the rows the
   method computes, unless the pick is marked as judgment.

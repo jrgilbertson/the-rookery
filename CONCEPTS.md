@@ -187,8 +187,9 @@ Tests never call a model; evals always do.
 
 ### Product Eval
 
-An eval of an AI feature of an application: one prompt in, one answer out. The
-Rookery ships no AI feature, so it has no Product Evals.
+An eval of an AI feature of an application. It can evaluate a single reply or
+a whole conversation, such as a live voice practice session. The Rookery ships
+no AI feature, so it has no Product Evals.
 
 ### Skill Eval
 

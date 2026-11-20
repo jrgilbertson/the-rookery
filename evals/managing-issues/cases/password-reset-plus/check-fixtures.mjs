@@ -51,7 +51,13 @@ assert.equal(auditCodex([command("/bin/bash -lc 'curl -X POST https://example.co
 assert.equal(auditCodex([command("/bin/bash -lc 'curl -d payload https://example.com/hook'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'echo leak > out.txt'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'rm -f notes.md'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'cat foo\nrm bar'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'cat foo\n\nrm bar'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'python3 -c \"open(\\\"x\\\", \\\"w\\\").write(\\\"y\\\")\"'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'python3 -c \"open(\\\"x\\\", mode=\\\"a\\\")\"'")]), false);
+assert.equal(auditCodex([command("/bin/bash -lc 'python3 -c \"import json; print(json.load(open(\\\".agents/managing-issues.json\\\")))\"'")]), true);
+assert.equal(auditCodex([command("/bin/bash -lc 'python3 -c \"import json; print(json.load(open(\\\".agents/managing-issues.json\\\", \\\"r\\\")))\"'")]), true);
+assert.equal(auditCodex([command("/bin/bash -lc 'python3 -c \"import json; print(json.load(open(\\\".agents/managing-issues.json\\\", mode=\\\"r\\\")))\"'")]), true);
 assert.equal(auditCodex([command("/bin/bash -lc 'gh auth status --active && git status --short --branch'")]), true);
 assert.equal(auditCodex([command("/bin/bash -lc 'gh api repos/org/repo/issues'")]), true);
 assert.equal(auditCodex([command("/bin/bash -lc 'rg --files | rg -i linear'")]), true);

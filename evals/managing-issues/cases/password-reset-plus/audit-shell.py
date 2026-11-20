@@ -165,7 +165,7 @@ INLINE_CODE_WRITE_RE = re.compile(
     | \bos\.(?:system|popen|remove|unlink|rmdir|mkdir|makedirs|rename|replace|chmod|chown|truncate|write|open)\b
     | \bshutil\.(?:rmtree|copy|copy2|copyfile|copytree|move|make_archive)\b
     | \.(?:write_text|write_bytes|unlink|rmdir|mkdir|rename|replace|touch|chmod)\s*\(
-    | \bopen\s*\([^)]*['"][^'"]*[wax+][^'"]*['"]
+    | \bopen\s*\([^)]*(?:,\s*(?:mode\s*=\s*)?|\bmode\s*=\s*)['"][^'"]*[wax+][^'"]*['"]
     | \bfs\.(?:writeFile|appendFile|rm|unlink|mkdir|rename|copyFile|chmod|chown)
     | \bfetch\s*\(
     """,
@@ -211,7 +211,7 @@ def extract_heredocs(script):
 def tokenize_script(script):
     # Normalize redacted transcript placeholders like <run> so '<' and '>' are not parsed as redirects.
     normalized = re.sub(r"<([a-z][a-z0-9-]*)>", r"__placeholder_\1__", script)
-    lexer = shlex.shlex(normalized, posix=True, punctuation_chars=";&|<>")
+    lexer = shlex.shlex(normalized, posix=True, punctuation_chars=";&|<>\n")
     lexer.whitespace_split = True
     lexer.whitespace = " \t\r"
     return list(lexer)
@@ -221,7 +221,7 @@ def split_segments(tokens):
     segments = []
     current = []
     for tok in tokens:
-        if tok in SEPARATOR_TOKENS:
+        if tok in SEPARATOR_TOKENS or (tok and set(tok) <= {"\n"}):
             if current:
                 segments.append(current)
                 current = []

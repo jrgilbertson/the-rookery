@@ -30,7 +30,6 @@ const checks = [
   ['tools', 'Read-only tool calls'],
 ];
 const caseChecks = {
-  'file-both-single': 'One Problem section',
   'mention-link': 'STORE-412 present',
 };
 

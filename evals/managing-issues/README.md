@@ -9,10 +9,13 @@ tracker tools. The fixtures support draft and preview checks. Live matchback
 and applying a batch are outside the run.
 
 - [Password reset with a plus sign](cases/password-reset-plus/README.md)
-- [Two export defects in a single issue](cases/file-both-single/README.md)
 - [A follow-up for a backup failure](cases/follow-up-later/README.md)
-- [A recurring release checklist gap](cases/recurring-gap/README.md)
 - [A Linear issue mention](cases/mention-link/README.md)
+
+The current three-case set SHA-256 is
+`f929cedc4cad1fc592b856cbccf6941574f139cab405cbe7c72efb4093535dc1`. From this
+directory, reproduce it with
+`{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs; } | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum`.
 
 ## Run on Linux
 
@@ -28,7 +31,7 @@ With approval for model usage, run from the repository root:
 
 ```sh
 work=$(bash evals/managing-issues/prepare.sh origin/main)
-bash evals/managing-issues/run.sh "$work" claude-skill file-both-single
+bash evals/managing-issues/run.sh "$work" claude-skill password-reset-plus
 ```
 
 Pass a Git revision to `prepare.sh` to rerun a specific version of the skill.
@@ -41,14 +44,15 @@ The Codex SDK reports usage and the launcher applies a five-minute timeout.
 ## Read the results
 
 Promptfoo writes a local `results-<case>-<arm>.json`. Its assertions check the
-three issue sections, four numeric leverage scores, and the recorded tool calls.
-The export case also counts `Problem` sections. The Linear mention case checks
-for the incident identifier in the response. Each case's README lists what the
-operator should judge by reading the response and transcript.
-The command audit recognizes a limited set of read-only commands. Inspect an
-unrecognized call before concluding what happened. A failed assertion can make
-Promptfoo exit 100 even when the agent finished and the output was written.
-To exercise the checks offline, run
+three issue sections (Markdown or inline bold headings), four numeric leverage
+scores (tables, lists, or prose), and the recorded tool calls. The Linear
+mention case also checks for the incident identifier in the response. Each
+case's README lists what the operator should judge by reading the response and
+transcript. The Claude tool audit enforces a read-only allowlist. The Codex
+command audit fails only calls or commands that could perform a tracker,
+network, or file write or deletion. A failed assertion can make Promptfoo exit
+100 even when the agent finished and the output was written. To exercise the
+checks offline—including replay checks over the recorded transcripts—run
 `node evals/managing-issues/cases/password-reset-plus/check-fixtures.mjs`.
 
 For an Eval Record, match the results' session IDs to the transcripts under

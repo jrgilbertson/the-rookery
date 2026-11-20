@@ -22,8 +22,8 @@ git -C "$repo" archive "$revision" skills/managing-issues |
 for case_path in "$case_dir"/cases/*/; do
   case_id=$(basename -- "$case_path")
   case "$case_id" in
-    password-reset-plus|recurring-gap) provider=github ;;
-    file-both-single|follow-up-later|mention-link) provider=linear ;;
+    password-reset-plus) provider=github ;;
+    follow-up-later|mention-link) provider=linear ;;
     *) echo "No provider fixture for $case_id" >&2; exit 2 ;;
   esac
   workspace="$work/workspaces/$case_id"

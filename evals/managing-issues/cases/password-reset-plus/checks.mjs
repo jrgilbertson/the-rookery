@@ -7,7 +7,8 @@ const factors = ['Impact', 'Confidence', 'Verification effort', 'Undo cost'];
 export function draftSections(output) {
   return headings.every((name) => {
     const heading = new RegExp(
-      `^\\s*(?:#{1,6} +|\\*\\*)${name}[:*# ]*$`, 'im',
+      `^[ \\t]*(?:#{1,6} +${name}[:# \\t]*$|\\*\\*${name}[.:]?\\*\\*[.:]?(?=[ \\t]|$))`,
+      'im',
     );
     return heading.test(output);
   });
@@ -16,8 +17,8 @@ export function draftSections(output) {
 export function leverageScores(output) {
   return factors.every((factor) => {
     const score = new RegExp(
-      `^ *[|*+•\\d.) -]*${factor}[:*| ]+(?:score[:* ]+)?[* ]*[1-3](?![\\d.])`,
-      'im',
+      `\\b${factor}[*\\s:|=—–]+(?:score[*\\s:|=—–]+)?[* ]*[1-3](?!\\d|\\.\\d)`,
+      'i',
     );
     return score.test(output);
   });

@@ -24,7 +24,7 @@ Source ID: `[stable native ID]`
 
 Source record: [source URL]
 
-Meeting start: [actual source start time]
+Meeting time: [selected source timestamp and its basis]
 
 Proposed note: `[exact path produced by the configured naming convention]`
 

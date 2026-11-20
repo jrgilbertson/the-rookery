@@ -171,6 +171,8 @@ reverse it.
 
 ## Coordinating work
 
+![Three small rooks, the workers, launch paper boats down a channel. Huginn, the Team lead, lets routine boats drift on to the pond, where routine work merges, and pulls a lock gate shut on one flagged boat beside a bell, held for the operator.](docs/assets/coordinating-work.webp)
+
 ### Team Lead
 
 The session that owns a piece of work and answers for its result. It thinks

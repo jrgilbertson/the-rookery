@@ -57,6 +57,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The routing checks fail when an Executor or Team lead pick in
+  `recommendations.csv` names a different model or effort from the rows the
+  method computes, unless the pick is marked as judgment.
 - `coordinating-work` records and verifies the Coordinator's workspace as the
   cross-machine parent when Orca cannot create a remote worker workspace as
   a child.

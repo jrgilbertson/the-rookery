@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import csv
 import re
 import shutil
 import subprocess
@@ -515,6 +516,32 @@ def check_charts() -> None:
     for problem in stale_charts(committed):
         failures.append(problem)
     failures.extend(page_alt_text_problems())
+    failures.extend(recommendation_drift(REPO_ROOT / "docs" / "routing"))
+
+    # The drift gate must catch a pick whose effort or model no longer matches the method,
+    # and must let a pick marked as judgment differ.
+    with tempfile.TemporaryDirectory() as tmp:
+        data = Path(tmp) / "routing"
+        shutil.copytree(REPO_ROOT / "docs" / "routing", data)
+        picks = data / "recommendations.csv"
+        with picks.open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        pick = next(row for row in rows if row["role"] == "Executor" and row["judgment"] != "yes")
+        pick["effort"] = "low" if pick["effort"] == "max" else "max"
+
+        def save() -> None:
+            with picks.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+                writer.writeheader()
+                writer.writerows(rows)
+
+        save()
+        problems = recommendation_drift(data)
+        check(any(pick["model"] in problem and f"at {pick['effort']}" in problem for problem in problems),
+              f"the drift gate missed an Executor pick at the wrong effort: {problems}")
+        pick["judgment"] = "yes"
+        save()
+        check(recommendation_drift(data) == [], "the drift gate should let a pick marked as judgment differ from the method")
 
     # The gate itself must fail on a chart that differs and on one that is missing.
     with tempfile.TemporaryDirectory() as tmp:
@@ -533,7 +560,6 @@ def check_charts() -> None:
 
 def page_alt_text_problems() -> list[str]:
     """The page shows the recommendations only as a figure, so its alt text must carry every pick for readers and agents."""
-    import csv
     page = (REPO_ROOT / "ROUTING.md").read_text(encoding="utf-8")
     found = re.search(r"!\[([^\]]*)\]\(docs/assets/routing-table\.svg\)", page)
     if not found:
@@ -548,6 +574,30 @@ def page_alt_text_problems() -> list[str]:
             if row["reviewed"] not in alt:
                 problems.append(f"the routing-table alt text does not give the review date {row['reviewed']}")
     return sorted(set(problems))
+
+
+def recommendation_drift(data_dir: Path) -> list[str]:
+    """The Executor and Team lead picks must be the settings the method computes for each provider.
+
+    Role inputs may reorder a row, so only the model and effort are compared. A pick
+    marked as judgment may name another setting.
+    """
+    result = run("report", "--data", str(data_dir))
+    if result.returncode != 0:
+        return [f"report failed on {data_dir}: {result.stdout}{result.stderr}"]
+    computed = {(row["role"], row["provider"]): row for row in sections(result.stdout)["rows"]}
+    problems = []
+    with (data_dir / "recommendations.csv").open(newline="", encoding="utf-8") as handle:
+        for row in csv.DictReader(handle):
+            if row["role"] not in ("Executor", "Team lead") or row["judgment"] == "yes":
+                continue
+            want = computed.get((row["role"], row["provider"]))
+            if want is None:
+                problems.append(f"recommendations.csv lists {row['provider']} for {row['role']}, but the method computes no {row['provider']} pick for that role")
+            elif not (row["model"] == want["model"] or row["model"].endswith(" " + want["model"])) or row["effort"] != want["effort"]:
+                problems.append(f"recommendations.csv lists {row['model']} at {row['effort']} for {row['role']}, but the method computes {want['model']} at {want['effort']}: "
+                                "update the pick, or mark it as judgment and explain it in ROUTING.md")
+    return problems
 
 
 def stale_charts(charts_dir: Path) -> list[str]:

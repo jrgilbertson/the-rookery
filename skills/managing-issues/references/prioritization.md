@@ -25,6 +25,13 @@ For impact, users are whoever uses what the repository ships. The owner
 counts as a user when the repository ships the owner's own tools. Maintainers
 count only through what their work unblocks.
 
+## Unclear scores
+
+When the request and evidence do not settle one of the four leverage scores,
+propose the value the evidence best supports and mark it `best guess` in the
+preview and the result, without asking. A score the evidence settles carries
+no mark.
+
 ## Derived priority and estimate
 
 `SKILL.md` says when to derive priority and estimate. These tables give the

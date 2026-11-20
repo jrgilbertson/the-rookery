@@ -264,8 +264,8 @@ belongs in a brief only when that condition holds for the assignment.
   says, and continues to the next step of its assignment when a helper skill
   returns.
 - **Verification currency.** On an unpushed branch, bring in the default
-  branch's merged fixes before running the repository's verification gate as
-  the repository's merge policy allows. Once a pull request is open, leave
+  branch's merged fixes, as the repository's merge policy allows, before
+  running the repository's verification gate. Once a pull request is open, leave
   branch currency to `ce-babysit-pr` and the repository's merge rules.
 
 Once an assignment is dispatched, its brief is fixed. Only the Team lead

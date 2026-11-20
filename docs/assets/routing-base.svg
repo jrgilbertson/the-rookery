@@ -137,6 +137,6 @@
 <text x="781.9" y="371.0" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="600" class="line-label">Grok 4.7 (5)</text>
 </g>
 <text x="40.0" y="752.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">One line per model, joining its efforts from lowest to highest. A dash pattern tells one provider's models apart. The marker's shape names the effort.</text>
-<text x="40.0" y="768.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">The number beside a name counts the suites that tested it at any effort, of 5. Data read 2026-11-19.</text>
+<text x="40.0" y="768.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">The number beside a name counts the suites that tested it at any effort, of 5. Data read 2026-11-20.</text>
 <text x="40.0" y="784.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">Suites: FrontierCode 2.0, VulcanBench v4, AA Intelligence Index v5.0.1, Vals Index 2.2, CursorBench 4.1.</text>
 </svg>

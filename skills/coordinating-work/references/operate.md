@@ -118,7 +118,9 @@ other than a default branch wait:
   and asking again;
 - when the worker cannot and you could, make one more attempt: amend the brief
   and reassign it, start one follow-on assignment, or do the work yourself.
-  Run the checklist again on the result;
+  When you do it yourself, run the continuous `ce-babysit-pr` watch on the new
+  head yourself, and line 2 reads your own report. Run the checklist again on
+  the result;
 - otherwise, or when that attempt also falls short, leave the pull request
   open, add it to the ready-for-operator list with the line that failed, and
   reply that it is held for the operator. A pull request that will be held

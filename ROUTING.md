@@ -276,7 +276,7 @@ Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv
 5. **Run `changes`** to see what moved since the previous read.
 6. **Run the report.** Its `candidates` section lists the charted models at their best-value efforts in order. Its `rows` section builds the Executor and Team lead rows.
 7. **Regenerate the charts** and look at each one. Run it again after the rows are final so the recommendations figure matches `recommendations.csv`.
-8. **Write the rows** in `recommendations.csv`. Take the Executor and Team lead rows from the report, Design/taste from Arena WebDev, and Writing from Arena's creative-writing board. Apply any adjustment a role input supports, and write each one as a line.
+8. **Write the rows** in `recommendations.csv`. Take the Executor and Team lead rows from the report, Design/taste from Arena WebDev, and Writing from Arena's creative-writing board. Apply any adjustment a role input supports, and write each one as a line. The routing checks fail when an Executor or Team lead pick names a different model or effort from the report's rows, unless its `judgment` column says `yes`.
 9. **Scan the last 30 days** for what practitioners report about the settings in the rows. Record what bears on a row in `role-inputs.csv` as a report.
 10. **Apply judgment.** Change any pick I disagree with, set its `judgment` column to `yes`, and write the adjustment with what would change my mind.
 11. **Update the page:** the recommendations figure's alt text, which must name every pick, the base table, each role's evidence tables, the chart alt text, the revisit conditions, and the review date.

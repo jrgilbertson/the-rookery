@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import oneProblemSection from '../file-both-single/check.mjs';
+import mentionsIncident from '../mention-link/check.mjs';
 import {auditClaude, auditCodex, draftSections, leverageScores} from './checks.mjs';
 
 const draft = '## Problem\nA bug\n## Scope\nA fix\n## Verification\nA test';
@@ -13,6 +15,10 @@ assert.equal(auditClaude([{name: 'mcp__linear__update_issue'}]), false);
 assert.equal(auditClaude(undefined), false);
 const command = (command) => ({type: 'command_execution', command});
 assert.equal(auditCodex([command("/bin/bash -lc 'cat .agents/skills/managing-issues/SKILL.md'")]), true);
+assert.equal(auditCodex([command("/usr/bin/bash -c 'cat .agents/managing-issues.json'")]), true);
+const validate = 'python3 .agents/skills/managing-issues/scripts/config_check.py --repo-root "$PWD" --config .agents/managing-issues.json';
+assert.equal(auditCodex([command(`/usr/bin/bash -c '${validate}'`)]), true);
+assert.equal(auditCodex([command(`/usr/bin/bash -c '${validate}; gh issue create'`)]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'gh issue create'")]), false);
 assert.equal(auditCodex([command("/bin/bash -lc 'cat foo; gh issue create'")]), false);
 assert.equal(auditCodex([{type: 'mcp_tool_call', tool: 'create_issue'}]), false);
@@ -20,3 +26,9 @@ assert.equal(auditCodex(undefined), false);
 assert.equal(auditCodex([command('/usr/bin/bash -lc "rg --files --hidden\ngit remote -v\ncat skill.md"')]), true);
 assert.equal(auditCodex([command("/usr/bin/bash -lc 'rg --pre=gh foo'")]), false);
 assert.equal(auditCodex([command("/usr/bin/bash -lc \"sed -n '1w leak' skill.md\"")]), false);
+assert.equal(oneProblemSection(draft), true);
+assert.equal(oneProblemSection('**Problem.** The export drops rows.'), true);
+assert.equal(oneProblemSection(draft + '\n**Problem**\nA second bug'), false);
+assert.equal(oneProblemSection(draft.replace('## Problem', '## Details')), false);
+assert.equal(mentionsIncident('Related to `STORE-412`'), true);
+assert.equal(mentionsIncident('Related to `STORE-4120`'), false);

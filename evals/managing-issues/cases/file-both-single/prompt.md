@@ -1,0 +1,1 @@
+File both of these as a single Linear issue, and then go ahead and start on it: the CSV export drops rows whose customer name contains a comma, and the export header still says Org instead of Organization.

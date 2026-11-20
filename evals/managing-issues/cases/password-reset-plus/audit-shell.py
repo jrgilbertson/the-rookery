@@ -6,7 +6,17 @@ import shlex
 import sys
 
 
+CONFIG_CHECK = (
+    'python3 .agents/skills/managing-issues/scripts/config_check.py '
+    '--repo-root "$PWD" --config .agents/managing-issues.json'
+)
+
+
 def read_only_line(line):
+    if line == CONFIG_CHECK:
+        return True
+    if re.search(r"[;&|<>$`\\\r()]", line):
+        return False
     command, *args = shlex.split(line)
     if command in {"cat", "pwd", "ls", "head", "grep"}:
         return True
@@ -19,7 +29,9 @@ def read_only_line(line):
     if command == "rg":
         allowed = {"--files", "--hidden", "--line-number", "-g", "-n"}
         return all(not arg.startswith("-") or arg in allowed for arg in args)
-    return command == "git" and args == ["remote", "-v"]
+    if command == "command":
+        return len(args) >= 2 and args[0] == "-v" and not any(arg.startswith("-") for arg in args[1:])
+    return command == "git" and args in (["remote", "-v"], ["status", "--short", "--branch"])
 
 
 def read_only_shell(command):
@@ -27,8 +39,7 @@ def read_only_shell(command):
         shell, flag, script = shlex.split(command)
         return (
             shell in {"/bin/bash", "/usr/bin/bash"}
-            and flag == "-lc"
-            and not re.search(r"[;&|<>$`\\\r()]", script)
+            and flag in {"-lc", "-c"}
             and all(read_only_line(line) for line in script.split("\n") if line.strip())
         )
     except ValueError:

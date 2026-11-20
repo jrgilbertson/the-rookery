@@ -21,13 +21,18 @@ const claude = {
   },
 };
 
-const caseId = 'password-reset-plus';
+const caseId = process.env.ROOKERY_EVAL_CASE;
 const fixture = `cases/${caseId}`;
+const workspace = `./workspaces/${caseId}`;
 const checks = [
   ['sections', 'Draft sections'],
   ['scores', 'Leverage scores'],
   ['tools', 'Read-only tool calls'],
 ];
+const caseChecks = {
+  'file-both-single': 'One Problem section',
+  'mention-link': 'STORE-412 present',
+};
 
 module.exports = {
   description: 'Managing issues Skill Eval',
@@ -37,12 +42,12 @@ module.exports = {
     {
       id: 'anthropic:claude-agent-sdk',
       label: 'Claude with skill',
-      config: { ...claude, working_dir: './claude-skill' },
+      config: { ...claude, working_dir: `${workspace}/claude-skill` },
     },
     {
       id: 'anthropic:claude-agent-sdk',
       label: 'Claude baseline',
-      config: { ...claude, working_dir: './claude-baseline' },
+      config: { ...claude, working_dir: `${workspace}/claude-baseline` },
     },
     {
       id: 'openai:codex-sdk',
@@ -50,15 +55,15 @@ module.exports = {
       config: {
         model: 'gpt-6.2-sol',
         model_reasoning_effort: 'high',
-        working_dir: './codex-skill',
+        working_dir: `${workspace}/codex-skill`,
         skip_git_repo_check: true,
-        sandbox_mode: 'read-only',
         approval_policy: 'never',
         network_access_enabled: false,
         web_search_mode: 'disabled',
         cli_env: { CODEX_HOME: join(__dirname, 'codex-home') },
         cli_config: {
           cli_auth_credentials_store: 'file',
+          allow_login_shell: false,
           analytics: { enabled: false },
           feedback: { enabled: false },
           features: { apps: false, multi_agent: false },
@@ -74,10 +79,14 @@ module.exports = {
       },
       assert: checks.map(([check, metric]) => ({
         type: 'javascript',
-        value: `file://./${fixture}/checks.mjs`,
+        value: 'file://./cases/password-reset-plus/checks.mjs',
         metric,
         config: { check },
-      })),
+      })).concat(caseChecks[caseId] ? [{
+        type: 'javascript',
+        value: `file://./${fixture}/check.mjs`,
+        metric: caseChecks[caseId],
+      }] : []),
     },
   ],
 };

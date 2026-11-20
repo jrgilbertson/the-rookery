@@ -8,7 +8,8 @@
 - **Case** [password-reset-plus](../../cases/password-reset-plus/prompt.md).
   The case-set SHA-256 is
   `470541e9a113b28a7330e531207be1d9c2de55d8b0085f1a2b4b7f7b4e254088`.
-  From the Skill Eval directory, reproduce it with
+  From the Skill Eval directory in the commit that introduced
+  `cases/password-reset-plus/checks.mjs`, reproduce it with
   `sha256sum cases/password-reset-plus/{prompt.md,checks.mjs,audit-shell.py} | sha256sum`.
 - **Baseline** A fresh Claude session without the `managing-issues` package.
 - **Models** `claude-opus-5-5` with medium effort and `gpt-6.2-sol` with high

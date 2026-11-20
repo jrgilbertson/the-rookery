@@ -26,7 +26,7 @@
   },
   "vendors": {
     "Anthropic": {"everyday": "Opus 5.5", "flagship": "Fable 5.2", "rationed": ["Fable 5.2"], "colour": "#C15F3C"},
-    "OpenAI": {"everyday": "GPT-6.2 Sol", "flagship": "GPT-6.2 Astra", "rationed": [], "colour": "#10A37F"},
+    "OpenAI": {"everyday": "GPT-6.2 Sol", "flagship": "GPT-6.2 Astra", "rationed": [], "colour": "#0E8F6E"},
     "Google": {"everyday": "Gemini 4 Hydrogen", "flagship": "Gemini 4 Carbon", "rationed": [], "colour": "#2F6FDB"},
     "xAI": {"everyday": "Grok 4.7", "flagship": "Grok 4.7", "rationed": [], "colour": "#050505"}
   },

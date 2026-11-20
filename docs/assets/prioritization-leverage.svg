@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" text-rendering="geometricPrecision" viewBox="0 0 1664 936" width="1664" height="936" role="img">
+  <title>The leverage formula</title>
+  <desc>Huginn finishes the fraction bar of the formula: leverage equals impact times confidence, divided by verification effort times undo cost.</desc>
+  <image href="prioritization-leverage-artwork.webp" width="1664" height="936"/>
+  <line x1="388" x2="476" y1="404.5" y2="404.5" stroke="#F5783E" stroke-width="11.5"/>
+  <text x="356" y="422" text-anchor="end" font-family="Baskerville,Georgia,serif" font-weight="400" font-style="italic" font-size="56" fill="#EEF2F9">leverage =</text>
+  <text x="668" y="368" text-anchor="middle" font-family="Baskerville,Georgia,serif" font-weight="400" font-style="italic" font-size="56" fill="#EEF2F9">impact × confidence</text>
+  <text x="668" y="466" text-anchor="middle" font-family="Baskerville,Georgia,serif" font-weight="400" font-style="italic" font-size="56" fill="#EEF2F9">verification effort × undo cost</text>
+</svg>

@@ -8,6 +8,8 @@ ideas, or tasks, I use this order.
 leverage = (impact × confidence) ÷ (verification effort × undo cost)
 ```
 
+![Huginn stands at a chalkboard and finishes the fraction bar of the formula: leverage equals impact times confidence, divided by verification effort times undo cost.](docs/assets/prioritization-leverage.webp)
+
 This is the traditional ICE score (impact, confidence, ease), modified in two
 ways for AI development:
 

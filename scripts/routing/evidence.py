@@ -555,7 +555,7 @@ def changes(data: Data) -> list[str]:
 
 
 # Chart palette and type, from DESIGN.md.
-NAVY, COBALT, GRAPHITE, PAPER = "#042458", "#0050CC", "#596A8B", "#DEE2EC"
+NAVY, COBALT, GRAPHITE, PAPER = "#042458", "#0050CC", "#47577A", "#F6F7FA"
 TEXT_FONT = "Baskerville,Georgia,serif"
 TITLE_FONT = "Didot,'Bodoni MT',Georgia,serif"
 FALLBACK_INKS = (NAVY, COBALT, GRAPHITE)
@@ -800,14 +800,21 @@ def _corner_marks(w: float, h: float) -> str:
     return f"M14 26V14H26M{w - 26} 14H{w - 14}V26M14 {h - 26}V{h - 14}H26M{w - 26} {h - 14}H{w - 14}V{h - 26}"
 
 
+def _ground(w: int, h: int) -> list[str]:
+    """Chalk Paper, the hairline that holds it on a white page, and the corner marks."""
+    return [
+        f'<rect width="{w}" height="{h}" fill="{PAPER}"/>',
+        f'<rect x=".5" y=".5" width="{w - 1}" height="{h - 1}" fill="none" stroke="{GRAPHITE}" stroke-opacity=".32"/>',
+        f'<path d="{_corner_marks(w, h)}" fill="none" stroke="{GRAPHITE}" stroke-opacity=".5"/>',
+    ]
+
+
 def _frame(body: list[str], title: str, subtitle: str, footer: list[str], h: int, efforts: list[str]) -> str:
     w, h = CHART_WIDTH, h + 26
-    marks = _corner_marks(w, h)
     return "\n".join([
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img">',
         f"<title>{escape(title)}</title>",
-        f'<rect width="{w}" height="{h}" fill="{PAPER}"/>',
-        f'<path d="{marks}" fill="none" stroke="{GRAPHITE}" stroke-opacity=".5"/>',
+        *_ground(w, h),
         _text(40, 52, title, 30, NAVY, font_family=TITLE_FONT),
         _text(40, 78, subtitle, 15, COBALT, font_weight="600"),
         *_effort_key(efforts, 104),
@@ -955,8 +962,7 @@ def table_chart(directory: Path, data: Data) -> str | None:
     return "\n".join([
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CHART_WIDTH} {h}" width="{CHART_WIDTH}" height="{h}" role="img">',
         "<title>Which model to use for which work</title>",
-        f'<rect width="{CHART_WIDTH}" height="{h}" fill="{PAPER}"/>',
-        f'<path d="{_corner_marks(CHART_WIDTH, h)}" fill="none" stroke="{GRAPHITE}" stroke-opacity=".5"/>',
+        *_ground(CHART_WIDTH, h),
         _text(left, 52, "Which model to use for which work", 30, NAVY, font_family=TITLE_FONT),
         _text(left, 80, "Three providers per row, best first, each at the effort setting worth its cost.", 15, COBALT, font_weight="600"),
         *body,

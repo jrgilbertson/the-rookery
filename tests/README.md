@@ -19,7 +19,9 @@ personal-chief-of-staff source-map sample
 against the version 3 shape in
 [source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md).
 The repository-integrity tests also exercise malformed packages and unsafe
-paths.
+paths. The routing checks run the shipped
+[routing evidence script](../scripts/routing/evidence.py) against synthetic
+benchmark data.
 
 Repository text checks also require the "Rank by leverage" section in
 `GLOBAL-AGENTS.md` and in the `managing-issues` skill to match the one in

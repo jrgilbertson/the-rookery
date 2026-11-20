@@ -1,0 +1,16 @@
+{
+  "models": ["Claude Alpha", "Beta", "Delta"],
+  "subsets": {"main": 4},
+  "data": {
+    "Claude Alpha": {
+      "low": {"main": {"correct": 0.5, "new_score": 0.4, "cost": 1.5, "duration_min": null}},
+      "xhigh": {"main": {"correct": 0.75, "new_score": 0.6125, "cost": 6.25, "duration_min": null}}
+    },
+    "Beta": {
+      "high": {"main": {"correct": 0.25, "new_score": 0.2, "cost": 0.5, "duration_min": null}}
+    },
+    "Delta": {
+      "na": {"main": {"correct": 0.1, "new_score": 0.08, "cost": 0.05, "duration_min": null}}
+    }
+  }
+}

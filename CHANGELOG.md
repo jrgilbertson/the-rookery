@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- A chart in `ROUTING.md` of combined quality against cost at each effort
+  setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
+  computes the figures and draws the chart from the committed data, and the
+  repository checks fail when a chart is stale.
 - `checking-skill-portability`, a read-only check that a skill package works
   the same in any harness and with any agent that supports the Agent Skills
   specification. It runs the specification's reference validator, then checks
@@ -56,6 +60,29 @@ looked" surface. GitHub Releases mirror its entries.
 - `coordinating-work` records and verifies the Coordinator's workspace as the
   cross-machine parent when Orca cannot create a remote worker workspace as
   a child.
+- `ROUTING.md` recommends models for the Team lead, Executor, Design/taste,
+  and Writing roles by a written method, reviewed against data read
+  2026-11-19. Five benchmark suites from five operators form a measured base
+  that covers coding and general work. The page covers four providers:
+  Anthropic, OpenAI, Google, and xAI. Each model is listed at its best-value effort, the last
+  effort before a step costs more than 40% extra per added point of quality.
+  The Executor row starts from each vendor's everyday model and the Team
+  lead row from its flagship. Design/taste follows Arena WebDev and Writing
+  follows Arena's creative-writing board, each with recorded checks. The
+  maintainer's judgment comes last and is marked with an asterisk. The
+  Reviewer role leaves the page, since `ce-code-review` covers review in the
+  Ship workflow.
+- The evidence lives in `docs/routing/`. `results.csv` is append-only: an
+  import adds a read and keeps earlier ones, `report --as-of` shows the
+  figures as they stood on a date, and `changes` lists what moved since the
+  previous read. `role-inputs.csv` records what each source says, and
+  `recommendations.csv` holds the picks with their model ids.
+- The page shows the recommendations as a figure drawn from
+  `recommendations.csv`, whose alt text names every pick; a check fails when
+  the two disagree. The charts show combined cost relative to a typical
+  FrontierCode setting, name the base suites in a footnote, colour each
+  provider by its logo, and mark each best-value effort with a soft ring in
+  its line's colour.
 - `coordinating-work` leaves branch currency to the repository and holds
   merges while the default branch's latest required checks are failing.
 - `CONCEPTS.md` defines one eval vocabulary, shared with Corvly: Product Eval,
@@ -76,8 +103,21 @@ looked" surface. GitHub Releases mirror its entries.
 - `CONCEPTS.md` widens Product Eval to cover a whole conversation, such as a
   live voice practice session, as well as a single reply, matching Corvly.
 
+- The section of `ROUTING.md` on delegating and handing off moved to
+  `WORKFLOWS.md`.
+- `ROUTING.md` renames the Planner role to Team lead. The role owns the
+  outcome: it thinks through the hard parts, hands the rest to Executors, and
+  answers for their quality.
+- `coordinating-work` calls its lead session the Team lead instead of the
+  Coordinator, and says up front that the Team lead is accountable for the
+  quality and output of every worker. When a worker's output falls short, the
+  Team lead amends the brief, reassigns the work, or does it itself. Orca's
+  "coordinator" and older records that say Coordinator mean the same session.
+
 ### Removed
 
+- `docs/model-evaluations.md`. `ROUTING.md` now carries the short version of
+  how its table gets updated, so the two files no longer repeat each other.
 - `creating-portable-skills`, its signal scanner, and the scanner's tests.
   Claude Code's and Codex's own `skill-creator` now write and revise skills,
   and `checking-skill-portability` keeps the cross-harness check they lack. Its

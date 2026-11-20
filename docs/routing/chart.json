@@ -1,0 +1,44 @@
+{
+  "anchor": "FrontierCode",
+  "aliases": {
+    "DeepSeek V4.1 Flash 1017": "DeepSeek V4.1 Flash",
+    "Reflection Beam": "Beam 1.0",
+    "GLM 5.3": "GLM-5.3",
+    "GLM 5.3 Flash": "GLM-5.3-Flash"
+  },
+  "suites": {
+    "FrontierCode": {"base": true},
+    "VulcanBench": {"base": true},
+    "AA Intelligence Index": {"base": true},
+    "Vals Index": {"base": true},
+    "CursorBench": {"base": true},
+    "AA Coding Agent Index": {"base": false},
+    "AA-Briefcase": {"base": false},
+    "Vals Terminal-Bench": {"base": false},
+    "Vals Terminal-Bench by effort": {"base": false},
+    "Design Arena": {"base": false},
+    "Arena WebDev": {"base": false},
+    "Design Arena UI Components": {"base": false},
+    "21st.dev Design System Bench": {"base": false},
+    "Arena Creative Writing": {"base": false},
+    "Arena Text": {"base": false},
+    "Lechmazur Writing": {"base": false}
+  },
+  "vendors": {
+    "Anthropic": {"everyday": "Opus 5.5", "flagship": "Fable 5.2", "rationed": ["Fable 5.2"], "colour": "#C15F3C"},
+    "OpenAI": {"everyday": "GPT-6.2 Sol", "flagship": "GPT-6.2 Astra", "rationed": [], "colour": "#10A37F"},
+    "Google": {"everyday": "Gemini 4 Hydrogen", "flagship": "Gemini 4 Carbon", "rationed": [], "colour": "#2F6FDB"},
+    "xAI": {"everyday": "Grok 4.7", "flagship": "Grok 4.7", "rationed": [], "colour": "#050505"}
+  },
+  "models": [
+    {"model": "Fable 5.2", "provider": "Anthropic", "status": "current"},
+    {"model": "Opus 5.5", "provider": "Anthropic", "status": "current"},
+    {"model": "GPT-6.2 Astra", "provider": "OpenAI", "status": "current"},
+    {"model": "GPT-6.2 Sol", "provider": "OpenAI", "status": "current"},
+    {"model": "Gemini 4 Neon", "provider": "Google", "status": "current"},
+    {"model": "Gemini 4 Carbon", "provider": "Google", "status": "current"},
+    {"model": "Gemini 4 Hydrogen", "provider": "Google", "status": "current"},
+    {"model": "Gemini 4 Argon", "provider": "Google", "status": "current"},
+    {"model": "Grok 4.7", "provider": "xAI", "status": "current"}
+  ]
+}

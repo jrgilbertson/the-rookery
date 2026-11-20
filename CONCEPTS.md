@@ -94,20 +94,103 @@ verification effort and undo cost. Verification effort is how hard a result is
 to confirm, and undo cost is what it takes to reverse a change that turns out
 wrong. [PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
 
+## Choosing models
+
+### Base
+
+The measured starting point for model recommendations: benchmark suites from
+different operators that report quality and cost for the same model, effort,
+and tasks, put on one scale. It covers coding and general work. It gives a
+model order and each model's best-value effort.
+
+### Setting
+
+One model at one effort. The recommendations compare settings, so a model is
+"better" when its listed setting scores higher, whatever it could reach at
+another effort. A model's best score at any effort is its ceiling.
+
+### Order
+
+How settings are listed. A setting at least as good for no more cost goes
+first. Otherwise the better-scoring setting goes first only when it costs at
+most 40% more for each point of quality it adds.
+
+### Best-Value Effort
+
+The effort setting to stop at for a model: the last one before the next step
+up costs too much for what it adds. A step's price is how much more it costs,
+in percent, for each added point of quality. Efforts that a cheaper effort of
+the same model beats are left out first.
+
+### Frontier
+
+The settings no other setting beats on both quality and cost. A listed
+setting off the frontier has a cheaper alternative that scores at least as
+well.
+
+### Practitioner View
+
+What people who use the models report, gathered from recent public posts at
+each refresh. A report does not change a row by itself. It informs the
+maintainer's judgment, and an adjustment that rests on one says so.
+
+### Judgment
+
+The maintainer's own call, made last. It can override the measurements when
+the adjustment says so and names what would change it.
+
+### Everyday Model
+
+The model a vendor itself recommends for most day-to-day work. When the
+vendor's own sources disagree, it is the model the vendor's coding tool runs
+by default to do the work. It starts the Executor row.
+
+### Flagship
+
+The model a vendor recommends for its hardest work. It starts the Team Lead
+row.
+
+### Rationed
+
+A model the vendor's plan limits more tightly than its others, by a cap, a
+faster draw on the plan's allowance, or billing to credits. A rationed model
+never takes another model's slot in the Executor or Team Lead row, even when
+it scores higher for less.
+
+### Role Input
+
+A recorded fact that bears on a role the base does not measure: a vendor's
+own model guidance, a related benchmark, or a preference ranking. Each has a
+source and the date it was read.
+
+### Adjustment
+
+A written departure from the base in a role's recommendation. It
+states from what, to what, which role input justifies it, and what would
+reverse it.
+
 ## Coordinating work
+
+### Team Lead
+
+The session that owns a piece of work and answers for its result. It thinks
+through the hard parts, hands the rest to workers, and is accountable for the
+quality and output of every worker. In a coordinated batch it is the session
+the operator talks to. Orca's guides call it the coordinator, and older
+records call it the Coordinator.
 
 ### Coordinated Batch
 
-One Coordinator, its task workers, and its record, working the issues and epics
+One Team lead, its task workers, and its record, working the issues and epics
 the operator handed it. An epic brings the child issues it had when handed
-over. The operator adds scope by telling the Coordinator, which records the
-operator's words, or by approving an issue the Coordinator drafted. The
-Coordinator dispatches nothing outside that scope. The batch ends when its scope is done or
+over. The operator adds scope by telling the Team lead, which records the
+operator's words, or by approving an issue the Team lead drafted. The
+Team lead dispatches nothing outside that scope. The batch ends when its scope is done or
 the operator ends it.
 
 ### Merge Approval
 
-What the operator approved a Coordinator to merge without them: the merge bar
+What the operator approved a Team lead to merge without them: the merge bar
 and held changes shown in the setup proposal for one coordinated batch, applied
 to the batch's scope, with any held change the operator pre-authorized under a
 stated bar and any change the operator made in recorded words to the scope,

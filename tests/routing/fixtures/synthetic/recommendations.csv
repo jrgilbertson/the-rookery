@@ -1,0 +1,5 @@
+role,choice,provider,model,model_id,effort,judgment,reviewed
+Executor,1,Anthropic,Claude Alpha 1.2,claude-alpha-1-2,high,yes,2026-01-02
+Executor,2,OpenAI,GPT-9.1 Gamma,gpt-9.1-gamma,medium,,2026-01-02
+Writing,1,OpenAI,GPT-9.1 Gamma,gpt-9.1-gamma,low,,2026-01-02
+Writing,2,Anthropic,Claude Alpha 1.2,claude-alpha-1-2,max,,2026-01-02

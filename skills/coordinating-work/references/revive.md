@@ -1,6 +1,6 @@
 # Revive
 
-Read this after the operator manually starts a replacement Coordinator or asks
+Read this after the operator manually starts a replacement Team lead or asks
 to recover an interrupted coordinated batch. The entry skill owns shape, shared
 approval, worker lifetime, the record, and completion requirements.
 
@@ -10,18 +10,18 @@ the operator asks.
 
 A planned move of a participant to another provider or model, such as to spare
 an account's quota, uses this reference for that participant only. Skip "Start
-with the Coordinator", propose the fresh-handoff row, and move the participant
+with the Team lead", propose the fresh-handoff row, and move the participant
 at its next idle point, after its running job ends.
 
-## Start with the Coordinator
+## Start with the Team lead
 
-Recovery starts with the Coordinator. The operator switches its account, or
+Recovery starts with the Team lead. The operator switches its account, or
 starts a replacement on the host that holds the coordinated batch's record,
-and the Coordinator then brings the workers along. On every start or revive,
+and the Team lead then brings the workers along. On every start or revive,
 in this order, before any new dispatch:
 
 1. A session that is new to the batch asks the operator to confirm the
-   previous Coordinator has ended, and waits for that answer. A Coordinator
+   previous Team lead has ended, and waits for that answer. A Team lead
    continuing its own conversation skips this step.
 2. Read the record: the approved proposal, the standing rules, the table with
    the batch's current scope, and the tail of the log, where open questions
@@ -38,9 +38,9 @@ the existing approval.
 ## Reconstruct current work
 
 Identify the intended effort from the record, current native records, and
-canonical work. Establish the replacement Coordinator's current
+canonical work. Establish the replacement Team lead's current
 identity, supported binding, inbox/question path, and lifecycle authority.
-Resolve any competing Coordinator before changing assignments; independent
+Resolve any competing Team lead before changing assignments; independent
 operation IDs do not establish exclusive coordination ownership.
 
 Reconcile current membership and attempts using the installed guide, including
@@ -136,8 +136,8 @@ changes do not authorize execution.
 
 Go ahead without a new approval in two cases. The first is when every row
 keeps an approval already in the record and the only change is the
-Coordinator's own account, with the operator's confirmation from
-"Start with the Coordinator" when the session is new. The second is when the operator has
+Team lead's own account, with the operator's confirmation from
+"Start with the Team lead" when the session is new. The second is when the operator has
 switched an account and asked to continue or recover, and every row resumes the same
 conversation under the newly selected account with the same provider, model,
 and effort. Replacing a worker, changing its provider or settings, or a fresh
@@ -146,7 +146,7 @@ handoff still needs approval.
 ## Recover approved effects
 
 Re-read affected current ownership and attempts before acting. If an old writer
-or Coordinator may still be active without a supported ownership transition,
+or Team lead may still be active without a supported ownership transition,
 hold that branch. Approval does not convert unknown liveness into proof of exit.
 
 Use the native continuation, retry, or fresh-handoff path for each approved
@@ -159,7 +159,7 @@ have the resumed worker confirm the latest amendment it is working from.
 
 Follow the guide's reconciliation path for uncertain results before repeating
 anything. Repeated revive must not duplicate workers, assignments, or timers.
-After a resume, check that a worker with an open question to the Coordinator
+After a resume, check that a worker with an open question to the Team lead
 can still receive the reply.
 
 Re-attaching gives a worker new identifiers and delivers its brief again. The

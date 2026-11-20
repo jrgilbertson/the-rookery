@@ -6,9 +6,9 @@ outcome requirements.
 
 ## Establish the intended coordinated batch
 
-Use the invoking session as Coordinator unless the operator requested another
-Coordinator. Establish its actual runtime identity and supported coordination
-authority; do not launch a duplicate Coordinator because this one lacks a
+Use the invoking session as Team lead unless the operator requested another
+Team lead. Establish its actual runtime identity and supported coordination
+authority; do not launch a duplicate Team lead because this one lacks a
 terminal handle.
 
 Read the supplied objective, canonical work and project instructions, current
@@ -41,7 +41,7 @@ Inspect available provider/model/effort choices and placement support on each
 execution host the guide can reach. Recommend where heavy workers run,
 preferring a reachable host kept for development work over the operator's own
 machine, and show the measured CPU and memory behind the recommendation; the
-operator chooses the placement. Distinguish the Coordinator already running from
+operator chooses the placement. Distinguish the Team lead already running from
 participants that need starting. Preserve evidenced settings for existing
 participants; show the supported choices for new ones. "Host default, no
 override" is an explicit value when the host's choices cannot be listed.
@@ -54,8 +54,8 @@ ownership, and initial workers to start. The proposal also states, so that one
 approval covers them:
 
 - **The batch.** List the issues and epics in scope, with each issue's four
-  scores. The Coordinator dispatches nothing outside the recorded scope.
-- **Issue edits.** State the standing instruction that lets the Coordinator
+  scores. The Team lead dispatches nothing outside the recorded scope.
+- **Issue edits.** State the standing instruction that lets the Team lead
   edit Scope and Verification on issues in scope as the entry skill's
   [Changing an issue](../SKILL.md#changing-an-issue) allows, with stored
   scores kept, and close an issue whose pull request merged through the
@@ -64,7 +64,7 @@ approval covers them:
 - **What a merge starts.** State what merging to the default branch triggers
   here, such as a deploy, a release, a migration, a paid job, or the tracker
   closing the linked issue.
-- **Spending.** Whether the Coordinator may choose a paid option, such as at a
+- **Spending.** Whether the Team lead may choose a paid option, such as at a
   usage-limit prompt. The default is no.
 
 - **The merge bar and the held changes.** Show the defaults from
@@ -76,11 +76,11 @@ approval covers them:
   them under a stated bar. With no answer, they are held. The answer goes in
   the record and is part of the merge approval.
 - **The standing instruction not to wait.** State it as the operator's
-  instruction: the Coordinator never stops for an answer, decides a default
+  instruction: the Team lead never stops for an answer, decides a default
   as Operate describes, and logs the question. An installed guide that says
   to ask the user first yields to this instruction once it is approved.
 - **Where the record lives.** Name a durable, private location on the
-  Coordinator's host, as the entry skill requires.
+  Team lead's host, as the entry skill requires.
 - **The check interval**, for the one periodic check Operate describes;
   suggest 30 minutes for the operator to approve.
 
@@ -99,7 +99,7 @@ effects are approved under the entry skill's approval rules.
 Immediately before affected changes, reconcile current ownership and any work
 that completed during the discussion. Use the supported native operations for
 the approved assignments, settings, and execution placements. If the current
-Coordinator lacks the required binding or authority, report that path blocked
+Team lead lacks the required binding or authority, report that path blocked
 instead of manufacturing a takeover.
 
 A partial startup does not authorize duplicating successful workers or changing

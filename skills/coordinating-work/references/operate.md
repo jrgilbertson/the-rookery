@@ -116,9 +116,13 @@ other than a default branch wait:
 - when the worker can make the line true, reply with what to do, such as
   fixing a failed check, resolving a thread, or running the continuous watch
   and asking again;
-- otherwise leave the pull request open, add it to the ready-for-operator list
-  with the line that failed, and reply that it is held for the operator. A
-  pull request that will be held anyway is held straight away.
+- when the worker cannot and you could, make one more attempt: amend the brief
+  and reassign it, start one follow-on assignment, or do the work yourself.
+  Run the checklist again on the result;
+- otherwise, or when that attempt also falls short, leave the pull request
+  open, add it to the ready-for-operator list with the line that failed, and
+  reply that it is held for the operator. A pull request that will be held
+  anyway is held straight away.
 
 A deviation the worker declared in the pull request body is yours to judge.
 When the result still solves the issue's Problem, accept it by editing the
@@ -148,7 +152,7 @@ question in the record with the default you took, and leave blocking question
 dialogs unused. When the operator is talking to you, raise what is open then.
 You wait only for the operator's own approvals: of a proposal, of a tracker
 write `managing-issues` needs approved, and a new session's confirmation that
-the previous Coordinator has ended. Each holds only the work that depends on
+the previous Team lead has ended. Each holds only the work that depends on
 it.
 
 On a judgment call the brief, the record, and the standing rules do not settle,
@@ -234,11 +238,11 @@ Each time, read the table against live state and act on what changed:
 - list for the operator a worker that has not acknowledged its last reply
   by the following check.
 
-The check belongs to the Coordinator's own session. It ends with that session,
+The check belongs to the Team lead's own session. It ends with that session,
 or when no assignment is open or waiting at a prompt the operator can answer,
 nothing in scope is left to dispatch or waiting on anything but the operator,
 and no recorded write is pending. The record says how to stop it. A scheduler
-that starts a new agent session is a second Coordinator, so the check uses the
+that starts a new agent session is a second Team lead, so the check uses the
 session's own timer.
 
 Moving, replacing, or switching the account of a worker happens only in

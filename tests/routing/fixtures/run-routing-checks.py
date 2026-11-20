@@ -524,7 +524,8 @@ def check_charts() -> None:
         picks = data / "recommendations.csv"
         with picks.open(newline="", encoding="utf-8") as handle:
             rows = list(csv.DictReader(handle))
-        pick = next(row for row in rows if row["role"] == "Executor" and row["judgment"] != "yes")
+        pick = next(row for row in rows if row["role"] == "Executor")
+        pick["judgment"] = ""
         pick["effort"] = "low" if pick["effort"] == "max" else "max"
 
         def save() -> None:

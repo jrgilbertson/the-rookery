@@ -278,10 +278,10 @@ has retrievable evidence, and the run names any unavailable check.
 
 Use the provider's verified actual meeting start when available. For Granola,
 if actual start is unavailable and the destination accepts an approximation,
-read only the opening transcript chunk. Use the first recorded utterance if it
-has a reliable clock timestamp with a date and UTC offset. Use the date and
-offset supplied by the connector's timestamp format when it gives a clock time
-alone. Label the time “approximate, based on first recorded speech” in the
+read only the opening transcript chunk. Use the first utterance in the chunk
+with a reliable clock timestamp, date, and UTC offset. Use the date and offset
+supplied by the connector's timestamp format when it gives a clock time alone.
+Label the time “approximate, based on first reliably timed speech” in the
 proposal and note. Elapsed offsets, estimated transcript timings, scheduled
 times, and note creation times cannot establish this fallback. A reliable
 transcript timestamp works for ad hoc meetings too.

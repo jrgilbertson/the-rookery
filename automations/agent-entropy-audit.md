@@ -8,7 +8,7 @@ Find duplicated truth, dead code, stale guidance, and weakened guardrails, and r
 
 ## Setup
 
-Use a repository-specific slug in the prompt (`agent-entropy-audit-<repository name>`). Keep the automation paused while validating its first manual run. A run with no prior history performs a full-repository baseline sweep; later weekly runs focus on recent changes and remaining debt.
+Use a repository-specific slug in the prompt (`agent-entropy-audit-<repository name>`). Keep the automation paused while validating its first manual run. A run with no prior history performs a full-repository baseline sweep; later weekly runs focus on recent changes and remaining debt. If you are upgrading from the retired coding standards audit, copy any prior decisions from `coding-standards-audit-<repository name>/decisions.md` into `agent-entropy-audit-<repository name>/decisions.md` before the first run, and leave `runs/` empty so the first run still performs a baseline sweep.
 
 ## Prompt
 

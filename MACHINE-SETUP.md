@@ -120,12 +120,13 @@ codex mcp add vercel --url https://mcp.vercel.com
 ## Check a machine against this list
 
 Run this from the repository root with Python 3.9 or later and both harness
-CLIs. It prints nothing when all listed entries are present and there are no
-extra skills managed by the skills CLI or extra enabled Claude Code user plugins.
-Additional Codex plugins and MCP servers can come from the harness or local
-configuration. The check compares names without starting MCP servers. It also
-checks for `SKILL.md` in both harnesses' global skill directories for listed
-skills in the lock and for Impeccable.
+CLIs. It prints nothing when all listed skills, plugins, and MCP servers are
+present and there are no extra skills managed by the skills CLI or extra
+enabled Claude Code user plugins. Global agent instructions above are not
+checked by this script. Additional Codex plugins and MCP servers can come from
+the harness or local configuration. The check compares names without starting
+MCP servers. It also checks for `SKILL.md` in both harnesses' global skill
+directories for listed skills in the lock and for Impeccable.
 
 ```bash
 python3 - <<'PYTHON'

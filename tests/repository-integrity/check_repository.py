@@ -104,15 +104,19 @@ def check_home_paths(repository: Path) -> None:
     workflow.unlink()
 
     machine_setup = repository / "MACHINE-SETUP.md"
+    antigravity_path = "~" + "/.gemini/config/AGENTS.md"
+    grok_path = "~" + "/.grok/AGENTS.md"
+    cursor_path = "~" + "/.cursor/rules/global-agents.mdc"
     machine_setup_paths = (
         approved,
         claude_path,
-        "~" + "/.gemini/config/AGENTS.md",
-        "~" + "/.grok/AGENTS.md",
-        "~" + "/.cursor/rules/global-agents.mdc",
+        antigravity_path,
+        grok_path,
+        cursor_path,
     )
     machine_setup.write_text(
-        "\n".join(f"- `{path}`" for path in machine_setup_paths) + "\n",
+        "\n".join(f"- `{path}`" for path in machine_setup_paths)
+        + f"\n- `@{approved}`\n",
         encoding="utf-8",
     )
     reviewed_setup = run_checker(repository)
@@ -120,14 +124,31 @@ def check_home_paths(repository: Path) -> None:
         reviewed_setup.returncode == 0,
         f"reviewed MACHINE-SETUP.md examples failed: {reviewed_setup.stderr}",
     )
-    machine_setup.write_text(f"`{approved}` and `{home_relative}`\n", encoding="utf-8")
-    rejected_setup = run_checker(repository)
-    require(
-        rejected_setup.returncode == 1
-        and "MACHINE-SETUP.md:1: local home-directory path is not allowed" in rejected_setup.stderr,
-        f"MACHINE-SETUP.md allowlist exempted an unreviewed path: {rejected_setup.stderr}",
-    )
+    for unreviewed in (
+        home_relative,
+        f"@{home_relative}",
+        approved + ".private",
+        "~" + "/.cursor/rules/other.mdc",
+    ):
+        machine_setup.write_text(f"`{approved}` and `{unreviewed}`\n", encoding="utf-8")
+        rejected_setup = run_checker(repository)
+        require(
+            rejected_setup.returncode == 1
+            and "MACHINE-SETUP.md:1: local home-directory path is not allowed" in rejected_setup.stderr,
+            f"MACHINE-SETUP.md allowlist exempted {unreviewed!r}: {rejected_setup.stderr}",
+        )
     machine_setup.unlink()
+
+    outside = repository / "outside-setup.md"
+    for scoped_path in (antigravity_path, grok_path, cursor_path):
+        outside.write_text(f"Path: `{scoped_path}`\n", encoding="utf-8")
+        rejected_outside = run_checker(repository)
+        require(
+            rejected_outside.returncode == 1
+            and "outside-setup.md:1: local home-directory path is not allowed" in rejected_outside.stderr,
+            f"MACHINE-SETUP.md path was accepted outside its file ({scoped_path!r}): {rejected_outside.stderr}",
+        )
+    outside.unlink()
 
     test_source = repository / "tests/repository-integrity/check_repository.py"
     test_source.parent.mkdir(parents=True)

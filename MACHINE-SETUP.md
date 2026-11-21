@@ -1,7 +1,23 @@
 # Machine setup
 
-The skills, plugins, and MCP servers I install on every machine. These commands
-use each source's current version.
+The global agent instructions, skills, plugins, and MCP servers I set up on
+every machine. The install commands below use each source's current version.
+
+## Global agent instructions
+
+Keep one canonical global instructions file on each machine (for example,
+`~/.codex/AGENTS.md`) and point every harness you use to it, so changes stay in
+one place instead of drifting across tools. [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md)
+is a published reference copy; agents in this repository do not load it
+directly.
+
+| Harness | Global instructions path | How to connect |
+|---|---|---|
+| Codex | `~/.codex/AGENTS.md` | Canonical file (or symlink to it) |
+| Claude Code | `~/.claude/CLAUDE.md` | Single `@~/.codex/AGENTS.md` import line (or symlink) |
+| Antigravity | `~/.gemini/config/AGENTS.md` | Symlink to the canonical file |
+| Grok | `~/.grok/AGENTS.md` | Symlink to the canonical file |
+| Cursor | `~/.cursor/rules/global-agents.mdc` | `.mdc` rule with `alwaysApply: true` YAML frontmatter (sync or wrap the canonical file) |
 
 ## Install with the skills CLI
 

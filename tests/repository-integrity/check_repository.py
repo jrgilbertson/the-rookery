@@ -88,11 +88,12 @@ def check_home_paths(repository: Path) -> None:
         )
     document.unlink()
 
+    claude_path = "~" + "/.claude/CLAUDE.md"
     workflow = repository / "WORKFLOWS.md"
     workflow.write_text(f"Shared instructions: `{approved}`.\n", encoding="utf-8")
     reviewed = run_checker(repository)
     require(reviewed.returncode == 0, f"reviewed setup example failed: {reviewed.stderr}")
-    for unreviewed in (home_relative, approved + ".private"):
+    for unreviewed in (home_relative, approved + ".private", claude_path):
         workflow.write_text(f"`{approved}` and `{unreviewed}`\n", encoding="utf-8")
         result = run_checker(repository)
         require(
@@ -101,6 +102,32 @@ def check_home_paths(repository: Path) -> None:
             f"reviewed example exempted another path: {result.stderr}",
         )
     workflow.unlink()
+
+    machine_setup = repository / "MACHINE-SETUP.md"
+    machine_setup_paths = (
+        approved,
+        claude_path,
+        "~" + "/.gemini/config/AGENTS.md",
+        "~" + "/.grok/AGENTS.md",
+        "~" + "/.cursor/rules/global-agents.mdc",
+    )
+    machine_setup.write_text(
+        "\n".join(f"- `{path}`" for path in machine_setup_paths) + "\n",
+        encoding="utf-8",
+    )
+    reviewed_setup = run_checker(repository)
+    require(
+        reviewed_setup.returncode == 0,
+        f"reviewed MACHINE-SETUP.md examples failed: {reviewed_setup.stderr}",
+    )
+    machine_setup.write_text(f"`{approved}` and `{home_relative}`\n", encoding="utf-8")
+    rejected_setup = run_checker(repository)
+    require(
+        rejected_setup.returncode == 1
+        and "MACHINE-SETUP.md:1: local home-directory path is not allowed" in rejected_setup.stderr,
+        f"MACHINE-SETUP.md allowlist exempted an unreviewed path: {rejected_setup.stderr}",
+    )
+    machine_setup.unlink()
 
     test_source = repository / "tests/repository-integrity/check_repository.py"
     test_source.parent.mkdir(parents=True)

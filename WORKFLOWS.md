@@ -207,7 +207,7 @@ and approve specific changes before applying them through the workflow that
 owns the work.
 
 Other [automations](automations/README.md) review tests, CI, codebase design,
-and coding standards. Their prompts and schedules live separately from skills:
+and agent entropy. Their prompts and schedules live separately from skills:
 a scheduled prompt can invoke an existing skill or describe a review directly.
 I copy them into Orca and choose the target repository, agent, and schedule there.
 

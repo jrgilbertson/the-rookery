@@ -20,7 +20,7 @@ between two jobs, with host-specific consolidation instructions below it.
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 21:00 | America/Los_Angeles |
 | [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
 | [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 04:00 | America/Los_Angeles |
-| [Coding standards audit](coding-standards-audit.md) | Keep adopted coding guidance current and useful | Saturday at 07:00 | America/Los_Angeles |
+| [Agent entropy audit](agent-entropy-audit.md) | Find duplicated truth, dead code, stale guidance, and weakened guardrails | Saturday at 07:00 | America/Los_Angeles |
 
 All schedules use America/Los_Angeles. Choose a cadence and timezone that suit
 your work.

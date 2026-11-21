@@ -89,7 +89,7 @@ separately from installing skills.
 - [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.
 - [Optimize CI](automations/optimize-ci.md). Review continuous integration and recommend improvements.
 - [Weekly codebase design](automations/weekly-codebase-design.md). Review codebase design and recommend improvements.
-- [Coding standards audit](automations/coding-standards-audit.md). Review adopted coding guidance against repository evidence and current primary sources.
+- [Agent entropy audit](automations/agent-entropy-audit.md). Find duplicated truth, dead code, stale guidance, and weakened guardrails, and recommend cleanups, mechanical checks, and standards updates.
 
 ## My other projects
 

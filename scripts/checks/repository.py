@@ -57,8 +57,8 @@ HOME_PATH = re.compile(
 # Split the home prefix so the allowlist itself contains no local-path literals.
 HOME_PATH_EXAMPLES = {
     "automations/README.md": {"~" + "/.local/state/automation-runs"},
+    "automations/agent-entropy-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/analytics-gap-audit.md": {"~" + "/.local/state/automation-runs"},
-    "automations/coding-standards-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/design-system-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/improve-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/optimize-ci.md": {"~" + "/.local/state/automation-runs"},

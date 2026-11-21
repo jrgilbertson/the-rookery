@@ -1,7 +1,23 @@
 # Machine setup
 
-The skills, plugins, and MCP servers I install on every machine. These commands
-use each source's current version.
+The global agent instructions, skills, plugins, and MCP servers I set up on
+every machine. The install commands below use each source's current version.
+
+## Global agent instructions
+
+Keep one canonical global instructions file on each machine (for example,
+`~/.codex/AGENTS.md`) and point every harness you use to it, so changes stay in
+one place instead of drifting across tools. [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md)
+is a published reference copy; agents in this repository do not load it
+directly.
+
+| Harness | Global instructions path | How to connect |
+|---|---|---|
+| Codex | `~/.codex/AGENTS.md` | Canonical file (or symlink to it) |
+| Claude Code | `~/.claude/CLAUDE.md` | Single `@~/.codex/AGENTS.md` import line (or symlink) |
+| Antigravity | `~/.gemini/config/AGENTS.md` | Symlink to the canonical file |
+| Grok | `~/.grok/AGENTS.md` | Symlink to the canonical file |
+| Cursor | `~/.cursor/rules/global-agents.mdc` | `.mdc` rule with `alwaysApply: true` YAML frontmatter (sync or wrap the canonical file) |
 
 ## Install with the skills CLI
 
@@ -104,12 +120,13 @@ codex mcp add vercel --url https://mcp.vercel.com
 ## Check a machine against this list
 
 Run this from the repository root with Python 3.9 or later and both harness
-CLIs. It prints nothing when all listed entries are present and there are no
-extra skills managed by the skills CLI or extra enabled Claude Code user plugins.
-Additional Codex plugins and MCP servers can come from the harness or local
-configuration. The check compares names without starting MCP servers. It also
-checks for `SKILL.md` in both harnesses' global skill directories for listed
-skills in the lock and for Impeccable.
+CLIs. It prints nothing when all listed skills, plugins, and MCP servers are
+present and there are no extra skills managed by the skills CLI or extra
+enabled Claude Code user plugins. Global agent instructions above are not
+checked by this script. Additional Codex plugins and MCP servers can come from
+the harness or local configuration. The check compares names without starting
+MCP servers. It also checks for `SKILL.md` in both harnesses' global skill
+directories for listed skills in the lock and for Impeccable.
 
 ```bash
 python3 - <<'PYTHON'

@@ -28,11 +28,11 @@ The workflows need three things:
 - **A lasting home for personal knowledge.** Obsidian, Notion, or plain Markdown files can hold knowledge outside an AI provider's memory. Point each agent at the same source so every tool can read it. Turning off an agent's built-in memory is a separate choice; it keeps knowledge from collecting somewhere only one provider can reach.
 - **One shared set of agent instructions.** Every agent in every project on my machine reads the same file before the repository's own `AGENTS.md`. It contains habits that apply everywhere: put simplicity first, reproduce a bug before fixing it, and keep working until the result is verified. Each project adds its own rules. I change the shared file rarely and deliberately because it affects every run.
 
-My shared instructions live at `~/.codex/AGENTS.md`. Claude Code imports them through a single `@~/.codex/AGENTS.md` line in `~/.claude/CLAUDE.md`, so Codex and Claude Code follow the same rules.
+My shared instructions live at `~/.codex/AGENTS.md`. Each harness links to, imports, or syncs that canonical file so every tool follows the same rules; see [Global agent instructions](MACHINE-SETUP.md#global-agent-instructions) for the per-harness paths.
 
 [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. [`scripts/sync-global-agents.sh`](scripts/sync-global-agents.sh) documents how the copy is kept current.
 
-[MACHINE-SETUP.md](MACHINE-SETUP.md) lists the skills, plugins, and MCP servers I install on every machine, with install commands and a drift check.
+[MACHINE-SETUP.md](MACHINE-SETUP.md) lists the global instructions paths, skills, plugins, and MCP servers I set up on every machine, with install commands and a drift check.
 
 The skills work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I use [Orca](https://github.com/stablyai/orca) to run several agent tools side by side in one project.
 

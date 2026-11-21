@@ -66,7 +66,14 @@ HOME_PATH_EXAMPLES = {
     "automations/state-machine-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/test-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/weekly-codebase-design.md": {"~" + "/.local/state/automation-runs"},
-    "WORKFLOWS.md": {"~" + "/.codex/AGENTS.md", "~" + "/.claude/CLAUDE.md"},
+    "MACHINE-SETUP.md": {
+        "~" + "/.codex/AGENTS.md",
+        "~" + "/.claude/CLAUDE.md",
+        "~" + "/.gemini/config/AGENTS.md",
+        "~" + "/.grok/AGENTS.md",
+        "~" + "/.cursor/rules/global-agents.mdc",
+    },
+    "WORKFLOWS.md": {"~" + "/.codex/AGENTS.md"},
     "scripts/sync-global-agents.sh": {"~" + "/.codex/AGENTS.md"},
     "docs/solutions/best-practices/blind-cross-model-grading-through-native-schema-flags.md": {
         "~" + "/.grok/auth.json",

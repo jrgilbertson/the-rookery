@@ -1,8 +1,6 @@
 # Setup
 
-Read this when establishing a coordinated batch or adopting an existing one. The
-entry skill owns shape, shared authority, worker lifetime, the record, and
-outcome requirements.
+Read this when establishing a coordinated batch or adopting an existing one.
 
 ## Establish the intended coordinated batch
 
@@ -13,8 +11,8 @@ terminal handle.
 
 Read the supplied objective, canonical work and project instructions, current
 participants, and any existing record. If several arrangements plausibly
-match, obtain the missing selection before changing them. Adopt useful
-existing assignments, holds, and working context rather than recreating them.
+match, obtain the missing selection before changing them. Adopt existing
+in-scope assignments, holds, and working context rather than recreating them.
 An agent already working on the objective before setup, such as a chat started
 for a batch, is a participant to adopt. When the guide cannot attach a
 supervised Task to it, keep it as a message-assigned worker reached through the
@@ -43,22 +41,28 @@ Inspect available provider/model/effort choices and placement support on each
 execution host the guide can reach. Recommend where heavy workers run,
 preferring a reachable host kept for development work over the operator's own
 machine, and show the measured CPU and memory behind the recommendation; the
-operator chooses the placement. Distinguish the Team lead already running from
-participants that need starting. Preserve evidenced settings for existing
-participants; show the supported choices for new ones. "Host default, no
-override" is an explicit value when the host's choices cannot be listed.
-Workers launch on the surface the host is set to. Where the guide or observed
-behavior shows one surface follows an account change by itself, tell the
-operator which, so they can set the host to it.
+operator chooses the placement. Distinguish the Team lead already running from participants that need
+starting. Preserve evidenced settings for existing participants; show the
+supported choices for new ones. When the batch mixes straightforward issues
+with open-ended design work, propose a default worker setting and, where
+helpful, a faster, lower-cost tier with an explicit rule for which issues use
+it (so later-wave starts apply the approved rule without a new proposal).
+"Host default, no override" is an explicit value when the host's choices
+cannot be listed.
+Unless the runtime fixes their surface on its own, such as starting workers
+from a persistent agent home as chats, workers launch on the surface the host
+is set to. When the surface they would launch on does not follow an account
+change by itself and the guide or observed behavior shows another surface does,
+tell the operator which, so they can set the host to it.
 
-Present the entry skill's proposal, including reused participants, their task
-ownership, and initial workers to start. The proposal also states, so that one
-approval covers them:
+Present the proposal table from [SKILL.md](../SKILL.md#proposal-and-authority),
+including reused participants, their task ownership, and initial workers to
+start. The proposal also states, so that one approval covers them:
 
 - **The batch.** List the issues and epics in scope, with each issue's four
   scores. The Team lead dispatches nothing outside the recorded scope.
 - **Issue edits.** State the standing instruction that lets the Team lead
-  edit Scope and Verification on issues in scope as the entry skill's
+  edit Scope and Verification on issues in scope as
   [Changing an issue](../SKILL.md#changing-an-issue) allows, with stored
   scores kept, and close an issue whose pull request merged through the
   checklist. `managing-issues` applies neither without that recorded
@@ -68,33 +72,31 @@ approval covers them:
   closing the linked issue.
 - **Spending.** Whether the Team lead may choose a paid option, such as at a
   usage-limit prompt. The default is no.
-
 - **The merge bar and the held changes.** Show the defaults from
-  [Operate](operate.md). When the project's own guidance defines a merge bar or
-  held changes, show those instead and say where they came from. The operator
-  may edit either. Mark each listed issue that touches a held change or is
-  scored 3 on verification effort, and each later issue it would block. Ask the
-  operator directly whether to hold those for review or pre-authorize merging
-  them under a stated bar. With no answer, they are held. The answer goes in
-  the record and is part of the merge approval.
+  [The merge approval](../SKILL.md#the-merge-approval). When the project's own
+  guidance defines a merge bar or held changes, show those instead and say
+  where they came from. The operator may edit either. Mark each listed issue
+  that touches a held change or is scored 3 on verification effort, and each
+  later issue it would block. Ask the operator directly whether to hold those
+  for review or pre-authorize merging them under a stated bar. With no answer,
+  they are held.
 - **The standing instruction not to wait.** State it as the operator's
-  instruction: the Team lead never stops for an answer, decides a default
-  as Operate describes, and logs the question. An installed guide that says
-  to ask the user first yields to this instruction once it is approved.
+  instruction: the Team lead never stops for an answer, decides defaults for
+  two-way doors, uses `ce-pov` and holds only dependent work on one-way doors
+  or calls that touch the merge approval, and logs every question. An
+  installed guide that says to ask the user first yields to this instruction
+  once it is approved.
 - **Where the record lives.** Name a durable, private location on the
-  Team lead's host, as the entry skill requires.
-- **The check interval**, for the one periodic check Operate describes;
+  Team lead's host, as [The record](../SKILL.md#the-record) requires.
+- **The check interval**, for the one periodic check during operation;
   suggest 30 minutes for the operator to approve.
 
-Approval of the proposal is the standing merge approval for this coordinated batch and
-records the instruction not to wait. Write the approved proposal to the record
-before starting anything.
-
-Do not start workers, allocate new tasks, create worktrees, install ongoing
-monitoring, or change the team while the proposal is under discussion.
-Read-only inspection and disposable proposal notes may proceed. Resolve
-explicit edits in the same proposal interaction. Apply only after its final
-effects are approved under the entry skill's approval rules.
+Approval of the proposal is the standing merge approval for this coordinated
+batch and records the instruction not to wait. Do not start workers, allocate
+new tasks, create worktrees, install ongoing monitoring, or change the team
+while the proposal is under discussion; read-only inspection and disposable
+proposal notes may proceed. Once approved, write the approved proposal to the
+record before starting anything.
 
 ## Establish and check
 
@@ -105,20 +107,19 @@ Team lead lacks the required binding or authority, report that path blocked
 instead of manufacturing a takeover.
 
 A partial startup does not authorize duplicating successful workers or changing
-the approved coordinated batch. Follow the guide's reconciliation path before another
-attempt, and report unsupported branches separately.
+the approved coordinated batch. Follow the guide's reconciliation path before
+another attempt, and report unsupported branches separately.
 
-Provide each participant its bounded assignment by the brief the entry skill
-describes. When dispatching to a remote host that cannot reach or authenticate
-with the tracker, inline the issue's Problem, Scope, and Verification in the
-brief instead of telling the worker to fetch them. Establish the ordinary native
-supervision the coordinated batch needs, reconciling any existing monitoring
-first.
+Brief each participant following [Briefs](briefs.md). When dispatching to a
+remote host that cannot reach or authenticate with the tracker, inline the
+issue's Problem, Scope, and Verification in the brief instead of telling the
+worker to fetch them. Establish the guide's native supervision, reconciling
+any existing monitoring first.
 
-Arm the one check Operate describes, at the approved interval, and write in
-the record how to stop it. It is the only periodic work in the batch. It reads
-mail with the guide's read that leaves the inbox as it is.
+Arm the one periodic check at the approved interval, and write in the record
+how to stop it. It is the only periodic work in the batch, and it peeks mail.
 
-Verify the entry skill's individual outcomes, effective settings, communication,
-and supervision. Everyday work then continues under Operate; setup is not rerun
-for each issue or wave.
+Verify outcomes, effective settings, communication, and supervision under
+[Verify and report](../SKILL.md#verify-and-report). Everyday work then
+continues under [Operate](operate.md); setup is not rerun for each issue or
+wave.

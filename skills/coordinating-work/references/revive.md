@@ -156,7 +156,8 @@ still needs approval.
 
 Re-read affected current ownership and attempts before acting. If an old
 writer or Team lead may still be active without a supported ownership
-transition, hold that branch.
+transition, hold that branch. Approval does not convert unknown liveness into
+proof of exit.
 
 Use the native continuation, retry, or fresh-handoff path for each approved
 effect. In a fresh handoff, carry scope, branch/worktree, preserved local

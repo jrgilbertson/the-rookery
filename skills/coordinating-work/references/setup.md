@@ -78,9 +78,10 @@ start. The proposal also states, so that one approval covers them:
   they are held.
 - **The standing instruction not to wait.** State it as the operator's
   instruction: the Team lead never stops for an answer, decides defaults for
-  two-way doors, uses `ce-pov` and holds only dependent work on one-way doors,
-  and logs every question. An installed guide that says to ask the user first
-  yields to this instruction once it is approved.
+  two-way doors, uses `ce-pov` and holds only dependent work on one-way doors
+  or calls that touch the merge approval, and logs every question. An
+  installed guide that says to ask the user first yields to this instruction
+  once it is approved.
 - **Where the record lives.** Name a durable, private location on the
   Team lead's host, as [The record](../SKILL.md#the-record) requires.
 - **The check interval**, for the one periodic check during operation;

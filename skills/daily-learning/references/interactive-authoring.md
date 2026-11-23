@@ -96,12 +96,12 @@ Apply mutations **only** after explicit operator approval of the exact preview (
 3. **Pre-write reread and single write:**
    - Immediately before writing, re-read the live target note via Obsidian CLI to confirm it has not drifted since the preview. If it drifted, stop and re-preview against live state.
    - Execute the approved write once via `atomic-note` or Obsidian CLI.
-   - Run live Obsidian CLI readback to confirm the exact persisted content and compute its `post_write_sha256` hash.
+   - Run live Obsidian CLI readback to confirm the exact persisted content.
 4. **Anki sync and unsuspension verification:**
-   - When an Anki card was added, edited, or deleted, run the awaited Obsidian-to-Anki vault scan and verify the resulting note ID, model, deck, card count, and fields via AnkiConnect readback.
+   - When an Anki card was added, edited, or deleted, run the awaited Obsidian-to-Anki vault scan, verify the resulting note ID, model, deck, card count, and fields via AnkiConnect readback, and re-read the live vault note via Obsidian CLI after the scan and any post-sync note cleanup (such as removing an ID-less retired card block) complete.
    - When Flow 3 repair included approved AnkiConnect `unsuspend` (and optional `removeTags` for `leech`), run those calls only after Obsidian-to-Anki readback succeeds, then verify via fresh `cardsInfo` readback that `queue != -1` (and `leech` removed if requested). If AnkiConnect rejects the call, classify the unsuspension step as **Manual** and report the exact card ID for manual unsuspension in Anki UI.
 5. **Classify outcome and persist incrementally:**
    - Assign one explicit outcome to this item: **Applied**, **Already satisfied**, **Failed**, **Indeterminate**, **Manual**, **Deferred**, or **Skipped**.
-   - Immediately log the abstracted disposition in `decisions.md` and (for every applied vault write) append `{path, write_utc, action_kind, post_write_sha256}` to `self_edited_notes` in shared run history per [trust-and-history.md](trust-and-history.md) before moving to the next item.
+   - Compute `post_write_sha256` from the final live Obsidian CLI readback (after Step 3.4 completes for Anki-backed writes or cleanup, or from the Step 3.3 readback when no post-write sync mutates the note), then immediately log the abstracted disposition in `decisions.md` and (for every applied vault write) append `{path, write_utc, action_kind, post_write_sha256}` to `self_edited_notes` in shared run history per [trust-and-history.md](trust-and-history.md) before moving to the next item.
 
 Completion: the item has a verified live outcome recorded incrementally in shared run history (when configured), and no unapproved or unverified writes occurred.

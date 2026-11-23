@@ -108,10 +108,15 @@ def check_loopback_url(url: object) -> None:
     require(parsed.path in {"", "/"} and not parsed.query and not parsed.fragment, f"anki.connect_url must not carry path/query: {url!r}")
 
 
-def check_vault_relative(path: object, field: str) -> None:
+def check_vault_relative(path: object, field: str, suffix: str | None = None) -> None:
     require(nonempty_text(path), f"{field} must be nonempty text")
     assert isinstance(path, str)
     require(not path.startswith(("/", "~")) and ".." not in Path(path).parts, f"{field} must be vault-relative: {path!r}")
+    if suffix is not None:
+        require(
+            not path.endswith("/") and path.endswith(suffix) and len(Path(path).name) > len(suffix),
+            f"{field} must be a vault-relative {suffix} file path: {path!r}",
+        )
 
 
 def validate_config(raw_text: str) -> None:
@@ -121,7 +126,7 @@ def validate_config(raw_text: str) -> None:
     config = json.loads(raw_text, object_pairs_hook=reject_duplicates, parse_constant=reject_constant)
     require(isinstance(config, dict), "config root must be an object")
     require({"version", "vault"} <= config.keys() <= TOP_KEYS, f"invalid top-level keys: {sorted(config)}")
-    require(config["version"] == 1 and not isinstance(config["version"], bool), "version must be integer 1")
+    require(type(config["version"]) is int and config["version"] == 1, "version must be integer 1")
 
     reject_capability_grants(config, "config")
     reject_local_home_paths(config, "config")
@@ -143,12 +148,12 @@ def validate_config(raw_text: str) -> None:
         check_remote_url(mirror["remote_url"])
         require(nonempty_text(mirror["cache_dir"]), "vault.git_backup_mirror.cache_dir must be nonempty text")
 
-    for list_field in ("reference_note_paths", "queue_notes"):
+    for list_field, suffix in (("reference_note_paths", None), ("queue_notes", ".md")):
         if list_field in vault:
             entries = vault[list_field]
             require(isinstance(entries, list) and bool(entries), f"vault.{list_field} must be a nonempty list")
             for item in entries:
-                check_vault_relative(item, f"vault.{list_field}")
+                check_vault_relative(item, f"vault.{list_field}", suffix=suffix)
 
     if "strategy_and_learning" in config:
         strat = config["strategy_and_learning"]
@@ -160,21 +165,21 @@ def validate_config(raw_text: str) -> None:
             require(cos_map["locator_kind"] in {"host-file", "vault-file"}, "locator_kind must be host-file or vault-file")
             require(nonempty_text(cos_map["path"]), "personal_chief_of_staff_map.path must be nonempty text")
             if cos_map["locator_kind"] == "vault-file":
-                check_vault_relative(cos_map["path"], "personal_chief_of_staff_map.path")
+                check_vault_relative(cos_map["path"], "personal_chief_of_staff_map.path", suffix=".json")
             require(isinstance(cos_map["allow_cross_mode_read"], bool), "allow_cross_mode_read must be boolean")
         else:
             direct = strat["direct_paths"]
             require(isinstance(direct, dict) and bool(direct) and set(direct) <= DIRECT_KEYS, "invalid direct_paths")
             if "strategy" in direct:
-                check_vault_relative(direct["strategy"], "direct_paths.strategy")
+                check_vault_relative(direct["strategy"], "direct_paths.strategy", suffix=".md")
             if "learning" in direct:
                 learning = direct["learning"]
                 if isinstance(learning, list):
                     require(bool(learning), "direct_paths.learning list must be nonempty")
                     for item in learning:
-                        check_vault_relative(item, "direct_paths.learning")
+                        check_vault_relative(item, "direct_paths.learning", suffix=".md")
                 else:
-                    check_vault_relative(learning, "direct_paths.learning")
+                    check_vault_relative(learning, "direct_paths.learning", suffix=".md")
 
     if "remote_environments" in config:
         remotes = config["remote_environments"]
@@ -245,6 +250,45 @@ def main() -> int:
     bad_current = copy.deepcopy(base)
     bad_current["remote_environments"][0]["workspace_selector"] = "current"
     expect_failure("remote workspace_selector current", json.dumps(bad_current))
+
+    bad_version_float = copy.deepcopy(base)
+    bad_version_float["version"] = 1.0
+    expect_failure("float version 1.0", json.dumps(bad_version_float))
+
+    bad_queue_ext = copy.deepcopy(base)
+    bad_queue_ext["vault"]["queue_notes"] = ["To Explore.txt"]
+    expect_failure("non-.md queue_notes path", json.dumps(bad_queue_ext))
+
+    good_vault_map = copy.deepcopy(base)
+    good_vault_map["strategy_and_learning"] = {
+        "personal_chief_of_staff_map": {
+            "locator_kind": "vault-file",
+            "path": "System/sources.json",
+            "allow_cross_mode_read": True,
+        }
+    }
+    validate_config(json.dumps(good_vault_map))
+
+    bad_vault_map_ext = copy.deepcopy(good_vault_map)
+    bad_vault_map_ext["strategy_and_learning"]["personal_chief_of_staff_map"]["path"] = "System/sources.yaml"
+    expect_failure("non-.json vault-file map path", json.dumps(bad_vault_map_ext))
+
+    good_direct = copy.deepcopy(base)
+    good_direct["strategy_and_learning"] = {
+        "direct_paths": {
+            "strategy": "Strategy/Personal Strategy.md",
+            "learning": ["Learning/Core Learnings.md"],
+        }
+    }
+    validate_config(json.dumps(good_direct))
+
+    bad_direct_strategy_ext = copy.deepcopy(good_direct)
+    bad_direct_strategy_ext["strategy_and_learning"]["direct_paths"]["strategy"] = "Strategy/Personal Strategy.txt"
+    expect_failure("non-.md direct_paths.strategy", json.dumps(bad_direct_strategy_ext))
+
+    bad_direct_learning_ext = copy.deepcopy(good_direct)
+    bad_direct_learning_ext["strategy_and_learning"]["direct_paths"]["learning"] = ["Learning/Core Learnings.txt"]
+    expect_failure("non-.md direct_paths.learning", json.dumps(bad_direct_learning_ext))
 
     expect_failure("duplicate JSON keys", '{"version": 1, "version": 1, "vault": {"name": "v", "reference_tags": {"in_progress": "#reading", "completed": "#reviewed"}}}')
 

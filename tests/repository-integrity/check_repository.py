@@ -104,13 +104,19 @@ def check_home_paths(repository: Path) -> None:
     workflow.unlink()
 
     machine_setup = repository / "MACHINE-SETUP.md"
+    claude_marketplace_path = "~" + "/.claude/plugins/marketplaces/compound-engineering-plugin"
     antigravity_path = "~" + "/.gemini/config/AGENTS.md"
+    antigravity_plugins_dir = "~" + "/.gemini/config/plugins"
+    antigravity_ce_path = "~" + "/.gemini/config/plugins/compound-engineering"
     grok_path = "~" + "/.grok/AGENTS.md"
     cursor_path = "~" + "/.cursor/rules/global-agents.mdc"
     machine_setup_paths = (
         approved,
         claude_path,
+        claude_marketplace_path,
         antigravity_path,
+        antigravity_plugins_dir,
+        antigravity_ce_path,
         grok_path,
         cursor_path,
     )
@@ -129,6 +135,8 @@ def check_home_paths(repository: Path) -> None:
         f"@{home_relative}",
         approved + ".private",
         "~" + "/.cursor/rules/other.mdc",
+        "~" + "/.gemini/config/plugins/other-plugin",
+        "~" + "/.claude/plugins/marketplaces/other-plugin",
     ):
         machine_setup.write_text(f"`{approved}` and `{unreviewed}`\n", encoding="utf-8")
         rejected_setup = run_checker(repository)
@@ -140,7 +148,14 @@ def check_home_paths(repository: Path) -> None:
     machine_setup.unlink()
 
     outside = repository / "outside-setup.md"
-    for scoped_path in (antigravity_path, grok_path, cursor_path):
+    for scoped_path in (
+        claude_marketplace_path,
+        antigravity_path,
+        antigravity_plugins_dir,
+        antigravity_ce_path,
+        grok_path,
+        cursor_path,
+    ):
         outside.write_text(f"Path: `{scoped_path}`\n", encoding="utf-8")
         rejected_outside = run_checker(repository)
         require(

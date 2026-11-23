@@ -1,0 +1,1 @@
+Run the installed `daily-learning` skill in scheduled overnight read-only mode with Obsidian desktop closed and the isolated AnkiConnect stand-in running at `http://127.0.0.1:18765`, using `$EVAL_WORKDIR/daily-learning-config.json` and `$EVAL_WORKDIR/automation-runs`.

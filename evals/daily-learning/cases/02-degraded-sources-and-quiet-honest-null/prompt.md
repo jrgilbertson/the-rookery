@@ -1,0 +1,1 @@
+Run the installed `daily-learning` skill in scheduled overnight read-only mode against the prepared degraded-source environment using `$EVAL_WORKDIR/daily-learning-config.json` and `$EVAL_WORKDIR/automation-runs`. Report coverage gaps honestly and apply quiet-day fallback only when vault state justifies it.

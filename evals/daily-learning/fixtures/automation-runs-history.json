@@ -1,0 +1,64 @@
+{
+  "slug": "daily-learning",
+  "recent_daily_runs": [
+    {
+      "file": "2026-11-19-130000-synthetic-mac.md",
+      "run_kind": "scheduled",
+      "run_ending": "Ready for review",
+      "vault_mirror_commit": "0000000000000000000000000000000000000001",
+      "vault_covered_through_utc": "2026-11-19T13:00:00Z",
+      "local_sessions_covered_through_utc": "2026-11-19T13:00:00Z",
+      "remote_coverage": [
+        {
+          "host": "synthetic-dev-host",
+          "status": "covered",
+          "covered_through_utc": "2026-11-19T13:00:00Z",
+          "unread_sessions": []
+        }
+      ],
+      "anki_status": "checked",
+      "suspended_card_ids": [
+        2000000009999
+      ],
+      "presented_items": [
+        {
+          "number": 1,
+          "title": "TCP congestion window sizing",
+          "item_type": "new concept",
+          "domain": "engineering",
+          "outcome": "unpicked"
+        },
+        {
+          "number": 2,
+          "title": "Legacy XML parser quirk",
+          "item_type": "new concept",
+          "domain": "engineering",
+          "outcome": "declined"
+        }
+      ],
+      "self_edited_notes": [
+        {
+          "path": "Structure Notes/Distributed Systems.md",
+          "write_utc": "2026-11-19T16:10:00Z",
+          "action_kind": "structure-note-update",
+          "post_write_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "unpresented_tail": [
+        "Lease-based linearizable reads",
+        "Feedback loop delay oscillation"
+      ]
+    }
+  ],
+  "engineering_skew_runs_count": 12,
+  "total_recent_runs_count": 14,
+  "decisions": [
+    {
+      "date": "2026-11-19",
+      "run_file": "2026-11-19-130000-synthetic-mac.md",
+      "title": "Legacy XML parser quirk",
+      "disposition": "declined",
+      "note_ref": "none"
+    }
+  ]
+}

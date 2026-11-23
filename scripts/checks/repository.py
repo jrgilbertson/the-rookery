@@ -69,7 +69,10 @@ HOME_PATH_EXAMPLES = {
     "MACHINE-SETUP.md": {
         "~" + "/.codex/AGENTS.md",
         "~" + "/.claude/CLAUDE.md",
+        "~" + "/.claude/plugins/marketplaces/compound-engineering-plugin",
         "~" + "/.gemini/config/AGENTS.md",
+        "~" + "/.gemini/config/plugins",
+        "~" + "/.gemini/config/plugins/compound-engineering",
         "~" + "/.grok/AGENTS.md",
         "~" + "/.cursor/rules/global-agents.mdc",
     },

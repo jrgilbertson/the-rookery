@@ -1,77 +1,41 @@
 # Operate
 
 Read this while running an established coordinated batch, with or without the
-operator present. The entry skill owns shape, the merge approval, briefs, and
-the record. Setup produced the approved proposal this file acts under.
-
-## Defaults the proposal shows
-
-**Merge bar.** `ce-babysit-pr` gave its looks-merge-ready report on the
-pull request's current head. A cautious report qualifies only when its sole
-remaining caution is missing reviewer coverage: explicit quota or
-unavailability, or a reviewer that has not completed after `ce-babysit-pr`'s
-prescribed wait. Another external reviewer on the pull request, distinct from
-the coding agent's own review, must have reviewed that head. All other merge
-requirements still apply. `ce-babysit-pr` and `ce-resolve-pr-feedback` own
-feedback assessment, including justified declines and follow-up handling.
-
-**Held changes.** A pull request is held for the operator when it changes:
-
-- access and authorization;
-- money;
-- data deletion;
-- privacy;
-- outbound email;
-- release gates;
-- the project's agent instructions, and its merge and review policy;
-- work only the operator's judgment can verify: any issue scored 3 on
-  verification effort.
-
-The approved proposal governs. It may replace either default with the
-project's own guidance or the operator's edits; the judgment hold stays unless
-the operator's own edit removes it. Updating this skill does not widen an
-existing batch's merge approval; only the operator's recorded approval can do
-that.
-
-The stored score governs the judgment hold. Bring such an issue's work to the
-point its Verification says the operator will look at, list it with a link to
-the evidence, and keep other work moving.
+operator present, under the approved setup proposal.
 
 ## Running the batch
 
 When a worker is still starting, waits at a one-time trust or setup prompt, or
-has its brief or restart continue prompt held behind a dialog, do not treat it
-as a failed start or submit input into the dialog. Tell the operator when a
-prompt or dialog needs their answer, hold only that assignment, and follow the
-runtime notice once it is cleared. Revive covers the workspace-trust prompt a
-resumed worker's new account raises. Recover any actual failed start through
-the guide, and put what it cannot recover on the ready-for-operator list.
+has its brief or restart continue prompt held behind a dialog, keep its live
+assignment open (never submit input into the dialog or restart it as a failed
+start). Tell the operator when a prompt or dialog needs their answer, hold
+only that assignment, and follow the runtime notice once it is cleared. Revive
+covers the workspace-trust prompt a resumed worker's new account raises.
+Recover any actual failed start through the guide, and put what it cannot
+recover on the ready-for-operator list.
 
 After every decision, dispatch the next issue from the batch's Ready Frontier
 that the batch has not yet assigned, in its leverage order unless host
 capacity or the operator's instruction says otherwise, and at the concurrency
-you judge best. Dispatch
-only an issue that has its four scores, and list an unscored one for the
-operator. Measure the whole host before a heavy job. When it is busy, leave
-the issue for the next check. When a merge changes what a later issue should
-assume, say so in that issue's brief. When nothing is ready, say so on the
-ready-for-operator list with what each remaining issue waits on; the batch is
-finished only when every issue in scope is done or the operator ends it. Scope
-grows only as the entry skill's [Shape](../SKILL.md#shape) says. When work
-outside scope would help the batch, such as a flaky test that blocks merges,
-draft it as an issue and list it for the operator.
+you judge best. Dispatch only an issue that has its four scores, and list an
+unscored one for the operator. Measure the whole host before a heavy job. When
+it is busy, leave the issue for the next check. When a merge changes what a
+later issue should assume, say so in that issue's brief. When nothing is
+ready, say so on the ready-for-operator list with what each remaining issue
+waits on; the batch is finished only when every issue in scope is done or the
+operator ends it. Scope grows only as [Shape](../SKILL.md#shape) says. When
+work outside scope would help the batch, such as a flaky test that blocks
+merges, draft it as an issue and list it for the operator.
 
 ## The merge checklist
 
 A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
-only when every line below is true. Line 2 is the worker's report, taken on the
-worker's word because the worker runs the watch. Lines 3 and 4 are facts you
-read yourself when you decide.
-In a batch with no task workers, you run `lfg` and the continuous
-`ce-babysit-pr` watch yourself, and line 2 reads the first line of your own
-watch report and the head commit it covered. Apply the UX and UI work guidance
-in [Assignment briefs](../SKILL.md#assignment-briefs) to your own assignments
-too.
+only when every line below is true. Line 2 is the worker's report, taken on
+the worker's word because the worker runs the watch. Lines 3 and 4 are facts
+you read yourself when you decide. In a batch with no task workers, you run
+`lfg` and the continuous `ce-babysit-pr` watch yourself, and line 2 reads the
+first line of your own watch report and the head commit it covered. Apply the
+UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
 
 1. **Approval.** The record holds the approved setup proposal and any change
    the operator made to the scope, merge bar, or held changes. Together they
@@ -80,22 +44,26 @@ too.
    adds beyond this list is true for this pull request.
 2. **Report.** The worker quoted the first line of `ce-babysit-pr`'s
    continuous-watch report, that line says the pull request looks merge-ready
-   under the approved merge bar, with no other condition such as a position in a
-   stack, and the worker gave the head commit that report covered. For a
+   under the approved merge bar, with no other condition such as a position in
+   a stack, and the worker gave the head commit that report covered. For a
    cautious report, read the other external review on that head yourself.
    A closing phrase that leaves the merge to the reader is not a condition.
-3. **Routine and done.** The diff touches no held change and the issue is not
-   scored 3 on verification effort. The exceptions are a held change the record
-   shows the operator pre-authorized for this issue, under a bar this pull
-   request meets, and a pull request the operator has told you, in their own
-   recorded words, to merge. A change that relates to a held change at all,
-   wording and tests included, touches it. The pull request body has no
-   unticked item under `lfg`'s unapplied review findings. The record shows no
-   item, at any point, that `ce-babysit-pr` parked for a human about the change
-   itself. Merging it starts only what the proposal showed. The pull request
-   body sets evidence beside each of the issue's verification criteria as the
-   issue reads now. Compare and do not interpret. A criterion met in part, with
-   an exception, or in other words is unproven.
+3. **Routine and done.** Every condition below holds:
+   - The diff touches no held change and the issue is not scored 3 on
+     verification effort. The exceptions are a held change the record shows
+     the operator pre-authorized for this issue, under a bar this pull request
+     meets, and a pull request the operator has told you, in their own
+     recorded words, to merge. A change that relates to a held change at all,
+     wording and tests included, touches it.
+   - The pull request body has no unticked item under `lfg`'s unapplied review
+     findings.
+   - The record shows no item, at any point, that `ce-babysit-pr` parked for a
+     human about the change itself.
+   - Merging it starts only what the proposal showed.
+   - The pull request body sets evidence beside each of the issue's
+     verification criteria as the issue reads now. Compare and do not
+     interpret. A criterion met in part, with an exception, or in other words
+     is unproven.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code
@@ -151,13 +119,13 @@ ready-for-operator list with the reason.
 
 ## Never wait for an answer
 
-Keep the batch moving whether or not the operator is present. Put every
-question in the record with the default you took, and leave blocking question
-dialogs unused. When the operator is talking to you, raise what is open then.
-You wait only for the operator's own approvals: of a proposal, of a tracker
-write `managing-issues` needs approved, and a new session's confirmation that
-the previous Team lead has ended. Each holds only the work that depends on
-it.
+Keep the batch moving whether or not the operator is present. Decide a default
+and write every question to the record with that default instead of opening a
+blocking question dialog. When the operator is talking to you, raise what is
+open then. You wait only for the operator's own approvals: of a proposal, of a
+tracker write `managing-issues` needs approved, and a new session's
+confirmation that the previous Team lead has ended. Each holds only the work
+that depends on it.
 
 On a judgment call the brief, the record, and the standing rules do not settle,
 decide a default and write the question and that default to the record. A
@@ -216,14 +184,15 @@ A standing rule only adds a restriction on how workers operate.
 The table names each wait: a running job, a usage-limit reset, a merge queue,
 default branch recovery, or the operator. Read the worker's live state after
 a stop, model-retry, model-wait, or background-task wait notice; non-stop
-notices do not mean the worker exited. If live state matches a recorded wait
-or active legitimate work, leave the worker alone; intervene through the guide
-only when it has actually stopped or is genuinely stuck.
+notices do not mean the worker exited. If live state shows the recorded wait
+or an active job making progress (new output, a running check, or an active
+tool), leave the worker alone. Intervene through the guide when the agent has
+stopped, failed, or shows no progress past the runtime's wait notice.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing
-else reports. Read mail with the guide's read that leaves the inbox as it is.
-Each time, read the table against live state and act on what changed:
+else reports. Peek mail, read the table against live state, and act on what
+changed:
 
 - answer any question still unanswered;
 - note pull requests the code host shows opened or merged since the last
@@ -238,7 +207,7 @@ Each time, read the table against live state and act on what changed:
 - when the cause of a hold placed for the operator is verifiably gone, such
   as a prompt the operator has since answered, continue that assignment.
   Held changes and merge decisions stay held;
-- tell a worker to continue when its assignment is open, as the entry skill
+- tell a worker to continue when its assignment is open, as [Briefs](briefs.md)
   defines it, with nothing it is waiting on;
 - read the Ready Frontier again, and dispatch an issue that became ready or
   was left for this check when the host now has room;

@@ -63,7 +63,10 @@ looked" surface. GitHub Releases mirror its entries.
   them as failed starts, checking live state on non-stop retry and wait
   notices, respecting automatic restart recovery and restart offers, and
   checking live worker state before replying to unread questions after a
-  Team lead replacement.
+  Team lead replacement. It also simplifies the package by moving worker brief
+  rules into `references/briefs.md`, co-locating workspace parentage
+  verification and merge defaults in `SKILL.md`, deduplicating shared rules,
+  breaking up dense guardrail blocks, and operationalizing vague qualifiers.
 - `coordinating-work` drops the worker reversibility decision rule in favor of
   `lfg`'s headless behavior, and leaves open-PR branch currency to
   `ce-babysit-pr` and the repository's merge rules.

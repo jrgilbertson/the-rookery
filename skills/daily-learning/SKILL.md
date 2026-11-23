@@ -47,7 +47,7 @@ These invariants hold across every mode and harness:
 Close every assessment pass with exactly one of these four endings and a short prose source-coverage paragraph (no tables or collapsible markup):
 
 - **Ready for review:** Required vault and session inputs were readable, one to five ranked recommendations are saved (when run history is configured) and ready for selection, and any unchecked overnight Anki pulse is clearly disclosed for Phase 2.
-- **Partial:** One to five recommendations were compiled with named coverage gaps (such as an offline remote host, an unavailable vault source, or an unmappable overnight strategy/learnings binding), with uncovered windows carried forward up to 7 days.
+- **Partial:** Zero to five recommendations were compiled with named coverage gaps (such as an offline remote host, an unavailable vault source, or an unmappable overnight strategy/learnings binding), emitting zero invented filler when no candidates surface and carrying uncovered windows forward up to 7 days.
 - **Nothing material:** Readable sources and configured quiet-day fallback queues produced zero defensible learning candidates. Report this honestly without inventing filler notes or resurfacing reviewed or declined items.
 - **Unable to prepare reliably:** Missing required skills, missing or invalid private configuration on a scheduled run, failed run-history save or secret scan, or zero usable primary and secondary input sources prevented a trustworthy digest. Do not advance coverage watermarks.
 

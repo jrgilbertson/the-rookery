@@ -9,7 +9,7 @@ Each synthetic Eval Case runs against a fresh Claude Baseline (`claude-baseline`
 - [Case 05: Continuity recovery, hypothesis verification, and Flow 3 unsuspension](cases/05-continuity-recovery-hypothesis-and-f3-unsuspend/README.md)
 - [Case 06: First-run private config setup and non-Orca on-demand portability](cases/06-first-run-config-and-non-orca-ondemand/README.md)
 
-The current six-case set SHA-256 is `7947526594b518e95691f4c12d73a0520e67bdd44fd91d25a1aefc6859e44724`. From this directory, reproduce it with:
+The current six-case set SHA-256 is `839fbeaae3ad76661a1b029fb346330827e15da52f839779ad981b3c0e6629a3`. From this directory, reproduce it with:
 
 ```sh
 find cases fixtures -type f -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256

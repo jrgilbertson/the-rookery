@@ -44,7 +44,7 @@ Include a compact structured metadata header at the top of each run file contain
 - `vault_mirror_commit`: latest fetched bare-mirror commit SHA (or `null`)
 - `vault_covered_through_utc`: UTC timestamp through which vault activity was covered (or `null`)
 - `local_sessions_covered_through_utc`: UTC timestamp through which local sessions were scanned (or `null`)
-- `remote_coverage`: list of `{host, status, covered_through_utc, unread_sessions}` entries (only for configured paired hosts; `host` pinned by the local agent)
+- `remote_coverage`: list of `{host, status, covered_through_utc, read_count, eligible_count}` entries (only for configured paired hosts; `host` pinned by the local agent; `status` is `covered` when all eligible sessions were read or `sampled` when `read_count < eligible_count` — both advance `covered_through_utc` to the completed scan window end — or `unavailable` / `timed-out` on failure, which leaves `covered_through_utc` unchanged for carry-forward)
 - `anki_status`: `checked` or `unchecked`
 - `suspended_card_ids`: lightweight integer ID list from `findCards('is:suspended')` on checked runs (for next-run newly-suspended set-difference detection without scanning all cards)
 - `presented_suspended_cards`: list of `{card_id, note_id}` presented in this digest (for the 14-run cooldown)
@@ -59,6 +59,7 @@ Follow the full numbered digest (titles, item types, and redacted evidence citat
 - **Focused on-demand isolation:** `on-demand-focused` runs contribute `thread_id` and `self_edited_notes` to future self-exclusion checks, but they never advance full-vault or remote coverage watermarks and never enter the 14-run daily engineering-skew window.
 - **Catch-up cap:** When missed runs occur, widen each source's scan window from its last covered watermark up to a maximum of 7 days, disclosing any older truncated window.
 - **Non-nagging decay and suppression:**
+  - Explicitly `deferred` items from the most recent daily run re-enter once as eligible candidates on the next daily run (labeled `carried from <date>`), compete fairly inside the 5-item cap against fresh activity, and then decay like unpicked items if still unpicked.
   - Unpicked items from earlier digests drop naturally on subsequent runs unless the topic genuinely recurs (including via `unpresented_tail`) or is an older suspended Anki card re-entering on quiet days after its 14-run cooldown.
   - Explicitly declined items (including declined suspended cards) remain suppressed unless materially new evidence or new lapses/edits appear, in which case label the item as previously declined and cite the new evidence.
   - Recognize returning presence lightly without shaming missed days or review gaps.

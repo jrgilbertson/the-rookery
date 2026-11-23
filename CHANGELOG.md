@@ -68,9 +68,11 @@ looked" surface. GitHub Releases mirror its entries.
   verification and merge defaults in `SKILL.md`, deduplicating shared rules,
   breaking up dense guardrail blocks, and operationalizing vague qualifiers,
   and strengthens the Team lead's batch-level role: settling shared
-  cross-issue design constraints before dispatch, checking workers' declared
-  PR choices against batch coherence before merge, and matching worker model
-  tier to issue specificity at setup.
+  cross-issue design constraints before dispatch (recorded alongside standing
+  rules and enforced via Verification), checking workers' declared PR choices
+  against recorded constraints and open or upcoming assumptions before merge,
+  and proposing an optional lower-cost worker tier with an explicit selection
+  rule when a batch mixes straightforward and open-ended work.
 - `coordinating-work` drops the worker reversibility decision rule in favor of
   `lfg`'s headless behavior, and leaves open-PR branch currency to
   `ce-babysit-pr` and the repository's merge rules.

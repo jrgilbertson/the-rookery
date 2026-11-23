@@ -30,11 +30,12 @@ tracker cannot be read through `managing-issues`, report the batch blocked.
 Propose only the initial assignments the work needs. Staffing, isolation,
 concurrency, and resource use follow the native workflow and the operator's
 existing limits. When ready issues in scope edit the same hot files, sequence
-them or record a tracker blocker instead of dispatching them in parallel. On a
-shared execution host, limit concurrent heavy jobs, such as verification,
-builds, and browser runs, by measured CPU and memory rather than by participant
-count. Each brief names the project's own metering helper, or, when the project
-has none, a host command confirmed to measure CPU and memory.
+them instead of dispatching them in parallel, and record a tracker blocker when
+the order must hold across waves. On a shared execution host, limit concurrent
+heavy jobs, such as verification, builds, and browser runs, by measured CPU and
+memory rather than by participant count. Each brief names the project's own
+metering helper, or, when the project has none, a host command confirmed to
+measure CPU and memory.
 
 ## Propose before establishing
 

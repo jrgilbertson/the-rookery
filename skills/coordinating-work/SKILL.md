@@ -87,11 +87,14 @@ communication.
 The canonical tracker is the batch's roadmap. Take the order of work from the
 Ready Frontier that `managing-issues` lists, and store no separate plan; a
 sequence that must hold is a blocker in the tracker. CE owns issue-specific
-planning, execution, review, and shipping.
+planning, execution, review, and shipping. When multiple issues in scope share
+a data model, API, interface contract, or UX pattern, settle that shared
+design once before dispatching them, record it in the batch's decision log,
+and carry it as a constraint in each affected brief.
 
 The Team lead is accountable for the quality and output of every worker, and
-it meets that duty through each issue's Verification, not by reviewing code.
-The workers' pipeline already reviews the code. For every issue in scope,
+it meets that duty through each issue's Verification and declared choices, not
+by reviewing code. The workers' pipeline already reviews the code. For every issue in scope,
 including one the Ready Frontier leaves out as not ready, make sure each
 criterion can be proven by a check before the merge; fix one that cannot, or
 move it to a proposed follow-up, before the issue is dispatched. An issue

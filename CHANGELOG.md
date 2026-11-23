@@ -66,7 +66,11 @@ looked" surface. GitHub Releases mirror its entries.
   Team lead replacement. It also simplifies the package by moving worker brief
   rules into `references/briefs.md`, co-locating workspace parentage
   verification and merge defaults in `SKILL.md`, deduplicating shared rules,
-  breaking up dense guardrail blocks, and operationalizing vague qualifiers.
+  breaking up dense guardrail blocks, and operationalizing vague qualifiers,
+  and strengthens the Team lead's batch-level role: settling shared
+  cross-issue design constraints before dispatch, checking workers' declared
+  PR choices against batch coherence before merge, and matching worker model
+  tier to issue specificity at setup.
 - `coordinating-work` drops the worker reversibility decision rule in favor of
   `lfg`'s headless behavior, and leaves open-PR branch currency to
   `ce-babysit-pr` and the repository's merge rules.

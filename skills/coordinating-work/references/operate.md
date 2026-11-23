@@ -64,6 +64,10 @@ UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
      verification criteria as the issue reads now. Compare and do not
      interpret. A criterion met in part, with an exception, or in other words
      is unproven.
+   - Any choice the worker declared in the pull request body fits the batch's
+     recorded design constraints and does not break an assumption of an open
+     or upcoming issue in scope (otherwise reply with what to align, hold the
+     pull request, or record the assumption change for later briefs).
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code

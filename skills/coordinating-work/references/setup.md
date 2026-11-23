@@ -43,7 +43,10 @@ preferring a reachable host kept for development work over the operator's own
 machine, and show the measured CPU and memory behind the recommendation; the
 operator chooses the placement. Distinguish the Team lead already running from
 participants that need starting. Preserve evidenced settings for existing
-participants; show the supported choices for new ones. "Host default, no
+participants; show the supported choices for new ones, matching worker model
+and effort to issue specificity (a faster, lower-cost executor when design
+and Verification are already settled; a stronger executor when design
+judgment remains open). "Host default, no
 override" is an explicit value when the host's choices cannot be listed.
 Unless the runtime fixes their surface on its own, such as starting workers
 from a persistent agent home as chats, workers launch on the surface the host

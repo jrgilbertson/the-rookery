@@ -7,12 +7,13 @@ operator present, under the approved setup proposal.
 
 When a worker is still starting, waits at a one-time trust or setup prompt, or
 has its brief or restart continue prompt held behind a dialog, keep its live
-assignment open (never submit input into the dialog or restart it as a failed
-start). Tell the operator when a prompt or dialog needs their answer, hold
-only that assignment, and follow the runtime notice once it is cleared. Revive
-covers the workspace-trust prompt a resumed worker's new account raises.
-Recover any actual failed start through the guide, and put what it cannot
-recover on the ready-for-operator list.
+assignment open and record that wait (`starting` or `prompt/dialog`) in the
+table (never submit input into the dialog or restart it as a failed start).
+Tell the operator when a prompt or dialog needs their answer, hold only that
+assignment, and follow the runtime notice once it is cleared. Revive covers
+the workspace-trust prompt a resumed worker's new account raises. Recover any
+start whose live state reports failure or timeout through the guide, and put
+what it cannot recover on the ready-for-operator list.
 
 After every decision, dispatch the next issue from the batch's Ready Frontier
 that the batch has not yet assigned, briefing it under [Briefs](briefs.md), in
@@ -65,9 +66,12 @@ UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
      interpret. A criterion met in part, with an exception, or in other words
      is unproven.
    - Any choice the worker declared in the pull request body fits the batch's
-     recorded design constraints and does not break an assumption of an open
-     or upcoming issue in scope (otherwise reply with what to align, hold the
-     pull request, or record the assumption change for later briefs).
+     recorded design constraints. A declared choice that contradicts a
+     recorded constraint makes this line false (reply with what to align, or
+     hold the pull request). A declared choice that only changes what another
+     in-scope issue should assume satisfies this line once you record the
+     change, amend every affected open assignment in full, and note it for
+     upcoming briefs before merging.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code
@@ -126,10 +130,10 @@ ready-for-operator list with the reason.
 Keep the batch moving whether or not the operator is present. Decide a default
 and write every question to the record with that default instead of opening a
 blocking question dialog. When the operator is talking to you, raise what is
-open then. You wait only for the operator's own approvals: of a proposal, of a
-tracker write `managing-issues` needs approved, and a new session's
-confirmation that the previous Team lead has ended. Each holds only the work
-that depends on it.
+open then. You wait only for the operator's own approvals (of a proposal, a tracker write
+`managing-issues` needs approved, or a runtime prompt or restart offer only
+the operator can answer) and a new session's confirmation that the previous
+Team lead has ended. Each holds only the work that depends on it.
 
 On a judgment call the brief, the record, and the standing rules do not settle,
 decide a default and write the question and that default to the record. A
@@ -185,13 +189,14 @@ A standing rule only adds a restriction on how workers operate.
 
 ## The check
 
-The table names each wait: a running job, a usage-limit reset, a merge queue,
-default branch recovery, or the operator. Read the worker's live state after
-a stop, model-retry, model-wait, or background-task wait notice; non-stop
-notices do not mean the worker exited. If live state shows the recorded wait
-or an active job making progress (new output, a running check, or an active
-tool), leave the worker alone. Intervene through the guide when the agent has
-stopped, failed, or shows no progress past the runtime's wait notice.
+The table names each wait: a worker start or dialog, a running job, a
+usage-limit reset, a merge queue, default branch recovery, or the operator.
+Read the worker's live state after a stop, model-retry, model-wait, or
+background-task wait notice; non-stop notices do not mean the worker exited.
+If live state shows the recorded wait or an active job with new output or
+advancing state, leave the worker alone. Intervene through the guide when the
+agent has stopped, failed, or shows no new output or state change across a
+wait notice or repeated checks.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing

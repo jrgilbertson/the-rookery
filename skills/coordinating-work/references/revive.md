@@ -22,9 +22,9 @@ in this order, before any new dispatch:
 1. A session that is new to the batch asks the operator to confirm the
    previous Team lead has ended, and waits for that answer. A Team lead
    continuing its own conversation skips this step.
-2. Read the record: the approved proposal, the standing rules, the table with
-   the batch's current scope, and the tail of the log, where open questions
-   sit. Peek mail.
+2. Read the record: the approved proposal, the standing rules, any shared
+   design constraints, the table with the batch's current scope, and the tail
+   of the log, where open questions sit. Peek mail.
 3. Take each worker's latest amendment from its last report. Ask a worker
    only when the record leaves it unclear.
 4. Stop any earlier check the way the record says, then arm one at the
@@ -90,14 +90,17 @@ Provider changes use fresh handoffs, never another provider's conversation
 identity.
 
 After a crash, reboot, or restart, check whether the runtime has already
-resumed a participant (chat or terminal) in its saved conversation and
-rebound its task, or is holding it as a restart offer for the operator. When
-the runtime already resumed a participant on the intended account, or is
-actively resuming it, leave it running and confirm from its own reply that it
-has its latest instructions instead of stopping and reopening it by hand.
-When the runtime holds a restart offer awaiting the operator, put it on the
-ready-for-operator list and wait for the operator's choice instead of
-replacing or duplicating it.
+resumed a worker (chat or terminal) in its saved conversation and rebound its
+task, or is holding it as a restart offer for the operator. When the runtime
+already resumed a worker on the intended account, or is actively resuming it,
+leave it running and confirm from its own reply that it has its latest
+instructions instead of stopping and reopening it by hand. When the runtime
+holds a restart offer awaiting the operator, record that wait, put it on the
+ready-for-operator list, and wait for the operator's choice instead of
+replacing or duplicating the worker. If the runtime resumed or offers to
+restart a previous Team lead session, treat it as a competing Team lead: hold
+assignment changes and merges and list it for the operator even if the
+operator earlier confirmed it had ended.
 
 For an account switch, first read each participant's effective account from
 its running agent. The runtime may already have carried a participant to the
@@ -173,9 +176,12 @@ anything. Repeated revive must not duplicate workers, assignments, or timers.
 After a resume or Team lead replacement, check a worker's live state before
 replying to an unread question, and confirm it can still receive the reply.
 When an earlier Team lead ended, the runtime may have told a waiting worker to
-decide on its own while leaving its question unread; verify whether the worker
-has already moved on or is still waiting (such as on a merge-ready ask it
-cannot act on alone) before answering.
+decide on its own while leaving its question unread. If the worker is still
+waiting (such as on a merge-ready ask it cannot act on alone), answer it. If
+it has already moved on, do not send a stale reply: confirm what it chose, log
+the question with that choice as the default taken (holding dependent work
+under Operate's one-way-door or merge-approval rules if needed), and close the
+question in the record.
 
 Re-attaching gives a worker new identifiers and delivers its brief again. The
 resume message says so: use only the newest identifiers, the brief is

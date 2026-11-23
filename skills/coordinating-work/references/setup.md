@@ -41,13 +41,14 @@ Inspect available provider/model/effort choices and placement support on each
 execution host the guide can reach. Recommend where heavy workers run,
 preferring a reachable host kept for development work over the operator's own
 machine, and show the measured CPU and memory behind the recommendation; the
-operator chooses the placement. Distinguish the Team lead already running from
-participants that need starting. Preserve evidenced settings for existing
-participants; show the supported choices for new ones, matching worker model
-and effort to issue specificity (a faster, lower-cost executor when design
-and Verification are already settled; a stronger executor when design
-judgment remains open). "Host default, no
-override" is an explicit value when the host's choices cannot be listed.
+operator chooses the placement. Distinguish the Team lead already running from participants that need
+starting. Preserve evidenced settings for existing participants; show the
+supported choices for new ones. When the batch mixes straightforward issues
+with open-ended design work, propose a default worker setting and, where
+helpful, a faster, lower-cost tier with an explicit rule for which issues use
+it (so later-wave starts apply the approved rule without a new proposal).
+"Host default, no override" is an explicit value when the host's choices
+cannot be listed.
 Unless the runtime fixes their surface on its own, such as starting workers
 from a persistent agent home as chats, workers launch on the surface the host
 is set to. When the surface they would launch on does not follow an account

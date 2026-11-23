@@ -6,8 +6,7 @@ workers, apply the UX and UI guidance below to your own assignments too.
 Build each brief, amendment, and reply from the project's own instructions and
 the installed guides. Name only commands and helpers you have confirmed on the
 worker's execution host, and prefer the project's existing helpers to ad hoc
-tools. A reply never tells a worker to skip or shorten a gate the repository
-requires. Carry the operator's current decisions and any shared cross-issue
+tools. Carry the operator's current decisions and any shared cross-issue
 design constraints from the record.
 
 Start each task worker through the guide's supervised launch path, and send

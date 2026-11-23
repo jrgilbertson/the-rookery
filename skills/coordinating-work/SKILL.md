@@ -77,20 +77,26 @@ as it is.
 Inspect the execution host and supported surface: a chat worker is not
 necessarily a terminal, and worker chat support does not prove replacement
 Team lead authority. A role name, workspace title, nearby workspace,
-historical dispatch, queued message, delivery receipt, heartbeat, live
-process, or script exit alone does not prove membership, ownership, exit, or
-recovery. Before relying on a message to an idle participant, confirm from its
-own reply or action that it read the message; a delivery receipt or status is
-not proof it was read. No new code or paid work is required merely to prove
-communication.
+historical dispatch, silence, a timeout, an unreachable host, a queued
+message, delivery receipt, heartbeat, live process, or script exit alone does
+not prove membership, ownership, exit, or recovery; retain a participant as
+blocked when only those signals are established. Before relying on a message
+to an idle participant, confirm from its own reply or action that it read the
+message; a delivery receipt or status is not proof it was read. No new code or
+paid work is required merely to prove communication.
 
 The canonical tracker is the batch's roadmap. Take the order of work from the
 Ready Frontier that `managing-issues` lists, and store no separate plan; a
 sequence that must hold is a blocker in the tracker. CE owns issue-specific
-planning, execution, review, and shipping. When multiple issues in scope share
-a data model, API, interface contract, or UX pattern, settle that shared
-design once before dispatching them, record it in the batch's decision log,
-and carry it as a constraint in each affected brief.
+planning, execution, review, and shipping. A reply never tells a worker to
+skip or shorten a gate the repository requires. When multiple issues in scope
+share a data model, API, interface contract, or UX pattern, settle that shared
+design once before dispatching them (applying Operate's one-way-door rule when
+the choice cannot be undone later), add it to the record's shared design
+constraints, carry it in each affected brief, and add it as a Verification
+criterion on each affected issue as [Changing an issue](#changing-an-issue)
+allows (listing score-3 issues for the operator instead) so PR evidence proves
+it.
 
 The Team lead is accountable for the quality and output of every worker, and
 it meets that duty through each issue's Verification and declared choices, not
@@ -138,6 +144,10 @@ exploratory question is not an approval. Apply only the approved supported
 effects; if state drift or a rejected setting changes those effects, pause
 that branch and present an amended proposal. Preserve independent approved
 successes.
+
+This confirmation belongs to setup and revive. Routine assignments and
+later-wave worker starts continue under the approved proposal without
+rerunning setup or adding a staffing confirmation for every task.
 
 ### The merge approval
 
@@ -235,7 +245,8 @@ Each coordinated batch has one record, kept on the Team lead's host, in a
 durable and private location the operator approved at setup. It holds four
 things:
 
-- the approved proposal and the standing rules;
+- the approved proposal, the standing rules, and any shared design
+  constraints;
 - every brief and amendment, as sent;
 - one decision log, appended in order, with each operator decision, question
   and default, issue edit, relayed message, merge, hold, and wait;

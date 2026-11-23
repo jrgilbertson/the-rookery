@@ -44,7 +44,7 @@ Include a compact structured metadata header at the top of each run file contain
 - `vault_mirror_commit`: latest fetched bare-mirror commit SHA (or `null`)
 - `vault_covered_through_utc`: UTC timestamp through which vault activity was covered (or `null`)
 - `local_sessions_covered_through_utc`: UTC timestamp through which local sessions were scanned (or `null`)
-- `remote_coverage`: list of `{host, status, covered_through_utc, read_count, eligible_count}` entries (only for configured paired hosts; `host` pinned by the local agent; `status` is `covered` when all eligible sessions were read, `sampled` when capped at 25 of `eligible_count`, or `unavailable` / `timed-out` on failure)
+- `remote_coverage`: list of `{host, status, covered_through_utc, read_count, eligible_count}` entries (only for configured paired hosts; `host` pinned by the local agent; `status` is `covered` when all eligible sessions were read or `sampled` when capped at 25 of `eligible_count` — both advance `covered_through_utc` to the completed scan window end — or `unavailable` / `timed-out` on failure, which leaves `covered_through_utc` unchanged for carry-forward)
 - `anki_status`: `checked` or `unchecked`
 - `suspended_card_ids`: lightweight integer ID list from `findCards('is:suspended')` on checked runs (for next-run newly-suspended set-difference detection without scanning all cards)
 - `presented_suspended_cards`: list of `{card_id, note_id}` presented in this digest (for the 14-run cooldown)

@@ -29,11 +29,12 @@ Verification as the entry skill describes before dispatching it. When the
 tracker cannot be read through `managing-issues`, report the batch blocked.
 Propose only the initial assignments the work needs. Staffing, isolation,
 concurrency, and resource use follow the native workflow and the operator's
-existing limits. On a shared execution host, limit concurrent heavy jobs, such
-as verification, builds, and browser runs, by measured CPU and memory rather
-than by participant count. Each brief names the project's own metering helper,
-or, when the project has none, a host command confirmed to measure CPU and
-memory.
+existing limits. When ready issues in scope edit the same hot files, sequence
+them or record a tracker blocker instead of dispatching them in parallel. On a
+shared execution host, limit concurrent heavy jobs, such as verification,
+builds, and browser runs, by measured CPU and memory rather than by participant
+count. Each brief names the project's own metering helper, or, when the project
+has none, a host command confirmed to measure CPU and memory.
 
 ## Propose before establishing
 
@@ -107,8 +108,11 @@ the approved coordinated batch. Follow the guide's reconciliation path before an
 attempt, and report unsupported branches separately.
 
 Provide each participant its bounded assignment by the brief the entry skill
-describes. Establish the ordinary native supervision the coordinated batch needs,
-reconciling any existing monitoring first.
+describes. When dispatching to a remote host that cannot reach or authenticate
+with the tracker, inline the issue's Problem, Scope, and Verification in the
+brief instead of telling the worker to fetch them. Establish the ordinary native
+supervision the coordinated batch needs, reconciling any existing monitoring
+first.
 
 Arm the one check Operate describes, at the approved interval, and write in
 the record how to stop it. It is the only periodic work in the batch. It reads

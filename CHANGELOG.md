@@ -57,6 +57,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` aligns setup, operation, and revive with Orca v1.4.272
+  behavior: recognizing runtime-fixed chat surfaces under persistent agent
+  homes, holding still-starting and dialog-withheld workers without treating
+  them as failed starts, checking live state on non-stop retry and wait
+  notices, respecting automatic restart recovery and restart offers, and
+  checking live worker state before replying to unread questions after a
+  Team lead replacement.
 - `coordinating-work` drops the worker reversibility decision rule in favor of
   `lfg`'s headless behavior, and leaves open-PR branch currency to
   `ce-babysit-pr` and the repository's merge rules.

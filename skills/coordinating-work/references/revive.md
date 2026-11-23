@@ -89,12 +89,22 @@ For a same-provider account change, keep each participant's conversation.
 Provider changes use fresh handoffs, never another provider's conversation
 identity.
 
-First read each participant's effective account from its running agent. The
-runtime may already have carried a participant to the newly selected account
-with its conversation intact. This has been observed for agents running as
-chats, while agents running in terminals kept the account they were launched
-with; selecting an account in Orca applies to new agent launches. Resume under
-the new account in this order:
+After a crash, reboot, or restart, check whether the runtime has already
+resumed a participant (chat or terminal) in its saved conversation and
+rebound its task, or is holding it as a restart offer for the operator. When
+the runtime already resumed a participant on the intended account, or is
+actively resuming it, leave it running and confirm from its own reply that it
+has its latest instructions instead of stopping and reopening it by hand.
+When the runtime holds a restart offer awaiting the operator, put it on the
+ready-for-operator list and wait for the operator's choice instead of
+replacing or duplicating it.
+
+For an account switch, first read each participant's effective account from
+its running agent. The runtime may already have carried a participant to the
+newly selected account with its conversation intact. This has been observed
+for agents running as chats, while agents running in terminals kept the
+account they were launched with; selecting an account in Orca applies to new
+agent launches. Resume under the new account in this order:
 
 1. A participant the runtime already carried over: confirm from its own reply
    that it has its latest instructions, and leave it running.
@@ -159,8 +169,12 @@ have the resumed worker confirm the latest amendment it is working from.
 
 Follow the guide's reconciliation path for uncertain results before repeating
 anything. Repeated revive must not duplicate workers, assignments, or timers.
-After a resume, check that a worker with an open question to the Team lead
-can still receive the reply.
+After a resume or Team lead replacement, check a worker's live state before
+replying to an unread question, and confirm it can still receive the reply.
+When an earlier Team lead ended, the runtime may have told a waiting worker to
+decide on its own while leaving its question unread; verify whether the worker
+has already moved on or is still waiting (such as on a merge-ready ask it
+cannot act on alone) before answering.
 
 Re-attaching gives a worker new identifiers and delivers its brief again. The
 resume message says so: use only the newest identifiers, the brief is

@@ -39,11 +39,13 @@ the evidence, and keep other work moving.
 
 ## Running the batch
 
-When a worker's start waits at a one-time trust or setup prompt, tell the
-operator, who answers it once for that agent in that repository, and hold only
-that assignment. Revive covers the prompt a resumed worker's new account
-raises. Recover any other failed start through the guide, and put what it
-cannot recover on the ready-for-operator list.
+When a worker is still starting, waits at a one-time trust or setup prompt, or
+has its brief or restart continue prompt held behind a dialog, do not treat it
+as a failed start or submit input into the dialog. Tell the operator when a
+prompt or dialog needs their answer, hold only that assignment, and follow the
+runtime notice once it is cleared. Revive covers the workspace-trust prompt a
+resumed worker's new account raises. Recover any actual failed start through
+the guide, and put what it cannot recover on the ready-for-operator list.
 
 After every decision, dispatch the next issue from the batch's Ready Frontier
 that the batch has not yet assigned, in its leverage order unless host
@@ -213,7 +215,10 @@ A standing rule only adds a restriction on how workers operate.
 
 The table names each wait: a running job, a usage-limit reset, a merge queue,
 default branch recovery, or the operator. Read the worker's live state after
-a stop report. If it matches the recorded wait, leave the worker alone.
+a stop, model-retry, model-wait, or background-task wait notice; non-stop
+notices do not mean the worker exited. If live state matches a recorded wait
+or active legitimate work, leave the worker alone; intervene through the guide
+only when it has actually stopped or is genuinely stuck.
 
 The runtime reports a worker's stop once and stays quiet about its later idle
 turns. One check, at the interval the operator approved, covers what nothing

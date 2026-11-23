@@ -47,9 +47,11 @@ operator chooses the placement. Distinguish the Team lead already running from
 participants that need starting. Preserve evidenced settings for existing
 participants; show the supported choices for new ones. "Host default, no
 override" is an explicit value when the host's choices cannot be listed.
-Workers launch on the surface the host is set to. Where the guide or observed
-behavior shows one surface follows an account change by itself, tell the
-operator which, so they can set the host to it.
+Unless the runtime fixes their surface on its own, such as starting workers
+from a persistent agent home as chats, workers launch on the surface the host
+is set to. When the surface they would launch on does not follow an account
+change by itself and the guide or observed behavior shows another surface does,
+tell the operator which, so they can set the host to it.
 
 Present the entry skill's proposal, including reused participants, their task
 ownership, and initial workers to start. The proposal also states, so that one

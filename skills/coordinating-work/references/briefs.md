@@ -9,9 +9,10 @@ worker's execution host, and prefer the project's existing helpers to ad hoc
 tools. Carry the operator's current decisions and any shared cross-issue
 design constraints from the record.
 
-Start each task worker through the guide's supervised launch path, and send
-the whole brief inline. A worker on another host cannot read the Team lead's
-files, so the brief carries everything the worker needs. An assignment is
+Start each new task worker through the guide's supervised launch path, reach an
+adopted worker through its existing path, and send the whole brief inline. A
+worker on another host cannot read the Team lead's files, so the brief carries
+everything the worker needs. An assignment is
 open from dispatch until it is merged, held, or finished, and settled after
 that. A follow-on to a settled assignment is a new assignment. Confirm the
 earlier session has ended, release it through the guide when it has not, then

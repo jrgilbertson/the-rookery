@@ -66,12 +66,16 @@ UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
      interpret. A criterion met in part, with an exception, or in other words
      is unproven.
    - Any choice the worker declared in the pull request body fits the batch's
-     recorded design constraints. A declared choice that contradicts a
-     recorded constraint makes this line false (reply with what to align, or
+     recorded design constraints and breaks no already-merged work in the
+     batch. A declared choice that contradicts a recorded constraint or breaks
+     already-merged work makes this line false (reply with what to align, or
      hold the pull request). A declared choice that only changes what another
      in-scope issue should assume satisfies this line once you record the
-     change, amend every affected open assignment in full, and note it for
-     upcoming briefs before merging.
+     change, update any affected issue's Scope or Verification as
+     [Changing an issue](../SKILL.md#changing-an-issue) allows (holding this
+     pull request if a conflicting criterion cannot be edited), amend every
+     affected open assignment in full, and note it for upcoming briefs before
+     merging.
 4. **Current.** Read the pull request now: its head is the reported commit,
    at least one check passed on that head and every check finished without
    failing, no review thread is open, no review requests changes, and the code

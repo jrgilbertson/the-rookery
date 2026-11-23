@@ -88,6 +88,33 @@ codex plugin add compound-engineering@compound-engineering-plugin
 codex plugin add posthog@posthog
 ```
 
+## Antigravity plugins
+
+Antigravity (`agy plugin`) has no built-in `update` command or marketplace
+auto-update, so a standalone install stays pinned at the version cloned at
+install time and can silently drift behind Claude Code.
+
+On machines with Claude Code, symlink Antigravity's Compound Engineering plugin
+to Claude Code's auto-updating marketplace checkout, which ships a root-native
+`plugin.json` and `skills/` bundle that passes `agy plugin validate`. If you
+previously installed a standalone copy, run
+`agy plugin uninstall compound-engineering` first so `ln -s` does not place the
+symlink inside the existing directory.
+
+```bash
+mkdir -p ~/.gemini/config/plugins
+ln -s ~/.claude/plugins/marketplaces/compound-engineering-plugin ~/.gemini/config/plugins/compound-engineering
+agy plugin validate ~/.gemini/config/plugins/compound-engineering
+```
+
+On machines without Claude Code, install the standalone copy directly and
+reinstall (`agy plugin uninstall compound-engineering`, then install again)
+when you want to update:
+
+```bash
+agy plugin install https://github.com/EveryInc/compound-engineering-plugin
+```
+
 ## Claude Code MCP servers
 
 Run these in addition to installing the plugins, which register their bundled
@@ -119,14 +146,16 @@ codex mcp add vercel --url https://mcp.vercel.com
 
 ## Check a machine against this list
 
-Run this from the repository root with Python 3.9 or later and both harness
-CLIs. It prints nothing when all listed skills, plugins, and MCP servers are
-present and there are no extra skills managed by the skills CLI or extra
-enabled Claude Code user plugins. Global agent instructions above are not
-checked by this script. Additional Codex plugins and MCP servers can come from
-the harness or local configuration. The check compares names without starting
-MCP servers. It also checks for `SKILL.md` in both harnesses' global skill
-directories for listed skills in the lock and for Impeccable.
+Run this from the repository root with Python 3.9 or later and the harness CLIs
+(`claude`, `codex`, and `agy`). It prints nothing when all listed skills,
+plugins, and MCP servers are present, Antigravity's Compound Engineering plugin
+matches Claude Code's installed version, and there are no extra skills managed
+by the skills CLI or extra enabled Claude Code user plugins. Global agent
+instructions above are not checked by this script. Additional Codex plugins and
+MCP servers, and additional Antigravity plugins, can come from the harness or
+local configuration. The check compares names without starting MCP servers. It
+also checks for `SKILL.md` in the Codex and Claude Code global skill directories
+for listed skills in the lock and for Impeccable.
 
 ```bash
 python3 - <<'PYTHON'
@@ -163,6 +192,7 @@ skill_lock = config_json(skill_lock_dir / ".skill-lock.json")
 claude_config = config_json(home / ".claude.json")
 claude_plugins = cli_json("claude", "plugin", "list", "--json")
 codex_plugins = cli_json("codex", "plugin", "list", "--json")["installed"]
+agy_plugins = cli_json("agy", "plugin", "list", "--json")
 codex_servers = cli_json("codex", "mcp", "list", "--json")
 
 expected_skills = {name for args in documented("npx skills add ")
@@ -176,11 +206,30 @@ for harness, skill_dir in (("Codex", ".agents/skills"), ("Claude Code", ".claude
                if (home / skill_dir / name / "SKILL.md").is_file()}
     report(f"{harness} skill", skills_to_check, present)
 
+claude_user_plugins = {
+    p["id"]: p for p in claude_plugins if p["scope"] == "user" and p["enabled"]
+}
+agy_enabled_plugins = {
+    p["name"]: p for p in agy_plugins if p.get("enabled")
+}
+
 report("Claude Code plugin", {args[0] for args in documented("claude plugin install ")},
-       {p["id"] for p in claude_plugins if p["scope"] == "user" and p["enabled"]},
-       show_extra=True)
+       set(claude_user_plugins), show_extra=True)
 report("Codex plugin", {args[0] for args in documented("codex plugin add ")},
        {p["pluginId"] for p in codex_plugins if p["enabled"]})
+report("Antigravity plugin", {"compound-engineering"}, set(agy_enabled_plugins))
+
+claude_ce = claude_user_plugins.get("compound-engineering@compound-engineering-plugin")
+agy_ce = agy_enabled_plugins.get("compound-engineering")
+if claude_ce and agy_ce:
+    agy_version = agy_ce.get("version")
+    claude_version = claude_ce.get("version")
+    if not agy_version or not claude_version or agy_version != claude_version:
+        print(
+            f"Antigravity plugin version mismatch: compound-engineering "
+            f"({agy_version or 'unknown'}) != Claude Code ({claude_version or 'unknown'})"
+        )
+
 report("Claude Code MCP server",
        {args[1] for args in documented("claude mcp add --scope user --transport ")},
        set(claude_config.get("mcpServers", {})))

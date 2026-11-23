@@ -65,12 +65,12 @@ Follow the full numbered digest (titles, item types, and redacted evidence citat
 
 ### Git sync and deterministic pre-push secret scan
 
-1. Before reading history, update the repo with `git -C <repo_path> pull --rebase --autostash`.
+1. Before reading history, update the repo with `git -C <repo_path> pull --rebase --autostash`. Load prior per-source coverage watermarks only from runs present on the synced remote tracking branch (`@{upstream}`) so an unpushed local commit from an earlier interrupted run can never advance watermarks.
 2. Before committing or pushing any new run file or incremental Phase 2 update:
    - Check that no unexpected `daily-learning/` commits landed from a paired remote host during a remote worker's run window; if unexpected remote commits appear, stop and report the anomaly before pushing.
    - Stage only `daily-learning/` files owned by this run.
    - Run a **deterministic secret check** on the staged diff: invoke `gitleaks` against the staged files when installed on the host, **and** scan the staged diff for common credential prefixes (API keys, cloud tokens, GitHub/Stripe/Anthropic/OpenAI tokens), PEM private-key headers, `Bearer ` authorization tokens, and `.env`-style secret assignments.
    - **Fail closed on any match:** abort the commit and push, unstage the files, retain the draft in an external temporary directory outside tracked repositories, and report the redacted match location without printing the secret value.
-3. Commit only the owned `daily-learning/` files, run `git -C <repo_path> pull --rebase --autostash`, and push (retrying rebase-and-push once on a concurrent push race).
+3. Commit only the owned `daily-learning/` files, run `git -C <repo_path> pull --rebase --autostash`, and push (retrying rebase-and-push once on a concurrent push race). If the push still fails after the retry, retain the draft in an external temporary directory outside tracked repositories, remove this failed run's unpushed local commit (restoring `HEAD` to before this run's commit so no unpublished run file remains in local history to advance future watermarks), report the draft path and push error, and stop with **Unable to prepare reliably**.
 
 Completion: every persisted run file and incremental Phase 2 record passed deterministic secret scanning, kept watermarks accurate per source, and respected all untrusted-data boundaries.

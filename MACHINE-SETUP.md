@@ -154,8 +154,8 @@ by the skills CLI or extra enabled Claude Code user plugins. Global agent
 instructions above are not checked by this script. Additional Codex plugins and
 MCP servers, and additional Antigravity plugins, can come from the harness or
 local configuration. The check compares names without starting MCP servers. It
-also checks for `SKILL.md` in the Codex and Claude Code global skill directories
-for listed skills in the lock and for Impeccable.
+also checks for `SKILL.md` in the Codex, Claude Code, and Antigravity global
+skill directories for listed skills in the lock and for Impeccable.
 
 ```bash
 python3 - <<'PYTHON'
@@ -201,7 +201,7 @@ locked_skills = set(skill_lock.get("skills", {}))
 report("skill", expected_skills, locked_skills, show_extra=True)
 
 skills_to_check = (expected_skills & locked_skills) | {"impeccable"}
-for harness, skill_dir in (("Codex", ".agents/skills"), ("Claude Code", ".claude/skills")):
+for harness, skill_dir in (("Codex", ".agents/skills"), ("Claude Code", ".claude/skills"), ("Antigravity", ".gemini/config/skills")):
     present = {name for name in skills_to_check
                if (home / skill_dir / name / "SKILL.md").is_file()}
     report(f"{harness} skill", skills_to_check, present)

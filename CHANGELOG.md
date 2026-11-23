@@ -64,6 +64,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `daily-learning` now carries explicitly `deferred` items from the most recent
+  daily run forward once (labeled `carried from <date>`, competing inside the
+  5-item cap before decaying), replaces per-ID remote `unread_sessions`
+  carry-forward with explicit `read_count`/`eligible_count` sampling disclosure,
+  and limits the full Anki backlog deferral warning to runs newly crossing the
+  threshold (reporting counts concisely on consecutive elevated runs).
+  `MACHINE-SETUP.md` now also verifies Antigravity's `.gemini/config/skills`
+  directory alongside Codex and Claude Code.
 - `coordinating-work` aligns setup, operation, and revive with Orca v1.4.272
   behavior: recognizing runtime-fixed chat surfaces under persistent agent
   homes, holding still-starting and dialog-withheld workers without treating

@@ -13,6 +13,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `daily-learning`, a portable skill and paired daily Orca automation
+  (`automations/daily-learning.md`) that runs read-only overnight across
+  Obsidian vault activity, local and paired remote AI sessions, and Anki
+  status, then shifts into approval-gated interactive authoring on reply and
+  supports on-demand learning passes. Includes offline configuration sample
+  checks under `tests/daily-learning/` and synthetic Skill Eval cases under
+  `evals/daily-learning/`.
 - A chart in `ROUTING.md` of combined quality against cost at each effort
   setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
   computes the figures and draws the chart from the committed data, and the

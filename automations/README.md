@@ -13,6 +13,7 @@ between two jobs, with host-specific consolidation instructions below it.
 |---|---|---|---|
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |
 | [Sessions audit (remote)](sessions-audit.md) | Review recent AI sessions on the remote host | Daily at 01:00 | America/Los_Angeles |
+| [Daily learning](daily-learning.md) | Curate daily personal learning recommendations from vault activity, local and paired remote AI sessions, and Anki status | Daily at 05:00 | America/Los_Angeles |
 | [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and recommend fixes | Monday at 04:00 | America/Los_Angeles |
 | [Improve audit](improve-audit.md) | Survey the whole codebase with `improve` and recommend improvements | Tuesday at 04:00 | America/Los_Angeles |
 | [State-machine correctness audit](state-machine-audit.md) | Assess lifecycle correctness and recommend fixes | Sunday at 04:00 | America/Los_Angeles |
@@ -51,7 +52,13 @@ edit it in Orca too.
 The prompts ask for recommendations in leverage order without defining it. The
 definition is the [Rank by leverage](../PRIORITIZATION.md#rank-by-leverage)
 section of `PRIORITIZATION.md`. Add that section to the selected agent's
-instructions so it scores findings the same way.
+instructions so it scores findings the same way. [Daily learning](daily-learning.md)
+is the intentional exception: it invokes the `daily-learning` skill, orders its
+capped morning digest by qualitative learning value and strategic fit without
+Leverage scores, uses a 14-run lookback for recurrence and skew checks, records
+abstracted `decisions.md` entries without verbatim sensitive owner quotes, and
+transitions into approval-gated interactive authoring when you reply in the same
+thread while keeping its scheduled overnight pass strictly read-only.
 
 Keep local paths, repository selections, account identifiers, and enabled
 status in Orca. Run findings and the owner's decisions go in the shared run

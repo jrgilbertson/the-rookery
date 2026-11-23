@@ -6,6 +6,7 @@ cd "$repo_root"
 export PYTHONDONTWRITEBYTECODE=1
 
 runners=(
+  tests/daily-learning/fixtures/run-sample-checks.py
   tests/managing-issues/fixtures/run-config-checks.py
   tests/personal-chief-of-staff/fixtures/run-sample-checks.py
   tests/repository-integrity/check_catalog.py

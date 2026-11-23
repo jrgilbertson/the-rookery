@@ -68,6 +68,7 @@ verify and what it takes to undo.
 
 - [checking-skill-portability](skills/checking-skill-portability/SKILL.md). Check that a skill package works the same in any harness and with any agent that supports the [Agent Skills](https://agentskills.io) specification. Use it before sharing a skill written with Claude Code's or Codex's own `skill-creator`, or when moving a skill between agents.
 - [coordinating-work](skills/coordinating-work/SKILL.md). Set up, run, or revive one Team lead in Orca. It works the issues and epics you hand it and is accountable for the quality and output of its task workers. One approved proposal is its merge approval: it merges routine PRs once their issue is proven done, leaves held changes such as billing, access, or work only you can judge open, and keeps one list of what needs you.
+- [daily-learning](skills/daily-learning/SKILL.md). Turn daily Obsidian vault activity, reading highlights, local and paired remote AI sessions, and Anki status into a capped learning digest and approval-gated interactive authoring across atomic notes, structure notes, reference-note tags, Anki cards, and personal learning or strategy updates.
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
@@ -76,12 +77,14 @@ verify and what it takes to undo.
 
 ## The automations
 
-I run recurring reviews in Orca to find improvements in my development work.
+I run recurring reviews in Orca to find improvements in my development work and
+support daily personal learning.
 The [automation catalog](automations/README.md) contains copyable prompts,
 schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
 - [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment.
+- [Daily learning](automations/daily-learning.md). Run `daily-learning` read-only overnight across vault activity, local and paired remote AI sessions, and Anki status, then author approved updates interactively when you reply.
 - [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and recommend fixes for approval.
 - [Design system audit](automations/design-system-audit.md). Review every page against the design contract and recommend fixes for drift and recurring design problems.
 - [Improve audit](automations/improve-audit.md). Use shadcn's `improve` to survey the whole codebase and recommend improvements for approval.

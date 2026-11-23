@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "vault": {
+    "name": "synthetic-vault",
+    "git_backup_mirror": {
+      "remote_url": "git@example.invalid:synthetic-owner/synthetic-vault-backup.git",
+      "cache_dir": "$EVAL_WORKDIR/cache/vault-mirror.git"
+    },
+    "reference_note_paths": [
+      "References/",
+      "Readwise/"
+    ],
+    "queue_notes": [
+      "To Explore.md",
+      "Misc.md"
+    ],
+    "reference_tags": {
+      "in_progress": "#reading",
+      "completed": "#reviewed"
+    }
+  },
+  "strategy_and_learning": {
+    "personal_chief_of_staff_map": {
+      "locator_kind": "vault-file",
+      "path": "System/chief-of-staff-sources.json",
+      "allow_cross_mode_read": true
+    }
+  },
+  "remote_environments": [
+    {
+      "name": "synthetic-dev-host",
+      "workspace_selector": "folder:daily-learning-readonly",
+      "agent": "codex"
+    }
+  ],
+  "automation_runs": {
+    "repo_path": "$EVAL_WORKDIR/automation-runs"
+  },
+  "anki": {
+    "connect_url": "http://127.0.0.1:18765"
+  }
+}

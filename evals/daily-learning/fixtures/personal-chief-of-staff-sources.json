@@ -1,0 +1,23 @@
+{
+  "version": 3,
+  "roles": {
+    "strategy": [
+      {
+        "area": "direction",
+        "source": "Synthetic Obsidian vault strategy note",
+        "interface": "host document reader",
+        "identity": "synthetic-vault",
+        "locator": "Strategy/Personal Strategy.md"
+      }
+    ],
+    "learning": [
+      {
+        "area": "reflection",
+        "source": "Synthetic Obsidian vault learnings note",
+        "interface": "host document reader",
+        "identity": "synthetic-vault",
+        "locator": "Reflection/Personal Learnings.md"
+      }
+    ]
+  }
+}

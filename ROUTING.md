@@ -124,7 +124,7 @@ What these suites add:
 
 One adjustment:
 
-- **Opus 5.5 moves to first \*.** The method puts Sol first, then Hydrogen, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. VulcanBench puts Opus at high (91.1) above Sol at medium (88.9), while FrontierCode puts it below (36.3 against 38.3). Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol by effort, and the Coding Agent Index tested Opus only at max. So this is my call, not a measured win. This reverses if a suite other than FrontierCode tests Opus at high beside Sol at medium and Opus falls behind, or if my own sessions stop bearing it out.
+- **Opus 5.5 moves to first \*.** The method puts Sol first, then Hydrogen, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. VulcanBench puts Opus at high (91.1) above Sol at medium (88.9), while FrontierCode puts it below (36.3 against 38.3). Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol by effort, and the Coding Agent Index tested Opus only at max. So this is my call, not a measured win. This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
 
 The previous review put Gemini 4 Neon at medium second by judgment, to reverse if a coding suite tested it beside Sol at medium and Sol matched or beat it. VulcanBench now does, with Sol ahead at a third of the cost, so Sol returns to second and Google's slot follows the method.
 

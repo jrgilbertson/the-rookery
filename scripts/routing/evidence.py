@@ -507,7 +507,8 @@ def preference_scores(data: Data, combined: list[Combined]) -> list[Preference]:
     A source's scores are standardized across the current models it lists,
     taking each model's best score at any effort. A model's score is the mean
     over the sources that list it, on the base's scale: 50 plus 10 for each
-    standard deviation. Rows come back best first within each role.
+    standard deviation. A source with no reads by the report date is left out.
+    Rows come back best first within each role.
     """
     current = {entry["model"] for entry in data.models if entry["status"] == "current"}
     marked = dict(best_value_settings(combined))
@@ -519,6 +520,8 @@ def preference_scores(data: Data, combined: list[Combined]) -> list[Preference]:
             for result in data.results:
                 if result.suite == name and result.model in current:
                     best[result.model] = max(best.get(result.model, result.score), result.score)
+            if not best:
+                continue  # not read by the report date; score the row from the sources that were
             spread = statistics.pstdev(best.values()) if len(best) > 1 else 0
             if spread == 0:
                 raise DataError(f"{name} needs at least two current models with different scores to score {role}")

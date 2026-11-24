@@ -146,6 +146,18 @@ def check_report() -> None:
     check([(row["provider"], row["model"]) for row in preference.values() if row["choice"]] == [("Anthropic", "Alpha"), ("OpenAI", "Solo")],
           f"each provider's best-scoring model should take its slot, best first: {preference}")
     check(preference.get("Alpha", {}).get("effort") == "medium", "a preference pick should list the model's best-value effort")
+    # A report as of a date before a preference source's first read scores the row from the
+    # sources read by then, instead of failing the whole report.
+    with tempfile.TemporaryDirectory() as tmp:
+        target = Path(tmp) / "data"
+        shutil.copytree(SYNTHETIC, target)
+        results = target / "results.csv"
+        results.write_text(results.read_text().replace(",2026-01-01,https://example.com/gorse", ",2026-02-01,https://example.com/gorse"))
+        earlier = run("report", "--data", str(target), "--as-of", "2026-01-15")
+        check(earlier.returncode == 0, f"a report before a preference source's first read should still run: {earlier.stdout[:200]}")
+        writing = {row["model"]: row for row in sections(earlier.stdout).get("preference", []) if row["role"] == "Writing"}
+        check(writing.get("Alpha", {}).get("sources") == "1 of 2",
+              f"a preference source with no reads by the report date should be left out of the score: {writing}")
     check(find(suite, suite="Birch", model="Alpha", effort="high").get("minutes") == "9.0",
           "the suite figures should carry each setting's time per task")
     # Combined cost is shown relative to the anchor suite's typical setting, not as dollars no suite charged.

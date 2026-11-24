@@ -11,7 +11,7 @@ skill.
 
 | Tool | What it does | When |
 | --- | --- | --- |
-| The harness's `skill-creator` | Drafts a package, runs test requests with and without it, compares two versions blind, and tunes the description | Creating or substantially revising a skill |
+| `anthropic-skills:skill-creator` (Claude Code) | Drafts a package, runs test requests with and without it, compares two versions blind, and tunes the description | Creating or substantially revising a skill |
 | [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md) | Validates the package against the standard and finds anything tied to one harness or one machine | Every change, before it ships |
 | `/doctor prompt-audit` (Claude Code) | Reads instruction files, skills, and agents for patterns written for older models, dead references, and contradictions | When a model changes |
 | `/skill-doctor` (Claude Code) | Reports each skill's listing cost and use | When a model changes, or when pruning |
@@ -29,14 +29,16 @@ First check that a skill is needed. An installed skill, a plugin, or the model
 on its own may already do the job. Run two or three realistic requests without
 a skill and note what goes wrong or is missing. If nothing does, stop.
 
-Otherwise build the skill with the harness's own `skill-creator`:
+Otherwise build the skill in Claude Code with `anthropic-skills:skill-creator`
+(switch to or delegate to Claude Code when working from a harness that does not
+have it, such as Antigravity):
 
 - **Claude Code:** `anthropic-skills:skill-creator`, which claude.ai syncs and
   keeps current. The copy in `anthropics/skills` on GitHub is older, so do not
   install it with `npx skills add`.
-- **Codex:** the built-in `skill-creator`, which updates with `codex-cli`. Its
-  starter adds `agents/openai.yaml`; keep that file out of the canonical package
-  as the package format below requires.
+- **Codex (if used instead):** the built-in `skill-creator`, which updates with
+  `codex-cli`. Its starter adds `agents/openai.yaml`; keep that file out of the
+  canonical package as the package format below requires.
 
 Then:
 

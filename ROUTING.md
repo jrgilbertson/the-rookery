@@ -90,7 +90,7 @@ Revisit when the Coding Agent Index tests Opus 5.5 at high, or when Terminal-Ben
 
 #### Design/taste
 
-Four sources score this row, weighted equally, and each provider's best-scoring model takes its slot. A score of 50 is the average, and 10 points is one standard deviation.
+Four sources score this row, weighted equally, and each provider's best-scoring model takes its slot. Each source is put on its own scale, where 50 is its average and 10 points is one standard deviation, and a model's score is the mean of its source scores. That mean isn't rescaled, so its spread can be narrower than 10 points per standard deviation.
 
 | Model | Arena WebDev | Design Arena | 21st.dev Design System Bench | Frontier Design | Score |
 |---|---|---|---|---|---|
@@ -205,9 +205,9 @@ These rules prevent the easiest mistakes:
 
 ### Running a refresh
 
-Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the anchor, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
+Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite in use. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the anchor, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
 
-`results.csv` is append-only. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read. To retire a source, delete its rows, its `chart.json` entry, and its `role-inputs.csv` row, so it can't be counted by accident.
+`results.csv` is append-only while a source is in use. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read. To retire a source, delete its rows, its `chart.json` entry, and its `role-inputs.csv` row, so it can't be counted by accident.
 
 1. **Import the base.** Download FrontierCode's `data.json` and VulcanBench's leaderboard CSV and import each. For the other three, copy the results from the page's data into a plain table of model, effort, score, pass rate, cost, and minutes, and import that.
 2. **Import the role inputs** the same way, each as a suite outside the base. Update what `role-inputs.csv` says about each one, with the date read.
@@ -224,9 +224,9 @@ Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv
 11. **Update the page:** the recommendations figure's alt text, which must name every pick, the base table, each role's evidence tables, the chart alt text, the revisit conditions, and the review date.
 
 ```bash
-python3 scripts/routing/evidence.py import --format frontiercode --file data.json --version 2.0 --date 2026-11-19 --url https://cognition.com/data/frontier-code-2.0/data.json
-python3 scripts/routing/evidence.py import --format vulcanbench --file swe-v4-board.csv --version v4 --date 2026-11-19 --url https://vulcanbench.com/assets/data/swe-v4-board.csv
-python3 scripts/routing/evidence.py import --format table --suite "Vals Index" --file vals.csv --version 2.2 --date 2026-11-19 --url https://www.vals.ai/benchmarks/vals_index
+python3 scripts/routing/evidence.py import --format frontiercode --file data.json --version 2.0 --date YYYY-MM-DD --url https://cognition.com/data/frontier-code-2.0/data.json
+python3 scripts/routing/evidence.py import --format vulcanbench --file swe-v4-board.csv --version v4 --date YYYY-MM-DD --url https://vulcanbench.com/assets/data/swe-v4-board.csv
+python3 scripts/routing/evidence.py import --format table --suite "Vals Index" --file vals.csv --version 2.2 --date YYYY-MM-DD --url https://www.vals.ai/benchmarks/vals_index
 python3 scripts/routing/evidence.py changes
 python3 scripts/routing/evidence.py report
 python3 scripts/routing/evidence.py charts

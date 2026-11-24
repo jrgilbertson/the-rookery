@@ -19,8 +19,9 @@ After every decision, dispatch the next issue from the batch's Ready Frontier
 that the batch has not yet assigned, briefing it under [Briefs](briefs.md), in
 its leverage order unless host capacity or the operator's instruction says
 otherwise, and at the concurrency you judge best. Dispatch only an issue that has its four scores, and list an
-unscored one for the operator. Measure the whole host before a heavy job. When
-it is busy, leave the issue for the next check. When a merge changes what a
+unscored one for the operator. When the host is too busy for heavy work the
+project's own gate does not meter, as [Setup](setup.md) limits it, leave the
+issue for the next check. When a merge changes what a
 later issue should assume, say so in that issue's brief. When nothing is
 ready, say so on the ready-for-operator list with what each remaining issue
 waits on; the batch is finished only when every issue in scope is done or the

@@ -64,6 +64,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `ROUTING.md` weighs each preference row's sources equally instead of
+  following one board. Design/taste averages Arena WebDev, Design Arena,
+  21st.dev Design System Bench, and the new Frontier Design benchmark, where
+  professional designers vote blind; Writing averages Arena creative writing
+  and Lechmazur. The Team lead row now goes by quality, and the Executor row
+  keeps the 40% price order. The better-sibling rule compares two settings only
+  on the base suites that tested both, and lists the sibling at its best-value
+  effort when that is higher. The routing checks now cover every row, and the
+  data is refreshed to 2026-11-24.
 - `coordinating-work` ends each standing rule by its own end observation,
   which the Team lead records with the rule and checks at each periodic check,
   retiring the rule by a dated amendment once the observation holds. Workers

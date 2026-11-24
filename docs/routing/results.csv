@@ -888,21 +888,10 @@ Vals Terminal-Bench by effort,4.0,Muse Spark 1.3,xhigh,11.10,,7.778,133.9,2026-1
 Vals Terminal-Bench by effort,4.0,Opus 5.5,low,40.40,,2.5888,27.33,2026-11-19,https://www.vals.ai/benchmarks/terminal-bench-4
 Vals Terminal-Bench by effort,4.0,Opus 5.5,high,67.70,,4.6958,31.95,2026-11-19,https://www.vals.ai/benchmarks/terminal-bench-4
 Vals Terminal-Bench by effort,4.0,Opus 5.5,max,68.70,,12.5954,60.51,2026-11-19,https://www.vals.ai/benchmarks/terminal-bench-4
-Design Arena UI Components,2026-11-19,Fable 5.2,none,1378.00,,,,2026-11-19,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-19,GPT-6.2 Astra,none,1332.00,,,,2026-11-19,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-19,Gemini 4 Carbon,none,1342.00,,,,2026-11-19,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-19,Gemini 4 Hydrogen,none,1339.00,,,,2026-11-19,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-19,Gemini 4 Neon,none,1359.00,,,,2026-11-19,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-19,Opus 5.5,none,1369.00,,,,2026-11-19,https://www.designarena.ai/leaderboard
 21st.dev Design System Bench,2026-11-12,Fable 5.2,none,85.20,,0.99,1.4,2026-11-19,https://21st.dev/benchmarks/leaderboard
 21st.dev Design System Bench,2026-11-12,Gemini 4 Carbon,none,82.90,,1.31,32,2026-11-19,https://21st.dev/benchmarks/leaderboard
 21st.dev Design System Bench,2026-11-12,Grok 4.7,none,72.70,,,,2026-11-19,https://21st.dev/benchmarks/leaderboard
 21st.dev Design System Bench,2026-11-12,Opus 5.5,none,73.70,,,,2026-11-19,https://21st.dev/benchmarks/leaderboard
-Arena Text,2026-11-19,Fable 5.2,max,1503.00,,0.24,,2026-11-19,https://arena.ai/leaderboard/text
-Arena Text,2026-11-19,Gemini 4 Argon,high,1520.00,,0.03,,2026-11-19,https://arena.ai/leaderboard/text
-Arena Text,2026-11-19,Gemini 4 Carbon,high,1527.00,,0.05,,2026-11-19,https://arena.ai/leaderboard/text
-Arena Text,2026-11-19,Gemini 4 Neon,high,1513.00,,0.08,,2026-11-19,https://arena.ai/leaderboard/text
-Arena Text,2026-11-19,Opus 5.5,high,1506.00,,0.08,,2026-11-19,https://arena.ai/leaderboard/text
 FrontierCode,2.0,Beam 1.0,minimal,0.00,0.00,0.059,,2026-11-20,https://cognition.com/data/frontier-code-2.0/data.json
 FrontierCode,2.0,Beam 1.0,low,0.00,0.00,0.142,,2026-11-20,https://cognition.com/data/frontier-code-2.0/data.json
 FrontierCode,2.0,Beam 1.0,medium,0.83,1.01,0.315,,2026-11-20,https://cognition.com/data/frontier-code-2.0/data.json
@@ -1523,15 +1512,6 @@ Arena Creative Writing,2026-11-22,Gemini 4 Hydrogen,xhigh,1492.00,,0.05,,2026-11
 Arena Creative Writing,2026-11-22,Gemini 4 Neon,xhigh,1504.00,,0.08,,2026-11-24,https://arena.ai/leaderboard/text/creative-writing
 Arena Creative Writing,2026-11-22,Grok 4.7,xhigh,1421.00,,0.02,,2026-11-24,https://arena.ai/leaderboard/text/creative-writing
 Arena Creative Writing,2026-11-22,Opus 5.5,high,1518.00,,0.08,,2026-11-24,https://arena.ai/leaderboard/text/creative-writing
-Arena Text,2026-11-22,Fable 5.2,max,1502.00,,0.24,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,GPT-6.2 Astra,max,1467.00,,0.13,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,GPT-6.2 Sol,max,1464.00,,0.04,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,Gemini 4 Argon,high,1520.00,,0.03,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,Gemini 4 Carbon,high,1527.00,,0.05,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,Gemini 4 Hydrogen,xhigh,1490.00,,0.05,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,Gemini 4 Neon,xhigh,1512.00,,0.08,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,Grok 4.7,xhigh,1444.00,,0.02,,2026-11-24,https://arena.ai/leaderboard/text
-Arena Text,2026-11-22,Opus 5.5,high,1507.00,,0.08,,2026-11-24,https://arena.ai/leaderboard/text
 CursorBench,4.1,Fable 5.2,low,53.40,,4.26,,2026-11-24,https://cursor.com/cursorbench
 CursorBench,4.1,Fable 5.2,medium,54.20,,5.01,,2026-11-24,https://cursor.com/cursorbench
 CursorBench,4.1,Fable 5.2,high,56.50,,10.51,,2026-11-24,https://cursor.com/cursorbench
@@ -2184,14 +2164,6 @@ Design Arena,2026-11-24,Sonnet 4.6,none,1193.00,,,27.66,2026-11-24,https://www.d
 Design Arena,2026-11-24,Sonnet 5,none,1226.00,,1.8751,18.14,2026-11-24,https://www.designarena.ai/leaderboard
 Design Arena,2026-11-24,Sonnet 5.5,none,1299.00,,1.6617,25.52,2026-11-24,https://www.designarena.ai/leaderboard
 Design Arena,2026-11-24,Step 3.7 Flash,none,1091.00,,0.1246,8.42,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Fable 5.2,none,1393.00,,2.0744,10.1,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,GPT-6.2 Astra,none,1329.00,,0.6791,4.19,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Gemini 4 Argon,none,1326.00,,0.1636,2.47,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Gemini 4 Carbon,none,1381.00,,0.1566,2.47,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Gemini 4 Hydrogen,none,1329.00,,0.1145,1.05,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Gemini 4 Neon,none,1335.00,,0.2479,2.32,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Grok 4.7,none,1276.00,,0.3903,12.71,2026-11-24,https://www.designarena.ai/leaderboard
-Design Arena UI Components,2026-11-24,Opus 5.5,none,1368.00,,0.4844,3.25,2026-11-24,https://www.designarena.ai/leaderboard
 Frontier Design,2026-11-22,DeepSeek V4 Pro,none,1110.00,,,,2026-11-24,https://contralabs.com/frontierdesign/leaderboard
 Frontier Design,2026-11-22,Fable 5.2,none,1710.00,,,,2026-11-24,https://contralabs.com/frontierdesign/leaderboard
 Frontier Design,2026-11-22,GLM-5.3 Prime,none,1400.00,,,,2026-11-24,https://contralabs.com/frontierdesign/leaderboard

@@ -107,7 +107,7 @@ Revisit when Design System Bench lists the GPT-6.2 models or Neon, or when Front
 
 #### Writing
 
-Two sources score this row, weighted equally. Arena's overall text board is left out because Arena already counts once, through creative writing.
+Two sources score this row, weighted equally. Arena counts once, through creative writing.
 
 | Model | Arena creative writing | Lechmazur score | Score |
 |---|---|---|---|
@@ -207,7 +207,7 @@ These rules prevent the easiest mistakes:
 
 Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the anchor, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
 
-`results.csv` is append-only. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read.
+`results.csv` is append-only. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read. To retire a source, delete its rows, its `chart.json` entry, and its `role-inputs.csv` row, so it can't be counted by accident.
 
 1. **Import the base.** Download FrontierCode's `data.json` and VulcanBench's leaderboard CSV and import each. For the other three, copy the results from the page's data into a plain table of model, effort, score, pass rate, cost, and minutes, and import that.
 2. **Import the role inputs** the same way, each as a suite outside the base. Update what `role-inputs.csv` says about each one, with the date read.

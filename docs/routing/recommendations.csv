@@ -1,13 +1,13 @@
 role,choice,provider,model,model_id,effort,judgment,reviewed
-Team lead,1,OpenAI,GPT-6.2 Sol,gpt-6.2-sol,max,,2026-11-24
+Team lead,1,Google,Gemini 4 Carbon,gemini-4-carbon,high,,2026-11-24
 Team lead,2,Anthropic,Claude Fable 5.2,claude-fable-5-2,medium,,2026-11-24
-Team lead,3,Google,Gemini 4 Carbon,gemini-4-carbon,high,,2026-11-24
+Team lead,3,OpenAI,GPT-6.2 Sol,gpt-6.2-sol,max,,2026-11-24
 Executor,1,Anthropic,Claude Opus 5.5,claude-opus-5-5,high,yes,2026-11-24
 Executor,2,OpenAI,GPT-6.2 Sol,gpt-6.2-sol,medium,,2026-11-24
 Executor,3,Google,Gemini 4 Hydrogen,gemini-4-hydrogen,high,,2026-11-24
 Design/taste,1,Anthropic,Claude Fable 5.2,claude-fable-5-2,medium,,2026-11-24
-Design/taste,2,Google,Gemini 4 Carbon,gemini-4-carbon,high,,2026-11-24
-Design/taste,3,OpenAI,GPT-6.2 Astra,gpt-6.2-astra,medium,,2026-11-24
+Design/taste,2,OpenAI,GPT-6.2 Astra,gpt-6.2-astra,medium,,2026-11-24
+Design/taste,3,Google,Gemini 4 Neon,gemini-4-neon,high,,2026-11-24
 Writing,1,Anthropic,Claude Fable 5.2,claude-fable-5-2,medium,,2026-11-24
-Writing,2,Google,Gemini 4 Neon,gemini-4-neon,high,yes,2026-11-24
+Writing,2,Google,Gemini 4 Neon,gemini-4-neon,high,,2026-11-24
 Writing,3,OpenAI,GPT-6.2 Astra,gpt-6.2-astra,medium,,2026-11-24

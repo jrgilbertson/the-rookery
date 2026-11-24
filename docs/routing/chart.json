@@ -25,6 +25,10 @@
     "Arena Text": {"base": false},
     "Lechmazur Writing": {"base": false}
   },
+  "preference": {
+    "Design/taste": ["Arena WebDev", "Design Arena", "21st.dev Design System Bench", "Frontier Design"],
+    "Writing": ["Arena Creative Writing", "Lechmazur Writing"]
+  },
   "vendors": {
     "Anthropic": {"everyday": "Opus 5.5", "flagship": "Fable 5.2", "rationed": ["Fable 5.2"], "colour": "#C15F3C"},
     "OpenAI": {"everyday": "GPT-6.2 Sol", "flagship": "GPT-6.2 Astra", "rationed": [], "colour": "#0E8F6E"},

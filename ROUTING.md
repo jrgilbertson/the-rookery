@@ -24,11 +24,11 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 **Last reviewed: 2026-11-24**
 
-![Recommendations reviewed 2026-11-24. Team lead: GPT-6.2 Sol (`gpt-6.2-sol`) at max, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Carbon (`gemini-4-carbon`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium, then Gemini 4 Hydrogen (`gemini-4-hydrogen`) at high. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Carbon (`gemini-4-carbon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Carbon (`gemini-4-carbon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Sol (`gpt-6.2-sol`) at max. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium, then Gemini 4 Hydrogen (`gemini-4-hydrogen`) at high. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
 
 Each row names a model from each provider, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
-A model marked \* is my judgment: the method would have put a different model there, and the reasons below say why and what would change my mind. This review has two marks, one on the Executor row and one on the Writing row.
+A model marked \* is my judgment: the method would have put a different model there, and the reasons below say why and what would change my mind. This review has one mark, on the Executor row.
 
 Claude plans that include Fable let it use up to half of the weekly limit, which the other Claude models share, according to Claude's [help center](https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan). When that half runs out, use `claude-opus-5-5` at high in Fable's place.
 
@@ -75,7 +75,7 @@ Sol comes first even though Neon scores 3.0 points more. Neon costs about 450% m
 
 #### Team lead
 
-This row starts from each vendor's flagship, the model it recommends for its hardest work: Fable 5.2, GPT-6.2 Astra, Gemini 4 Carbon, and Grok 4.7. Astra's best-value effort is now medium, at 58.7 for a relative cost of 1.11. GPT-6.2 Sol at max scores 59.1 at 0.74, higher for less, so Sol at max takes OpenAI's slot. Gemini 4 Neon at high scores 60.8 at 2.02, below Carbon's 61.5 at 3.93, so Carbon keeps Google's slot. On the 2026-11-20 read Neon beat Carbon; VulcanBench's first results for Neon lowered its combined score.
+This row starts from each vendor's flagship, the model it recommends for its hardest work: Fable 5.2, GPT-6.2 Astra, Gemini 4 Carbon, and Grok 4.7. Astra's best-value effort is now medium, at 58.7 for a relative cost of 1.11. GPT-6.2 Sol at max scores 59.1 at 0.74, higher for less, so Sol at max takes OpenAI's slot. Gemini 4 Neon at high scores 60.8 at 2.02, below Carbon's 61.5 at 3.93, so Carbon keeps Google's slot. On the 2026-11-20 read Neon beat Carbon; VulcanBench's first results for Neon lowered its combined score. The row goes by quality: Carbon first, then Fable, then Sol at max.
 
 No suite measures leading a team. The closest is AA-Briefcase, which scores long, multi-step knowledge work:
 
@@ -88,7 +88,7 @@ No suite measures leading a team. The closest is AA-Briefcase, which scores long
 | GPT-6.2 Sol | 1494 | 1541 | 1579 | 1612 |
 | GPT-6.2 Astra | 1407 | 1570 | 1593 | 1643 |
 
-Its intervals run about 8 to 12 points either way. At the listed efforts, Fable at 1623 sits 11 points above Sol at max (1612) and 12 above Carbon at high (1611), inside those intervals, so Briefcase does not reorder the row. Neon at high (1631) leads Carbon at high by 20 points, at the edge of the intervals, which is not enough to give it Google's slot. Artificial Analysis labels its Claude runs "Default Fallback", so another model may have answered some turns.
+Its intervals run about 8 to 12 points either way. At the listed efforts, Fable at 1623 sits 11 points above Sol at max (1612) and 12 above Carbon at high (1611), inside those intervals, so Briefcase does not change the order. Neon at high (1631) leads Carbon at high by 20 points, at the edge of the intervals, which is not enough to give it Google's slot. Artificial Analysis labels its Claude runs "Default Fallback", so another model may have answered some turns.
 
 The row follows the method, with no adjustment. The previous review moved Fable above Astra on Briefcase; Astra has left the row, so that adjustment no longer applies. Practitioners who name an effort run Fable as lead at high or xhigh, not medium, and launch-week testers report Astra stopping early on long, self-directed work. No one reported running Sol at max as a lead.
 
@@ -132,56 +132,47 @@ Revisit when the Coding Agent Index tests Opus 5.5 at high, when Terminal-Bench 
 
 #### Design/taste
 
-People's preferences decide this row, and the base doesn't measure how an interface looks. Arena WebDev sets the order. It ranks every candidate at a named effort, on over a million votes. Three more sources serve as checks.
+People's preferences decide this row, and the base doesn't measure how an interface looks. Four sources score it, weighted equally. Each is standardized across the current models it lists, and a model's score is the mean over the sources that list it, where 50 is the average and 10 points is one standard deviation.
 
-| Model | Arena WebDev | Design Arena, UI components | 21st.dev Design System Bench | Frontier Design |
-|---|---|---|---|---|
-| Fable 5.2 | 1822 at xhigh | 1393 | 85.2 | 1710 |
-| Opus 5.5 | 1820 at max | 1368 | 73.7 | 1684 |
-| Gemini 4 Carbon | 1769 at high | 1381 | 82.9 | 1337 |
-| Gemini 4 Neon | 1765 at xhigh | 1335 | not listed | 1430 |
-| GPT-6.2 Astra | 1761 at max | 1329 | not listed | 1755 |
-| GPT-6.2 Sol | 1755 at max | not listed | not listed | 1631 |
-| Grok 4.7 | 1639 at xhigh | 1276 | 72.7 | 1236 |
+| Model | Arena WebDev | Design Arena | 21st.dev Design System Bench | Frontier Design | Score |
+|---|---|---|---|---|---|
+| Fable 5.2 | 1822 at xhigh | 1378 | 85.2 | 1710 | 61.1 |
+| Opus 5.5 | 1820 at max | 1454 at high | 73.7 | 1684 | 58.6 |
+| GPT-6.2 Astra | 1761 at max | 1324 at max | not listed | 1755 | 55.0 |
+| Gemini 4 Neon | 1765 at xhigh | 1392 | not listed | 1430 | 53.7 |
+| GPT-6.2 Sol | 1755 at max | 1289 | not listed | 1631 | 50.7 |
+| Gemini 4 Carbon | 1769 at high | 1318 | 82.9 | 1337 | 50.7 |
+| Grok 4.7 | 1639 at xhigh | 1278 | 72.7 | 1236 | 37.6 |
 
-Design Arena counts people's votes on interface components and names no effort for these models. Design System Bench has agents build interfaces in a real repository and scores how well they use its design system; each model ran at medium, except Carbon at high. Its operator may sell UI tooling. Frontier Design has professional designers vote blind between websites built from 33 real client briefs, and ranks human designers' own builds among the models at 1735. It names no effort. It is run by Contra Labs, whose freelance marketplace supplies the briefs and the voters, and its data is not public.
+The row takes each provider's best-scoring model: Fable 5.2, then GPT-6.2 Astra, then Gemini 4 Neon. The margins behind first place are small. Astra leads Sol by 4 points and Neon leads Carbon by 3, and Carbon is the only Gemini model all four sources list. Frontier Design puts every Gemini model well below the OpenAI and Anthropic models, which is most of why Astra moves above them.
 
-One adjustment:
+Design System Bench ran each model at medium, except Carbon at high. Frontier Design's operator, Contra Labs, runs the freelance marketplace its briefs and voters come from, and its data is not public. Its GPT-6.2 and Neon entries rest on about 110 votes each.
 
-- **The order comes from Arena WebDev, not the base.** The row takes each provider's first model on WebDev: Fable 5.2, then Carbon, then GPT-6.2 Astra. Design System Bench agrees on Fable first and Carbon above Opus, and Design Arena's UI board agrees on the whole order. The 40% price doesn't apply here, since cost doesn't measure taste. This reverses if WebDev reorders the providers' leading models.
+Each pick lists the model's best-value effort, as the rules require. WebDev tested Fable at xhigh and Astra at max. A lower effort is untested for design, not worse, but one practitioner found Astra's interfaces weak at high and decent at xhigh, so raise it when a design calls for more.
 
-Frontier Design disagrees. Its designers put Astra (1755) above Fable (1710) and every Gemini model 200 or more points lower, with Carbon at 1337. Astra rests on 114 votes, against 660 for Carbon, and WebDev's far larger vote keeps Carbon ahead, so the row keeps Carbon. One practitioner also found Carbon's pages dense or cluttered.
-
-Each pick lists the model's best-value effort, as the rules require. WebDev tested Fable at xhigh and Astra at max. Astra's best-value effort is now medium. A lower effort is untested for design, not worse, but one practitioner found Astra's interfaces weak at high and decent at xhigh, so raise it when a design calls for more.
-
-Revisit when Frontier Design keeps Astra above Carbon on several hundred votes for Astra, or when a check lists GPT-6.2 Sol or Neon at a named effort.
+Revisit when Design System Bench lists the GPT-6.2 models or Neon, or when Frontier Design's GPT-6.2 and Neon entries reach several hundred votes.
 
 #### Writing
 
-Readers judge writing by preference, so this row works like Design/taste. Arena's creative-writing board sets the order, from about 1.5 million human votes. Two more sources serve as checks: Arena's overall text board, and Lechmazur's benchmark, where models judge short stories.
+Readers judge writing by preference, so this row works like Design/taste. Two sources score it, weighted equally: Arena's creative-writing board, from about 1.5 million human votes, and Lechmazur's benchmark, where models judge short stories. Arena's overall text board is left out: it covers all kinds of prompts, and Arena already counts once through creative writing.
 
-| Model | Arena creative writing | Arena text, overall | Lechmazur rank, of 67 |
+| Model | Arena creative writing | Lechmazur score (rank of 67) | Score |
 |---|---|---|---|
-| Fable 5.2 | 1525 at max | 1502 at max | 2 |
-| Gemini 4 Argon | 1521 at high | 1520 at high | 27 |
-| Opus 5.5 | 1518 at high | 1507 at high | 6 |
-| Gemini 4 Carbon | 1518 at high | 1527 at high | 19 |
-| Gemini 4 Neon | 1504 at xhigh | 1512 at xhigh | not listed |
-| GPT-6.2 Astra | 1471 at max | 1467 at max | 1 |
-| GPT-6.2 Sol | 1436 at max | 1464 at max | not listed |
+| Fable 5.2 | 1525 at max | 3.56 (2) | 59.0 |
+| Opus 5.5 | 1518 at high | 3.35 (6) | 57.4 |
+| Gemini 4 Neon | 1504 at xhigh | not listed | 54.0 |
+| GPT-6.2 Astra | 1471 at max | 4.30 (1) | 53.9 |
+| Gemini 4 Carbon | 1518 at high | 1.62 (19) | 52.0 |
+| Gemini 4 Argon | 1521 at high | 0.45 (27) | 48.8 |
+| GPT-6.2 Sol | 1436 at max | not listed | 35.3 |
 
-Two adjustments:
+The row takes Fable 5.2, then Gemini 4 Neon, then GPT-6.2 Astra. Neon and Astra are 0.1 apart, and Neon's score rests on Arena alone because Lechmazur doesn't list it. Practitioners point the same way for non-fiction: Stephen Smith ranked Fable first and Neon a close second on board and investor documents, and many Hacker News users say Neon writes docs better than Claude.
 
-- **The order comes from Arena's creative-writing board, not the base.** The row takes each provider's first model there: Fable 5.2, then Gemini 4 Argon, then GPT-6.2 Astra. Arena now scores the GPT-6.2 models, with Astra 35 points above Sol, and Lechmazur also ranks Astra first. This reverses if Arena reorders the providers' leading models.
-- **Gemini 4 Neon takes Google's slot from Argon \*.** Arena puts Argon 17 points above Neon, but this role is mostly non-fiction, and the non-fiction evidence favors Neon. Stephen Smith had the models write board and investor documents and ranked Fable 5.2 first and Neon a close second; he did not test Argon. Many Hacker News users also say, mostly unprompted, that Neon writes docs and landing pages better than Claude, though no one compared it with Argon side by side. This is my call on practitioner reports, not a measured win. It reverses if a non-fiction benchmark such as Hemingway-bench lists both and puts Argon ahead.
-
-The checks are weak. Arena's text board covers all kinds of prompts, not just writing, and it puts Carbon first. Epoch rated Lechmazur "Flawed" in August 2026 because its grading changed without a version, and the rating still stood on 2026-11-24.
-
-No public benchmark scores current models on non-fiction such as documentation, email, or reports, so this row rests on creative writing.
+The sources are weak. Epoch rated Lechmazur "Flawed" in August 2026 because its grading changed without a version, and the rating still stood on 2026-11-24. No public benchmark scores current models on non-fiction such as documentation, email, or reports, so this row rests on creative writing.
 
 Each pick lists the model's best-value effort. Arena tested Fable and Astra at max, and a lower effort is untested for writing, not worse.
 
-Revisit when Surge AI's Hemingway-bench, where professional writers judge business and everyday writing, lists current models. Today its newest entries are Fable 5.1 and Opus 5.
+Revisit when Lechmazur lists Neon, or when Surge AI's Hemingway-bench, where professional writers judge business and everyday writing, lists current models. Today its newest entries are Fable 5.1 and Opus 5.
 
 ## Choose effort and tools
 
@@ -203,35 +194,35 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 - **Compare settings.** A setting is one model at one effort. A model is better when its listed setting scores higher, whatever it could reach at another effort.
 - **A point of quality is worth up to 40% more cost.** This one figure sets both the best-value effort and the price order.
 - **The best-value effort is the last step worth its extra cost.** First drop any effort that a cheaper effort of the same model beats. Then climb from the cheapest and stop before the first step that costs more than 40% extra for each added point. Each model is listed at its best-value effort unless a rule below names another.
-- **Order by the same price.** A setting at least as good for no more cost goes first. Otherwise the better-scoring setting goes first only when it costs at most 40% more for each point it adds. Past that, the cheaper one goes first. If every remaining setting is beaten by another, the best-scoring one goes next.
-- **The Executor row starts from each vendor's everyday model, and the Team lead row from its flagship.** Vendors name these in their own guidance. When a vendor's sources disagree, the everyday model is the one its own coding tool runs by default to do the work. Both rows follow the price order.
+- **The Executor row follows the price order.** A setting at least as good for no more cost goes first. Otherwise the better-scoring setting goes first only when it costs at most 40% more for each point it adds. Past that, the cheaper one goes first. If every remaining setting is beaten by another, the best-scoring one goes next. The base table uses the same order.
+- **The Team lead row goes by quality.** The higher combined score goes first, and the cheaper setting breaks a tie. A lead's decisions carry the outcome, so cost only sets each model's effort and decides whether a sibling takes a slot.
+- **The Executor row starts from each vendor's everyday model, and the Team lead row from its flagship.** Vendors name these in their own guidance. When a vendor's sources disagree, the everyday model is the one its own coding tool runs by default to do the work.
 - **A better sibling takes the slot.** If another current model from the same vendor scores higher for less at any effort, its cheapest such setting replaces the vendor's pick. A rationed model never replaces one. A vendor rations a model when its plans cap the model's use, count it faster against the allowance, or bill it to credits.
-- **Preference rows follow their ranking.** Design/taste takes each provider's first model on Arena WebDev, and Writing each provider's first model on Arena's creative-writing board, since cost doesn't measure taste. Each model is listed at its best-value effort, and a ranking that tested it at another effort still counts as evidence for it.
+- **Preference rows weigh their sources equally.** Design/taste and Writing each have their own sources, since cost doesn't measure taste, and each operator counts once. Each source is standardized across the current models it lists, taking a model's best score at any effort, and a model's score is the mean over the sources that list it. Each provider's best-scoring model takes its slot, best first, at its best-value effort.
 - **Three providers per row, one model each.** A row takes the first three providers in its order.
 - **The frontier shows the best buys.** A setting is on the frontier when no other setting scores higher for less. A listed model whose best-value effort falls off the frontier has a cheaper alternative; the base table shows which ones are.
 
 ### Where the evidence comes from
 
-| Source | Operator | Feeds | Kind of evidence | What it reports |
+| Source | Operator | Feeds | Kind of evidence | What it is and how it's used |
 |---|---|---|---|---|
-| [FrontierCode](https://cognition.com/frontiercode) | Cognition | The base | Measured | Merge quality, a pass rate, and cost per rollout on coding tasks, each model in its maker's tool. The other suites are scaled against it because it tests the most settings. |
-| [VulcanBench](https://vulcanbench.com/leaderboard.html) | VulcanBench | The base | Measured | Tasks passed, a combined quality score, cost, and runtime on 23 coding tasks. Models judge part of its score. |
-| [CursorBench](https://cursor.com/cursorbench) | Cursor | The base | Measured | A score and cost per task on ambiguous multi-file coding tasks. It tests no OpenAI model from the current generation. |
-| [AA Intelligence Index](https://artificialanalysis.ai/leaderboards/models) | Artificial Analysis | The base | Measured | A composite of nine evaluations, mostly not coding, with cost and time per task. One of the nine reruns FrontierCode. |
-| [Vals Index](https://www.vals.ai/benchmarks/vals_index) | Vals AI | The base | Measured | A composite of eight evaluations, including legal, tax, and finance work, with cost per test. Its leaderboard runs each model at one effort, which the page's data records, and its per-effort results let it meet the base's rule of more than one effort per model. |
-| Each vendor's model guidance | Anthropic, OpenAI, Google, xAI | Executor and Team lead inputs | Vendor guidance | Which model the vendor recommends for everyday work and which for its hardest work, and which models its plans ration. |
-| [AA Coding Agent Index](https://artificialanalysis.ai/agents/coding) | Artificial Analysis | Executor input | Measured | Each model inside its maker's own coding tool, scored on three coding suites, with cost and time per task. |
-| [Vals Terminal-Bench](https://www.vals.ai/benchmarks/terminal-bench-4) | Vals AI | Executor input | Measured | Terminal tasks with every model in one simple harness. Its by-effort chart uses fewer tasks than its leaderboard, so I store the two as separate suites. |
-| [AA-Briefcase](https://artificialanalysis.ai/evaluations/aa-briefcase) | Artificial Analysis | Team lead input | Proxy | Elo on long, multi-step knowledge-work tasks. It is one part of the AA index, read on its own because it is the closest published match to leading work. |
-| [Arena WebDev](https://arena.ai/leaderboard/code/webdev) | Arena | Design/taste order | Preference | Human-preference ranking of finished web apps. |
-| [Design Arena](https://www.designarena.ai/leaderboard) | Design Arena | Design/taste check | Preference | Human-preference Elo, read from its UI components board, which lists Gemini 4 Neon. |
-| [21st.dev Design System Bench](https://21st.dev/benchmarks/leaderboard) | 21st.dev | Design/taste check | Measured | Agents build interfaces in a real repository, scored on use of its design system, with error bars, cost, and time. |
-| [Frontier Design](https://contralabs.com/frontierdesign/leaderboard) | Contra Labs and BenchFlow | Design/taste check | Preference | Professional designers' blind votes between websites built from real client briefs, as Elo, with human designers ranked among the models. |
-| [Arena Creative Writing](https://arena.ai/leaderboard/text/creative-writing) | Arena | Writing order | Preference | Human-preference ranking of written output, with cost per reply. |
-| [Arena Text](https://arena.ai/leaderboard/text) | Arena | Writing check | Preference | Human-preference ranking across all kinds of text prompts. |
-| [Lechmazur Writing](https://github.com/lechmazur/writing) | Lechmazur | Writing check | Proxy | Short stories scored by a panel of models. Epoch rated it "Flawed". |
-| Public posts from the last 30 days | Many | Any row | Report | What practitioners say they found. Unmeasured, and often second-hand. |
-| My own use | Me | Any row | Judgment | What I have seen these models do. |
+| [FrontierCode](https://cognition.com/frontiercode) | Cognition | The base | Measured | Coding tasks run in each model's own tool, scored on merge quality with a pass rate and cost. The base's anchor: the other base suites are scaled to it. |
+| [VulcanBench](https://vulcanbench.com/leaderboard.html) | VulcanBench | The base | Measured | 23 coding tasks scored on tests passed and code quality, which models judge, with cost and time. One of the five base suites. |
+| [CursorBench](https://cursor.com/cursorbench) | Cursor | The base | Measured | Ambiguous multi-file coding tasks, with a score and cost per task. One of the five base suites; it tests no current OpenAI model. |
+| [AA Intelligence Index](https://artificialanalysis.ai/leaderboards/models) | Artificial Analysis | The base | Measured | A composite of nine evaluations, mostly general knowledge work, with cost and time per task. One of the five base suites. |
+| [Vals Index](https://www.vals.ai/benchmarks/vals_index) | Vals AI | The base | Measured | A composite of eight evaluations, including legal, tax, and finance work, with cost per test. One of the five base suites, read from its per-effort results. |
+| Each vendor's model guidance | Anthropic, OpenAI, Google, xAI | Executor and Team lead starting models | Vendor guidance | Which model each vendor recommends for everyday work and for its hardest work, and which it rations. Sets the model each of those rows starts from. |
+| [AA Coding Agent Index](https://artificialanalysis.ai/agents/coding) | Artificial Analysis | Executor check | Measured | Each model in its maker's coding tool, scored on three coding suites with cost and time. Read beside the base when judging the Executor row. |
+| [Vals Terminal-Bench](https://www.vals.ai/benchmarks/terminal-bench-4) | Vals AI | Executor check | Measured | Terminal tasks with every model in one shared harness, with a separate by-effort chart. Read beside the base when judging the Executor row. |
+| [AA-Briefcase](https://artificialanalysis.ai/evaluations/aa-briefcase) | Artificial Analysis | Team lead check | Proxy | Elo on long, multi-step knowledge-work tasks, the closest published match to leading work. Read beside the base when judging the Team lead row. |
+| [Arena WebDev](https://arena.ai/leaderboard/code/webdev) | Arena | Design/taste | Preference | People vote between finished web apps. One of four equal sources for Design/taste. |
+| [Design Arena](https://www.designarena.ai/leaderboard) | Design Arena | Design/taste | Preference | People vote between generated interfaces, read from its overall agentic board. One of four equal sources for Design/taste. |
+| [21st.dev Design System Bench](https://21st.dev/benchmarks/leaderboard) | 21st.dev | Design/taste | Measured | Agents build interfaces in a real repository, scored on how well they use its design system. One of four equal sources for Design/taste. |
+| [Frontier Design](https://contralabs.com/frontierdesign/leaderboard) | Contra Labs and BenchFlow | Design/taste | Preference | Professional designers vote blind between websites built from real client briefs. One of four equal sources for Design/taste. |
+| [Arena Creative Writing](https://arena.ai/leaderboard/text/creative-writing) | Arena | Writing | Preference | People vote between pieces of creative writing. One of two equal sources for Writing. |
+| [Lechmazur Writing](https://github.com/lechmazur/writing) | Lechmazur | Writing | Proxy | Short stories scored by a panel of models; Epoch rated it "Flawed". One of two equal sources for Writing. |
+| Public posts from the last 30 days | Many | Any row | Report | What practitioners report from their own use, often second-hand. Informs judgment but never changes a row by itself. |
+| My own use | Me | Any row | Judgment | What I have seen these models do. The basis for any pick marked \*. |
 
 Measured means the suite reports quality and cost for the same model, effort, and tasks. Vendor guidance is the vendor's own recommendation, which I take as a statement of what it tuned each model for. Proxy means it measures related work. Preference means people chose between results. Report and Judgment are the last two steps of the method.
 
@@ -266,20 +257,20 @@ These rules prevent the easiest mistakes:
 
 ### Running a refresh
 
-Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the anchor, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
+Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the anchor, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
 
 `results.csv` is append-only. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read.
 
 1. **Import the base.** Download FrontierCode's `data.json` and VulcanBench's leaderboard CSV and import each. For the other three, copy the results from the page's data into a plain table of model, effort, score, pass rate, cost, and minutes, and import that.
 2. **Import the role inputs** the same way, each as a suite outside the base. Update what `role-inputs.csv` says about each one, with the date read.
 
-   Most sources can be fetched as plain pages or files. The three Arena boards (WebDev, creative writing, and text) cannot: arena.ai refuses automated requests, so read them in a real browser, such as Orca's built-in browser, and say so in `role-inputs.csv`. A summarising reader is not a substitute. On the 2026-11-19 read one gave the wrong page date and dropped the efforts the text board names.
+   Most sources can be fetched as plain pages or files. The two Arena boards (WebDev and creative writing) cannot: arena.ai refuses automated requests, so read them in a real browser, such as Orca's built-in browser, and say so in `role-inputs.csv`. A summarising reader is not a substitute. On the 2026-11-19 read one gave the wrong page date and dropped the efforts the text board names.
 3. **Re-read each vendor's model guidance.** Update `chart.json` with each vendor's everyday model, flagship, and rationed models, and record the sources in `role-inputs.csv`. The script looks for a better sibling only among the models `chart.json` lists, so list any current model that could beat a vendor's everyday model or flagship.
 4. **Check names.** If a suite names a model differently, add an alias to `chart.json`. Confirm from the sources that two names are one model before merging them.
 5. **Run `changes`** to see what moved since the previous read.
-6. **Run the report.** Its `candidates` section lists the charted models at their best-value efforts in order. Its `rows` section builds the Executor and Team lead rows.
+6. **Run the report.** Its `candidates` section lists the charted models at their best-value efforts in order. Its `rows` section builds the Executor and Team lead rows, and its `preference` section scores the Design/taste and Writing rows.
 7. **Regenerate the charts** and look at each one. Run it again after the rows are final so the recommendations figure matches `recommendations.csv`.
-8. **Write the rows** in `recommendations.csv`. Take the Executor and Team lead rows from the report, Design/taste from Arena WebDev, and Writing from Arena's creative-writing board. Apply any adjustment a role input supports, and write each one as a line. The routing checks fail when an Executor or Team lead pick names a different model or effort from the report's rows, unless its `judgment` column says `yes`.
+8. **Write the rows** in `recommendations.csv`. Take the Executor and Team lead rows from the report's `rows` section, and Design/taste and Writing from its `preference` section. Apply any adjustment a role input supports, and write each one as a line. The routing checks fail when a pick names a different model or effort from the report, unless its `judgment` column says `yes`.
 9. **Scan the last 30 days** for what practitioners report about the settings in the rows. Record what bears on a row in `role-inputs.csv` as a report.
 10. **Apply judgment.** Change any pick I disagree with, set its `judgment` column to `yes`, and write the adjustment with what would change my mind.
 11. **Update the page:** the recommendations figure's alt text, which must name every pick, the base table, each role's evidence tables, the chart alt text, the revisit conditions, and the review date.

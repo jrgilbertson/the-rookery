@@ -5,9 +5,11 @@ Commands:
   report --data DIR [--as-of YYYY-MM-DD]
                       Print cost per pass, cost per added quality point, time,
                       the combined score, each model's best-value effort, the
-                      charted models at those efforts in order, and the Executor and
-                      Team lead rows built from each vendor's own guidance,
-                      from the latest read of each suite. --as-of ignores later reads.
+                      charted models at those efforts in order, the Executor and
+                      Team lead rows built from each vendor's own guidance, and
+                      the preference rows, each scored on its sources weighted
+                      equally, from the latest read of each suite. --as-of
+                      ignores later reads.
   changes --data DIR  List what moved between each suite's two latest reads.
   import --data DIR --format frontiercode|vulcanbench|table --file PATH
          --version V --date YYYY-MM-DD --url URL [--suite NAME]
@@ -35,7 +37,7 @@ import io
 import json
 import math
 import statistics
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 # "none" is a model with no effort setting.
@@ -98,6 +100,7 @@ class Data:
     models: list[dict[str, str]]
     anchor: str  # the base suite every other base suite is scaled against
     vendors: dict[str, dict]  # provider -> {"everyday": model, "flagship": model, "rationed": [models]}
+    preference: dict[str, list[str]] = field(default_factory=dict)  # role -> the suites that score it, weighted equally
 
     @property
     def base(self) -> list[str]:
@@ -146,6 +149,11 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
         anchor = chart["anchor"]
         aliases = dict(chart.get("aliases", {}))
         vendors = {name: dict(entry) for name, entry in chart.get("vendors", {}).items()}
+        preference = {role: list(names) for role, names in chart.get("preference", {}).items()}
+        for role, names in preference.items():
+            for name in names:
+                if name not in suites:
+                    raise DataError(f"chart.json: preference names {name} for {role}, but suites does not list it")
         listed = {(entry["model"], entry["provider"]) for entry in models}
         for provider, entry in vendors.items():
             entry.setdefault("rationed", [])
@@ -202,7 +210,7 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
     for result in history:
         latest[result.suite] = max(latest.get(result.suite, ""), result.date_read)
     results = [result for result in history if result.date_read == latest[result.suite]]
-    return Data(results, history, suites, models, anchor, vendors)
+    return Data(results, history, suites, models, anchor, vendors, preference)
 
 
 def cost_per_pass(result: Result) -> float | str:
@@ -408,7 +416,9 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
     Each vendor contributes its everyday model to the Executor row and its
     flagship to the Team lead row, at the model's best-value effort. If another current,
     unrationed model from the same vendor scores higher for less at any
-    effort, the cheapest such setting takes the slot instead.
+    effort, the cheapest such setting takes the slot instead. The Executor row
+    follows the 40% price order; the Team lead row goes by combined quality,
+    the cheaper setting first on a tie.
     """
     providers = {entry["model"]: entry["provider"] for entry in data.models if entry["status"] == "current"}
     marked = best_value_settings(combined)
@@ -430,8 +440,49 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
             pick = min(better, key=lambda row: (row.cost, -row.quality)) if better else start
             picks.append((pick, "" if pick is start else name))
         replaced = {id(pick): name for pick, name in picks}
-        rows += [(role, pick, replaced[id(pick)]) for pick in order([pick for pick, _ in picks])]
+        chosen = [pick for pick, _ in picks]
+        ranked = order(chosen) if role == "Executor" else sorted(chosen, key=lambda row: (-row.quality, row.cost))
+        rows += [(role, pick, replaced[id(pick)]) for pick in ranked]
     return rows
+
+
+@dataclass(frozen=True)
+class Preference:
+    role: str
+    model: str
+    score: float
+    sources: int
+    effort: str | None  # the model's best-value effort in the base, if it has one
+
+
+def preference_scores(data: Data, combined: list[Combined]) -> list[Preference]:
+    """Score each current model on each preference row's sources, weighted equally.
+
+    A source's scores are standardized across the current models it lists,
+    taking each model's best score at any effort. A model's score is the mean
+    over the sources that list it, on the base's scale: 50 plus 10 for each
+    standard deviation. Rows come back best first within each role.
+    """
+    current = {entry["model"] for entry in data.models if entry["status"] == "current"}
+    marked = dict(best_value_settings(combined))
+    scored = []
+    for role, names in data.preference.items():
+        standard: dict[str, list[float]] = {}
+        for name in names:
+            best: dict[str, float] = {}
+            for result in data.results:
+                if result.suite == name and result.model in current:
+                    best[result.model] = max(best.get(result.model, result.score), result.score)
+            spread = statistics.pstdev(best.values()) if len(best) > 1 else 0
+            if spread == 0:
+                raise DataError(f"{name} needs at least two current models with different scores to score {role}")
+            mean = statistics.fmean(best.values())
+            for model, value in best.items():
+                standard.setdefault(model, []).append((value - mean) / spread)
+        rows = [Preference(role, model, 50 + 10 * statistics.fmean(values), len(values), marked.get(model))
+                for model, values in standard.items()]
+        scored += sorted(rows, key=lambda row: (-row.score, row.model))
+    return scored
 
 
 def best_value_settings(combined: list[Combined]) -> set[tuple[str, str]]:
@@ -522,6 +573,18 @@ def report(data: Data) -> list[str]:
     for role, pick, replaced in built:
         lines.append("\t".join((
             role, providers[pick.model], pick.model, pick.effort, f"{pick.quality:.1f}", _relative(pick.cost, unit), replaced,
+        )))
+    lines += ["# preference", "\t".join(("role", "provider", "model", "effort", "preference_score", "sources", "choice"))]
+    chosen: dict[str, set[str]] = {}
+    for row in preference_scores(data, combined):
+        taken = chosen.setdefault(row.role, set())
+        choice = ""
+        if providers[row.model] not in taken:
+            taken.add(providers[row.model])
+            choice = str(len(taken))
+        lines.append("\t".join((
+            row.role, providers[row.model], row.model, row.effort or "missing", f"{row.score:.1f}",
+            f"{row.sources} of {len(data.preference[row.role])}", choice,
         )))
     return lines
 

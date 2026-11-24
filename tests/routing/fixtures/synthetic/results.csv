@@ -56,3 +56,10 @@ Elm,4.0,Gamma,low,5,,1.00,,2026-01-01,https://example.com/elm
 Elm,4.0,Gamma,medium,8,,2.00,,2026-01-01,https://example.com/elm
 Elm,4.0,Gamma,high,40,,4.00,,2026-01-01,https://example.com/elm
 Birch,2.0,Thrift Mini,low,50,,0.40,,2026-01-01,https://example.com/birch
+Fir,1.0,Alpha,high,1500,,,,2026-01-01,https://example.com/fir
+Fir,1.0,Alpha,low,1300,,,,2026-01-01,https://example.com/fir
+Fir,1.0,Gamma,high,1400,,,,2026-01-01,https://example.com/fir
+Fir,1.0,Solo,high,1450,,,,2026-01-01,https://example.com/fir
+Fir,1.0,Beta,high,2000,,,,2026-01-01,https://example.com/fir
+Gorse,1.0,Alpha,high,80,,,,2026-01-01,https://example.com/gorse
+Gorse,1.0,Gamma,high,90,,,,2026-01-01,https://example.com/gorse

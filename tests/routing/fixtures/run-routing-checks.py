@@ -133,6 +133,19 @@ def check_report() -> None:
     check(("Anthropic", "Alpha", "medium", "") in executor, f"an everyday model nothing beats should keep its slot: {executor}")
     lead = [(row["provider"], row["model"]) for row in rows if row["role"] == "Team lead"]
     check(("OpenAI", "Gamma") in lead and ("Anthropic", "Alpha") in lead, f"Team lead should start from each flagship: {lead}")
+    # Preference rows weigh their sources equally. Fir puts Alpha 1.22 standard deviations
+    # above the mean, Solo at it and Gamma 1.22 below, using Alpha's best effort and ignoring
+    # the superseded Beta; Gorse, which skips Solo, puts Gamma one above and Alpha one below.
+    # Each model averages only the sources that list it, so Solo (50.0) edges Gamma (48.8).
+    preference = {row["model"]: row for row in data.get("preference", []) if row["role"] == "Writing"}
+    check(set(preference) == {"Alpha", "Gamma", "Solo"}, f"preference rows should score each current model a source lists: {sorted(preference)}")
+    check(preference.get("Alpha", {}).get("preference_score") == "51.1" and preference.get("Gamma", {}).get("preference_score") == "48.9",
+          f"each source should count equally after standardizing: {preference}")
+    check(preference.get("Solo", {}).get("preference_score") == "50.0" and preference.get("Solo", {}).get("sources") == "1 of 2",
+          f"a model should average only the sources that list it: {preference.get('Solo')}")
+    check([(row["provider"], row["model"]) for row in preference.values() if row["choice"]] == [("Anthropic", "Alpha"), ("OpenAI", "Solo")],
+          f"each provider's best-scoring model should take its slot, best first: {preference}")
+    check(preference.get("Alpha", {}).get("effort") == "medium", "a preference pick should list the model's best-value effort")
     check(find(suite, suite="Birch", model="Alpha", effort="high").get("minutes") == "9.0",
           "the suite figures should carry each setting's time per task")
     # Combined cost is shown relative to the anchor suite's typical setting, not as dollars no suite charged.
@@ -184,6 +197,16 @@ def check_report() -> None:
           f"of two siblings that beat the pick, the cheaper should take the slot: {built}")
     check(("Solo", "") in built, f"a sibling that scores higher but costs more should not take the slot: {built}")
     check([model for model, _ in built] == ["Top", "Cheaper", "Solo"], f"the row should follow the price order: {built}")
+    # The Executor row follows the price order, and the Team lead row goes by quality.
+    p, pm = vendor("P", "Cheap", ("Cheap",))
+    q, qm = vendor("Q", "Best", ("Best",))
+    pair = ev.Data([], [], {}, pm + qm, "A", {"P": p, "Q": q})
+    both = [C("Cheap", "low", 55, 0.5, 1), C("Best", "low", 60, 5.0, 1)]
+    by_role = {}
+    for role, pick, _ in ev.vendor_rows(pair, both):
+        by_role.setdefault(role, []).append(pick.model)
+    check(by_role.get("Executor") == ["Cheap", "Best"], f"Executor should put the cheaper setting first when a point costs 180% more: {by_role}")
+    check(by_role.get("Team lead") == ["Best", "Cheap"], f"Team lead should put the better-scoring setting first whatever it costs: {by_role}")
     # The order follows the 40% price, and a cycle falls back to the best-scoring setting.
     a, b, c = C("A", "low", 50, 1.0, 1), C("B", "low", 51, 1.3, 1), C("C", "low", 52, 2.5, 1)
     check([x.model for x in ev.order([c, b, a])] == ["B", "A", "C"],
@@ -297,6 +320,8 @@ def check_validation() -> None:
         ("model with no provider", swap("chart.json", '"provider": "Anthropic", ', ""), "provider"),
         ("role-inputs.csv missing a column", swap("role-inputs.csv", ",says", ",notes"), "says"),
         ("no base suite", no_base, "base suite"),
+        ("preference source missing from chart.json", swap("chart.json", '["Fir", "Gorse"]', '["Fir", "Dogwood"]'), "Dogwood"),
+        ("preference source with one current model", swap("results.csv", "Gorse,1.0,Gamma,high,90", "Gorse,1.0,Beta,high,90"), "at least two"),
         ("anchor that is not a base suite", swap("chart.json", '"anchor": "Alder"', '"anchor": "Cedar"'), "anchor"),
         ("a suite that shares too few settings with the anchor",
          rows("Alder,1.0,Alpha,low,40" + tail, "Alder,1.0,Alpha,high,60" + tail, "Alder,1.0,Beta,low,50" + tail,
@@ -541,6 +566,13 @@ def check_charts() -> None:
         pick["judgment"] = "yes"
         save()
         check(recommendation_drift(data) == [], "the drift gate should let a pick marked as judgment differ from the method")
+        writing = next(row for row in rows if row["role"] == "Writing")
+        writing["judgment"] = ""
+        writing["model"] = "Claude Opus 5.5" if "Opus" not in writing["model"] else "Claude Fable 5.2"
+        save()
+        problems = recommendation_drift(data)
+        check(any(writing["model"] in problem for problem in problems),
+              f"the drift gate missed a Writing pick that is not the provider's best-scoring model: {problems}")
 
     # The gate itself must fail on a chart that differs and on one that is missing.
     with tempfile.TemporaryDirectory() as tmp:
@@ -576,19 +608,24 @@ def page_alt_text_problems() -> list[str]:
 
 
 def recommendation_drift(data_dir: Path) -> list[str]:
-    """The Executor and Team lead picks must be the settings the method computes for each provider.
+    """Each pick must be the setting the method computes for its provider.
 
-    Role inputs may reorder a row, so only the model and effort are compared. A pick
-    marked as judgment may name another setting.
+    The Executor and Team lead rows come from the report's rows section and the
+    preference rows from its preference section. Role inputs may reorder a row,
+    so only the model and effort are compared. A pick marked as judgment may
+    name another setting.
     """
     result = run("report", "--data", str(data_dir))
     if result.returncode != 0:
         return [f"report failed on {data_dir}: {result.stdout}{result.stderr}"]
-    computed = {(row["role"], row["provider"]): row for row in sections(result.stdout)["rows"]}
+    report = sections(result.stdout)
+    computed = {(row["role"], row["provider"]): row for row in report["rows"]}
+    computed.update({(row["role"], row["provider"]): row for row in report.get("preference", []) if row["choice"]})
+    scored = {row["role"] for row in report.get("preference", [])} | {"Executor", "Team lead"}
     problems = []
     with (data_dir / "recommendations.csv").open(newline="", encoding="utf-8") as handle:
         for row in csv.DictReader(handle):
-            if row["role"] not in ("Executor", "Team lead") or row["judgment"] == "yes":
+            if row["role"] not in scored or row["judgment"] == "yes":
                 continue
             want = computed.get((row["role"], row["provider"]))
             if want is None:

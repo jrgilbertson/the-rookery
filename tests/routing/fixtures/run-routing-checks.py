@@ -221,6 +221,19 @@ def check_report() -> None:
     check(slot(settings) == ["Pick"], "without per-suite figures the combined scores should decide")
     lone = [C("Pick", "high", 50, 2.0, 1), C("Lone", "high", 55, 1.0, 1)]
     check(slot(lone, scales) == ["Lone"], f"with no suite in common the combined scores should decide: {slot(lone, scales)}")
+    # A sibling earns the slot with its cheapest winning setting, then is listed at that
+    # setting or its best-value effort, whichever is higher. Rise wins only at medium, but
+    # its step to high costs about 17% a point, so it is listed at high. Top wins only at
+    # max, above its best-value effort of low, so it stays at max.
+    r, rm = vendor("R", "Base", ("Base", "Rise"))
+    t_, tm = vendor("T", "Floor", ("Floor", "Top"))
+    rise = ev.Data([], [], {}, rm + tm, "A", {"R": r, "T": t_})
+    listed = {pick.model: pick.effort for role, pick, _ in ev.vendor_rows(rise, [
+        C("Base", "high", 55, 2.0, 1), C("Rise", "medium", 56, 1.5, 1), C("Rise", "high", 60, 2.5, 1),
+        C("Floor", "high", 50.5, 1.2, 1), C("Top", "low", 50, 0.5, 1), C("Top", "max", 51, 1.0, 1),
+    ]) if role == "Executor"}
+    check(listed.get("Rise") == "high", f"a sibling should be listed at its best-value effort when that is above the setting that won the slot: {listed}")
+    check(listed.get("Top") == "max", f"a sibling should stay at the setting that won the slot when that is above its best-value effort: {listed}")
     # The order follows the 40% price, and a cycle falls back to the best-scoring setting.
     a, b, c = C("A", "low", 50, 1.0, 1), C("B", "low", 51, 1.3, 1), C("C", "low", 52, 2.5, 1)
     check([x.model for x in ev.order([c, b, a])] == ["B", "A", "C"],

@@ -458,7 +458,8 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
     flagship to the Team lead row, at the model's best-value effort. If another current,
     unrationed model from the same vendor scores higher for less at any
     effort, on the base suites that tested both settings, the cheapest such
-    setting takes the slot instead. The Executor row
+    setting earns the slot, and the sibling is listed at that setting or at its
+    own best-value effort, whichever is higher. The Executor row
     follows the 40% price order; the Team lead row goes by combined quality,
     the cheaper setting first on a tie.
     """
@@ -480,6 +481,9 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
                 and row.cost is not None and start.cost is not None and _sibling_beats(row, start, scales)
             ]
             pick = min(better, key=lambda row: (row.cost, -row.quality)) if better else start
+            knee = next((row for row in combined if row.model == pick.model and (row.model, row.effort) in marked), None)
+            if knee is not None and EFFORTS.index(knee.effort) > EFFORTS.index(pick.effort):
+                pick = knee
             picks.append((pick, "" if pick is start else name))
         replaced = {id(pick): name for pick, name in picks}
         chosen = [pick for pick, _ in picks]

@@ -177,7 +177,7 @@ After a resume or Team lead replacement, check a worker's live state before
 replying to an unread question, and confirm it can still receive the reply.
 When an earlier Team lead ended, the runtime may have told a waiting worker to
 decide on its own while leaving its question unread. If the worker is still
-waiting (such as on a merge-ready ask it cannot act on alone), answer it. If
+waiting (such as on a choice it cannot make alone), answer it. If
 it has already moved on, do not send a stale reply: confirm what it chose, log
 the question with that choice as the default taken (holding dependent work
 under Operate's one-way-door or merge-approval rules if needed), and close the

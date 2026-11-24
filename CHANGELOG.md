@@ -64,6 +64,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `coordinating-work` ends each standing rule by its own end observation,
+  which the Team lead records with the rule and checks at each periodic check,
+  retiring the rule by a dated amendment once the observation holds. Workers
+  submit heavy jobs straight to a project gate that already queues and admits
+  them, and the Team lead limits only heavy work that gate does not meter. A
+  worker's merge-ready report now ends its assignment: the worker no longer
+  waits for a merged, held, or findings reply. The Team lead sends findings
+  and merge-queue ejections as a follow-up to the worker's dispatch, starts a
+  new worker in the same worktree when Orca refuses that follow-up, and keeps
+  the worktree until the pull request reads merged.
 - `daily-learning` now carries explicitly `deferred` items from the most recent
   daily run forward once (labeled `carried from <date>`, competing inside the
   5-item cap before decaying), replaces per-ID remote `unread_sessions`

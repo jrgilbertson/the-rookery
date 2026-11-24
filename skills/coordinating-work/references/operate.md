@@ -19,8 +19,9 @@ After every decision, dispatch the next issue from the batch's Ready Frontier
 that the batch has not yet assigned, briefing it under [Briefs](briefs.md), in
 its leverage order unless host capacity or the operator's instruction says
 otherwise, and at the concurrency you judge best. Dispatch only an issue that has its four scores, and list an
-unscored one for the operator. Measure the whole host before a heavy job. When
-it is busy, leave the issue for the next check. When a merge changes what a
+unscored one for the operator. When the host is too busy for heavy work the
+project's own gate does not meter, as [Setup](setup.md) limits it, leave the
+issue for the next check. When a merge changes what a
 later issue should assume, say so in that issue's brief. When nothing is
 ready, say so on the ready-for-operator list with what each remaining issue
 waits on; the batch is finished only when every issue in scope is done or the
@@ -30,8 +31,9 @@ merges, draft it as an issue and list it for the operator.
 
 ## The merge checklist
 
-A worker asks when its `ce-babysit-pr` run reports looks merge-ready. Merge
-only when every line below is true. Line 2 is the worker's report, taken on
+A worker's merge-ready report, sent when its `ce-babysit-pr` run reports
+looks merge-ready, ends its assignment and starts this checklist. Merge only
+when every line below is true. Line 2 is the worker's report, taken on
 the worker's word because the worker runs the watch. Lines 3 and 4 are facts
 you read yourself when you decide. In a batch with no task workers, you run
 `lfg` and the continuous `ce-babysit-pr` watch yourself, and line 2 reads the
@@ -68,8 +70,8 @@ UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
    - Any choice the worker declared in the pull request body fits the batch's
      recorded design constraints and breaks no already-merged work in the
      batch. A declared choice that contradicts a recorded constraint or breaks
-     already-merged work makes this line false (reply with what to align, or
-     hold the pull request). A declared choice that only changes what another
+     already-merged work makes this line false (send what to align as a
+     follow-up, or hold the pull request). A declared choice that only changes what another
      in-scope issue should assume satisfies this line once you record the
      change, update any affected issue's Scope or Verification as
      [Changing an issue](../SKILL.md#changing-an-issue) allows (holding this
@@ -84,8 +86,8 @@ UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
    that decides currency. Neutral or skipped checks count as non-failing.
    Read the default branch's latest required checks. If any are failing,
    route the fix or revert first. If it needs a merge to restore the default
-   branch, ask the operator to land it. Tell the worker this merge must wait,
-   record the wait, and rerun the checklist after recovery.
+   branch, ask the operator to land it. Record that this merge waits, and
+   rerun the checklist after recovery.
 5. **Merge.** Merge that head now, as an ordinary merge the repository
    accepts, with the merge conditional on the reported commit, and read the
    pull request once more to confirm it landed. Where the repository merges
@@ -95,25 +97,25 @@ UX and UI work guidance in [Briefs](briefs.md) to your own assignments too.
 False, unreadable, unclear, or unlisted conditions block merging. For blockers
 other than a default branch wait:
 
-- when the worker can make the line true, reply with what to do, such as
-  fixing a failed check, resolving a thread, or running the continuous watch
-  and asking again;
+- when the worker can make the line true, send it a follow-up with what to
+  do, such as fixing a failed check or resolving a thread, then running the
+  continuous watch and reporting merge-ready again;
 - when the worker cannot and you could, make one more attempt: amend the brief
   and reassign it, start one follow-on assignment, or do the work yourself.
   When you do it yourself, run the continuous `ce-babysit-pr` watch on the new
   head yourself, and line 2 reads your own report. Run the checklist again on
   the result;
 - otherwise, or when that attempt also falls short, leave the pull request
-  open, add it to the ready-for-operator list with the line that failed, and
-  reply that it is held for the operator. A pull request that will be held
-  anyway is held straight away.
+  open and add it to the ready-for-operator list with the line that failed.
+  A pull request that will be held anyway is held straight away.
 
 A deviation the worker declared in the pull request body is yours to judge.
 When the result still solves the issue's Problem, accept it by editing the
 issue as [Changing an issue](../SKILL.md#changing-an-issue) allows, then run
-the checklist against the edited text. Otherwise reply with what to fix, or
-hold the pull request. A criterion that is unmet and undeclared is a false
-line: reply with what to fix, and leave the issue as it is. In a batch with no
+the checklist against the edited text. Otherwise send what to fix as a
+follow-up, or hold the pull request. A criterion that is unmet and undeclared
+is a false line: send what to fix as a follow-up, and leave the issue as it
+is. In a batch with no
 task workers, a deviation in your own work is not yours to accept; hold the
 pull request for the operator.
 
@@ -124,9 +126,22 @@ the worker with the default, and let the checklist decide.
 Leave a held pull request as it is and stop its watch. Assign further work
 when the operator asks.
 
-After a merge lands, record it and reply merged. An issue whose pull request
-you merged is done: read the issue, and when the tracker left it open, close
-it through `managing-issues`. An issue you could not close goes on the
+## After the merge-ready report
+
+A worker's assignment ends with its merge-ready report, and the worker does
+not wait for a reply. Keep its worktree until the pull request reads merged.
+When the pull request needs the worker again, for findings to fix or a
+merge-queue ejection, send the work as a follow-up to that worker's dispatch
+through the guide, which can reach a finished worker. When Orca refuses the
+follow-up, start a new worker in the same worktree with the whole brief, its
+amendments, and the follow-up. Either way, the assignment is open again until
+the worker finishes, as [Briefs](briefs.md) defines it.
+
+After a merge lands, record it, then release the worker and remove its
+worktree as
+[Worker lifetime and cleanup](../SKILL.md#worker-lifetime-and-cleanup) says.
+An issue whose pull request you merged is done: read the issue, and when the
+tracker left it open, close it through `managing-issues`. An issue you could not close goes on the
 ready-for-operator list with the reason.
 
 ## Never wait for an answer
@@ -187,9 +202,11 @@ needs the operator first:
 
 Keep the coordinated batch's standing rules in the record. When an incident
 shows workers need a rule the briefs lack, add it without asking: one dated
-rule, tied to the named incident that caused it. Send it to affected workers
-as an amendment, and list each new rule in your next report to the operator.
-A standing rule only adds a restriction on how workers operate.
+rule, tied to the named incident that caused it, with the observation that
+will show the rule is no longer needed, chosen for that incident. Send it to
+affected workers as an amendment. A standing rule only adds a restriction on
+how workers operate, and it lasts until its end observation holds. List each
+rule you add or retire in your next report to the operator.
 
 ## The check
 
@@ -211,8 +228,8 @@ changed:
 - note pull requests the code host shows opened or merged since the last
   check, and stamp the table with the time;
 - when a wait has ended, or its end cannot be determined, take the next step:
-  continue the worker, reply merged, or return a pull request the queue
-  ejected to its worker;
+  continue the worker, clean up after a merge, or send a follow-up for a pull
+  request the queue ejected;
 - when a worker waits at a usage-limit prompt, choose no paid option unless
   the approved proposal lets you, since that is spending. Once the limit
   clears, cancel the prompt and tell the worker to continue. That is part of
@@ -222,6 +239,9 @@ changed:
   Held changes and merge decisions stay held;
 - tell a worker to continue when its assignment is open, as [Briefs](briefs.md)
   defines it, with nothing it is waiting on;
+- retire each standing rule whose end observation now holds, by a dated
+  amendment to the workers it affects, and give an end observation to any
+  rule recorded without one;
 - read the Ready Frontier again, and dispatch an issue that became ready or
   was left for this check when the host now has room;
 - list for the operator a worker that has not acknowledged its last reply

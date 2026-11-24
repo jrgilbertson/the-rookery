@@ -207,6 +207,20 @@ def check_report() -> None:
         by_role.setdefault(role, []).append(pick.model)
     check(by_role.get("Executor") == ["Cheap", "Best"], f"Executor should put the cheaper setting first when a point costs 180% more: {by_role}")
     check(by_role.get("Team lead") == ["Best", "Cheap"], f"Team lead should put the better-scoring setting first whatever it costs: {by_role}")
+    # A sibling is compared on the suites that tested both settings. Sib beats Pick on S1, the
+    # only suite they share, but S2 tested only Sib and drags its combined score below Pick's.
+    import math
+    s, sm = vendor("S", "Pick", ("Pick", "Sib", "Lone"))
+    solo_data = ev.Data([], [], {}, sm, "A", {"S": s})
+    settings = [C("Pick", "high", 60, 2.0, 1), C("Sib", "high", 52, 1.0, 2)]
+    scales = ev.Scaled({"S1": {"Pick": {"high": 1.0}, "Sib": {"high": 1.2}}, "S2": {"Sib": {"high": -1.0}}},
+                       {"S1": {"Pick": {"high": math.log(2.0)}, "Sib": {"high": math.log(1.0)}}, "S2": {}}, {})
+    def slot(rows, scales=None):
+        return [pick.model for role, pick, _ in ev.vendor_rows(solo_data, rows, None, scales) if role == "Executor"]
+    check(slot(settings, scales) == ["Sib"], f"a sibling ahead on every suite it shares with the pick should take the slot: {slot(settings, scales)}")
+    check(slot(settings) == ["Pick"], "without per-suite figures the combined scores should decide")
+    lone = [C("Pick", "high", 50, 2.0, 1), C("Lone", "high", 55, 1.0, 1)]
+    check(slot(lone, scales) == ["Lone"], f"with no suite in common the combined scores should decide: {slot(lone, scales)}")
     # The order follows the 40% price, and a cycle falls back to the best-scoring setting.
     a, b, c = C("A", "low", 50, 1.0, 1), C("B", "low", 51, 1.3, 1), C("C", "low", 52, 2.5, 1)
     check([x.model for x in ev.order([c, b, a])] == ["B", "A", "C"],

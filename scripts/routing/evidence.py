@@ -251,13 +251,18 @@ class Combined:
     suites: int
 
 
-def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
-    """Put the base suites on one scale and average them.
+@dataclass(frozen=True)
+class Scaled:
+    quality: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> standard deviations from the anchor's mean
+    cost: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> log cost at the anchor's price level
+    overlap: dict[str, int]  # suite -> settings it shares with the anchor
 
-    Each suite is scaled against the anchor suite on the settings the two
-    share, so a suite that tested only some models still joins. A setting's
-    score averages whichever suites tested it. Returns the combined rows and
-    each suite's count of settings shared with the anchor.
+
+def scale(data: Data) -> Scaled:
+    """Put every base suite's scores and costs on the anchor suite's scale.
+
+    Each suite is scaled against the anchor on the settings the two share, so
+    a suite that tested only some models still joins.
     """
     base = data.base
     if not base:
@@ -303,7 +308,17 @@ def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
             scaled[name].setdefault(model, {})[effort] = (_logit(row.score) - own_mean) * scale + shift
             if row.cost is not None and level is not None:
                 priced[name].setdefault(model, {})[effort] = math.log(row.cost) - level
+    return Scaled(scaled, priced, overlap)
 
+
+def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
+    """Put the base suites on one scale and average them.
+
+    A setting's score averages whichever suites tested it. Returns the
+    combined rows and each suite's count of settings shared with the anchor.
+    """
+    scales = scale(data)
+    scaled, priced = scales.quality, scales.cost
     combined = []
     for model in sorted({model for suite in scaled.values() for model in suite}):
         quality = _blend({name: suite[model] for name, suite in scaled.items() if model in suite})
@@ -314,7 +329,7 @@ def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
                 model, effort, 50 + 10 * quality[effort],
                 math.exp(cost[effort]) if effort in cost else None, tested,
             ))
-    return combined, overlap
+    return combined, scales.overlap
 
 
 def _blend(cells: dict[str, dict[str, float]]) -> dict[str, float]:
@@ -410,13 +425,40 @@ def order(settings: list[Combined]) -> list[Combined]:
     return ordered
 
 
-def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None = None) -> list[tuple[str, Combined, str]]:
+def _sibling_beats(row: Combined, start: Combined, scales: Scaled | None) -> bool:
+    """Whether row scores higher than start for less, on the base suites that tested both settings.
+
+    Comparing only shared suites keeps a model from losing ground for having
+    been tested more widely. Cost uses the shared suites that price both
+    settings, else the combined cost. Without a shared suite, or without
+    scaled figures, the combined figures decide.
+    """
+    if scales is not None:
+        shared = [name for name, models in scales.quality.items()
+                  if row.effort in models.get(row.model, {}) and start.effort in models.get(start.model, {})]
+        if shared:
+            gain = statistics.fmean(scales.quality[name][row.model][row.effort] - scales.quality[name][start.model][start.effort]
+                                    for name in shared)
+            priced = [name for name in shared
+                      if row.effort in scales.cost[name].get(row.model, {}) and start.effort in scales.cost[name].get(start.model, {})]
+            if priced:
+                saving = statistics.fmean(scales.cost[name][start.model][start.effort] - scales.cost[name][row.model][row.effort]
+                                          for name in priced)
+            else:
+                saving = math.log(start.cost) - math.log(row.cost)
+            return gain > 0 and saving > 0
+    return row.quality > start.quality and row.cost < start.cost
+
+
+def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None = None,
+                scales: Scaled | None = None) -> list[tuple[str, Combined, str]]:
     """Build the rows that start from each vendor's own guidance, as (role, setting, replaced model).
 
     Each vendor contributes its everyday model to the Executor row and its
     flagship to the Team lead row, at the model's best-value effort. If another current,
     unrationed model from the same vendor scores higher for less at any
-    effort, the cheapest such setting takes the slot instead. The Executor row
+    effort, on the base suites that tested both settings, the cheapest such
+    setting takes the slot instead. The Executor row
     follows the 40% price order; the Team lead row goes by combined quality,
     the cheaper setting first on a tie.
     """
@@ -435,7 +477,7 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
             better = [
                 row for row in combined
                 if row.model != name and providers.get(row.model) == provider and row.model not in entry["rationed"]
-                and row.cost is not None and row.quality > start.quality and row.cost < start.cost
+                and row.cost is not None and start.cost is not None and _sibling_beats(row, start, scales)
             ]
             pick = min(better, key=lambda row: (row.cost, -row.quality)) if better else start
             picks.append((pick, "" if pick is start else name))
@@ -567,7 +609,7 @@ def report(data: Data) -> list[str]:
         )))
     lines += ["# rows", "\t".join(("role", "provider", "model", "effort", "combined_quality", "relative_cost", "replaces"))]
     skipped: list[str] = []
-    built = vendor_rows(data, combined, skipped)
+    built = vendor_rows(data, combined, skipped, scale(data))
     if skipped:
         lines[0] += "; left out of rows: " + ", ".join(skipped)
     for role, pick, replaced in built:

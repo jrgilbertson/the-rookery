@@ -24,7 +24,7 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 **Last reviewed: 2026-11-24**
 
-![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Carbon (`gemini-4-carbon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Sol (`gpt-6.2-sol`) at max. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium, then Gemini 4 Hydrogen (`gemini-4-hydrogen`) at high. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Sol (`gpt-6.2-sol`) at max. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
 
 Each row names a model from each provider, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
@@ -75,7 +75,7 @@ Sol comes first even though Neon scores 3.0 points more. Neon costs about 450% m
 
 #### Team lead
 
-This row starts from each vendor's flagship, the model it recommends for its hardest work: Fable 5.2, GPT-6.2 Astra, Gemini 4 Carbon, and Grok 4.7. Astra's best-value effort is now medium, at 58.7 for a relative cost of 1.11. GPT-6.2 Sol at max scores 59.1 at 0.74, higher for less, so Sol at max takes OpenAI's slot. Gemini 4 Neon at high scores 60.8 at 2.02, below Carbon's 61.5 at 3.93, so Carbon keeps Google's slot. On the 2026-11-20 read Neon beat Carbon; VulcanBench's first results for Neon lowered its combined score. The row goes by quality: Carbon first, then Fable, then Sol at max.
+This row starts from each vendor's flagship, the model it recommends for its hardest work: Fable 5.2, GPT-6.2 Astra, Gemini 4 Carbon, and Grok 4.7. Astra's best-value effort is now medium, at 58.7 for a relative cost of 1.11. GPT-6.2 Sol at max scores 59.1 at 0.74, higher for less, so Sol at max takes OpenAI's slot. On the suites that tested both, Gemini 4 Neon at high beats Carbon at high, 62.4 to 61.6 on FrontierCode, the AA Intelligence Index, and CursorBench, at about two thirds of the cost, so Neon at high takes Google's slot. The row goes by quality: Neon at 60.8, then Fable at 60.2, then Sol at max at 59.1.
 
 No suite measures leading a team. The closest is AA-Briefcase, which scores long, multi-step knowledge work:
 
@@ -88,7 +88,7 @@ No suite measures leading a team. The closest is AA-Briefcase, which scores long
 | GPT-6.2 Sol | 1494 | 1541 | 1579 | 1612 |
 | GPT-6.2 Astra | 1407 | 1570 | 1593 | 1643 |
 
-Its intervals run about 8 to 12 points either way. At the listed efforts, Fable at 1623 sits 11 points above Sol at max (1612) and 12 above Carbon at high (1611), inside those intervals, so Briefcase does not change the order. Neon at high (1631) leads Carbon at high by 20 points, at the edge of the intervals, which is not enough to give it Google's slot. Artificial Analysis labels its Claude runs "Default Fallback", so another model may have answered some turns.
+Its intervals run about 8 to 12 points either way. At the listed efforts, Neon at high (1631), Fable at medium (1623), and Sol at max (1612) sit within each other's intervals, so Briefcase does not change the order. It agrees on Google's slot: Neon at high leads Carbon at high (1611) by 20 points. Artificial Analysis labels its Claude runs "Default Fallback", so another model may have answered some turns.
 
 The row follows the method, with no adjustment. The previous review moved Fable above Astra on Briefcase; Astra has left the row, so that adjustment no longer applies. Practitioners who name an effort run Fable as lead at high or xhigh, not medium, and launch-week testers report Astra stopping early on long, self-directed work. No one reported running Sol at max as a lead.
 
@@ -96,7 +96,7 @@ Revisit when a suite measures plan quality and downstream success for these rele
 
 #### Executor
 
-This row starts from each vendor's everyday model, the one it recommends for day-to-day work: Opus 5.5, GPT-6.2 Sol, Gemini 4 Hydrogen, and Grok 4.7. Anthropic, OpenAI, and Google each describe this model as built for that work. Gemini 4 Neon at medium now scores 58.6 at a relative cost of 1.11, just under Hydrogen's 58.8 at 1.56, so it no longer scores higher for less and Hydrogen keeps Google's slot. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
+This row starts from each vendor's everyday model, the one it recommends for day-to-day work: Opus 5.5, GPT-6.2 Sol, Gemini 4 Hydrogen, and Grok 4.7. Anthropic, OpenAI, and Google each describe this model as built for that work. On the suites that tested both, Gemini 4 Neon at medium beats Hydrogen at high, 59.5 to 58.9 on FrontierCode, the AA Intelligence Index, and CursorBench, at about 85% of the cost, so Neon at medium takes Google's slot. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
 
 Two more suites test only coding and are worth reading beside the base. The AA Coding Agent Index runs each model inside its maker's own tool. Vals Terminal-Bench publishes results by effort in one shared harness.
 
@@ -124,11 +124,11 @@ What these suites add:
 
 One adjustment:
 
-- **Opus 5.5 moves to first \*.** The method puts Sol first, then Hydrogen, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. VulcanBench puts Opus at high (91.1) above Sol at medium (88.9), while FrontierCode puts it below (36.3 against 38.3). Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol by effort, and the Coding Agent Index tested Opus only at max. So this is my call, not a measured win. This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
+- **Opus 5.5 moves to first \*.** The method puts Sol first, then Neon, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. VulcanBench puts Opus at high (91.1) above Sol at medium (88.9), while FrontierCode puts it below (36.3 against 38.3). Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol by effort, and the Coding Agent Index tested Opus only at max. So this is my call, not a measured win. This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
 
-The previous review put Gemini 4 Neon at medium second by judgment, to reverse if a coding suite tested it beside Sol at medium and Sol matched or beat it. VulcanBench now does, with Sol ahead at a third of the cost, so Sol returns to second and Google's slot follows the method.
+The previous review put Gemini 4 Neon at medium second by judgment, to reverse if a coding suite tested it beside Sol at medium and Sol matched or beat it. VulcanBench now does, with Sol ahead at a third of the cost, so Sol returns to second and Neon follows it.
 
-Revisit when the Coding Agent Index tests Opus 5.5 at high, when Terminal-Bench by effort adds Sol or Hydrogen, or when subscription costs change the trade.
+Revisit when the Coding Agent Index tests Opus 5.5 at high, when Terminal-Bench by effort adds Sol or Neon, or when subscription costs change the trade.
 
 #### Design/taste
 
@@ -197,7 +197,7 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 - **The Executor row follows the price order.** A setting at least as good for no more cost goes first. Otherwise the better-scoring setting goes first only when it costs at most 40% more for each point it adds. Past that, the cheaper one goes first. If every remaining setting is beaten by another, the best-scoring one goes next. The base table uses the same order.
 - **The Team lead row goes by quality.** The higher combined score goes first, and the cheaper setting breaks a tie. A lead's decisions carry the outcome, so cost only sets each model's effort and decides whether a sibling takes a slot.
 - **The Executor row starts from each vendor's everyday model, and the Team lead row from its flagship.** Vendors name these in their own guidance. When a vendor's sources disagree, the everyday model is the one its own coding tool runs by default to do the work.
-- **A better sibling takes the slot.** If another current model from the same vendor scores higher for less at any effort, its cheapest such setting replaces the vendor's pick. A rationed model never replaces one. A vendor rations a model when its plans cap the model's use, count it faster against the allowance, or bill it to credits.
+- **A better sibling takes the slot.** If another current model from the same vendor scores higher for less at any effort, compared on the base suites that tested both settings, its cheapest such setting replaces the vendor's pick. Comparing only shared suites keeps a model from losing ground for having been tested more widely. A rationed model never replaces one. A vendor rations a model when its plans cap the model's use, count it faster against the allowance, or bill it to credits.
 - **Preference rows weigh their sources equally.** Design/taste and Writing each have their own sources, since cost doesn't measure taste, and each operator counts once. Each source is standardized across the current models it lists, taking a model's best score at any effort, and a model's score is the mean over the sources that list it. Each provider's best-scoring model takes its slot, best first, at its best-value effort.
 - **Three providers per row, one model each.** A row takes the first three providers in its order.
 - **The frontier shows the best buys.** A setting is on the frontier when no other setting scores higher for less. A listed model whose best-value effort falls off the frontier has a cheaper alternative; the base table shows which ones are.

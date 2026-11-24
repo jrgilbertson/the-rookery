@@ -24,12 +24,12 @@
 <rect x="210.0" y="260.0" width="4" height="56.0" rx="2" fill="#C15F3C"/>
 <text x="226.0" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Claude Opus 5.5 *</text>
 <text x="226.0" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Anthropic</text>
-<rect x="526.7" y="260.0" width="4" height="56.0" rx="2" fill="#0E8F6E"/>
-<text x="542.7" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Sol</text>
-<text x="542.7" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Medium effort · OpenAI</text>
-<rect x="843.3" y="260.0" width="4" height="56.0" rx="2" fill="#2F6FDB"/>
-<text x="859.3" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Gemini 4 Neon</text>
-<text x="859.3" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Google</text>
+<rect x="526.7" y="260.0" width="4" height="56.0" rx="2" fill="#2F6FDB"/>
+<text x="542.7" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Gemini 4 Neon *</text>
+<text x="542.7" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Google</text>
+<rect x="843.3" y="260.0" width="4" height="56.0" rx="2" fill="#0E8F6E"/>
+<text x="859.3" y="282.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Sol</text>
+<text x="859.3" y="309.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">Medium effort · OpenAI</text>
 <line x1="40" x2="1160" y1="334.0" y2="334.0" stroke="#47577A" stroke-opacity=".3"/>
 <text x="40.0" y="387.0" font-size="20" fill="#042458" font-family="Didot,'Bodoni MT',Georgia,serif">Design/taste</text>
 <rect x="210.0" y="352.0" width="4" height="56.0" rx="2" fill="#C15F3C"/>

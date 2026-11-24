@@ -24,11 +24,11 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 **Last reviewed: 2026-11-24**
 
-![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Sol (`gpt-6.2-sol`) at max. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Sol (`gpt-6.2-sol`) at max. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
 
 Each row names a model from each provider, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
-A model marked \* is my judgment: the method would have put a different model there, and the reasons below say why and what would change my mind. This review has one mark, on the Executor row.
+A model marked \* is my judgment: the method would have put a different model there, and the reasons below say why and what would change my mind. This review has two marks, both on the Executor row. Each changes the order only; the models and efforts follow the method.
 
 Claude plans that include Fable let it use up to half of the weekly limit, which the other Claude models share, according to Claude's [help center](https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan). When that half runs out, use `claude-opus-5-5` at high in Fable's place.
 
@@ -122,11 +122,10 @@ What these suites add:
 - **Sol is the fast, cheap worker.** It takes 8 minutes and $0.57 a task in Codex at medium. On FrontierCode it passes 42.17% of tasks at $1.62 per pass, against 39.85% at $6.08 per pass for Opus at high.
 - **VulcanBench, in the base, now tests these settings side by side.** Opus at high scores 91.1 for $3.27 a task, Sol at medium 88.9 for $0.33, and Neon at medium 87.5 for $0.92. It has not tested Hydrogen.
 
-One adjustment:
+Two adjustments:
 
 - **Opus 5.5 moves to first \*.** The method puts Sol first, then Neon, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. VulcanBench puts Opus at high (91.1) above Sol at medium (88.9), while FrontierCode puts it below (36.3 against 38.3). Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol by effort, and the Coding Agent Index tested Opus only at max. So this is my call, not a measured win. This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
-
-The previous review put Gemini 4 Neon at medium second by judgment, to reverse if a coding suite tested it beside Sol at medium and Sol matched or beat it. VulcanBench now does, with Sol ahead at a third of the cost, so Sol returns to second and Neon follows it.
+- **Gemini 4 Neon at high moves to second \*.** The method puts Sol at medium ahead on the 40% price rule: Neon at high scores 3.0 points more on the base (60.8 against 57.8) at about five times the API cost (2.02 against 0.37). On subscriptions that gap is less steep, and Neon's quality edge is worth taking over Sol's lower cost. FrontierCode and the AA Intelligence Index put Neon at high well ahead of Sol at medium, while VulcanBench puts Sol slightly ahead. This reverses if the Coding Agent Index or Terminal-Bench by effort tests Neon at high beside Sol at medium and Sol matches or beats it, or if my own sessions stop bearing it out.
 
 Revisit when the Coding Agent Index tests Opus 5.5 at high, when Terminal-Bench by effort adds Sol or Neon, or when subscription costs change the trade.
 

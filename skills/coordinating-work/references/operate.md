@@ -187,9 +187,11 @@ needs the operator first:
 
 Keep the coordinated batch's standing rules in the record. When an incident
 shows workers need a rule the briefs lack, add it without asking: one dated
-rule, tied to the named incident that caused it. Send it to affected workers
-as an amendment, and list each new rule in your next report to the operator.
-A standing rule only adds a restriction on how workers operate.
+rule, tied to the named incident that caused it, with the observation that
+will show the rule is no longer needed, chosen for that incident. Send it to
+affected workers as an amendment. A standing rule only adds a restriction on
+how workers operate, and it lasts until its end observation holds. List each
+rule you add or retire in your next report to the operator.
 
 ## The check
 
@@ -222,6 +224,9 @@ changed:
   Held changes and merge decisions stay held;
 - tell a worker to continue when its assignment is open, as [Briefs](briefs.md)
   defines it, with nothing it is waiting on;
+- retire each standing rule whose end observation now holds, by a dated
+  amendment to the workers it affects, and give an end observation to any
+  rule recorded without one;
 - read the Ready Frontier again, and dispatch an issue that became ready or
   was left for this check when the host now has room;
 - list for the operator a worker that has not acknowledged its last reply

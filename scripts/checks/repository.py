@@ -85,12 +85,6 @@ HOME_PATH_EXAMPLES = {
     "docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md": {
         "~" + "/.claude/skills/", "~" + "/.agents/skills/",
     },
-    "skills/daily-learning/references/config-and-sources.md": {
-        "~" + "/.config/the-rookery/daily-learning/config.json",
-    },
-    "skills/daily-learning/references/trust-and-history.md": {
-        "~" + "/.local/state/automation-runs",
-    },
     "skills/personal-chief-of-staff/references/source-bindings.md": {
         "~" + "/.config/the-rookery/personal-chief-of-staff/sources.json",
     },

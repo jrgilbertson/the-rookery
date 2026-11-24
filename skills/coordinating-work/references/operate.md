@@ -134,8 +134,8 @@ When the pull request needs the worker again, for findings to fix or a
 merge-queue ejection, send the work as a follow-up to that worker's dispatch
 through the guide, which can reach a finished worker. When Orca refuses the
 follow-up, start a new worker in the same worktree with the whole brief, its
-amendments, and the follow-up. Either way, the follow-up is open until the
-worker's next merge-ready report.
+amendments, and the follow-up. Either way, the assignment is open again until
+the worker finishes, as [Briefs](briefs.md) defines it.
 
 After a merge lands, record it, then release the worker and remove its
 worktree as

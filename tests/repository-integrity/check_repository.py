@@ -445,6 +445,7 @@ def main() -> int:
             "docs/reports",
             "docs/pulse-reports",
             "outputs",
+            "tmp",
         ):
             regular_path = repository / regular_name
             regular_path.parent.mkdir(parents=True, exist_ok=True)
@@ -472,6 +473,7 @@ def main() -> int:
             "docs/reports/force-added.md",
             "docs/pulse-reports/force-added.md",
             "outputs/force-added.md",
+            "tmp/force-added.md",
         ):
             transient_path = repository / transient_name
             transient_path.parent.mkdir(parents=True, exist_ok=True)

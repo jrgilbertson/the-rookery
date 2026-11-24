@@ -8,8 +8,10 @@ Thumbs.db
 .idea/
 .vscode/
 
-# Legacy Codex Desktop or similar generated artifacts may contain private data.
+# Generated artifacts, such as legacy Codex Desktop outputs or scratch files,
+# may contain private data.
 outputs/
+/tmp/
 
 # Durable docs stay tracked; temporary working paths are listed below.
 __pycache__/

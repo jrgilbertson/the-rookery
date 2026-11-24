@@ -584,7 +584,8 @@ looked" surface. GitHub Releases mirror its entries.
   relationship Linear adds on its own, which nobody approved, stops the batch
   before the next write and comes with a removal preview awaiting approval.
 - Repository verification rejects tracked files under the root `outputs/`
-  directory, which may hold private generated artifacts.
+  and `tmp/` directories, which may hold private generated artifacts, and
+  `.gitignore` ignores both.
 - Repository tests now fail when the issue-configuration label, duplicate,
   control-character, or size guards are removed, when the README skill list
   or a skill name drifts from `skills/`, or when a test runner is missing from

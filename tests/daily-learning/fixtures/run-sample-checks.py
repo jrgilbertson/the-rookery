@@ -32,7 +32,8 @@ TAG_KEYS = {"in_progress", "completed"}
 STRATEGY_KEYS = {"personal_chief_of_staff_map", "direct_paths"}
 COS_MAP_KEYS = {"locator_kind", "path", "allow_cross_mode_read"}
 DIRECT_KEYS = {"strategy", "learning"}
-REMOTE_KEYS = {"name", "workspace_selector", "agent"}
+REMOTE_REQUIRED_KEYS = {"name", "workspace_selector", "agent"}
+REMOTE_KEYS = REMOTE_REQUIRED_KEYS | {"scan_timeout_minutes"}
 RUNS_KEYS = {"repo_path"}
 ANKI_KEYS = {"connect_url"}
 
@@ -186,9 +187,18 @@ def validate_config(raw_text: str) -> None:
         require(isinstance(remotes, list), "remote_environments must be a list")
         seen_names: set[str] = set()
         for entry in remotes:
-            require(isinstance(entry, dict) and set(entry) == REMOTE_KEYS, "remote environment requires name, workspace_selector, agent")
-            for field in REMOTE_KEYS:
+            require(
+                isinstance(entry, dict) and REMOTE_REQUIRED_KEYS <= set(entry) <= REMOTE_KEYS,
+                "remote environment requires name, workspace_selector, agent (and optional scan_timeout_minutes)",
+            )
+            for field in REMOTE_REQUIRED_KEYS:
                 require(nonempty_text(entry[field]), f"remote_environments.{field} must be nonempty text")
+            if "scan_timeout_minutes" in entry:
+                timeout = entry["scan_timeout_minutes"]
+                require(
+                    type(timeout) is int and timeout >= 1,
+                    f"remote_environments.scan_timeout_minutes must be a positive integer: {timeout!r}",
+                )
             require(str(entry["workspace_selector"]).strip().lower() != "current", "workspace_selector must not be current")
             name = str(entry["name"])
             require(name not in seen_names, f"duplicate remote environment name: {name}")
@@ -250,6 +260,21 @@ def main() -> int:
     bad_current = copy.deepcopy(base)
     bad_current["remote_environments"][0]["workspace_selector"] = "current"
     expect_failure("remote workspace_selector current", json.dumps(bad_current))
+
+    good_default_timeout = copy.deepcopy(base)
+    del good_default_timeout["remote_environments"][0]["scan_timeout_minutes"]
+    validate_config(json.dumps(good_default_timeout))
+
+    for label, bad_timeout in (
+        ("zero scan_timeout_minutes", 0),
+        ("negative scan_timeout_minutes", -5),
+        ("float scan_timeout_minutes", 10.0),
+        ("bool scan_timeout_minutes", True),
+        ("string scan_timeout_minutes", "10"),
+    ):
+        bad_remote_timeout = copy.deepcopy(base)
+        bad_remote_timeout["remote_environments"][0]["scan_timeout_minutes"] = bad_timeout
+        expect_failure(label, json.dumps(bad_remote_timeout))
 
     bad_version_float = copy.deepcopy(base)
     bad_version_float["version"] = 1.0

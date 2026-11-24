@@ -30,7 +30,8 @@
     {
       "name": "example-dev-host",
       "workspace_selector": "folder:daily-learning-readonly",
-      "agent": "codex"
+      "agent": "codex",
+      "scan_timeout_minutes": 10
     }
   ],
   "automation_runs": {

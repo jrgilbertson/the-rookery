@@ -22,23 +22,23 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 ## Model recommendations
 
-**Last reviewed: 2026-11-20**
+**Last reviewed: 2026-11-24**
 
-![Recommendations reviewed 2026-11-20. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at xhigh. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at medium, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Carbon (`gemini-4-carbon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at xhigh. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Astra (`gpt-6.2-astra`) at xhigh.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-24. Team lead: GPT-6.2 Sol (`gpt-6.2-sol`) at max, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Carbon (`gemini-4-carbon`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium, then Gemini 4 Hydrogen (`gemini-4-hydrogen`) at high. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Carbon (`gemini-4-carbon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
 
 Each row names a model from each provider, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
-A model marked \* is my judgment: the method would have put a different model there, and the reasons below say why and what would change my mind. This review has three marks, two on the Executor row and one on the Writing row.
+A model marked \* is my judgment: the method would have put a different model there, and the reasons below say why and what would change my mind. This review has two marks, one on the Executor row and one on the Writing row.
 
 Claude plans that include Fable let it use up to half of the weekly limit, which the other Claude models share, according to Claude's [help center](https://support.claude.com/en/articles/15424964-claude-fable-models-on-your-plan). When that half runs out, use `claude-opus-5-5` at high in Fable's place.
 
 The recommendations cover four providers: Anthropic, OpenAI, Google, and xAI. The suites also test models from other companies, such as DeepSeek, Qwen, and Mistral, and their results stay in `results.csv`, but this page charts and recommends only these four.
 
-Each row shows three providers. Grok 4.7 has no slot. It comes fourth in the Executor and Team lead rows, since GPT-6.2 Sol at medium scores higher than Grok at any effort and costs less, and the Arena boards behind Design/taste and Writing do not score it.
+Each row shows three providers. Grok 4.7 has no slot. It comes fourth in the Executor and Team lead rows, since GPT-6.2 Sol at medium scores higher than Grok at any effort and costs less. The Arena boards behind Design/taste and Writing now score it, but below each row's three providers: 1639 on WebDev and 1421 on creative writing.
 
 ### What each model gains as you raise its effort
 
-![One chart of combined quality against relative cost per task for nine models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-20, Gemini 4 Neon at high scores about 62 at 2.4 times the cost of a typical setting, level with Fable 5.2 at high for half its cost. GPT-6.2 Astra at xhigh scores about 61 at 2.2 times. GPT-6.2 Sol reaches about 58 at a third of a typical setting's cost. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
+![One chart of combined quality against relative cost per task for nine models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-24, Gemini 4 Neon at high scores about 61 at 2.0 times the cost of a typical setting, and Gemini 4 Carbon at high about 61.5 at 3.9 times. Fable 5.2 at high scores about 62 at 4.9 times. GPT-6.2 Astra's best value is now medium, about 59 at 1.1 times. GPT-6.2 Sol reaches about 58 at medium for a third of a typical setting's cost, and about 59 at max for three quarters of it. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
 
 The chart puts five benchmark suites on one scale, so every model shares the same axes. Colour names the provider, a dash tells one provider's models apart, and each marker's shape names the effort, as the key above the chart shows. The chart covers coding and general work, and it shows the current models from the four providers, whether or not I can run them today.
 
@@ -61,42 +61,42 @@ The evidence is in [`docs/routing/`](docs/routing/), and [How I update the table
 
 | Model | Best value | Combined quality | Relative cost | Suites | On the frontier |
 |---|---|---|---|---|---|
-| GPT-6.2 Sol | medium | 57.8 | 0.36 | 3 of 5 | yes |
-| Gemini 4 Neon | high | 62.4 | 2.36 | 3 of 5 | yes |
-| GPT-6.2 Astra | xhigh | 61.3 | 2.24 | 3 of 5 | yes |
-| Fable 5.2 | medium | 60.0 | 2.16 | 4 of 5 | no |
-| Gemini 4 Hydrogen | high | 59.0 | 1.65 | 3 of 5 | no |
-| Gemini 4 Carbon | high | 61.8 | 3.91 | 4 of 5 | no |
-| Opus 5.5 | high | 58.9 | 2.24 | 5 of 5 | no |
-| Gemini 4 Argon | high | 57.9 | 3.86 | 4 of 5 | no |
-| Grok 4.7 | medium | 53.3 | 3.01 | 3 of 5 | no |
+| GPT-6.2 Sol | medium | 57.8 | 0.37 | 3 of 5 | yes |
+| Gemini 4 Neon | high | 60.8 | 2.02 | 4 of 5 | yes |
+| GPT-6.2 Astra | medium | 58.7 | 1.11 | 4 of 5 | no |
+| Fable 5.2 | medium | 60.2 | 2.23 | 4 of 5 | no |
+| Gemini 4 Hydrogen | high | 58.8 | 1.56 | 3 of 5 | no |
+| Gemini 4 Carbon | high | 61.5 | 3.93 | 4 of 5 | yes |
+| Opus 5.5 | high | 59.1 | 2.32 | 5 of 5 | no |
+| Gemini 4 Argon | high | 58.0 | 4.62 | 4 of 5 | no |
+| Grok 4.7 | medium | 53.5 | 3.03 | 3 of 5 | no |
 
-Sol comes first even though Neon scores 4.6 points more. Neon costs about 560% more, which is 120% for each added point, well past the 40% limit. Relative cost is a multiple of a typical FrontierCode setting's cost, so 2.36 means 2.36 times that. A model off the frontier has some other setting that scores higher for less. Fewer suites means a less certain position.
+Sol comes first even though Neon scores 3.0 points more. Neon costs about 450% more, which is 150% for each added point, well past the 40% limit. Relative cost is a multiple of a typical FrontierCode setting's cost, so 2.02 means 2.02 times that. A model off the frontier has some other setting that scores higher for less. Fewer suites means a less certain position.
 
 #### Team lead
 
-This row starts from each vendor's flagship, the model it recommends for its hardest work: Fable 5.2, GPT-6.2 Astra, Gemini 4 Carbon, and Grok 4.7. Gemini 4 Neon at high scores 62.4 at a relative cost of 2.36, which beats Carbon's 61.8 at 3.91, so Neon takes Google's slot.
+This row starts from each vendor's flagship, the model it recommends for its hardest work: Fable 5.2, GPT-6.2 Astra, Gemini 4 Carbon, and Grok 4.7. Astra's best-value effort is now medium, at 58.7 for a relative cost of 1.11. GPT-6.2 Sol at max scores 59.1 at 0.74, higher for less, so Sol at max takes OpenAI's slot. Gemini 4 Neon at high scores 60.8 at 2.02, below Carbon's 61.5 at 3.93, so Carbon keeps Google's slot. On the 2026-11-20 read Neon beat Carbon; VulcanBench's first results for Neon lowered its combined score.
 
 No suite measures leading a team. The closest is AA-Briefcase, which scores long, multi-step knowledge work:
 
-| Model | Medium | High | Xhigh |
-|---|---|---|---|
-| Opus 5.5 | 1617 | 1682 | 1760 |
-| Fable 5.2 | 1622 | 1677 | 1737 |
-| Gemini 4 Neon | 1518 | 1632 | 1699 |
-| GPT-6.2 Astra | 1408 | 1570 | 1594 |
+| Model | Medium | High | Xhigh | Max |
+|---|---|---|---|---|
+| Opus 5.5 | 1615 | 1681 | 1758 | 1797 |
+| Fable 5.2 | 1623 | 1676 | 1737 | 1783 |
+| Gemini 4 Neon | 1517 | 1631 | 1699 | not tested |
+| Gemini 4 Carbon | 1602 | 1611 | not tested | not tested |
+| GPT-6.2 Sol | 1494 | 1541 | 1579 | 1612 |
+| GPT-6.2 Astra | 1407 | 1570 | 1593 | 1643 |
 
-Artificial Analysis labels its Claude runs "Default Fallback", so another model may have answered some turns.
+Its intervals run about 8 to 12 points either way. At the listed efforts, Fable at 1623 sits 11 points above Sol at max (1612) and 12 above Carbon at high (1611), inside those intervals, so Briefcase does not reorder the row. Neon at high (1631) leads Carbon at high by 20 points, at the edge of the intervals, which is not enough to give it Google's slot. Artificial Analysis labels its Claude runs "Default Fallback", so another model may have answered some turns.
 
-One adjustment:
+The row follows the method, with no adjustment. The previous review moved Fable above Astra on Briefcase; Astra has left the row, so that adjustment no longer applies. Practitioners who name an effort run Fable as lead at high or xhigh, not medium, and launch-week testers report Astra stopping early on long, self-directed work. No one reported running Sol at max as a lead.
 
-- **Fable moves above Astra.** The base puts Astra first. At the listed efforts, Briefcase scores Fable at 1622 and Astra at 1594, a gap well outside its interval of about 10 points. This reverses if Astra passes Fable on Briefcase.
-
-Revisit when a suite measures plan quality and downstream success for these releases with the same Executor.
+Revisit when a suite measures plan quality and downstream success for these releases with the same Executor, or when Briefcase separates Fable at medium from Sol at max by more than its interval.
 
 #### Executor
 
-This row starts from each vendor's everyday model, the one it recommends for day-to-day work: Opus 5.5, GPT-6.2 Sol, Gemini 4 Hydrogen, and Grok 4.7. Anthropic, OpenAI, and Google each describe this model as built for that work. Gemini 4 Neon at medium scores 59.6 at a relative cost of 1.16, which beats Hydrogen's 59.0 at 1.65, so Neon takes Google's slot. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
+This row starts from each vendor's everyday model, the one it recommends for day-to-day work: Opus 5.5, GPT-6.2 Sol, Gemini 4 Hydrogen, and Grok 4.7. Anthropic, OpenAI, and Google each describe this model as built for that work. Gemini 4 Neon at medium now scores 58.6 at a relative cost of 1.11, just under Hydrogen's 58.8 at 1.56, so it no longer scores higher for less and Hydrogen keeps Google's slot. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
 
 Two more suites test only coding and are worth reading beside the base. The AA Coding Agent Index runs each model inside its maker's own tool. Vals Terminal-Bench publishes results by effort in one shared harness.
 
@@ -120,40 +120,41 @@ What these suites add:
 
 - **Claude models do better on these coding suites than the base suggests.** On the Coding Agent Index, which runs each model in its maker's tool, Fable at high (58.2) and Opus at max (58.2) sit level with Neon at xhigh (58.6), the leader, and above Astra at xhigh (53.1). It tested Opus only at max and Neon only at xhigh. Terminal-Bench, which runs every model in one shared harness, puts Opus at high (67.7%) above Astra at xhigh (64.6%), and did not test Sol or Neon by effort.
 - **Sol is the fast, cheap worker.** It takes 8 minutes and $0.57 a task in Codex at medium. On FrontierCode it passes 42.17% of tasks at $1.62 per pass, against 39.85% at $6.08 per pass for Opus at high.
-
-Two adjustments:
-
-- **Opus 5.5 moves to first \*.** The method puts Sol first, then Neon, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol or Neon by effort. The Coding Agent Index has Sol at medium on 45.4, well below Opus at max on 58.2, but it did not test Opus at high or Neon at medium. So this is my call, not a measured win. This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
-- **Gemini 4 Neon moves to second \*.** The method puts Sol ahead of Neon at medium on the 40% price rule: Neon at medium scores higher on the base (59.6 vs 57.8) at roughly three times the API cost (1.16 vs 0.36). On subscriptions that cost gap is less steep, and in my own sessions Neon at medium has been strong enough as an executor to justify taking its quality edge over Sol's lower cost. This reverses if coding suites test Neon at medium beside Sol at medium and Sol matches or beats it, or if my own sessions stop bearing it out.
-
-Revisit when the Coding Agent Index tests Opus 5.5 at high, when Terminal-Bench by effort adds Neon or Sol, or when subscription costs change the trade.
-
-#### Design/taste
-
-People's preferences decide this row, and the base doesn't measure how an interface looks. Arena WebDev sets the order. It ranks every candidate at a named effort, on over a million votes. Two more sources serve as checks.
-
-| Model | Arena WebDev | Design Arena, UI components | 21st.dev Design System Bench |
-|---|---|---|---|
-| Fable 5.2 | 1823 at xhigh | 1378 | 85.2 |
-| Opus 5.5 | 1818 at max | 1369 | 73.7 |
-| Gemini 4 Carbon | 1769 at high | 1342 | 82.9 |
-| Gemini 4 Neon | 1763 at high | 1359 | not listed |
-| GPT-6.2 Astra | 1759 at max | 1332 | not listed |
-| GPT-6.2 Sol | 1755 at max | not listed | not listed |
-
-Design Arena counts people's votes on interface components and names no effort for these models. Design System Bench has agents build interfaces in a real repository and scores how well they use its design system. Its operator may sell UI tooling.
+- **VulcanBench, in the base, now tests these settings side by side.** Opus at high scores 91.1 for $3.27 a task, Sol at medium 88.9 for $0.33, and Neon at medium 87.5 for $0.92. It has not tested Hydrogen.
 
 One adjustment:
 
-- **The order comes from Arena WebDev, not the base.** The row takes each provider's first model on WebDev: Fable 5.2, then Carbon, then GPT-6.2 Astra. Design System Bench agrees on Fable first and Carbon above Opus. The 40% price doesn't apply here, since cost doesn't measure taste. This reverses if WebDev reorders the providers' leading models.
+- **Opus 5.5 moves to first \*.** The method puts Sol first, then Hydrogen, then Opus. Opus is the worker I rely on day to day, and the coding suites lean its way without settling it. VulcanBench puts Opus at high (91.1) above Sol at medium (88.9), while FrontierCode puts it below (36.3 against 38.3). Terminal-Bench puts Opus at high above Astra at xhigh, but it did not test Sol by effort, and the Coding Agent Index tested Opus only at max. So this is my call, not a measured win. This reverses if a suite other than FrontierCode tests Opus at high beside Sol at medium and Opus falls behind, or if my own sessions stop bearing it out.
 
-Each pick lists the model's best-value effort, as the rules require. WebDev tested Fable at xhigh and Astra at max. A lower effort is untested for design, not worse, so raise it when a design calls for more.
+The previous review put Gemini 4 Neon at medium second by judgment, to reverse if a coding suite tested it beside Sol at medium and Sol matched or beat it. VulcanBench now does, with Sol ahead at a third of the cost, so Sol returns to second and Google's slot follows the method.
 
-WebDev moves quickly. On an earlier read the same day, GPT-6.2 Astra scored 1797 and sat above Carbon.
+Revisit when the Coding Agent Index tests Opus 5.5 at high, when Terminal-Bench by effort adds Sol or Hydrogen, or when subscription costs change the trade.
 
-Design Arena already disagrees on one point: it puts Neon (1359) above Carbon (1342), on only 109 comparisons for Neon. WebDev, on far more votes, has Carbon ahead, so the row keeps Carbon.
+#### Design/taste
 
-Revisit when Design Arena keeps Neon above Carbon on several hundred comparisons, or when either check lists GPT-6.2 Sol or Neon at a named effort.
+People's preferences decide this row, and the base doesn't measure how an interface looks. Arena WebDev sets the order. It ranks every candidate at a named effort, on over a million votes. Three more sources serve as checks.
+
+| Model | Arena WebDev | Design Arena, UI components | 21st.dev Design System Bench | Frontier Design |
+|---|---|---|---|---|
+| Fable 5.2 | 1822 at xhigh | 1393 | 85.2 | 1710 |
+| Opus 5.5 | 1820 at max | 1368 | 73.7 | 1684 |
+| Gemini 4 Carbon | 1769 at high | 1381 | 82.9 | 1337 |
+| Gemini 4 Neon | 1765 at xhigh | 1335 | not listed | 1430 |
+| GPT-6.2 Astra | 1761 at max | 1329 | not listed | 1755 |
+| GPT-6.2 Sol | 1755 at max | not listed | not listed | 1631 |
+| Grok 4.7 | 1639 at xhigh | 1276 | 72.7 | 1236 |
+
+Design Arena counts people's votes on interface components and names no effort for these models. Design System Bench has agents build interfaces in a real repository and scores how well they use its design system; each model ran at medium, except Carbon at high. Its operator may sell UI tooling. Frontier Design has professional designers vote blind between websites built from 33 real client briefs, and ranks human designers' own builds among the models at 1735. It names no effort. It is run by Contra Labs, whose freelance marketplace supplies the briefs and the voters, and its data is not public.
+
+One adjustment:
+
+- **The order comes from Arena WebDev, not the base.** The row takes each provider's first model on WebDev: Fable 5.2, then Carbon, then GPT-6.2 Astra. Design System Bench agrees on Fable first and Carbon above Opus, and Design Arena's UI board agrees on the whole order. The 40% price doesn't apply here, since cost doesn't measure taste. This reverses if WebDev reorders the providers' leading models.
+
+Frontier Design disagrees. Its designers put Astra (1755) above Fable (1710) and every Gemini model 200 or more points lower, with Carbon at 1337. Astra rests on 114 votes, against 660 for Carbon, and WebDev's far larger vote keeps Carbon ahead, so the row keeps Carbon. One practitioner also found Carbon's pages dense or cluttered.
+
+Each pick lists the model's best-value effort, as the rules require. WebDev tested Fable at xhigh and Astra at max. Astra's best-value effort is now medium. A lower effort is untested for design, not worse, but one practitioner found Astra's interfaces weak at high and decent at xhigh, so raise it when a design calls for more.
+
+Revisit when Frontier Design keeps Astra above Carbon on several hundred votes for Astra, or when a check lists GPT-6.2 Sol or Neon at a named effort.
 
 #### Writing
 
@@ -161,26 +162,26 @@ Readers judge writing by preference, so this row works like Design/taste. Arena'
 
 | Model | Arena creative writing | Arena text, overall | Lechmazur rank, of 67 |
 |---|---|---|---|
-| Fable 5.2 | 1529 at max | 1503 at max | 2 |
-| Gemini 4 Argon | 1520 at high | 1520 at high | 27 |
-| Opus 5.5 | 1516 at high | 1506 at high | 6 |
-| Gemini 4 Carbon | 1515 at high | 1527 at high | 19 |
-| Gemini 4 Neon | 1502 at high | 1513 at high | not listed |
-| GPT-6.2 Astra | not scored | not scored | 1 |
-| GPT-6.2 Sol | not scored | not scored | not listed |
+| Fable 5.2 | 1525 at max | 1502 at max | 2 |
+| Gemini 4 Argon | 1521 at high | 1520 at high | 27 |
+| Opus 5.5 | 1518 at high | 1507 at high | 6 |
+| Gemini 4 Carbon | 1518 at high | 1527 at high | 19 |
+| Gemini 4 Neon | 1504 at xhigh | 1512 at xhigh | not listed |
+| GPT-6.2 Astra | 1471 at max | 1467 at max | 1 |
+| GPT-6.2 Sol | 1436 at max | 1464 at max | not listed |
 
 Two adjustments:
 
-- **The order comes from Arena's creative-writing board, not the base.** The row takes each provider's first model there: Fable 5.2, then Gemini 4 Argon. Arena lists the GPT-6.2 models without scores, so the OpenAI slot goes to Astra, which Lechmazur ranks first. This reverses if Arena reorders the providers' leading models or scores GPT-6.2 Sol above Astra.
-- **Gemini 4 Neon takes Google's slot from Argon \*.** Arena puts Argon 18 points above Neon, but this role is mostly non-fiction, and the only non-fiction test I found favors Neon. Stephen Smith had the models write board and investor documents and ranked Fable 5.2 first and Neon a close second; he did not test Argon. This is my call on one practitioner test, not a measured win. It reverses if a non-fiction benchmark such as Hemingway-bench lists both and puts Argon ahead.
+- **The order comes from Arena's creative-writing board, not the base.** The row takes each provider's first model there: Fable 5.2, then Gemini 4 Argon, then GPT-6.2 Astra. Arena now scores the GPT-6.2 models, with Astra 35 points above Sol, and Lechmazur also ranks Astra first. This reverses if Arena reorders the providers' leading models.
+- **Gemini 4 Neon takes Google's slot from Argon \*.** Arena puts Argon 17 points above Neon, but this role is mostly non-fiction, and the non-fiction evidence favors Neon. Stephen Smith had the models write board and investor documents and ranked Fable 5.2 first and Neon a close second; he did not test Argon. Many Hacker News users also say, mostly unprompted, that Neon writes docs and landing pages better than Claude, though no one compared it with Argon side by side. This is my call on practitioner reports, not a measured win. It reverses if a non-fiction benchmark such as Hemingway-bench lists both and puts Argon ahead.
 
-The checks are weak. Arena's text board covers all kinds of prompts, not just writing, and it puts Carbon first. Epoch rated Lechmazur "Flawed" in August 2026 because its grading changed without a version.
+The checks are weak. Arena's text board covers all kinds of prompts, not just writing, and it puts Carbon first. Epoch rated Lechmazur "Flawed" in August 2026 because its grading changed without a version, and the rating still stood on 2026-11-24.
 
-No public benchmark scores current models on non-fiction such as documentation, email, or reports, so this row rests on creative writing. No source gives GPT-6.2 Sol a writing score.
+No public benchmark scores current models on non-fiction such as documentation, email, or reports, so this row rests on creative writing.
 
-Each pick lists the model's best-value effort. Arena tested Fable at max, and a lower effort is untested for writing, not worse.
+Each pick lists the model's best-value effort. Arena tested Fable and Astra at max, and a lower effort is untested for writing, not worse.
 
-Revisit when Arena scores the GPT-6.2 models, or when Surge AI's Hemingway-bench, where professional writers judge business and everyday writing, lists current models. Today its newest entries are Fable 5.1 and Opus 5.
+Revisit when Surge AI's Hemingway-bench, where professional writers judge business and everyday writing, lists current models. Today its newest entries are Fable 5.1 and Opus 5.
 
 ## Choose effort and tools
 
@@ -225,6 +226,7 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 | [Arena WebDev](https://arena.ai/leaderboard/code/webdev) | Arena | Design/taste order | Preference | Human-preference ranking of finished web apps. |
 | [Design Arena](https://www.designarena.ai/leaderboard) | Design Arena | Design/taste check | Preference | Human-preference Elo, read from its UI components board, which lists Gemini 4 Neon. |
 | [21st.dev Design System Bench](https://21st.dev/benchmarks/leaderboard) | 21st.dev | Design/taste check | Measured | Agents build interfaces in a real repository, scored on use of its design system, with error bars, cost, and time. |
+| [Frontier Design](https://contralabs.com/frontierdesign/leaderboard) | Contra Labs and BenchFlow | Design/taste check | Preference | Professional designers' blind votes between websites built from real client briefs, as Elo, with human designers ranked among the models. |
 | [Arena Creative Writing](https://arena.ai/leaderboard/text/creative-writing) | Arena | Writing order | Preference | Human-preference ranking of written output, with cost per reply. |
 | [Arena Text](https://arena.ai/leaderboard/text) | Arena | Writing check | Preference | Human-preference ranking across all kinds of text prompts. |
 | [Lechmazur Writing](https://github.com/lechmazur/writing) | Lechmazur | Writing check | Proxy | Short stories scored by a panel of models. Epoch rated it "Flawed". |

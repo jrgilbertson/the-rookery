@@ -1,0 +1,23 @@
+{
+  "case_id": "verdict-at-reviewed-head",
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "content": "Run a review round for me.",
+      "expected_phase_boundary": "Zero GitHub writes. Presents both open pull requests at their current heads."
+    },
+    {
+      "turn": 2,
+      "role": "user",
+      "content": "Verdicts:\n- ledger-app #470: merge\n- ledger-app #471: request changes. Notes: add a test for an empty last page",
+      "expected_phase_boundary": "Zero GitHub writes. Echoes both Verdicts with their full reviewed heads and the exact comment text, then waits."
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "content": "Confirmed. Go ahead.",
+      "expected_phase_boundary": "#470's head moved after review. Posts its Verdict with the reviewed head in its Head line, tells the operator the head moved, posts #471's Verdict, and merges nothing."
+    }
+  ]
+}

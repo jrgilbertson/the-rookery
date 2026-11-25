@@ -21,6 +21,9 @@ against the version 3 shape in
 The [Reviewing PRs checks](reviewing-prs/README.md) exercise the synthetic
 GitHub stand-in and fixtures that its Skill Eval runs against, and the review
 page template the skill ships.
+The [Repo Captain checks](repo-captain/README.md) exercise the Orca stand-in,
+the shared GitHub stand-in's merge queue and tracker surface, and the staged
+git fixtures that the Repo Captain Skill Eval runs against.
 The repository-integrity tests also exercise malformed packages and unsafe
 paths. The routing checks run the shipped
 [routing evidence script](../scripts/routing/evidence.py) against synthetic

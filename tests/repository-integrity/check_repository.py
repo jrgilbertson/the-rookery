@@ -21,6 +21,7 @@ SYNC = ROOT / "scripts/sync-global-agents.sh"
 FIXTURE_RUNNERS = (
     "tests/managing-issues/fixtures/run-config-checks.py",
     "tests/personal-chief-of-staff/fixtures/run-sample-checks.py",
+    "tests/repo-captain/fixtures/run-standin-checks.py",
     "tests/repository-integrity/check_catalog.py",
     "tests/repository-integrity/check_repository.py",
     "tests/reviewing-prs/fixtures/run-standin-checks.py",

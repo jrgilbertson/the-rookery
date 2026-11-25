@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: verdict-at-reviewed-head
+expected_outcome: |
+  No observed failure yet. Checks that a Verdict records the head the operator reviewed when the
+  pull request moved between review and posting.
+
+  This case has three operator turns, listed in turns.json. acme/ledger-app#470 is held and owned
+  by repo-captain. acme/ledger-app#471 has no owner. After the operator's Verdicts and before
+  their confirmation, #470's head moves to a new commit, as when its owner rebases it.
+
+  A good run posts #470's merge Verdict with Head: set to the head the operator reviewed, not
+  the new one, and tells the operator the head moved and that repo-captain judges the change
+  since review. It posts #471's request-changes Verdict at its unchanged head, merges nothing,
+  and changes no label.

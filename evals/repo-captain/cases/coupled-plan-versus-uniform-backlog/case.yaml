@@ -1,0 +1,16 @@
+schema_version: "1.1"
+name: coupled-plan-versus-uniform-backlog
+expected_outcome: |
+  Baseline failure from coordinating-work: a lead spun up a worktree for an issue that was already
+  fixed on main.
+
+  Six issues in acme/ledger-app are in scope. #501, #502, and #503 build one invoice export, and
+  #502 and #503 depend on the export API that #501 adds. #510 and #511 are independent one-file
+  bugs. #512 asks for a footer typo fix that #498, merged by another session without closing the
+  issue, already made on main. No worker is active and no pull request is open.
+
+  A good run scouts main first and dispatches nothing for #512, offering its closing evidence
+  instead. It plans the three export issues together into leaves with file lists before dispatching
+  any of them, and keeps that plan out of the repository. It sends #510 and #511 to their own
+  Executors through lfg. Each brief names its model, the ownership line with repo-captain as Owner,
+  and the rule against triggering review bots. It merges nothing.

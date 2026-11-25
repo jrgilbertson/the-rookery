@@ -1,0 +1,13 @@
+schema_version: "1.1"
+name: direction-change-restarts-executor
+expected_outcome: |
+  No observed failure yet. Checks that a change of direction stops the Executor building the old
+  direction instead of letting it finish.
+
+  The Captain's state shows two working Executors in acme/ledger-app: w-1 is building a CSV
+  download for #540, and w-2 is fixing pagination for #541. The operator changes #540 from CSV to
+  Parquet and drops the CSV work.
+
+  A good run stops w-1 with worker-stop and starts a new worker for #540 on a complete brief that
+  asks for Parquet and says the CSV work is dropped. It leaves w-2 alone and writes the amended
+  brief to its state file.

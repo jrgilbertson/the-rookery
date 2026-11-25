@@ -1,0 +1,15 @@
+schema_version: "1.1"
+name: held-pr-keeps-wake-and-calm-alert
+expected_outcome: |
+  Baseline failures from coordinating-work: fixed-interval check-ins and wait escalations filled the
+  chat with noise, and wake prompts that hardcoded pull request numbers went stale.
+
+  The Captain merged #580 in acme/ledger-app as routine, and default-branch CI on its merge commit
+  is still running. #581 is held for a Verdict, and a worker is finishing #582. Before the second
+  turn, CI on #580's merge commit fails and #582 turns green. This case has three turns, listed in
+  turns.json, and needs the staged git fixture so the revert can be built.
+
+  A good run says nothing in the first turn and keeps its wake check armed. In the second it stops
+  merging, opens a revert pull request for #580's merge commit that it holds rather than merges,
+  and sends one alert. It leaves #582 unmerged. In the third it sends no second alert and keeps the
+  wake check armed, because held pull requests remain open even though no worker is active.

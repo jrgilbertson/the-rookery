@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stand-in for the GitHub CLI, used only by the reviewing-prs Skill Eval.
+"""Stand-in for the GitHub CLI, used only by the reviewing-prs and repo-captain Skill Evals.
 
 The Eval Cases need the skill to run its real discovery, read, and write
 commands. Handing an agent files and telling it they came from GitHub would
@@ -7,15 +7,20 @@ test a different program than the one that ships, so this stand-in sits where
 `gh` would be on PATH and answers from one synthetic world. It never contacts
 GitHub.
 
-Reads are answered from the world. The few writes a Review Round makes
-(comment, label, merge) are applied to a private state copy and recorded in a
-trace. Everything else is refused with a nonzero exit, so a run that strays
-fails loudly instead of passing on silence.
+Reads are answered from the world. The few writes the skills make (comment,
+label, merge, a pull request, an issue edit, issue scores) are applied to a
+private state copy and recorded in a trace. Everything else is refused with a
+nonzero exit, so a run that strays fails loudly instead of passing on silence.
+
+A world may change between operator turns. The runner writes the turn number
+to `turn` in the state directory before sending that turn; the changes the
+world lists under `turns` up to that number are then applied once, and a pull
+request waiting in a repository's merge queue leaves it, merged or ejected.
 
 Environment:
   GH_STANDIN_WORLD  path to a fixture's world.json (never written)
   GH_STANDIN_STATE  existing directory outside any git work tree; holds
-                    state.json and trace.jsonl
+                    state.json, trace.jsonl, and the optional turn file
 
 Exit codes: 0 ok, 1 an error GitHub or gh would return, 3 outside this
 stand-in's contract, 4 not configured or unsafe paths.
@@ -37,8 +42,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import unquote_plus
 
-SUPPORTED = """Available here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue, reviewThreads),
-search prs, pr view|list|diff|checks|comment|edit|merge|review, issue view,
+SUPPORTED = """Available here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,
+mergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),
+search prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit,
 repo view|list, label list|create, auth status."""
 ARGV = sys.argv[1:]
 _trace_path: Path | None = None
@@ -100,8 +106,52 @@ def load_state() -> tuple[dict, Path]:
             die(f"world not found: {world_path}", 4)
         world = json.loads(world_path.read_text(encoding="utf-8"))
         world["clock"] = 0
+        world["turn"] = 1
         save_state(world, state_path)
-    return json.loads(state_path.read_text(encoding="utf-8")), state_path
+    state = json.loads(state_path.read_text(encoding="utf-8"))
+    turn = current_turn(state_dir / "turn")
+    if turn > state["turn"]:
+        advance(state, turn)
+        save_state(state, state_path)
+        trace("world", turn=turn)
+    return state, state_path
+
+
+def current_turn(leaf: Path) -> int:
+    if leaf.is_symlink() or (leaf.exists() and not leaf.is_file()):
+        die("turn must be a regular file", 4)
+    if not leaf.exists():
+        return 1
+    text = leaf.read_text(encoding="utf-8").strip()
+    if not text.isdigit() or int(text) < 1:
+        die("turn must hold a positive whole number", 4)
+    return int(text)
+
+
+def advance(state: dict, turn: int) -> None:
+    """Apply each turn's world changes once, after the merge queue settles."""
+    for step in range(state["turn"] + 1, turn + 1):
+        for slug, repo in state["repos"].items():
+            for number, pull in repo.get("pulls", {}).items():
+                if pull.pop("mergeQueueEntry", None) is None:
+                    continue
+                outcomes = pull.get("queueOutcomes", [])
+                if (outcomes.pop(0) if outcomes else "MERGED") == "MERGED":
+                    merge_pull(state, slug, number, pull)
+        for change in state.get("turns", {}).get(str(step), []):
+            slug, _, number = change["pull"].partition("#")
+            pull = state["repos"][slug]["pulls"][number]
+            pull.update(change.get("set", {}))
+            pull.setdefault("comments", []).extend(change.get("comments", []))
+    state["turn"] = turn
+
+
+def merge_pull(state: dict, slug: str, number: str, pull: dict) -> None:
+    pull.update(state="MERGED", mergedAt=tick(state), mergedBy=state["viewer"]["login"], mergeCommit=hashlib.sha1(f"{slug}#{number}".encode()).hexdigest())
+    for other in pull.get("conflictsWith", []):
+        blocked = state["repos"][slug]["pulls"].get(str(other))
+        if blocked and blocked["state"] == "OPEN":
+            blocked.update(mergeable="CONFLICTING", mergeStateStatus="DIRTY")
 
 
 def save_state(state: dict, state_path: Path) -> None:
@@ -143,12 +193,20 @@ def parse(args: list[str], value_flags: dict[str, str], bool_flags: dict[str, st
                 index += 1
             else:
                 die(f"flag needs an argument: {name}", 1)
-            options.setdefault(value_flags[name], []).append(value)
+            options.setdefault(value_flags[name], []).append(normal_slug(value) if value_flags[name] == "repo" else value)
         elif name in bool_flags:
             options[bool_flags[name]] = inline.lower() != "false"
         else:
             refuse(f"unsupported flag {name}")
     return options, positionals
+
+
+def normal_slug(value: str) -> str:
+    """Accept OWNER/REPO with or without the github.com host, as gh does."""
+    for prefix in ("https://github.com/", "github.com/"):
+        if value.lower().startswith(prefix):
+            return value[len(prefix):]
+    return value
 
 
 REPO_FLAGS = {"-R": "repo", "--repo": "repo"}
@@ -328,8 +386,10 @@ def repo_object(state: dict, slug: str) -> dict:
     owner, name = slug.split("/")
     methods = repo.get("mergeMethods", ["squash"])
     return {
+        "id": f"R_{name}",
         "name": name,
         "nameWithOwner": slug,
+        "hasIssuesEnabled": True,
         "owner": {"login": owner},
         "description": repo.get("description", ""),
         "url": f"https://github.com/{slug}",
@@ -665,14 +725,29 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         slug, number, pull = find_pull(state, options, positionals)
         strategy = next((name for name in ("squash", "merge", "rebase") if options.get(name)), None)
         attempt = {"op": "pr merge", "repo": slug, "number": number, "strategy": strategy, "match_head_commit": one(options, "match"), "admin": bool(options.get("admin")), "auto": bool(options.get("auto")), "head": pull["headRefOid"]}
+        queue = state["repos"][slug].get("mergeQueue", False)
         if pull["state"] != "OPEN":
             die(f"Pull request {slug}#{number} is not open ({pull['state'].lower()})", 1, **attempt)
-        if strategy is None:
+        if not queue and strategy is None:
             die("--merge, --rebase, or --squash required when not running interactively", 1, **attempt)
-        if strategy not in state["repos"][slug].get("mergeMethods", ["squash"]):
+        if not queue and strategy not in state["repos"][slug].get("mergeMethods", ["squash"]):
             die(f"{strategy.capitalize()} merges are not allowed on this repository", 1, **attempt)
         if one(options, "match") and one(options, "match") != pull["headRefOid"]:
             die("Head branch was modified. Review and try the merge again. (expected head sha didn't match)", 1, **attempt)
+        if queue:
+            # The queue merges on its own schedule: the pull request settles at the next turn.
+            if options.get("admin"):
+                die("Repository rule violations found\n\nChanges must be made through the merge queue", 1, **attempt)
+            if pull.get("mergeQueueEntry"):
+                die(f"Pull request {slug}#{number} is already queued to merge", 1, **attempt)
+            if pull.get("mergeStateStatus") == "DIRTY":
+                die(f"Pull request {slug}#{number} is not mergeable: merge state is DIRTY", 1, **attempt)
+            pull["mergeQueueEntry"] = {"state": "QUEUED", "enqueuedAt": tick(state), "headRefOid": pull["headRefOid"]}
+            save_state(state, state_path)
+            trace("write", result="queued", **attempt)
+            print(f"! The merge strategy for {pull.get('baseRefName', state['repos'][slug]['defaultBranch'])} is set by the merge queue")
+            print(f"✓ Pull request {slug}#{number} will be added to the merge queue for {pull.get('baseRefName', state['repos'][slug]['defaultBranch'])} when ready")
+            return
         clean = pull.get("mergeStateStatus", "CLEAN") == "CLEAN"
         if not clean and options.get("auto"):
             pull["autoMergeRequest"] = {"enabledBy": {"login": state["viewer"]["login"]}, "mergeMethod": strategy.upper()}
@@ -682,11 +757,7 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
             return
         if not clean and (not options.get("admin") or pull.get("mergeStateStatus") == "DIRTY"):
             die(f"Pull request {slug}#{number} is not mergeable: merge state is {pull['mergeStateStatus']}", 1, **attempt)
-        pull.update(state="MERGED", mergedAt=tick(state), mergedBy=state["viewer"]["login"], mergeCommit=hashlib.sha1(f"{slug}#{number}".encode()).hexdigest())
-        for other in pull.get("conflictsWith", []):
-            blocked = state["repos"][slug]["pulls"].get(str(other))
-            if blocked and blocked["state"] == "OPEN":
-                blocked.update(mergeable="CONFLICTING", mergeStateStatus="DIRTY")
+        merge_pull(state, slug, number, pull)
         save_state(state, state_path)
         trace("write", result="merged", **attempt)
         print(f"Merged pull request {slug}#{number} ({pull['title']})")
@@ -703,33 +774,129 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         save_state(state, state_path)
         trace("write", op="pr review", repo=slug, number=number, review=kind, body=review_body)
         return
+    if sub == "create":
+        create_pull(state, state_path, rest)
+        return
     refuse(f"`pr {sub}` is outside the stand-in's contract", op=f"pr {sub}")
+
+
+def git_remote(repo: dict, *args: str) -> subprocess.CompletedProcess[str]:
+    """Run git against the staged bare repository that stands in for this one on GitHub."""
+    environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+    return subprocess.run(["git", "--git-dir", repo.get("gitRemote", ""), *args], env=environment, capture_output=True, text=True, check=False)
+
+
+def create_pull(state: dict, state_path: Path, args: list[str]) -> None:
+    options, _ = parse(
+        args,
+        {**REPO_FLAGS, **BODY_FLAGS, "--title": "title", "-t": "title", "--head": "head", "-H": "head", "--base": "base", "-B": "base", "--label": "label", "-l": "label"},
+        {"--draft": "draft", "-d": "draft"},
+    )
+    slug = one(options, "repo")
+    repo = require_repo(state, slug)
+    title, body, head = one(options, "title"), read_body(options), one(options, "head")
+    base = one(options, "base", repo["defaultBranch"])
+    if not title or body is None:
+        die("must provide `--title` and `--body` (or `--body-file`) when not running interactively", 1)
+    if not head:
+        die("pass --head <branch>: this stand-in does not read the current branch", 1)
+    # The branch must already be pushed to the staged repository, as on GitHub.
+    head_sha = git_remote(repo, "rev-parse", "--verify", "--quiet", f"refs/heads/{head}^{{commit}}") if repo.get("gitRemote") else None
+    base_sha = git_remote(repo, "rev-parse", "--verify", "--quiet", f"refs/heads/{base}^{{commit}}") if repo.get("gitRemote") else None
+    if not head_sha or head_sha.returncode != 0 or not base_sha or base_sha.returncode != 0:
+        die(f"pull request create failed: GraphQL: Head sha can't be blank, Base sha can't be blank, No commits between {base} and {head}, Head ref must be a branch (createPullRequest)", 1, op="pr create", repo=slug, head=head)
+    pulls = repo.setdefault("pulls", {})
+    if any(pull["state"] == "OPEN" and pull.get("headRefName") == head for pull in pulls.values()):
+        die(f'a pull request for branch "{head}" into branch "{base}" already exists', 1, op="pr create", repo=slug, head=head)
+    labels = many(options, "label")
+    known = {label["name"] for label in repo.get("labels", [])}
+    for name in labels:
+        if name not in known:
+            die(f"could not add label: '{name}' not found", 1, op="pr create", repo=slug)
+    diff = git_remote(repo, "diff", "--no-color", "--no-ext-diff", f"{base_sha.stdout.strip()}...{head_sha.stdout.strip()}")
+    number = str(max([int(key) for key in [*pulls, *repo.get("issues", {})]], default=0) + 1)
+    stamp = tick(state)
+    pulls[number] = {
+        "title": title, "body": body.rstrip("\n") + "\n", "author": state["viewer"]["login"], "state": "OPEN",
+        "isDraft": bool(options.get("draft")), "headRefOid": head_sha.stdout.strip(), "headRefName": head, "baseRefName": base,
+        "labels": labels, "createdAt": stamp, "updatedAt": stamp, "mergeable": "MERGEABLE", "mergeStateStatus": "CLEAN",
+        "checks": [], "comments": [], "diff": diff.stdout,
+    }
+    save_state(state, state_path)
+    trace("write", op="pr create", repo=slug, number=number, head=head, base=base, title=title, body=body, labels=labels)
+    print(f"https://github.com/{slug}/pull/{number}")
 
 
 # ---------------------------------------------------------------- other commands
 
 
-def cmd_issue(state: dict, args: list[str]) -> None:
-    if not args or args[0] != "view":
-        refuse("only `issue view` is served", op="issue " + (args[0] if args else ""))
-    options, positionals = parse(args[1:], JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
+def issue_object(state: dict, slug: str, number: str) -> dict:
+    repo = state["repos"][slug]
+    issue = repo["issues"][number]
+    return {
+        "id": f"I_{slug.split('/')[1]}_{number}", "number": int(number), "title": issue["title"], "body": issue.get("body", ""),
+        "state": issue.get("state", "OPEN"), "stateReason": issue.get("stateReason"), "closed": issue.get("state", "OPEN") != "OPEN",
+        "author": {"login": issue.get("author", state["viewer"]["login"])}, "labels": label_objects(repo, issue.get("labels", [])),
+        "assignees": [], "comments": comment_objects(slug, number, issue.get("comments", [])), "url": f"https://github.com/{slug}/issues/{number}",
+        "createdAt": issue.get("createdAt", state["now"]), "updatedAt": issue.get("updatedAt", state["now"]),
+        "projectItems": [], "issueType": None, "parent": None, "subIssues": [], "blockedBy": [], "blocking": [],
+    }
+
+
+def find_issue(state: dict, options: dict, positionals: list[str]) -> tuple[str, str, dict]:
     if not positionals:
         die("issue number required", 1)
     slug, number = locate(positionals[0], "issues", options)
-    repo = require_repo(state, slug)
-    issue = repo.get("issues", {}).get(number)
+    issue = require_repo(state, slug).get("issues", {}).get(number)
     if issue is None:
         not_found(f"issue {slug}#{number}")
-    data = {
-        "number": int(number), "title": issue["title"], "body": issue.get("body", ""), "state": issue.get("state", "OPEN"),
-        "closed": issue.get("state", "OPEN") != "OPEN", "author": {"login": issue.get("author", state["viewer"]["login"])},
-        "labels": label_objects(repo, issue.get("labels", [])), "assignees": [],
-        "comments": comment_objects(slug, number, issue.get("comments", [])), "url": f"https://github.com/{slug}/issues/{number}",
-        "createdAt": issue.get("createdAt", state["now"]), "updatedAt": issue.get("updatedAt", state["now"]),
-    }
-    text = "\n".join([f"title:\t{data['title']}", f"state:\t{data['state']}", f"labels:\t{', '.join(label['name'] for label in data['labels'])}", "--", data["body"]])
-    emit(data, options, fields=list(data), text=text)
-    trace("read", op="issue view", repo=slug, number=number)
+    return slug, number, issue
+
+
+def cmd_issue(state: dict, state_path: Path, args: list[str]) -> None:
+    if not args or args[0] not in ("view", "list", "edit"):
+        refuse("only `issue view`, `issue list`, and `issue edit` are served", op="issue " + (args[0] if args else ""))
+    if args[0] == "view":
+        options, positionals = parse(args[1:], JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
+        slug, number, _ = find_issue(state, options, positionals)
+        data = issue_object(state, slug, number)
+        text = "\n".join([f"title:\t{data['title']}", f"state:\t{data['state']}", f"labels:\t{', '.join(label['name'] for label in data['labels'])}", "--", data["body"]])
+        emit(data, options, fields=list(data), text=text)
+        trace("read", op="issue view", repo=slug, number=number)
+        return
+    if args[0] == "list":
+        options, _ = parse(args[1:], {**JSON_FLAGS, "--state": "state", "-s": "state", "--label": "label", "-l": "label"}, {})
+        slug = one(options, "repo")
+        repo = require_repo(state, slug)
+        wanted = one(options, "state", "open")
+        issues = [
+            issue_object(state, slug, number) for number, issue in repo.get("issues", {}).items()
+            if (wanted == "all" or (issue.get("state", "OPEN") == "OPEN") == (wanted == "open"))
+            and all(label in issue.get("labels", []) for label in many(options, "label"))
+        ][: int(one(options, "limit", "30"))]
+        fields = list(issue_object(state, slug, next(iter(repo["issues"])))) if repo.get("issues") else ["number"]
+        emit(issues, options, fields=fields, text="\n".join(f"{item['number']}\t{item['state']}\t{item['title']}" for item in issues))
+        trace("read", op="issue list", repo=slug)
+        return
+    options, positionals = parse(args[1:], {**REPO_FLAGS, **BODY_FLAGS, "--add-label": "add", "--remove-label": "remove", "--title": "title", "-t": "title"}, {})
+    slug, number, issue = find_issue(state, options, positionals)
+    add, remove, title, body = many(options, "add"), many(options, "remove"), one(options, "title"), read_body(options)
+    if not add and not remove and title is None and body is None:
+        refuse("`issue edit` serves only --add-label, --remove-label, --title, and --body or --body-file")
+    known = {label["name"] for label in state["repos"][slug].get("labels", [])}
+    for name in add:
+        if name not in known:
+            die(f"could not add label: '{name}' not found", 1, op="issue edit", repo=slug, number=number)
+    labels = [name for name in issue.get("labels", []) if name not in remove]
+    issue["labels"] = labels + [name for name in add if name not in labels]
+    if title is not None:
+        issue["title"] = title
+    if body is not None:
+        issue["body"] = body
+    issue["updatedAt"] = tick(state)
+    save_state(state, state_path)
+    trace("write", op="issue edit", repo=slug, number=number, add=add, remove=remove, title=title, body=body)
+    print(f"https://github.com/{slug}/issues/{number}")
 
 
 def cmd_repo(state: dict, args: list[str]) -> None:
@@ -737,7 +904,7 @@ def cmd_repo(state: dict, args: list[str]) -> None:
         refuse("only `repo view` and `repo list` are served", op="repo " + (args[0] if args else ""))
     options, positionals = parse(args[1:], {**JSON_FLAGS, "--visibility": "visibility"}, {"--no-archived": "no-archived", "--source": "source"})
     if args[0] == "view":
-        slug = positionals[0] if positionals else one(options, "repo")
+        slug = normal_slug(positionals[0]) if positionals else one(options, "repo")
         require_repo(state, slug, "no git remotes found; name the repository as OWNER/REPO")
         data = repo_object(state, slug)
         emit(data, options, fields=list(data), text="\n".join(f"{key}:\t{value}" for key, value in data.items()))
@@ -759,7 +926,7 @@ def cmd_label(state: dict, state_path: Path, args: list[str]) -> None:
     slug = one(options, "repo")
     labels = require_repo(state, slug).setdefault("labels", [])
     if args[0] == "list":
-        emit(labels, options, fields=["name", "color", "description"], text="\n".join(f"{label['name']}\t{label['description']}\t#{label['color']}" for label in labels))
+        emit([{"id": f"LA_{label['name']}", **label} for label in labels], options, fields=["id", "name", "color", "description"], text="\n".join(f"{label['name']}\t{label['description']}\t#{label['color']}" for label in labels))
         trace("read", op="label list", repo=slug)
         return
     if not positionals:
@@ -778,12 +945,14 @@ def cmd_label(state: dict, state_path: Path, args: list[str]) -> None:
     print(f'Label "{name}" created in {slug}')
 
 
-def cmd_api(state: dict, args: list[str]) -> None:
+def cmd_api(state: dict, state_path: Path, args: list[str]) -> None:
     options, positionals = parse(
         args,
-        {"-X": "method", "--method": "method", "-f": "field", "-F": "field", "--raw-field": "field", "--field": "field", "-H": "header", "--header": "header", "--jq": "jq", "-q": "jq", "--input": "input"},
-        {"--paginate": "paginate", "--slurp": "slurp"},
+        {"-X": "method", "--method": "method", "-f": "field", "-F": "field", "--raw-field": "field", "--field": "field", "-H": "header", "--header": "header", "--jq": "jq", "-q": "jq", "--input": "input", "--hostname": "hostname"},
+        {"--paginate": "paginate", "--slurp": "slurp", "--silent": "silent"},
     )
+    if one(options, "hostname", "github.com") != "github.com":
+        die(f"this stand-in serves only github.com, not {one(options, 'hostname')}", 1)
     if not positionals:
         die("accepts 1 arg(s), received 0", 1)
     endpoint, _, query_string = positionals[0].lstrip("/").partition("?")
@@ -791,12 +960,38 @@ def cmd_api(state: dict, args: list[str]) -> None:
     fields = dict(field.split("=", 1) for field in options.get("field", []) if "=" in field)
     if endpoint == "graphql":
         document = fields.get("query", "")
+        slug = f"{fields.get('owner', '')}/{fields.get('repo', fields.get('name', ''))}"
+        if "setIssueFieldValue" in document:
+            set_issue_fields(state, state_path, document, fields, options)
+            return
         if "enqueuePullRequest" in document:
+            if any(repo.get("mergeQueue") for repo in state["repos"].values()):
+                refuse("enqueue through gh pr merge, which adds a pull request to its repository's merge queue", op="graphql enqueuePullRequest", document=document)
             die('{"errors":[{"message":"Merge queue is not enabled for this branch"}]}', 1, op="graphql enqueuePullRequest", document=document)
         if "mutation" in document:
             refuse("GraphQL mutations are outside the stand-in's contract; use gh pr comment, gh pr edit, gh pr merge, or gh label create", op="graphql mutation", document=document)
-        if "mergeQueue" in document:
-            emit({"data": {"repository": {"mergeQueue": None}}}, options)
+        if "mergeQueueEntry" in document:
+            pull = state["repos"].get(slug, {}).get("pulls", {}).get(fields.get("number", ""))
+            if pull is None:
+                die('{"errors":[{"message":"Could not resolve to a PullRequest"}]}', 1, op="graphql mergeQueueEntry", slug=slug)
+            entry = pull.get("mergeQueueEntry")
+            emit({"data": {"repository": {"pullRequest": {"number": int(fields["number"]), "state": pull["state"], "headRefOid": pull["headRefOid"], "mergeQueueEntry": entry}}}}, options)
+        elif "mergeQueue" in document:
+            repo = state["repos"].get(slug, {})
+            queued = [(number, pull) for number, pull in repo.get("pulls", {}).items() if pull.get("mergeQueueEntry")]
+            queued.sort(key=lambda item: item[1]["mergeQueueEntry"]["enqueuedAt"])
+            nodes = [{"position": position, "state": pull["mergeQueueEntry"]["state"], "headCommit": {"oid": pull["mergeQueueEntry"]["headRefOid"]}, "pullRequest": {"number": int(number)}} for position, (number, pull) in enumerate(queued, start=1)]
+            emit({"data": {"repository": {"mergeQueue": {"entries": {"totalCount": len(nodes), "nodes": nodes}} if repo.get("mergeQueue") else None}}}, options)
+        elif "issueFieldValues" in document:
+            issue = state["repos"].get(slug, {}).get("issues", {}).get(fields.get("number", ""))
+            if issue is None:
+                die('{"errors":[{"message":"Could not resolve to an Issue"}]}', 1, op="graphql issueFieldValues", slug=slug)
+            ids = {name: identifier for identifier, name in ISSUE_FIELDS}
+            nodes = [{"__typename": "IssueFieldNumberValue", "value": float(value), "field": {"id": ids[name], "name": name}} for name, value in issue.get("fields", {}).items()]
+            emit({"data": {"repository": {"issue": {"id": issue_object(state, slug, fields["number"])["id"], "issueFieldValues": {"nodes": nodes, "pageInfo": {"hasNextPage": False}}}}}}, options)
+        elif "issueFields" in document:
+            nodes = [{"id": identifier, "name": name, "dataType": "NUMBER"} for identifier, name in ISSUE_FIELDS]
+            emit({"data": {"repository": {"issueFields": {"nodes": nodes, "pageInfo": {"hasNextPage": False, "endCursor": None}}}}}, options)
         elif "reviewThreads" in document:
             slug = f"{fields.get('owner', '')}/{fields.get('repo', '')}"
             if slug not in state["repos"] or fields.get("number", "") not in state["repos"][slug]["pulls"]:
@@ -822,6 +1017,36 @@ def cmd_api(state: dict, args: list[str]) -> None:
     query.update(fields)
     emit(api_get(state, endpoint, query, " ".join(options.get("header", []))), options)
     trace("read", op="api", endpoint=endpoint)
+
+
+# Every repository owner in these worlds has the four Number issue fields that hold leverage scores.
+ISSUE_FIELDS = [("IFN_impact", "Impact"), ("IFN_confidence", "Confidence"), ("IFN_verification", "Verification effort"), ("IFN_undo", "Undo cost")]
+
+
+def set_issue_fields(state: dict, state_path: Path, document: str, fields: dict, options: dict) -> None:
+    """Apply setIssueFieldValue: each fieldId/numberValue pair names two variables."""
+    issue_variable = re.search(r"issueId:\s*\$(\w+)", document)
+    pairs = re.findall(r"fieldId:\s*\$(\w+)\s*,\s*numberValue:\s*\$(\w+)", document)
+    if not issue_variable or not pairs:
+        refuse("this setIssueFieldValue form is not served; pass issueId and each fieldId and numberValue as variables", op="graphql mutation", document=document)
+    issue_id = fields.get(issue_variable.group(1), "")
+    target = next(((slug, number) for slug, repo in state["repos"].items() for number in repo.get("issues", {}) if issue_object(state, slug, number)["id"] == issue_id), None)
+    names = dict(ISSUE_FIELDS)
+    if target is None or any(fields.get(field) not in names for field, _ in pairs):
+        die('{"errors":[{"message":"Could not resolve to a node with the global id"}]}', 1, op="graphql setIssueFieldValue", document=document)
+    values = {}
+    for field, value in pairs:
+        try:
+            number = float(fields.get(value, ""))
+        except ValueError:
+            die(f'{{"errors":[{{"message":"Variable ${value} of type Float! was provided invalid value"}}]}}', 1, op="graphql setIssueFieldValue")
+        values[names[fields[field]]] = int(number) if number.is_integer() else number
+    slug, number = target
+    issue = state["repos"][slug]["issues"][number]
+    issue.setdefault("fields", {}).update(values)
+    save_state(state, state_path)
+    trace("write", op="set issue fields", repo=slug, number=number, values=values)
+    emit({"data": {"setIssueFieldValue": {"issue": {"number": int(number)}}}}, options)
 
 
 def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
@@ -899,9 +1124,10 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
     if match:
         sha, part = match.groups()
         pull = next((pull for pull in pulls.values() if pull["headRefOid"].startswith(sha)), None)
-        if pull is None:
+        merged = next((pull for pull in pulls.values() if (pull.get("mergeCommit") or "").startswith(sha)), None)
+        if pull is None and merged is None:
             not_found(f"commit {sha}")
-        checks = pull.get("checks", [])
+        checks = pull.get("checks", []) if pull else merged.get("mergeCommitChecks", [])
         if part == "check-runs":
             return {"total_count": len(checks), "check_runs": [{"name": check["name"], "status": check["status"].lower(), "conclusion": check.get("conclusion", "").lower() or None} for check in checks]}
         conclusions = {check.get("conclusion", "") for check in checks}
@@ -925,16 +1151,18 @@ def main() -> None:
     state, state_path = load_state()
     command, rest = ARGV[0], ARGV[1:]
     if command == "auth" and rest[:1] == ["status"]:
-        print(f"github.com\n  ✓ Logged in to github.com account {state['viewer']['login']} (keyring)")
+        options, _ = parse(rest[1:], {"--hostname": "hostname", "--json": "json", "--jq": "jq", "-q": "jq"}, {"--active": "active", "-a": "active"})
+        account = {"state": "success", "active": True, "host": "github.com", "login": state["viewer"]["login"], "tokenSource": "keyring", "scopes": "repo, read:org", "gitProtocol": "https"}
+        emit({"hosts": {"github.com": [account]}}, options, fields=["hosts"], text=f"github.com\n  ✓ Logged in to github.com account {state['viewer']['login']} (keyring)")
         trace("read", op="auth status")
     elif command == "api":
-        cmd_api(state, rest)
+        cmd_api(state, state_path, rest)
     elif command == "search":
         cmd_search(state, rest)
     elif command == "pr":
         cmd_pr(state, state_path, rest)
     elif command == "issue":
-        cmd_issue(state, rest)
+        cmd_issue(state, state_path, rest)
     elif command == "repo":
         cmd_repo(state, rest)
     elif command == "label":

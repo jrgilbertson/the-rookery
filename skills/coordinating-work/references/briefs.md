@@ -12,11 +12,11 @@ design constraints from the record.
 Start each new task worker through the guide's supervised launch path, reach an
 adopted worker through its existing path, and send the whole brief inline. A
 worker on another host cannot read the Team lead's files, so the brief carries
-everything the worker needs. An assignment is
-open from dispatch until it is merged, held, or finished, and settled after
-that. A follow-on to a settled assignment is a new assignment. Confirm the
-earlier session has ended, release it through the guide when it has not, then
-start the follow-on fresh with the whole brief.
+everything the worker needs. An assignment is open from dispatch until its
+worker finishes, normally with its merge-ready report, and settled after that.
+Work its pull request still needs, such as findings to fix or a merge-queue
+ejection, reaches the worker as a follow-up, as
+[Operate](operate.md#after-the-merge-ready-report) says.
 
 Each brief tells its worker the following. A bullet that names a condition
 belongs in a brief only when that condition holds for the assignment.
@@ -45,28 +45,27 @@ belongs in a brief only when that condition holds for the assignment.
   not fix; it reports that item at once, in full. Otherwise it keeps going
   and declares its choices in the pull request body.
 - **The issue's Verification.** The worker treats each criterion as a
-  requirement of the work source `lfg` uses. Before asking to merge, the pull
-  request body lists the evidence beside each criterion and declares each
-  deviation: the criterion, what the worker did instead, and why. For
+  requirement of the work source `lfg` uses. Before its merge-ready report,
+  the pull request body lists the evidence beside each criterion and declares
+  each deviation: the criterion, what the worker did instead, and why. For
   user-facing work, the end-to-end browser run is the preferred evidence. The
   worker never edits the issue's Problem, Scope, Verification, or scores.
-- **Whether the pull request will be held.** When the issue is a held change
-  the operator did not pre-authorize, say so, so the worker expects a held
-  reply.
-- **Merge-ready is a question.** When `ce-babysit-pr` reports looks
-  merge-ready, the worker asks the Team lead once, naming the pull request,
-  quoting the report's first line verbatim, and giving the head commit that
-  report covered. Evidence and declared deviations belong in the pull request
-  body, not in the message. If the head moved after the report, the worker
-  waits for a report on the new head before asking. It stays open for the
-  reply: merged, held for the operator, or findings to fix.
+- **Merge-ready is the final report.** When `ce-babysit-pr` reports looks
+  merge-ready, the worker finishes its assignment with one report to the
+  Team lead, sent the way the guide finishes a task: it names the pull
+  request, quotes the report's first line verbatim, and gives the head commit
+  that report covered. Evidence and declared deviations belong in the pull
+  request body, not in the message. If the head moved after the report, the
+  worker waits for a report on the new head before finishing. It does not
+  wait for a reply; findings to fix or a merge-queue ejection come later as a
+  follow-up.
 - **A hold ends the assignment.** Any Team lead reply that holds the pull
   request for the operator finishes the worker's assignment: the worker stops
   its watch, including any watch it delegated, and finishes. A parked item the
   Team lead answers itself does not end the watch.
-- **Unapplied review findings.** Before asking, the worker settles each
-  unticked item `lfg` left in the pull request body and ticks it with the
-  outcome beside it: fixed in the branch, no change and why, or a follow-up
+- **Unapplied review findings.** Before its merge-ready report, the worker
+  settles each unticked item `lfg` left in the pull request body and ticks it
+  with the outcome beside it: fixed in the branch, no change and why, or a follow-up
   proposed there and not filed. Only a product or design call stays unticked,
   and it holds the pull request for the operator.
 - **A choice is a question.** A blocker that offers options for the

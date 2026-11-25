@@ -1,0 +1,21 @@
+[
+  {"query": "ok I've been heads down all week and there's a pile of agent PRs across ledger-app and the cli repo. can you go through everything that's open and tell me what I should merge", "should_trigger": true},
+  {"query": "Run a review round.", "should_trigger": true},
+  {"query": "what's waiting on me for review across my github repos? I think a few got held yesterday", "should_trigger": true},
+  {"query": "Show me the held PRs with before/after screenshots so I can decide on each one", "should_trigger": true},
+  {"query": "merge 412 and 423, request changes on 134 (tell them to split the typo fix out), and defer the rest until tomorrow", "should_trigger": true},
+  {"query": "what did the agents auto-merge overnight? anything in there I should look at again", "should_trigger": true},
+  {"query": "I want one page with a card for every open pull request in the acme org, most important first, so I can go through them on the train", "should_trigger": true},
+  {"query": "can you check which of my open PRs are safe to merge today and then merge the ones I say yes to", "should_trigger": true},
+  {"query": "three open PRs all touch the router. what order should they go in? review the rest of the queue while you're at it", "should_trigger": true},
+  {"query": "review my diff before I open a PR, I mostly care about the retry logic in src/http/client.ts", "should_trigger": false},
+  {"query": "address the review comments on PR 212 and resolve the threads when you're done", "should_trigger": false},
+  {"query": "CI is red on #88. fix it and keep an eye on it until it goes green", "should_trigger": false},
+  {"query": "commit this, push the branch, and open a PR against main", "should_trigger": false},
+  {"query": "create an issue for the flaky invoice export test and make it a sub-issue of the billing epic", "should_trigger": false},
+  {"query": "walk me through what PR 4521 changed in the config loader and why, I wasn't around when it merged", "should_trigger": false},
+  {"query": "set up a team lead to work through the billing epic and let it merge the routine PRs while I'm out", "should_trigger": false},
+  {"query": "review the notes from my 2pm design sync and pull out the action items", "should_trigger": false},
+  {"query": "write the changelog entry from the PRs that merged this week", "should_trigger": false},
+  {"query": "do a security review of the changes on this branch before I ship it", "should_trigger": false}
+]

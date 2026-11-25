@@ -1,15 +1,8 @@
 {
-  "anchor": "FrontierCode",
-  "aliases": {
-    "DeepSeek V4.1 Flash 1017": "DeepSeek V4.1 Flash",
-    "Reflection Beam": "Beam 1.0",
-    "GLM 5.3": "GLM-5.3",
-    "GLM 5.3 Flash": "GLM-5.3-Flash"
-  },
   "suites": {
     "FrontierCode": {"base": true},
     "VulcanBench": {"base": true},
-    "AA Intelligence Index": {"base": true},
+    "AA Index without coding": {"base": true},
     "Vals Index": {"base": true},
     "CursorBench": {"base": true},
     "AA Coding Agent Index": {"base": false},
@@ -18,11 +11,18 @@
     "Vals Terminal-Bench by effort": {"base": false},
     "Design Arena": {"base": false},
     "Arena WebDev": {"base": false},
-    "Design Arena UI Components": {"base": false},
     "21st.dev Design System Bench": {"base": false},
+    "Frontier Design": {"base": false},
     "Arena Creative Writing": {"base": false},
-    "Arena Text": {"base": false},
     "Lechmazur Writing": {"base": false}
+  },
+  "preference": {
+    "Design/taste": ["Arena WebDev", "Design Arena", "21st.dev Design System Bench", "Frontier Design"],
+    "Writing": ["Arena Creative Writing", "Lechmazur Writing"]
+  },
+  "frontier": {
+    "top": 15,
+    "min_suites": 2
   },
   "vendors": {
     "Anthropic": {"everyday": "Opus 5.5", "flagship": "Fable 5.2", "rationed": ["Fable 5.2"], "colour": "#C15F3C"},
@@ -38,7 +38,6 @@
     {"model": "Gemini 4 Neon", "provider": "Google", "status": "current"},
     {"model": "Gemini 4 Carbon", "provider": "Google", "status": "current"},
     {"model": "Gemini 4 Hydrogen", "provider": "Google", "status": "current"},
-    {"model": "Gemini 4 Argon", "provider": "Google", "status": "current"},
     {"model": "Grok 4.7", "provider": "xAI", "status": "current"}
   ]
 }

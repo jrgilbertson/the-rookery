@@ -73,6 +73,7 @@ verify and what it takes to undo.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
+- [reviewing-prs](skills/reviewing-prs/SKILL.md). Review the open pull requests across your repositories, and the ones that ask for your review, in one sitting. It reads each raw diff instead of the description, calls out stored names and missing screenshots, shows the round on one local page that puts the riskiest pull requests first and shows what each one changes for a user, and records your merge, request-changes, defer, or not-applicable Verdict at the exact commit you reviewed. It never merges: the agent working on each pull request acts on your Verdict.
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
 
 ## The automations
@@ -83,7 +84,7 @@ The [automation catalog](automations/README.md) contains copyable prompts,
 schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
-- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment.
+- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment, and check each host for operational drift.
 - [Daily learning](automations/daily-learning.md). Run a `daily-learning` review each morning across the last day's vault changes, local and paired remote AI sessions, and Anki status, then work the items you pick when you reply in its chat.
 - [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and recommend fixes for approval.
 - [Design system audit](automations/design-system-audit.md). Review every page against the design contract and recommend fixes for drift and recurring design problems.

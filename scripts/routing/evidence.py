@@ -3,11 +3,14 @@
 
 Commands:
   report --data DIR [--as-of YYYY-MM-DD]
-                      Print cost per pass, cost per added quality point, time,
-                      the combined score, each model's best-value effort, the
-                      charted models at those efforts in order, and the Executor and
-                      Team lead rows built from each vendor's own guidance,
-                      from the latest read of each suite. --as-of ignores later reads.
+                      Print each suite's figures, the combined score, each model's best-value effort, the
+                      charted models at those efforts in order, the Executor and
+                      Team lead rows built from each vendor's own guidance, and
+                      the preference rows, each scored on its sources weighted
+                      equally, from the latest read of each suite. --as-of
+                      ignores later reads. Every section is tab-separated
+                      except the last, names, which prints ROUTING.md's two
+                      mapping tables in Markdown.
   changes --data DIR  List what moved between each suite's two latest reads.
   import --data DIR --format frontiercode|vulcanbench|table --file PATH
          --version V --date YYYY-MM-DD --url URL [--suite NAME]
@@ -17,9 +20,9 @@ Commands:
                       pass_rate, cost_usd, and minutes for any suite named
                       with --suite.
   charts --data DIR --out DIR
-                      Write routing-base.svg, routing-base-providers.svg, and
-                      routing-base-suites.svg, and routing-table.svg from
-                      recommendations.csv.
+                      Write routing-base.svg, routing-frontier.svg when
+                      chart.json has a frontier block, and routing-table.svg
+                      from recommendations.csv.
 
 Every command prints a verdict on line 1: "OK ..." on success, or
 "ERROR ..." naming the problem, with a non-zero exit. The script reads local
@@ -35,7 +38,7 @@ import io
 import json
 import math
 import statistics
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 # "none" is a model with no effort setting.
@@ -45,8 +48,10 @@ RESULT_COLUMNS = (
     "cost_usd", "minutes", "date_read", "source_url",
 )
 ROLE_INPUT_COLUMNS = ("role", "source", "url", "date_read", "says")
+MODEL_COLUMNS = ("name", "model", "maker", "status", "note")
+EFFORT_COLUMNS = ("label", "effort", "sources")
 # The most extra cost, in percent, worth paying for each added point of combined quality.
-BEST_VALUE_STEP_LIMIT = 40.0
+BEST_VALUE_STEP_LIMIT = 20.0
 VENDOR_ROLES = (("Executor", "everyday"), ("Team lead", "flagship"))
 
 
@@ -96,8 +101,19 @@ class Data:
     history: list[Result]  # every read in the file
     suites: dict[str, bool]  # suite name -> in the base
     models: list[dict[str, str]]
-    anchor: str  # the base suite every other base suite is scaled against
     vendors: dict[str, dict]  # provider -> {"everyday": model, "flagship": model, "rationed": [models]}
+    preference: dict[str, list[str]] = field(default_factory=dict)  # role -> the suites that score it, weighted equally
+    frontier: dict = field(default_factory=dict)  # {"top": n, "min_suites": n}; empty draws no frontier chart
+    names: list[dict[str, str]] = field(default_factory=list)  # models.csv rows: each name a source uses, and the model it means
+    effort_labels: list[dict[str, str]] = field(default_factory=list)  # efforts.csv rows: each source's effort label, and our effort
+
+    @property
+    def makers(self) -> dict[str, str]:
+        return {row["model"]: row["maker"] for row in self.names if row["name"] == row["model"]}
+
+    @property
+    def superseded(self) -> set[str]:
+        return {row["model"] for row in self.names if row["name"] == row["model"] and row["status"] == "superseded"}
 
     @property
     def base(self) -> list[str]:
@@ -132,8 +148,49 @@ def _read_csv(path: Path, columns: tuple[str, ...], text: str | None = None) -> 
     return list(reader)
 
 
+def read_names(directory: Path) -> tuple[list[dict[str, str]], dict[str, str]]:
+    """Read models.csv: one row per model, giving its maker and status, plus one row per other name a source uses for it.
+
+    Returns the rows and the alias map from each other name to its model.
+    """
+    rows = [{key: (row.get(key) or "").strip() for key in MODEL_COLUMNS} for row in _read_csv(directory / "models.csv", MODEL_COLUMNS)]
+    seen: set[str] = set()
+    for line, row in enumerate(rows, start=2):
+        name, model = row["name"], row["model"]
+        if not name or not model:
+            raise DataError(f"models.csv line {line}: name and model are both required")
+        if name in seen:
+            raise DataError(f"models.csv line {line}: {name} is listed twice")
+        seen.add(name)
+        if name == model:
+            if not row["maker"] or row["status"] not in ("current", "superseded"):
+                raise DataError(f"models.csv line {line}: {model} needs a maker and a status of current or superseded")
+        elif row["maker"] or row["status"]:
+            raise DataError(f"models.csv line {line}: {name} is another name for {model}, so leave its maker and status to {model}'s own row")
+    models = {row["model"] for row in rows if row["name"] == row["model"]}
+    aliases = {row["name"]: row["model"] for row in rows if row["name"] != row["model"]}
+    for name, model in aliases.items():
+        if model not in models:
+            raise DataError(f"models.csv: {name} names {model}, which has no row of its own")
+    return rows, aliases
+
+
+def read_effort_labels(directory: Path) -> tuple[list[dict[str, str]], dict[str, str]]:
+    """Read efforts.csv: each label a source uses for an effort, and the effort it means here."""
+    rows = [{key: (row.get(key) or "").strip() for key in EFFORT_COLUMNS} for row in _read_csv(directory / "efforts.csv", EFFORT_COLUMNS)]
+    labels: dict[str, str] = {}
+    for line, row in enumerate(rows, start=2):
+        label = row["label"].lower()
+        if not label or row["effort"] not in EFFORTS:
+            raise DataError(f"efforts.csv line {line}: {row['label']!r} must map to one of {', '.join(EFFORTS)}")
+        if label in labels:
+            raise DataError(f"efforts.csv line {line}: {row['label']} is listed twice")
+        labels[label] = row["effort"]
+    return rows, labels
+
+
 def load(directory: Path, results_text: str | None = None, as_of: str | None = None) -> Data:
-    """Read and validate the three data files. Every command uses this loader.
+    """Read and validate the data files. Every command uses this loader.
 
     results.csv keeps every read of every suite. The figures come from each
     suite's latest read, or its latest on or before as_of. results_text stands
@@ -143,17 +200,28 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
         chart = json.loads((directory / "chart.json").read_text(encoding="utf-8"))
         suites = {name: bool(entry["base"]) for name, entry in chart["suites"].items()}
         models = [dict(entry) for entry in chart["models"]]
-        anchor = chart["anchor"]
-        aliases = dict(chart.get("aliases", {}))
+        if "aliases" in chart:
+            raise DataError("chart.json: aliases now live in models.csv, one row per other name")
         vendors = {name: dict(entry) for name, entry in chart.get("vendors", {}).items()}
+        preference = {role: list(names) for role, names in chart.get("preference", {}).items()}
+        frontier = dict(chart.get("frontier", {}))
+        if frontier:
+            for key in ("top", "min_suites"):
+                value = frontier.get(key)
+                if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+                    raise DataError(f"chart.json: frontier {key} must be a whole number of at least 1")
+            if "superseded" in frontier:
+                raise DataError("chart.json: superseded releases now live in models.csv, with status superseded")
+        for role, names in preference.items():
+            for name in names:
+                if name not in suites:
+                    raise DataError(f"chart.json: preference names {name} for {role}, but suites does not list it")
         listed = {(entry["model"], entry["provider"]) for entry in models}
         for provider, entry in vendors.items():
             entry.setdefault("rationed", [])
             for name in (entry["everyday"], entry["flagship"], *entry["rationed"]):
                 if (name, provider) not in listed:
                     raise DataError(f"chart.json: vendors names {name} for {provider}, but models does not list it under {provider}")
-        if not suites.get(anchor):
-            raise DataError(f"chart.json: anchor {anchor!r} is not a base suite")
         for entry in models:
             if entry["status"] not in ("current", "superseded"):
                 raise DataError(f"chart.json: status of {entry['model']} must be current or superseded")
@@ -165,6 +233,19 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
         raise DataError(f"chart.json is malformed: {error}") from None
 
     _read_csv(directory / "role-inputs.csv", ROLE_INPUT_COLUMNS)
+    names, aliases = read_names(directory)
+    effort_labels, _ = read_effort_labels(directory)
+    own = {row["model"]: row for row in names if row["name"] == row["model"]}
+    for entry in models:
+        if entry["model"] in aliases:
+            raise DataError(f"chart.json: models lists {entry['model']}, which models.csv calls another name for {aliases[entry['model']]}")
+        row = own.get(entry["model"])
+        if row is None:
+            raise DataError(f"chart.json: models lists {entry['model']}, which needs its own row in models.csv")
+        if row["maker"] != entry["provider"]:
+            raise DataError(f"chart.json: {entry['model']} is under {entry['provider']}, but models.csv gives its maker as {row['maker']}")
+        if row["status"] != entry["status"]:
+            raise DataError(f"chart.json lists {entry['model']} as {entry['status']}, but models.csv marks it {row['status']}")
 
     history: list[Result] = []
     seen: set[tuple[str, str, str, str]] = set()
@@ -202,36 +283,11 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
     for result in history:
         latest[result.suite] = max(latest.get(result.suite, ""), result.date_read)
     results = [result for result in history if result.date_read == latest[result.suite]]
-    return Data(results, history, suites, models, anchor, vendors)
-
-
-def cost_per_pass(result: Result) -> float | str:
-    if result.cost is None or result.pass_rate is None:
-        return "missing"
-    if result.pass_rate == 0:
-        return "no passes"
-    return result.cost / (result.pass_rate / 100)
+    return Data(results, history, suites, models, vendors, preference, frontier, names, effort_labels)
 
 
 def _by_effort(results: list[Result]) -> list[Result]:
     return sorted(results, key=lambda result: EFFORTS.index(result.effort))
-
-
-def cost_per_added_point(previous: Result, current: Result) -> float | str:
-    """Dollars per extra quality point over the next lower effort tested."""
-    if previous.cost is None or current.cost is None:
-        return "missing"
-    gain = current.score - previous.score
-    if gain <= 0:
-        return "no gain"
-    if current.cost < previous.cost:
-        return "cheaper"
-    return (current.cost - previous.cost) / gain
-
-
-def _logit(percent: float) -> float:
-    clamped = min(max(percent, 1.0), 99.0)
-    return math.log(clamped / (100 - clamped))
 
 
 @dataclass(frozen=True)
@@ -243,104 +299,79 @@ class Combined:
     suites: int
 
 
-def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
-    """Put the base suites on one scale and average them.
+@dataclass(frozen=True)
+class Scaled:
+    quality: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> standard deviations from the suite's reference mean
+    cost: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> log cost relative to the suite's typical reference setting
+    reference: dict[str, int]  # suite -> settings it tested for the current charted models
 
-    Each suite is scaled against the anchor suite on the settings the two
-    share, so a suite that tested only some models still joins. A setting's
-    score averages whichever suites tested it. Returns the combined rows and
-    each suite's count of settings shared with the anchor.
+
+def scale(data: Data) -> Scaled:
+    """Standardize every base suite on its own.
+
+    Each suite's scores are z-scored over the settings it tested for the
+    current charted models, and its costs are taken relative to the geometric
+    mean of those settings' costs. Every suite counts the same; none is a
+    reference for the others.
     """
     base = data.base
     if not base:
         raise DataError("chart.json names no base suite")
-    by_suite = {name: {r.setting: r for r in data.results if r.suite == name} for name in base}
-    anchor = by_suite[data.anchor]
-    if len(anchor) < 3:
-        raise DataError(f"the anchor suite {data.anchor} holds fewer than three settings")
-    logits = [_logit(row.score) for row in anchor.values()]
-    mean, spread = statistics.fmean(logits), statistics.pstdev(logits)
-    if spread == 0:
-        raise DataError(f"every setting scores the same on {data.anchor}")
-    anchor_quality = {setting: (_logit(row.score) - mean) / spread for setting, row in anchor.items()}
-
-    # scaled[suite][model][effort] holds that suite's score on the anchor's scale.
-    scaled: dict[str, dict[str, dict[str, float]]] = {data.anchor: {}}
-    priced: dict[str, dict[str, dict[str, float]]] = {data.anchor: {}}
-    for (model, effort), value in anchor_quality.items():
-        scaled[data.anchor].setdefault(model, {})[effort] = value
-    for (model, effort), row in anchor.items():
-        if row.cost is not None:
-            priced[data.anchor].setdefault(model, {})[effort] = math.log(row.cost)
-    overlap: dict[str, int] = {}
-    for name, rows in by_suite.items():
-        if name == data.anchor:
-            continue
-        shared = sorted(set(rows) & set(anchor))
-        overlap[name] = len(shared)
-        if len(shared) < 3:
-            raise DataError(f"{name} shares fewer than three settings with the anchor {data.anchor}")
-        own = [_logit(rows[setting].score) for setting in shared]
-        target = [anchor_quality[setting] for setting in shared]
-        own_mean, own_spread = statistics.fmean(own), statistics.pstdev(own)
-        if own_spread == 0:
-            raise DataError(f"every setting {name} shares with the anchor scores the same")
-        scale, shift = statistics.pstdev(target) / own_spread, statistics.fmean(target)
-        # A suite's price level is how far its costs sit, at the median, from
-        # the anchor's for the same setting.
-        both = [s for s in shared if rows[s].cost is not None and anchor[s].cost is not None]
-        level = statistics.median(math.log(rows[s].cost) - math.log(anchor[s].cost) for s in both) if both else None
+    current = {entry["model"] for entry in data.models if entry["status"] == "current"}
+    scaled: dict[str, dict[str, dict[str, float]]] = {}
+    priced: dict[str, dict[str, dict[str, float]]] = {}
+    reference: dict[str, int] = {}
+    for name in base:
+        rows = {r.setting: r for r in data.results if r.suite == name}
+        chosen = [setting for setting in rows if setting[0] in current]
+        reference[name] = len(chosen)
+        if len(chosen) < 3:
+            raise DataError(f"{name} holds fewer than three settings for the current charted models")
+        scores = [rows[setting].score for setting in chosen]
+        mean, spread = statistics.fmean(scores), statistics.pstdev(scores)
+        if spread == 0:
+            raise DataError(f"every current-model setting on {name} scores the same")
+        costs = [math.log(rows[setting].cost) for setting in chosen if rows[setting].cost is not None]
+        level = statistics.fmean(costs) if costs else None
         scaled[name], priced[name] = {}, {}
         for (model, effort), row in rows.items():
-            scaled[name].setdefault(model, {})[effort] = (_logit(row.score) - own_mean) * scale + shift
+            scaled[name].setdefault(model, {})[effort] = (row.score - mean) / spread
             if row.cost is not None and level is not None:
                 priced[name].setdefault(model, {})[effort] = math.log(row.cost) - level
+    return Scaled(scaled, priced, reference)
 
+
+def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
+    """Average the standardized base suites.
+
+    A setting's score averages whichever suites tested it, shown as 50 plus 10
+    for each standard deviation. Returns the combined rows and each suite's
+    count of reference settings.
+    """
+    scales = scale(data)
+    scaled, priced = scales.quality, scales.cost
     combined = []
     for model in sorted({model for suite in scaled.values() for model in suite}):
-        quality = _blend({name: suite[model] for name, suite in scaled.items() if model in suite})
-        cost = _blend({name: suite[model] for name, suite in priced.items() if model in suite})
+        quality = _mean_by_effort([suite[model] for suite in scaled.values() if model in suite])
+        cost = _mean_by_effort([suite[model] for suite in priced.values() if model in suite])
         for effort in sorted(quality, key=EFFORTS.index):
             tested = sum(1 for suite in scaled.values() if effort in suite.get(model, {}))
             combined.append(Combined(
                 model, effort, 50 + 10 * quality[effort],
                 math.exp(cost[effort]) if effort in cost else None, tested,
             ))
-    return combined, overlap
+    return combined, scales.reference
 
 
-def _blend(cells: dict[str, dict[str, float]]) -> dict[str, float]:
-    """Average one model's values across suites, effort by effort.
-
-    A suite that tested only some efforts still says something about the
-    model as a whole. Its average gap from the other suites, at the efforts
-    they share, is applied to every effort, so it moves the curve up or down
-    without bending it. With every suite at every effort this is a plain mean.
-    """
-    efforts = sorted({effort for values in cells.values() for effort in values})
-    if not efforts:
-        return {}
-    point = {e: statistics.fmean(v[e] for v in cells.values() if e in v) for e in efforts}
-    gap = {name: 0.0 for name in cells}
-    for _ in range(200):
-        settled = (gap, point)
-        gap = {name: statistics.fmean(value - point[e] for e, value in values.items()) for name, values in cells.items()}
-        point = {e: statistics.fmean(v[e] - gap[name] for name, v in cells.items() if e in v) for e in efforts}
-        if (gap, point) == settled:
-            break
-    level = statistics.fmean(gap.values())
-    return {e: point[e] + level for e in efforts}
+def _mean_by_effort(cells: list[dict[str, float]]) -> dict[str, float]:
+    """Average one model's values effort by effort, over the suites that tested that effort."""
+    efforts = {effort for values in cells for effort in values}
+    return {e: statistics.fmean(values[e] for values in cells if e in values) for e in efforts}
 
 
 def _dominates(a: Combined, b: Combined) -> bool:
     """Whether a scores at least as well as b for no more cost, and is not the same point."""
     return a.quality >= b.quality and a.cost <= b.cost and (a.quality > b.quality or a.cost < b.cost)
-
-
-def frontier(combined: list[Combined]) -> set[tuple[str, str]]:
-    """Settings no other setting beats on both quality and cost."""
-    priced = [row for row in combined if row.cost is not None]
-    return {(row.model, row.effort) for row in priced if not any(_dominates(other, row) for other in priced)}
 
 
 def best_value_effort(points: list[Combined]) -> str | None:
@@ -402,13 +433,43 @@ def order(settings: list[Combined]) -> list[Combined]:
     return ordered
 
 
-def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None = None) -> list[tuple[str, Combined, str]]:
+def _sibling_beats(row: Combined, start: Combined, scales: Scaled | None) -> bool:
+    """Whether row scores higher than start for less, on the base suites that tested both settings.
+
+    Comparing only shared suites keeps a model from losing ground for having
+    been tested more widely. Cost uses the shared suites that price both
+    settings, else the combined cost. Without a shared suite, or without
+    scaled figures, the combined figures decide.
+    """
+    if scales is not None:
+        shared = [name for name, models in scales.quality.items()
+                  if row.effort in models.get(row.model, {}) and start.effort in models.get(start.model, {})]
+        if shared:
+            gain = statistics.fmean(scales.quality[name][row.model][row.effort] - scales.quality[name][start.model][start.effort]
+                                    for name in shared)
+            priced = [name for name in shared
+                      if row.effort in scales.cost[name].get(row.model, {}) and start.effort in scales.cost[name].get(start.model, {})]
+            if priced:
+                saving = statistics.fmean(scales.cost[name][start.model][start.effort] - scales.cost[name][row.model][row.effort]
+                                          for name in priced)
+            else:
+                saving = math.log(start.cost) - math.log(row.cost)
+            return gain > 0 and saving > 0
+    return row.quality > start.quality and row.cost < start.cost
+
+
+def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None = None,
+                scales: Scaled | None = None) -> list[tuple[str, Combined, str]]:
     """Build the rows that start from each vendor's own guidance, as (role, setting, replaced model).
 
     Each vendor contributes its everyday model to the Executor row and its
     flagship to the Team lead row, at the model's best-value effort. If another current,
     unrationed model from the same vendor scores higher for less at any
-    effort, the cheapest such setting takes the slot instead.
+    effort, on the base suites that tested both settings, the cheapest such
+    setting earns the slot, and the sibling is listed at that setting or at its
+    own best-value effort, whichever is higher. The Executor row
+    follows the 20% price order; the Team lead row goes by combined quality,
+    the cheaper setting first on a tie.
     """
     providers = {entry["model"]: entry["provider"] for entry in data.models if entry["status"] == "current"}
     marked = best_value_settings(combined)
@@ -425,13 +486,60 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
             better = [
                 row for row in combined
                 if row.model != name and providers.get(row.model) == provider and row.model not in entry["rationed"]
-                and row.cost is not None and row.quality > start.quality and row.cost < start.cost
+                and row.cost is not None and start.cost is not None and _sibling_beats(row, start, scales)
             ]
             pick = min(better, key=lambda row: (row.cost, -row.quality)) if better else start
+            knee = next((row for row in combined if row.model == pick.model and (row.model, row.effort) in marked), None)
+            if knee is not None and EFFORTS.index(knee.effort) > EFFORTS.index(pick.effort):
+                pick = knee
             picks.append((pick, "" if pick is start else name))
         replaced = {id(pick): name for pick, name in picks}
-        rows += [(role, pick, replaced[id(pick)]) for pick in order([pick for pick, _ in picks])]
+        chosen = [pick for pick, _ in picks]
+        ranked = order(chosen) if role == "Executor" else sorted(chosen, key=lambda row: (-row.quality, row.cost))
+        rows += [(role, pick, replaced[id(pick)]) for pick in ranked]
     return rows
+
+
+@dataclass(frozen=True)
+class Preference:
+    role: str
+    model: str
+    score: float
+    sources: int
+    effort: str | None  # the model's best-value effort in the base, if it has one
+
+
+def preference_scores(data: Data, combined: list[Combined]) -> list[Preference]:
+    """Score each current model on each preference row's sources, weighted equally.
+
+    A source's scores are standardized across the current models it lists,
+    taking each model's best score at any effort. A model's score is the mean
+    over the sources that list it, on the base's scale: 50 plus 10 for each
+    standard deviation. A source with no reads by the report date is left out.
+    Rows come back best first within each role.
+    """
+    current = {entry["model"] for entry in data.models if entry["status"] == "current"}
+    marked = dict(best_value_settings(combined))
+    scored = []
+    for role, names in data.preference.items():
+        standard: dict[str, list[float]] = {}
+        for name in names:
+            best: dict[str, float] = {}
+            for result in data.results:
+                if result.suite == name and result.model in current:
+                    best[result.model] = max(best.get(result.model, result.score), result.score)
+            if not best:
+                continue  # not read by the report date; score the row from the sources that were
+            spread = statistics.pstdev(best.values()) if len(best) > 1 else 0
+            if spread == 0:
+                raise DataError(f"{name} needs at least two current models with different scores to score {role}")
+            mean = statistics.fmean(best.values())
+            for model, value in best.items():
+                standard.setdefault(model, []).append((value - mean) / spread)
+        rows = [Preference(role, model, 50 + 10 * statistics.fmean(values), len(values), marked.get(model))
+                for model, values in standard.items()]
+        scored += sorted(rows, key=lambda row: (-row.score, row.model))
+    return scored
 
 
 def best_value_settings(combined: list[Combined]) -> set[tuple[str, str]]:
@@ -443,86 +551,93 @@ def best_value_settings(combined: list[Combined]) -> set[tuple[str, str]]:
     return {(model, effort) for model, effort in picks.items() if effort}
 
 
-def cost_unit(data: Data) -> float:
-    """The cost of a typical setting on the anchor suite: the geometric mean of its costs.
-
-    Combined cost is reported as a multiple of this, so 1 means a typical
-    setting and 2 means twice that, the way 50 on the quality scale means the
-    anchor suite's average.
-    """
-    costs = [result.cost for result in data.results if result.suite == data.anchor and result.cost]
-    if not costs:
-        raise DataError(f"the anchor suite {data.anchor} has no costs, so relative cost cannot be computed")
-    return math.exp(sum(math.log(cost) for cost in costs) / len(costs))
+def _relative(cost: float | None) -> str:
+    return "missing" if cost is None else f"{cost:.2f}"
 
 
-def _relative(cost: float | None, unit: float) -> str:
-    return "missing" if cost is None else f"{cost / unit:.2f}"
-
-
-def _money(value: float | str | None) -> str:
-    if value is None:
-        return "missing"
-    return value if isinstance(value, str) else f"{value:.3f}"
+def _money(value: float | None) -> str:
+    return "missing" if value is None else f"{value:.3f}"
 
 
 def report(data: Data) -> list[str]:
-    combined, overlap = combine(data)
-    unit = cost_unit(data)
+    combined, reference = combine(data)
     outside = [name for name, in_base in data.suites.items() if not in_base]
     verdict = (
         f"OK routing evidence: {len(data.results)} rows from the latest read of each suite, "
-        f"{len(data.history)} in the file; base suites: {', '.join(data.base)}; "
-        f"anchor: {data.anchor}"
+        f"{len(data.history)} in the file; base suites: {', '.join(data.base)}"
     )
-    if overlap:
-        verdict += "; settings shared with the anchor: " + ", ".join(f"{name} {count}" for name, count in overlap.items())
+    if reference:
+        verdict += "; current-model settings per suite: " + ", ".join(f"{name} {count}" for name, count in reference.items())
     if outside:
         verdict += f"; outside the base: {', '.join(outside)}"
     lines = [verdict, "# suite figures",
-             "\t".join(("suite", "model", "effort", "score", "pass_rate", "cost_usd",
-                        "cost_per_pass", "cost_per_added_point", "minutes"))]
+             "\t".join(("suite", "model", "effort", "score", "pass_rate", "cost_usd", "minutes"))]
     groups: dict[tuple[str, str], list[Result]] = {}
     for result in data.results:
         groups.setdefault((result.suite, result.model), []).append(result)
     for (suite, model) in sorted(groups):
-        previous = None
         for result in _by_effort(groups[(suite, model)]):
-            step = "-" if previous is None else cost_per_added_point(previous, result)
             lines.append("\t".join((
                 suite, model, result.effort, f"{result.score:.2f}",
                 "missing" if result.pass_rate is None else f"{result.pass_rate:.2f}",
-                _money(result.cost), _money(cost_per_pass(result)), _money(step),
+                _money(result.cost),
                 "missing" if result.minutes is None else f"{result.minutes:.1f}",
             )))
-            previous = result
-    marked, best = best_value_settings(combined), frontier(combined)
+    marked = best_value_settings(combined)
     lines += ["# combined",
-              "\t".join(("model", "effort", "combined_quality", "relative_cost", "suites", "best_value", "frontier"))]
+              "\t".join(("model", "effort", "combined_quality", "relative_cost", "suites", "best_value"))]
     for row in combined:
         lines.append("\t".join((
-            row.model, row.effort, f"{row.quality:.1f}", _relative(row.cost, unit),
+            row.model, row.effort, f"{row.quality:.1f}", _relative(row.cost),
             f"{row.suites} of {len(data.base)}", "yes" if (row.model, row.effort) in marked else "",
-            "frontier" if (row.model, row.effort) in best else "",
         )))
 
     providers = {entry["model"]: entry["provider"] for entry in data.models}
     at_best_value = [row for row in combined if row.model in providers and (row.model, row.effort) in marked]
-    lines += ["# candidates", "\t".join(("model", "provider", "effort", "combined_quality", "relative_cost", "suites", "frontier"))]
+    lines += ["# candidates", "\t".join(("model", "provider", "effort", "combined_quality", "relative_cost", "suites"))]
     for pick in order(at_best_value):
         lines.append("\t".join((
-            pick.model, providers[pick.model], pick.effort, f"{pick.quality:.1f}", _relative(pick.cost, unit),
-            f"{pick.suites} of {len(data.base)}", "frontier" if (pick.model, pick.effort) in best else "",
+            pick.model, providers[pick.model], pick.effort, f"{pick.quality:.1f}", _relative(pick.cost),
+            f"{pick.suites} of {len(data.base)}",
         )))
     lines += ["# rows", "\t".join(("role", "provider", "model", "effort", "combined_quality", "relative_cost", "replaces"))]
     skipped: list[str] = []
-    built = vendor_rows(data, combined, skipped)
+    built = vendor_rows(data, combined, skipped, scale(data))
     if skipped:
         lines[0] += "; left out of rows: " + ", ".join(skipped)
     for role, pick, replaced in built:
         lines.append("\t".join((
-            role, providers[pick.model], pick.model, pick.effort, f"{pick.quality:.1f}", _relative(pick.cost, unit), replaced,
+            role, providers[pick.model], pick.model, pick.effort, f"{pick.quality:.1f}", _relative(pick.cost), replaced,
         )))
+    lines += ["# preference", "\t".join(("role", "provider", "model", "effort", "preference_score", "sources", "choice"))]
+    chosen: dict[str, set[str]] = {}
+    for row in preference_scores(data, combined):
+        taken = chosen.setdefault(row.role, set())
+        choice = ""
+        if providers[row.model] not in taken:
+            taken.add(providers[row.model])
+            choice = str(len(taken))
+        lines.append("\t".join((
+            row.role, providers[row.model], row.model, row.effort or "missing", f"{row.score:.1f}",
+            f"{row.sources} of {len(data.preference[row.role])}", choice,
+        )))
+    return lines + ["# names"] + names_tables(data)
+
+
+def names_tables(data: Data) -> list[str]:
+    """ROUTING.md's two mapping tables, as Markdown: other names the sources use, and effort labels."""
+    own = {row["model"]: row for row in data.names if row["name"] == row["model"]}
+    others: dict[str, list[str]] = {}
+    for row in data.names:
+        if row["name"] != row["model"]:
+            others.setdefault(row["model"], []).append(row["name"])
+    lines = ["| Model | Maker | Other names the sources use |", "|---|---|---|"]
+    lines += [f"| {model} | {own[model]['maker']} | {', '.join(sorted(names))} |" for model, names in sorted(others.items())]
+    labels: dict[str, list[str]] = {}
+    for row in data.effort_labels:
+        labels.setdefault(row["effort"], []).append(f"{row['label']} ({row['sources']})" if row["sources"] else row["label"])
+    lines += ["", "| Effort | Labels the sources use |", "|---|---|"]
+    lines += [f"| {effort} | {'; '.join(labels[effort])} |" for effort in EFFORTS if effort in labels]
     return lines
 
 
@@ -652,8 +767,13 @@ def _best_value_mark(x: float, y: float, ink: str, radius: float, tag: str) -> l
             f'<circle {tag} cx="{x:.1f}" cy="{y:.1f}" r="{radius:g}" fill="none" stroke="{ink}" stroke-width="1"/>']
 
 
-def _effort_key(efforts: list[str], y: float) -> list[str]:
-    """The key every figure shares: one marker per effort, then the best-value mark."""
+def _frontier_mark(x: float, y: float, tag: str) -> str:
+    """A navy ring around a setting that no cheaper setting beats."""
+    return f'<circle {tag} cx="{x:.1f}" cy="{y:.1f}" r="10" fill="none" stroke="{NAVY}" stroke-width="1.6"/>'
+
+
+def _effort_key(efforts: list[str], y: float, frontier: bool = False) -> list[str]:
+    """The key every figure shares: one marker per effort, then the best-value or frontier mark."""
     out = [_text(40, y + 4, "Effort", 12, GRAPHITE, font_style="italic")]
     x = 86.0
     for effort in efforts:
@@ -661,16 +781,23 @@ def _effort_key(efforts: list[str], y: float) -> list[str]:
         out.append(_text(x + 11, y + 4, effort.capitalize(), 12, NAVY, **{"class": "legend"}))
         x += 11 + 0.56 * 12 * len(effort) + 20
     x += 14
+    if frontier:
+        out.append(_frontier_mark(x, y, 'class="key-frontier"'))
+        out.append(_text(x + 16, y + 4, "On the frontier: scores higher than every cheaper setting shown", 12, NAVY, **{"class": "legend"}))
+        return out
     out += _best_value_mark(x, y, NAVY, 8.5, 'class="key-knee"')
     out.append(_text(x + 14, y + 4, f"Best-value effort: the last step costing at most {BEST_VALUE_STEP_LIMIT:g}% more per point", 12, NAVY, **{"class": "legend"}))
     return out
 
 
 def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
-           styled: list[tuple[Series, str, str]], context: list[Series], legend: list[tuple[str, str, str]],
-           title: str, y_label: str, x_label: str, show_counts: bool, money: bool = True,
-           legend_rows: int = 1) -> list[str]:
-    """Draw one plot. styled pairs each highlighted series with its ink and dash."""
+           styled: list[tuple[Series, str, str]], legend: list[tuple[str, str, str]],
+           y_label: str, x_label: str, frontier: list[Combined] | None = None) -> list[str]:
+    """Draw one plot. styled pairs each highlighted series with its ink and dash.
+
+    Given frontier settings, the plot marks those instead of each line's best-value effort,
+    and bolds the names of models with a setting on the frontier instead of current models.
+    """
     left, right, top, bottom = 62, 128, 46, 44
     size = 13.0
     widths = [32 + 0.56 * (size - 1) * len(name) + 18 for name, _, _ in legend]
@@ -679,7 +806,7 @@ def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
         if run and run + wide > width - left - right + 100:
             rows_used, run = rows_used + 1, 0.0
         run += wide
-    top += 18 * (max(rows_used, legend_rows) - 1)
+    top += 18 * (rows_used - 1)
 
     def px(cost: float) -> float:
         return x0 + left + (math.log10(cost) - scale.low) / (scale.high - scale.low) * (width - left - right)
@@ -687,11 +814,11 @@ def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
     def py(score: float) -> float:
         return y0 + height - bottom - (score - scale.floor) / (scale.ceiling - scale.floor) * (height - top - bottom)
 
-    out = [_text(x0 + left, y0 + 16, title, size + 3, NAVY, font_weight="600")] if title else []
+    out: list[str] = []
     for tick in COST_TICKS:
         if scale.low <= math.log10(tick) <= scale.high:
             out.append(f'<line x1="{px(tick):.1f}" x2="{px(tick):.1f}" y1="{y0 + top:.1f}" y2="{y0 + height - bottom:.1f}" stroke="{GRAPHITE}" stroke-opacity=".16"/>')
-            out.append(_text(px(tick), y0 + height - bottom + 17, f"${tick:g}" if money else f"{tick:g}×", size - 1, GRAPHITE, text_anchor="middle"))
+            out.append(_text(px(tick), y0 + height - bottom + 17, f"{tick:g}×", size - 1, GRAPHITE, text_anchor="middle"))
     step = next((s for s in (0.5, 1, 2, 5, 10, 20, 50) if (scale.ceiling - scale.floor) / s <= 6), 50)
     tick = math.ceil(scale.floor / step) * step
     while tick <= scale.ceiling:
@@ -715,16 +842,20 @@ def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
         out.append(_text(key_x + 32, key_y + 4, name, size - 1, NAVY, **{"class": "legend"}))
         key_x += wide
 
-    for line in context:
-        path = " ".join(f"{px(point.cost):.1f},{py(point.quality):.1f}" for point in line.points)
-        out.append(f'<polyline class="context" data-model="{escape(line.model)}" points="{path}" fill="none" stroke="{GRAPHITE}" stroke-opacity=".32" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>')
-
     ink_points: list[tuple[float, float]] = []
     blocked: list[tuple[float, float, float, float]] = []
     line_labels = []
     # Best-value marks go down first, so every line and point stays crisp on top of the tint.
     rings = []
-    for line, ink, _ in styled:
+    if frontier:
+        edge = [(px(point.cost), py(point.quality)) for point in frontier]
+        path = " ".join(f"{x:.1f},{y:.1f}" for x, y in edge)
+        out.append(f'<polyline class="frontier-band" points="{path}" fill="none" stroke="{NAVY}" stroke-opacity=".1" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>')
+        out.append(f'<polyline class="frontier-line" points="{path}" fill="none" stroke="{NAVY}" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="5 4"/>')
+        for point, (x, y) in zip(frontier, edge):
+            rings.append(_frontier_mark(x, y, f'class="frontier" data-model="{escape(point.model)}" data-effort="{point.effort}" data-x="{x:.1f}" data-y="{y:.1f}"'))
+            blocked.append((x - 11, y - 11, x + 11, y + 11))
+    for line, ink, _ in styled if frontier is None else []:
         if line.current and len(line.points) > 1:
             effort = best_value_effort(line.points)
             for point in line.points:
@@ -745,8 +876,9 @@ def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
         for x, y in spots:
             blocked.append((x - 6, y - 6, x + 6, y + 6))
         out += [_marker(point.effort, x, y, ink) for point, (x, y) in zip(line.points, spots)]
-        name = f"{line.model} ({line.suites})" if show_counts else line.model
-        line_labels.append((spots[-1][0], spots[-1][1], name, line.current))
+        name = f"{line.model} ({line.suites})"
+        bold = any(point.model == line.model for point in frontier) if frontier else line.current
+        line_labels.append((spots[-1][0], spots[-1][1], name, bold))
 
     out += rings
     frame = (x0 + left + 2, y0 + top + 2, x0 + width - 4, y0 + height - bottom - 2)
@@ -774,8 +906,8 @@ def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
             ink_points.extend((x + (near_x - x) * i / steps, y + (near_y - y) * i / steps) for i in range(2, steps))
         out.append(_text(tx, ty, text, text_size, NAVY, text_anchor=anchor, **attributes))
 
-    for x, y, text, current in sorted(line_labels, key=lambda label: (not label[3], label[1])):
-        place(x, y, text, size, LINE_LABEL_SPOTS, True, font_weight="600" if current else "400", **{"class": "line-label"})
+    for x, y, text, bold in sorted(line_labels, key=lambda label: (not label[3], label[1])):
+        place(x, y, text, size, LINE_LABEL_SPOTS, True, font_weight="600" if bold else "400", **{"class": "line-label"})
     return out
 
 
@@ -809,7 +941,8 @@ def _ground(w: int, h: int) -> list[str]:
     ]
 
 
-def _frame(body: list[str], title: str, subtitle: str, footer: list[str], h: int, efforts: list[str]) -> str:
+def _frame(body: list[str], title: str, subtitle: str, footer: list[str], h: int, efforts: list[str],
+           frontier: bool = False) -> str:
     w, h = CHART_WIDTH, h + 26
     return "\n".join([
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img">',
@@ -817,7 +950,7 @@ def _frame(body: list[str], title: str, subtitle: str, footer: list[str], h: int
         *_ground(w, h),
         _text(40, 52, title, 30, NAVY, font_family=TITLE_FONT),
         _text(40, 78, subtitle, 15, COBALT, font_weight="600"),
-        *_effort_key(efforts, 104),
+        *_effort_key(efforts, 104, frontier),
         '<g transform="translate(0,26)">',
         *body,
         "</g>",
@@ -826,35 +959,39 @@ def _frame(body: list[str], title: str, subtitle: str, footer: list[str], h: int
     ]) + "\n"
 
 
-def _provider_grid(series: list[Series], styles: dict[str, tuple[str, str]], scale: Scale, y_label: str, x_label: str,
-                   show_counts: bool, money: bool = True) -> tuple[list[str], int]:
-    """One panel per provider on a shared scale, with the other providers' models faint behind."""
-    providers = list(dict.fromkeys(line.provider for line in series))
-    width, height, columns = (CHART_WIDTH - 60) / 2, 350, 2
-    rows = math.ceil(len(providers) / columns)
-    most = max(sum(1 for line in series if line.provider == provider) for provider in providers)
-    legend_rows = 1 + (most > 3)
-    body: list[str] = []
-    for index, provider in enumerate(providers):
-        own = [line for line in series if line.provider == provider]
-        styled = [(line, *styles[line.model]) for line in own]
-        legend = [(f"{line.model} ({line.suites})" if show_counts else line.model, ink, dash) for line, ink, dash in styled]
-        column, row = index % columns, index // columns
-        body.append(f'<g data-provider="{escape(provider)}">')
-        body += _panel(30 + column * width, 100 + row * height, width, height - 14, scale, styled,
-                       [line for line in series if line.provider != provider], legend, provider,
-                       y_label if column == 0 else "", x_label if index + columns >= len(providers) else "", False, money,
-                       legend_rows)
-        body.append("</g>")
-    return body, 100 + rows * height + 44
+def frontier_field(data: Data, combined: list[Combined]) -> tuple[list[Series], list[Combined]]:
+    """The top models by best combined score, and the settings among them that no cheaper one beats.
+
+    A model qualifies when at least min_suites base suites scored it at any
+    effort and neither models.csv nor chart.json marks it superseded. The frontier runs over
+    the drawn models only: a near-free model far below them would otherwise
+    join it and squeeze the rest of the chart. Models the routing page covers
+    count as current, so they keep their provider's colour.
+    """
+    config = data.frontier
+    skip = data.superseded | {entry["model"] for entry in data.models if entry["status"] == "superseded"}
+    routed = {entry["model"]: entry["provider"] for entry in data.models if entry["status"] == "current"}
+    scored = scale(data).quality
+    field_, peak = [], {}
+    for model in sorted({row.model for row in combined} - skip):
+        suites = sum(1 for suite in scored.values() if model in suite)
+        rows = [r for r in combined if r.model == model]
+        points = [row for row in _by_effort(rows) if row.cost is not None]
+        if suites >= config["min_suites"] and points:
+            field_.append(Series(model, routed.get(model, ""), model in routed, suites, points))
+            peak[model] = max(row.quality for row in rows)  # rank by every scored effort, priced or not
+    field_ = sorted(field_, key=lambda line: (-peak[line.model], line.model))[:config["top"]]
+    edge, best = [], -math.inf
+    for point in sorted((point for line in field_ for point in line.points), key=lambda point: (point.cost, -point.quality)):
+        if point.quality > best or (edge and (point.cost, point.quality) == (edge[-1].cost, edge[-1].quality)):
+            edge.append(point)  # a setting at exactly the same cost and score as a frontier one is on it too
+            best = point.quality
+    return field_, edge
 
 
 def charts(data: Data) -> dict[str, str]:
     """Build the chart files as SVG text, keyed by file name."""
     combined, _ = combine(data)
-    unit = cost_unit(data)
-    combined = [Combined(row.model, row.effort, row.quality, None if row.cost is None else row.cost / unit, row.suites)
-                for row in combined]
     base = data.base
     read = max(result.date_read for result in data.results if result.suite in base)
     versions = {result.suite: result.suite_version for result in data.results}
@@ -862,8 +999,8 @@ def charts(data: Data) -> dict[str, str]:
     if not everyone:
         raise DataError("none of the models chart.json lists has results with a cost")
     scale = Scale.of(everyone)
-    y_label = f"Combined quality (50 = {data.anchor} average)"
-    x_label = f"Relative cost per task (1 = a typical {data.anchor} setting), log scale"
+    y_label = "Combined quality (50 = the average charted setting)"
+    x_label = "Relative cost per task (1 = a typical charted setting), log scale"
     efforts = [effort for effort in EFFORTS if any(point.effort == effort for line in everyone for point in line.points)]
     notes = [f"{FOOTER} The marker's shape names the effort.",
              f"The number beside a name counts the suites that tested it at any effort, of {len(base)}. Data read {read}.",
@@ -875,40 +1012,33 @@ def charts(data: Data) -> dict[str, str]:
     providers = list(dict.fromkeys(line.provider for line in everyone))
     legend = [(provider, inks[provider], "") for provider in providers]
     together = _frame(
-        _panel(30, 100, CHART_WIDTH - 60, 600, scale, styled, [], legend, "", y_label, x_label, True, False),
+        _panel(30, 100, CHART_WIDTH - 60, 600, scale, styled, legend, y_label, x_label),
         "What each model gains as you raise its effort",
         f"{len(base)} benchmark suites on one scale. Colour names the provider, shape names the effort, and each line is labelled with its model.",
         notes, 776, efforts,
     )
 
-    body, height = _provider_grid(everyone, styles, scale, y_label, x_label, True, False)
-    apart = _frame(
-        body, "The same chart, one provider at a time",
-        "Every panel has the same axes as the chart above. The faint lines are the other providers' models.",
-        notes, height + 30, efforts,
-    )
-
-    panels: list[str] = []
-    offset = 100
-    for suite in base:
-        rows = [Combined(r.model, r.effort, r.score, r.cost, 1) for r in data.results if r.suite == suite]
-        series = _series(data, rows)
-        if not series:
-            continue
-        version = next(r.suite_version for r in data.results if r.suite == suite)
-        grid, used = _provider_grid(series, styles, Scale.of(series), "Score, 0 to 100", "Cost per task, log scale", False)
-        panels.append(f'<g data-suite="{escape(suite)}">')
-        panels.append(_text(40, offset + 4, f"{suite} {version}", 18, NAVY, font_weight="600"))
-        panels.append(f'<g transform="translate(0,{offset - 78})">')
-        panels += grid
-        panels.append("</g></g>")
-        offset += used - 62
-    below = _frame(
-        panels, "The same settings, suite by suite",
-        "Each suite on its own scale, one panel per provider, with the best-value effort each suite finds.",
-        [f"{FOOTER} The marker's shape names the effort. Data read {read}."], offset + 30, efforts,
-    )
-    return {"routing-base.svg": together, "routing-base-providers.svg": apart, "routing-base-suites.svg": below}
+    files = {"routing-base.svg": together}
+    if data.frontier:
+        field_, edge = frontier_field(data, combined)
+        if not field_:
+            raise DataError("no model meets the frontier chart's suite minimum")
+        others = (GRAPHITE, "1 4")
+        drawn = [(line, *(styles[line.model] if line.current else others)) for line in field_]
+        shown = list(dict.fromkeys(line.provider for line in field_ if line.current))
+        key = [(provider, inks[provider], "") for provider in shown] + ([("Not routed here", *others)] if any(not line.current for line in field_) else [])
+        field_efforts = [effort for effort in EFFORTS if any(point.effort == effort for line in field_ for point in line.points)]
+        files["routing-frontier.svg"] = _frame(
+            _panel(30, 100, CHART_WIDTH - 60, 600, Scale.of(field_), drawn, key, y_label, x_label, frontier=edge),
+            "Where the frontier sits among the top models",
+            f"The top {len(field_)} models scored by at least {data.frontier['min_suites']} of {len(base)} suites, on the same scale. Outlined settings sit on the frontier.",
+            [f"{FOOTER} Coloured lines are the models this page routes; grey dotted lines are the rest.",
+             "Bold names have at least one setting on the frontier.",
+             f"The number beside a name counts the suites that scored it at any effort, of {len(base)}. Superseded releases are left out. Data read {read}.",
+             "Suites: " + ", ".join(f"{suite} {versions.get(suite, '')}".strip() for suite in base) + "."],
+            792, field_efforts, frontier=True,
+        )
+    return files
 
 
 RECOMMENDATION_COLUMNS = ("role", "choice", "provider", "model", "model_id", "effort", "judgment", "reviewed")
@@ -972,7 +1102,6 @@ def table_chart(directory: Path, data: Data) -> str | None:
 
 
 SOURCE_SUITES = {"frontiercode": "FrontierCode", "vulcanbench": "VulcanBench"}
-SOURCE_EFFORTS = {"extra-high": "xhigh", "extra high": "xhigh", "na": "none"}
 TABLE_COLUMNS = ("model", "effort", "score", "pass_rate", "cost_usd", "minutes")
 
 
@@ -1038,9 +1167,14 @@ def import_source(directory: Path, fmt: str, path: Path, version: str, date: str
         existing = [line for line in results_path.read_text(encoding="utf-8").splitlines()[1:] if line]
     except FileNotFoundError:
         existing = []
+    _, labels = read_effort_labels(directory)
     fresh = []
     for model, effort, score, pass_rate, cost, minutes in _source_rows(fmt, path):
-        model, effort = model.removeprefix("Claude ").strip(), SOURCE_EFFORTS.get(effort, effort)
+        label = effort.strip().lower()
+        model = model.removeprefix("Claude ").strip()
+        if label not in labels:
+            raise DataError(f"{path.name}: {model} has effort label {label!r}, which efforts.csv doesn't map; add a row or leave the row out")
+        effort = labels[label]
         cells = io.StringIO()
         csv.writer(cells, lineterminator="").writerow((suite, version, model, effort, score, pass_rate, cost, minutes, date, url))
         fresh.append(((model, EFFORTS.index(effort) if effort in EFFORTS else -1), cells.getvalue()))

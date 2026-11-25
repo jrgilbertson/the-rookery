@@ -13,6 +13,33 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `reviewing-prs`, a skill that runs one Review Round across every
+  repository the operator can merge in, including repositories shared with
+  them as a collaborator, plus every pull request that asks for their
+  review. It reads each open pull request from
+  its raw diff at a fixed head commit, scores verification effort and undo
+  cost from what the diff shows, lists stored and published names, flags
+  claims the diff does not support and missing screenshots, and checks
+  interface changes against the repository's design system when it has one.
+  It fills a page template it ships with the round: a risk overview ranked
+  by verification effort times undo cost and split at the hold line, then
+  one block per pull request showing what changes for a user, as a table of
+  situations before and after or as screens side by side. Shipped risk, such
+  as a merge without the operator, is counted in the headline. A rail on wide
+  screens, a progress count, and keyboard keys move through the round, and
+  choices survive a reload in that browser. The page follows the system's
+  light or dark setting, carries a strict Content Security Policy, and
+  renders pull request text as text. It records each Verdict on
+  the pull request as a three-line comment naming the reviewed commit, and
+  answers a review request with a review. A `not applicable` Verdict posts
+  nothing and removes the operator from a review request. It never merges or
+  changes a label: the session that owns a pull request acts on its Verdict.
+  Synthetic Skill Eval cases are under `evals/reviewing-prs/`.
+- `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels
+  (`review:held`, `review:auto-merged`, `review:human-merged`).
+- `docs/adr/001-verdict-trust-by-convention.md` records why a Verdict comment
+  and a pull request's `Owner:` line are trusted by convention while every
+  agent shares the operator's GitHub login, and what would replace them.
 - `daily-learning`, a portable skill and paired daily Orca automation
   (`automations/daily-learning.md`). The skill coaches a learning habit from
   recent notes, reading highlights, AI sessions, and flashcards: a review that
@@ -65,6 +92,57 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Leverage scoring has two fixed anchors. A new user-facing view, flow, or
+  concept scores 3 on verification effort, and any stored or published name
+  (table, column, stored ID, event name, or public API) scores 3 on undo
+  cost. `PRIORITIZATION.md`'s factor table and the "Rank by leverage" rule in
+  `PRIORITIZATION.md`, `GLOBAL-AGENTS.md`, and `managing-issues` carry both.
+- Held Changes in `CONCEPTS.md` are now decided by two tests: a list of
+  sensitive kinds, which gains CI workflows and composite actions, git-hook
+  and secret-scanner configuration, and dependency lockfiles; and a score
+  line, verification effort times undo cost of 3 or more, or a diff the
+  reviewer cannot read clearly. The higher of the issue's stored scores and
+  what the diff shows counts, and repo policy is read from the default
+  branch.
+- `WORKFLOWS.md` Ship describes Review Rounds and Verdicts through
+  `reviewing-prs`, the two hold tests, and the three PR review labels.
+  `coordinating-work` is unchanged: it still holds on its earlier list and
+  writes no labels.
+- `managing-issues` asks for a Verification criterion that requires
+  before-and-after screenshots, or a named preview walkthrough, on a change
+  users will see.
+- Sessions audit covers every configured harness, reading Antigravity, Grok,
+  and other JSONL transcripts that `ce-retro`'s extractors do not recognize
+  through `ce-retro`'s raw-JSONL fallback. Each host now also checks for
+  operational drift: failed or missed automations, reverts and same-day fixups
+  of `review:auto-merged` changes, crashed or stalled orchestrator sessions,
+  expired sign-ins, and installed skills or a main checkout that differ from
+  the repository. The new check renumbers the prompt's later steps, so update
+  saved jobs from the definition.
+- `ROUTING.md` weighs each preference row's sources equally instead of
+  following one board. Design/taste averages Arena WebDev, Design Arena,
+  21st.dev Design System Bench, and the new Frontier Design benchmark, where
+  professional designers vote blind; Writing averages Arena creative writing
+  and Lechmazur. Every base suite and preference source is now standardized on
+  its own over the charted models it tested, with no anchor suite, and the
+  step limit is rescaled from 40% to 20% a point to keep the same trade-off on
+  that scale. A setting's score is a plain mean of the suites that tested it,
+  with no logit or curve shift, and the page drops the frontier, per-pass cost,
+  and two secondary charts. The Team lead row now goes by quality, and the
+  Executor row keeps the price order. The better-sibling rule compares two settings only
+  on the base suites that tested both, and lists the sibling at its best-value
+  effort when that is higher. The routing checks now cover every row, and the
+  data is refreshed to 2026-11-24.
+- `coordinating-work` ends each standing rule by its own end observation,
+  which the Team lead records with the rule and checks at each periodic check,
+  retiring the rule by a dated amendment once the observation holds. Workers
+  submit heavy jobs straight to a project gate that already queues and admits
+  them, and the Team lead limits only heavy work that gate does not meter. A
+  worker's merge-ready report now ends its assignment: the worker no longer
+  waits for a merged, held, or findings reply. The Team lead sends findings
+  and merge-queue ejections as a follow-up to the worker's dispatch, starts a
+  new worker in the same worktree when Orca refuses that follow-up, and keeps
+  the worktree until the pull request reads merged.
 - `MACHINE-SETUP.md` now also verifies Antigravity's `.gemini/config/skills`
   directory alongside Codex and Claude Code.
 - `coordinating-work` aligns setup, operation, and revive with Orca v1.4.272
@@ -579,7 +657,8 @@ looked" surface. GitHub Releases mirror its entries.
   relationship Linear adds on its own, which nobody approved, stops the batch
   before the next write and comes with a removal preview awaiting approval.
 - Repository verification rejects tracked files under the root `outputs/`
-  directory, which may hold private generated artifacts.
+  and `tmp/` directories, which may hold private generated artifacts, and
+  `.gitignore` ignores both.
 - Repository tests now fail when the issue-configuration label, duplicate,
   control-character, or size guards are removed, when the README skill list
   or a skill name drifts from `skills/`, or when a test runner is missing from

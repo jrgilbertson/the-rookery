@@ -113,7 +113,7 @@ another effort. A model's best score at any effort is its ceiling.
 
 How settings are listed. A setting at least as good for no more cost goes
 first. Otherwise the better-scoring setting goes first only when it costs at
-most 40% more for each point of quality it adds.
+most 20% more for each point of quality it adds.
 
 ### Best-Value Effort
 
@@ -201,14 +201,18 @@ changes it. It covers merging and nothing else.
 
 ### Held Changes
 
-The kinds of change that wait for the operator, however clean the pull
-request, unless the operator pre-authorized them: by default access
-and authorization, money, data deletion, privacy, outbound email, release
-gates, and the project's agent instructions and merge and review policy. An
-issue scored 3 on verification effort, which only the operator's judgment can
-verify, is held the same way. A project's own guidance or the operator's edit
-to a proposal can replace the list; only the operator's own edit removes the
-judgment hold.
+The changes that wait for the operator, however clean the pull request, unless
+the operator pre-authorized them. Two tests decide. First, a list of sensitive
+kinds: by default access and authorization, money, data deletion, privacy,
+outbound email, release gates, CI workflows and composite actions, git-hook
+and secret-scanner configs, dependency lockfiles, and the project's agent
+instructions and merge and review policy. Second, the score line: verification
+effort multiplied by undo cost is 3 or more, taking the higher of the issue's
+stored scores and what the pull request's diff shows, or any diff the reviewer
+cannot read clearly. Repo policy is read from the default branch, so a pull
+request cannot loosen the tests it is judged by. A project's own guidance or
+the operator's edit to a proposal can change the list of sensitive kinds; only
+the operator's own edit moves the score line.
 
 ## Issue management
 
@@ -265,6 +269,37 @@ An immutable semantic-version tag and GitHub Release that identify one validated
 state of the published catalog. It is a historical checkpoint with release
 notes, not an installation pin: ordinary installs continue to follow `main`, and
 a correction receives a new release tag instead of moving an existing one.
+
+### Review Round
+
+The pull requests gathered across repositories for the operator to review in
+one sitting: every one in a repository they can merge in, and every one that
+asks for their review. Each is fixed at the head commit it was read at. The
+operator answers a round with one set of [Verdicts](#verdict).
+
+### Verdict
+
+The operator's decision on one pull request in a [Review Round](#review-round),
+at the head commit reviewed: `merge`, `request changes`, `defer`, or
+`not applicable`, for a pull request that is not theirs to decide. A merge
+Verdict covers the change as it stood at that head. A later change to the pull
+request is judged on its own by the [Held Changes](#held-changes) tests,
+including a check that a rebase did not quietly revert work on the default
+branch: a routine delta merges under the same Verdict, and any other delta
+returns to the operator. A merge Verdict clears a hold on that pull request
+and never changes [Merge Approval](#merge-approval).
+
+### PR Review Labels
+
+Three GitHub labels that show where a pull request stands in review.
+`review:held` marks one waiting for the operator in a
+[Review Round](#review-round). `review:auto-merged` marks a routine one merged
+under [Merge Approval](#merge-approval). `review:human-merged` replaces
+`review:held` once GitHub confirms that a held pull request merged after a
+merge [Verdict](#verdict). The labels are for visibility and reporting. A
+review reads every open pull request that is ready for review, and every one
+merged recently, so a missing or stale label never hides one, and no label
+permits a merge.
 
 ## Evaluation
 

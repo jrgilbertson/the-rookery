@@ -20,7 +20,7 @@ between two jobs, with host-specific consolidation instructions below it.
 | [Design system audit](design-system-audit.md) | Review every page against the design system and recommend fixes, shared components, and design upgrades | Wednesday at 04:00 | America/Los_Angeles |
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 21:00 | America/Los_Angeles |
 | [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
-| [Weekly codebase design](weekly-codebase-design.md) | Review codebase design | Saturday at 04:00 | America/Los_Angeles |
+| [Weekly codebase design](weekly-codebase-design.md) | Survey the codebase for modules worth deepening | Saturday at 04:00 | America/Los_Angeles |
 | [Agent entropy audit](agent-entropy-audit.md) | Find duplicated truth, dead code, stale guidance, and weakened guardrails | Saturday at 07:00 | America/Los_Angeles |
 
 All schedules use America/Los_Angeles. Choose a cadence and timezone that suit
@@ -41,7 +41,8 @@ replace the reference to The Rookery with your own repository.
 Sessions audit invokes `ce-retro` on each host separately, with required skills
 available to the selected agent on each host. The remote job runs first and
 the local job merges both hosts' findings into one list; see
-[Consolidation](sessions-audit.md#consolidation).
+[Consolidation](sessions-audit.md#consolidation). Each job also checks its
+host for operational drift.
 
 Some prompts invoke an existing skill; others describe the review directly.
 Orca runs the prompt on a schedule; an invoked skill tells the agent how to do

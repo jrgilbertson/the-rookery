@@ -1,0 +1,1029 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-{{NONCE}}'; connect-src 'none'; img-src 'self' data: https://github.com https://user-images.githubusercontent.com https://private-user-images.githubusercontent.com; form-action 'none'; base-uri 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<title>Review Round</title>
+<style>
+:root {
+  color-scheme: light;
+  --paper: #F6F7FA; --sheet: #FFFFFF; --mist: #E3E9F7; --stake: #E3E9F7; --dispatch: #F0EBE5;
+  --hairline: rgb(71 87 122 / 0.32); --hairline-soft: rgb(71 87 122 / 0.16);
+  --ink: #042458; --ink-soft: #47577A; --route: #0050CC;
+  --signal: #DC6C36; --signal-ink: #963E12;
+  --add: #0B5D3B; --add-wash: #EAF3EE; --del: #8F2A1F; --del-wash: #F7E9E6;
+  --chosen: #042458; --on-chosen: #F6F7FA;
+  --display: Didot, "Bodoni 72", "Bodoni MT", Georgia, serif;
+  --serif: Baskerville, "Libre Baskerville", "Baskerville Old Face", Georgia, serif;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --stake: #34415C; --dispatch: #29251F;
+    --hairline: rgb(167 175 192 / 0.30); --hairline-soft: rgb(167 175 192 / 0.15);
+    --ink: #ECEEF3; --ink-soft: #A7AFC0; --route: #93AEEF;
+    --signal: #E08A5E; --signal-ink: #F0A57E;
+    --add: #9BD3B5; --add-wash: #1C2A23; --del: #F0A99D; --del-wash: #33201D;
+    --chosen: #ECEEF3; --on-chosen: #14161B;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --stake: #34415C; --dispatch: #29251F;
+  --hairline: rgb(167 175 192 / 0.30); --hairline-soft: rgb(167 175 192 / 0.15);
+  --ink: #ECEEF3; --ink-soft: #A7AFC0; --route: #93AEEF;
+  --signal: #E08A5E; --signal-ink: #F0A57E;
+  --add: #9BD3B5; --add-wash: #1C2A23; --del: #F0A99D; --del-wash: #33201D;
+  --chosen: #ECEEF3; --on-chosen: #14161B;
+}
+* { box-sizing: border-box; }
+html { background: var(--paper); scrollbar-color: var(--ink-soft) var(--paper); scroll-padding-top: 72px; }
+body { margin: 0; background: var(--paper); font: 16px/1.5 var(--serif); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
+::selection { background: var(--mist); color: var(--ink); }
+h1, h2, h3, p, dl, dd { margin: 0; }
+h1 { font: 400 2.6rem/1.08 var(--display); letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font: 600 1.2rem/1.3 var(--serif); }
+p, li, dd { text-wrap: pretty; }
+a { color: var(--route); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+button, input, textarea { font: inherit; color: inherit; caret-color: var(--route); }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+pre { margin: 6px 0 0; padding: 10px 12px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.8rem/1.55 var(--mono); }
+pre span { display: block; padding: 2px 8px 2px 2.3em; text-indent: -1.6em; }
+pre .add { color: var(--add); background: var(--add-wash); }
+pre .del { color: var(--del); background: var(--del-wash); }
+pre .ctx { color: var(--ink-soft); }
+
+.sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
+.read dt, .bots b, .part small, .bar-note, .bar-progress, .theme, .seg button, .notes, .copy,
+.over-head small, .rail, .keys, .xnote b { font-family: var(--sans); }
+.meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
+.source { margin-top: 6px; }
+.empty { color: var(--ink-soft); font-style: italic; }
+.sec-title { font-size: 0.72rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 6px; line-height: 1.4; overflow-wrap: anywhere; text-wrap: balance; }
+.sec-title.spaced { margin-top: 18px; }
+
+.seal, .ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.seal { background: var(--signal); }
+.ring { border: 1.5px solid var(--ink-soft); }
+
+.bar { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--hairline); }
+.bar strong { font: 400 1.25rem/1 var(--display); }
+.bar-note { color: var(--ink-soft); font-size: 0.8rem; flex: 1 1 320px; }
+.bar-progress { margin-left: auto; font-size: 0.85rem; font-weight: 600; }
+.theme { border: 1px solid var(--hairline); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 32px; }
+.theme:hover { border-color: var(--ink-soft); }
+
+.shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
+.rail { display: none; }
+main { padding: 40px 0 80px; min-width: 0; }
+.lede { max-width: 72ch; margin-bottom: 30px; }
+.lede p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; max-width: 66ch; }
+.notices { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.notices li { display: flex; align-items: baseline; gap: 10px; padding: 9px 14px; border: 1px solid var(--hairline); background: var(--sheet); font-size: 0.97rem; }
+.notices .seal { transform: translateY(-1px); }
+
+.over { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; margin-bottom: 16px; }
+.over-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; padding: 14px 20px 12px; border-bottom: 1px solid var(--hairline); }
+.over-head small { font-size: 0.82rem; color: var(--ink-soft); }
+.over > .empty { padding: 12px 20px; }
+.orows { list-style: none; margin: 0; padding: 0; }
+.orow { display: grid; grid-template-columns: 60px minmax(0, 1.2fr) minmax(0, 1.5fr) 320px; gap: 18px; padding: 14px 20px; border-top: 1px solid var(--hairline-soft); align-items: center; }
+.orow:first-child { border-top: 0; }
+.vu { display: grid; place-items: center; align-content: center; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1.55rem/1 var(--display); color: var(--ink-soft); text-align: center; }
+.over.hold .vu { border-color: var(--ink); color: var(--ink); }
+.vu small { display: block; margin-top: 2px; font-size: 0.7rem; font-weight: 600; color: var(--ink-soft); }
+.orow a.title { display: block; font-weight: 600; line-height: 1.3; color: var(--ink); text-decoration: none; }
+.orow a.title:hover { text-decoration: underline; }
+.where { display: block; margin-top: 2px; font-size: 0.8rem; color: var(--ink-soft); }
+.state { display: inline-block; margin-top: 4px; font-size: 0.78rem; font-weight: 650; }
+.kind { display: flex; align-items: center; gap: 7px; margin-top: 4px; font: 650 0.78rem/1.4 var(--sans); color: var(--signal-ink); }
+.kind::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); }
+.state:empty { display: none; }
+.orow p { font-size: 0.95rem; }
+.scores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 4px; text-align: center; }
+.scores span { border: 1px solid var(--hairline-soft); border-radius: 2px; padding: 3px 0 2px; font-weight: 600; font-size: 0.95rem; }
+.scores span small { display: block; font-size: 0.7rem; font-weight: 600; color: var(--ink-soft); }
+.scores span.three { background: var(--stake); border-color: var(--ink-soft); font-weight: 700; }
+.scores span.three small { color: var(--ink); }
+.scores span.lev { border-color: var(--hairline); }
+.key { margin: -4px 0 18px; color: var(--ink-soft); font-size: 0.8rem; max-width: 90ch; }
+.across { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 30px; font-size: 0.95rem; }
+.across span { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 8px 12px; }
+
+.block { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 22px 24px 24px; margin-bottom: 20px; }
+.block-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
+.block-head h2 { flex: 1 1 320px; display: flex; align-items: center; gap: 12px; }
+.rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1rem/1 var(--display); color: var(--ink-soft); }
+.block.hold .rank { border-color: var(--ink); color: var(--ink); }
+.verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
+.seg { display: inline-flex; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); }
+.seg button { border: 0; background: none; padding: 6px 13px; min-height: 36px; font-size: 0.82rem; border-right: 1px solid var(--hairline); }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { background: var(--mist); }
+.seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 650; }
+.notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
+.notes::placeholder { color: var(--ink-soft); }
+.block-meta { margin: 8px 0 0; }
+.driver { margin-top: 10px; max-width: 80ch; }
+.xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
+.xnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
+.main-col, .side-col { display: grid; gap: 18px; min-width: 0; }
+.panel { padding-top: 10px; border-top: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.panel p { max-width: 70ch; }
+.panel.risk .sec-title { display: flex; align-items: center; gap: 8px; color: var(--signal-ink); }
+.panel.risk .sec-title::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--signal); }
+.frame-table { border: 1px solid var(--hairline); }
+.sit { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.sit th { text-align: left; font: 600 0.7rem/1.3 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); padding: 8px 10px; border-bottom: 1px solid var(--hairline); background: var(--paper); }
+.sit td { padding: 8px 10px; border-bottom: 1px solid var(--hairline-soft); vertical-align: top; }
+.sit tbody tr:last-child td { border-bottom: 0; }
+.sit td.now { font-weight: 700; }
+.sit td.no { font: 650 0.85rem/1.4 var(--sans); color: var(--signal-ink); white-space: nowrap; }
+.sit td.no::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); margin-right: 7px; vertical-align: 1px; }
+.sit tr.quiet td { color: var(--ink-soft); }
+.screens, .beforeafter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.screen, .ba { border: 1px solid var(--hairline); padding: 12px; background: var(--paper); font-size: 0.92rem; min-width: 0; }
+.screen.after, .ba.after { background: var(--sheet); border-color: var(--ink-soft); }
+.cap { font-size: 0.7rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+.screen img { display: block; max-width: 100%; height: auto; border: 1px solid var(--hairline); }
+.screen .addr { display: block; margin-top: 6px; font: 0.75rem/1.4 var(--sans); overflow-wrap: anywhere; }
+.w-heading { font-weight: 600; margin: 4px 0; }
+.w-text { margin: 4px 0; }
+.w-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid var(--hairline-soft); padding: 8px 10px; background: var(--sheet); margin-top: 6px; }
+.w-row > span { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.w-btn { display: inline-block; padding: 3px 12px; border-radius: 2px; font: 600 0.78rem/1.6 var(--sans); border: 1px solid var(--route); color: var(--route); }
+.w-btn.primary { background: var(--route); color: var(--sheet); }
+.w-btn.new { border: 1.5px dashed var(--signal); color: var(--signal-ink); }
+.w-badge { display: inline-block; padding: 0 7px; border-radius: 999px; font: 650 0.7rem/1.6 var(--sans); border: 1px solid var(--ink-soft); color: var(--ink-soft); }
+.w-input { display: block; border: 1px solid var(--hairline); padding: 4px 8px; color: var(--ink-soft); background: var(--sheet); font: 0.8rem/1.4 var(--sans); margin: 4px 0; }
+.w-image { display: grid; place-items: center; height: 56px; border: 1px dashed var(--hairline); color: var(--ink-soft); font: 0.75rem/1.4 var(--sans); margin: 4px 0; }
+.changed { outline: 2px solid var(--route); outline-offset: 2px; }
+.ba mark { background: none; color: inherit; font-weight: 700; text-decoration: underline 2px var(--route); text-underline-offset: 3px; }
+.walk { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.walk li { flex: 1 1 120px; display: flex; align-items: center; gap: 6px; }
+.walk li > span { flex: 1; border: 1px solid var(--hairline); padding: 8px 10px; background: var(--paper); font-size: 0.88rem; align-self: stretch; }
+.walk li.on > span { border: 2px solid var(--route); background: var(--sheet); font-weight: 600; }
+.walk i { color: var(--route); font-style: normal; font-family: var(--sans); }
+.parts { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.9rem; }
+.part { border: 1px solid var(--hairline); padding: 7px 12px; background: var(--paper); }
+.part.added, .part.changed-part { border-color: var(--route); background: var(--sheet); }
+.part.gone { color: var(--ink-soft); }
+.part.gone .name { text-decoration: line-through; }
+.part small { display: block; font-size: 0.7rem; font-weight: 650; color: var(--ink-soft); }
+.swatches { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font: 0.72rem/1.4 var(--mono); color: var(--ink-soft); }
+.swatches span { display: inline-flex; align-items: center; gap: 5px; }
+.swatches i { width: 16px; height: 16px; border: 1px solid var(--hairline); }
+.read { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 12px 14px; font-size: 0.95rem; }
+.read dl { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 10px; }
+.read dt { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); padding-top: 3px; }
+.read dd.judgment { font-weight: 600; }
+.bots { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.bots b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
+.rest-line { color: var(--ink-soft); font-size: 0.9rem; }
+.legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; }
+
+.closing { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 18px 22px; margin-bottom: 16px; }
+.closing h2 { margin-bottom: 4px; }
+.closing h3 { font: 600 1rem/1.3 var(--serif); margin: 14px 0 2px; }
+.crows { list-style: none; margin: 0; padding: 0; }
+.crow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 4px 18px; padding: 8px 0; font-size: 0.95rem; }
+.crow + .crow { border-top: 1px solid var(--hairline-soft); }
+.crow .where { display: inline; }
+.crow .seal { margin-right: 8px; }
+.verdicts { background: var(--sheet); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 16px 20px; margin-top: 26px; }
+.verdicts textarea { display: block; width: 100%; min-height: 4.5em; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--paper); font: 0.8rem/1.5 var(--mono); resize: vertical; }
+.verdicts-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.copy { border: 1px solid var(--chosen); background: var(--chosen); color: var(--on-chosen); border-radius: 2px; padding: 6px 16px; min-height: 36px; font-weight: 650; font-size: 0.85rem; }
+.copy:hover { opacity: 0.9; }
+.keys { margin-top: 8px; color: var(--ink-soft); font-size: 0.78rem; }
+.keys kbd { font: 0.75rem/1 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 1px 5px; background: var(--paper); }
+
+@media (min-width: 1180px) {
+  .shell { max-width: 1600px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; }
+  .rail { display: block; position: sticky; top: 58px; align-self: start; max-height: calc(100vh - 58px); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
+  .rail h2 { font: 650 0.72rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 16px 0 6px; display: flex; align-items: center; gap: 8px; }
+  .rail h2:first-of-type { margin-top: 0; }
+  .rail p { color: var(--ink-soft); margin-bottom: 4px; }
+  .rail ol { list-style: none; margin: 0; padding: 0; }
+  .rail a { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; padding: 6px 8px; color: var(--ink); text-decoration: none; border-radius: 2px; }
+  .rail a:hover { background: var(--mist); }
+  .rail a[aria-current="true"] { background: var(--mist); box-shadow: inset 0 0 0 1px var(--hairline); }
+  .rail .r-rank { font: 400 0.95rem/1.3 var(--display); color: var(--ink-soft); }
+  .rail .r-title { font: 0.85rem/1.3 var(--serif); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rail .r-state { grid-column: 2; font-size: 0.72rem; color: var(--ink-soft); }
+  .rail .r-state.done { color: var(--ink); font-weight: 650; }
+  .rail .r-links { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--hairline-soft); display: grid; gap: 2px; }
+  .rail .r-links a { display: block; color: var(--route); text-decoration: underline; text-underline-offset: 3px; }
+}
+@media (max-width: 980px) {
+  .bar { padding: 10px 16px; gap: 6px 12px; }
+  .bar-note { display: none; }
+  .shell { padding: 0 16px; }
+  main { padding: 26px 0 60px; }
+  h1 { font-size: 2.1rem; }
+  .block { padding: 16px 14px 18px; }
+  .orow { grid-template-columns: 56px minmax(0, 1fr); padding: 12px 14px; }
+  .orow > p, .orow > .scores { grid-column: 1 / -1; }
+  .cols, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
+  .verdict { margin-left: 0; }
+  .seg button, .notes, .copy, .theme { min-height: 44px; }
+  .read dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .read dd + dt { margin-top: 6px; }
+}
+@media (max-width: 560px) {
+  .sit thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .sit tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 12px; padding: 10px; border-bottom: 1px solid var(--hairline-soft); }
+  .sit tbody tr:last-child { border-bottom: 0; }
+  .sit td { display: block; padding: 0; border: 0; }
+  .sit td:first-child { grid-column: 1 / -1; font-weight: 600; margin-bottom: 4px; }
+  .sit td[data-label]::before { content: attr(data-label); display: block; font: 600 0.7rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+  .sit td:first-child::before { display: none; }
+  .sit td.no { grid-column: 1 / -1; margin-top: 4px; }
+}
+</style>
+</head>
+<body>
+<header class="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><button type="button" class="theme" id="theme"></button></header>
+<div class="shell"><nav class="rail" id="rail" aria-label="Pull requests in this round"></nav><main id="page"><noscript>This page needs JavaScript turned on to show the round.</noscript></main></div>
+<script type="application/json" id="round-data">
+{{ROUND_DATA}}
+</script>
+<script nonce="{{NONCE}}">
+"use strict";
+(() => {
+  const root = document.documentElement;
+  const page = document.getElementById("page");
+  const rail = document.getElementById("rail");
+
+  const themeButton = document.getElementById("theme");
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const effectiveTheme = () => root.dataset.theme || (media.matches ? "dark" : "light");
+  const labelTheme = () => {
+    const next = effectiveTheme() === "dark" ? "light" : "dark";
+    themeButton.textContent = next === "dark" ? "Dark mode" : "Light mode";
+    themeButton.setAttribute("aria-label", "Switch to " + next + " mode");
+  };
+  themeButton.addEventListener("click", () => {
+    root.dataset.theme = effectiveTheme() === "dark" ? "light" : "dark";
+    labelTheme();
+  });
+  media.addEventListener("change", labelTheme);
+  labelTheme();
+
+  const el = (tag, cls, text) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  };
+  const add = (parent, ...kids) => {
+    for (const kid of kids) if (kid) parent.append(kid);
+    return parent;
+  };
+  const hidden = (text) => el("span", "vh", text);
+  const str = (value) => (typeof value === "string" ? value.trim() : "");
+  const list = (value) => (Array.isArray(value) ? value : []);
+  const records = (value) => list(value).filter((row) => row && typeof row === "object");
+  const plural = (count, one, many) => count + " " + (count === 1 ? one : many);
+
+  let round;
+  try {
+    round = JSON.parse(document.getElementById("round-data").textContent);
+    if (!round || typeof round !== "object" || Array.isArray(round)) throw new Error("not an object");
+  } catch (error) {
+    page.replaceChildren(el("p", "notices", "The round's data could not be read, so nothing is shown. Ask the agent to rebuild the page."));
+    return;
+  }
+
+  const IMAGE_HOSTS = new Set(["github.com", "user-images.githubusercontent.com", "private-user-images.githubusercontent.com"]);
+  const DATA_IMAGE = /^data:image\/(png|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+$/;
+  const HEX = /^#[0-9a-fA-F]{3,8}$/;
+  const httpsUrl = (value) => {
+    try {
+      const url = new URL(String(value));
+      return url.protocol === "https:" ? url : null;
+    } catch (error) {
+      return null;
+    }
+  };
+  const link = (text, address) => {
+    const url = httpsUrl(address);
+    if (!url) return el("span", "", text);
+    const anchor = el("a", "", text);
+    anchor.href = url.href;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    return anchor;
+  };
+  const inPage = (text, id, cls) => {
+    const anchor = el("a", cls || "", text);
+    anchor.href = "#" + id;
+    return anchor;
+  };
+  const imageSource = (address) => {
+    const value = str(address);
+    if (DATA_IMAGE.test(value)) return value;
+    const url = httpsUrl(value);
+    return url && IMAGE_HOSTS.has(url.hostname) ? url.href : null;
+  };
+
+  const score = (value) => (Number.isInteger(value) && value >= 1 && value <= 3 ? value : null);
+  const prs = records(round.prs).map((pr, index) => {
+    const s = pr.scores || {};
+    const impact = score(s.impact), confidence = score(s.confidence), verify = score(s.verify), undo = score(s.undo);
+    // A missing or invalid score fails safe: the pull request sorts to the top of the held group.
+    const product = impact && confidence && verify && undo ? verify * undo : 9;
+    const leverage = impact && confidence && verify && undo ? (impact * confidence) / (verify * undo) : null;
+    // A sensitive kind holds a pull request whatever its score (the first hold test).
+    const sensitiveKinds = (typeof pr.sensitiveKind === "string" ? [pr.sensitiveKind] : list(pr.sensitiveKind)).map(str).filter(Boolean);
+    return { pr, index, impact, confidence, verify, undo, product, leverage, sensitiveKinds,
+      hold: product >= 3 || sensitiveKinds.length > 0 };
+  });
+  const groupName = (hold) => (hold ? "Over the hold line" : "Under the hold line");
+  const byProduct = (a, b) => b.product - a.product || (b.leverage ?? Infinity) - (a.leverage ?? Infinity) || a.index - b.index;
+  const over = prs.filter((item) => item.hold).sort(byProduct);
+  const under = prs.filter((item) => !item.hold).sort(byProduct);
+  const ordered = over.concat(under);
+  ordered.forEach((item, position) => {
+    item.rank = position + 1;
+    item.id = "pr-" + item.rank;
+  });
+
+  const shortRepo = (repo) => str(repo).split("/").pop() || str(repo);
+  const label = (pr) => shortRepo(pr.repo) + " #" + (pr.number ?? "?");
+  const fullRef = (pr) => str(pr.repo) + "#" + (pr.number ?? "");
+  const joinNames = (names) => names.length < 2 ? names.join("") : names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+
+  document.getElementById("bar-note").textContent = [str(round.scope), str(round.generated)].filter(Boolean).join(" · ");
+
+  // Verdicts are kept in this browser only, keyed to the reviewed head, so a
+  // moved head starts blank. Nothing leaves the machine.
+  const STORE = "reviewing-prs:";
+  const storeKey = (pr) => STORE + fullRef(pr) + "@" + str(pr.head);
+  const storage = (() => {
+    try {
+      const probe = window.localStorage;
+      probe.getItem(STORE + "probe");
+      return probe;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const recall = (pr) => {
+    if (!storage) return null;
+    try {
+      const saved = JSON.parse(storage.getItem(storeKey(pr)) || "null");
+      return saved && typeof saved === "object" ? saved : null;
+    } catch (error) {
+      return null;
+    }
+  };
+  const remember = (pr, verdict, notes) => {
+    if (!storage) return;
+    try {
+      if (!verdict && !notes) storage.removeItem(storeKey(pr));
+      else storage.setItem(storeKey(pr), JSON.stringify({ verdict, notes, saved: Date.now() }));
+    } catch (error) {
+      /* Storage full or blocked: the page still works without it. */
+    }
+  };
+  if (storage) {
+    try {
+      const month = 30 * 24 * 60 * 60 * 1000;
+      for (let i = storage.length - 1; i >= 0; i -= 1) {
+        const key = storage.key(i);
+        if (!key || !key.startsWith(STORE)) continue;
+        const saved = JSON.parse(storage.getItem(key) || "null");
+        if (!saved || !(Date.now() - saved.saved < month)) storage.removeItem(key);
+      }
+    } catch (error) {
+      /* Ignore a malformed entry; it expires with the rest. */
+    }
+  }
+
+  const merged = round.merged && typeof round.merged === "object" ? round.merged : {};
+  const mergedWithout = records(merged.without);
+  const changedAfter = records(merged.changedAfter);
+  mergedWithout.forEach((row, i) => { row.id = "merged-" + (i + 1); });
+  changedAfter.forEach((row, i) => { row.id = "changed-" + (i + 1); });
+
+  const lede = el("header", "lede");
+  const total = ordered.length;
+  let headline;
+  if (total === 0) headline = "No open pull requests in this round.";
+  else if (over.length === 0) headline = total === 1 ? "The one pull request is under the hold line." : "None of the " + total + " is over the hold line.";
+  else if (over.length === total) headline = total === 1 ? "The one pull request is over the hold line." : "All " + total + " are over the hold line.";
+  else headline = over.length + " of " + total + (over.length === 1 ? " is" : " are") + " over the hold line.";
+  const impactNames = ordered.filter((item) => item.impact === 3).map((item) => label(item.pr));
+  const impactText = impactNames.length === 0 ? "None scores 3 on impact."
+    : joinNames(impactNames) + (impactNames.length === 1 ? " scores" : " score") + " 3 on impact.";
+  const shipped = [];
+  if (mergedWithout.length) shipped.push(plural(mergedWithout.length, "pull request", "pull requests") + " merged without you");
+  if (changedAfter.length) shipped.push(plural(changedAfter.length, "pull request", "pull requests") + " changed after your Verdict");
+  const shippedText = shipped.length ? " Recently, " + joinNames(shipped) + "." : "";
+  add(lede, el("h1", "", headline), el("p", "", "Ranked by verification effort times undo cost, highest first. " + impactText + shippedText));
+  const notices = el("ul", "notices");
+  for (const notice of list(round.notices).map(str).filter(Boolean)) {
+    const li = el("li");
+    add(li, el("span", "seal"), el("span", "", notice));
+    notices.append(li);
+  }
+  for (const [rows, what] of [[changedAfter, "changed after your Verdict"], [mergedWithout, "merged without you"]]) {
+    for (const row of rows) {
+      const li = el("li");
+      const text = el("span");
+      add(text, inPage(label(row) + " " + what, row.id), document.createTextNode(": " + (str(row.summary) || str(row.reason) || str(row.title))));
+      add(li, el("span", "seal"), text);
+      notices.append(li);
+    }
+  }
+  if (notices.children.length) lede.append(notices);
+  page.replaceChildren(lede);
+
+  const SCORE_NAMES = [["impact", true], ["confidence", false], ["verify", true], ["undo", true]];
+  const VERDICTS = { merge: "Merge", changes: "Request changes", defer: "Defer", na: "Not applicable" };
+  const overviewGroup = (items, hold) => {
+    const section = el("section", hold ? "over hold" : "over");
+    const head = el("div", "over-head");
+    add(head, el("span", hold && items.length ? "seal" : "ring"), el("h2", "", groupName(hold)),
+      el("small", "", hold ? "verification effort × undo cost is 3 or more, or the change touches a sensitive kind"
+        : "verification effort × undo cost is 2 or less, and no sensitive kind"));
+    section.append(head);
+    if (!items.length) {
+      section.append(el("p", "empty", hold ? "None over the hold line." : "None under the hold line."));
+      return section;
+    }
+    const rows = el("ol", "orows");
+    for (const item of items) {
+      const row = el("li", "orow");
+      const vu = el("div", "vu", item.product);
+      vu.append(el("small", "", "V × U"));
+      vu.setAttribute("aria-label", "Verification effort times undo cost: " + item.product);
+      const name = el("div");
+      item.overviewState = el("span", "state");
+      add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
+      if (item.sensitiveKinds.length) name.append(el("span", "kind", "Sensitive kind: " + item.sensitiveKinds.join(", ")));
+      name.append(item.overviewState);
+      const scores = el("div", "scores");
+      const spoken = [];
+      for (const [key, tint] of SCORE_NAMES) {
+        const value = item[key];
+        const cell = el("span", tint && value === 3 ? "three" : "", value ?? "?");
+        cell.append(el("small", "", key));
+        cell.setAttribute("aria-hidden", "true");
+        scores.append(cell);
+        spoken.push(key + " " + (value ?? "unknown"));
+      }
+      const lev = el("span", "lev", item.leverage === null ? "?" : item.leverage.toFixed(2));
+      lev.append(el("small", "", "leverage"));
+      lev.setAttribute("aria-hidden", "true");
+      scores.append(lev);
+      scores.setAttribute("role", "img");
+      scores.setAttribute("aria-label", spoken.join(", ") + ", leverage " + (item.leverage === null ? "unknown" : item.leverage.toFixed(2)));
+      add(row, vu, name, el("p", "", str(item.pr.driver)), scores);
+      rows.append(row);
+    }
+    section.append(rows);
+    return section;
+  };
+  add(page, overviewGroup(over, true), overviewGroup(under, false),
+    el("p", "key", "V × U is verification effort times undo cost, each scored 1 to 3; it sets the order. Leverage, impact times confidence divided by V × U, is shown for reference."));
+
+  const across = list(round.across).filter((note) => note && str(note.text));
+  if (across.length) {
+    const box = el("div", "across");
+    for (const note of across) {
+      const span = el("span");
+      if (str(note.label)) span.append(el("b", "", str(note.label) + ": "));
+      span.append(document.createTextNode(str(note.text)));
+      box.append(span);
+    }
+    page.append(box);
+  }
+
+  const SOURCES = {
+    tests: "Taken from the pull request's test or CI output.",
+    screenshot: "Taken from a screenshot attached to the pull request.",
+    diff: "Worked out by reading the diff, not by running it.",
+  };
+  const sourceLine = (part) => {
+    const key = Object.hasOwn(SOURCES, part.source) ? part.source : "diff";
+    return el("p", "source", [SOURCES[key], str(part.sourceNote)].filter(Boolean).join(" "));
+  };
+  const panel = (title, text, risk) => {
+    const box = el("section", risk ? "panel risk" : "panel");
+    const body = str(text);
+    add(box, el("h3", "sec-title", title), el("p", body ? "" : "empty", body || "Nothing to report."));
+    return box;
+  };
+
+  const DESCRIBED = { yes: "Yes", no: "No", unchanged: "unchanged" };
+  const situations = (part) => {
+    const frag = document.createDocumentFragment();
+    const frame = el("div", "frame-table");
+    const table = el("table", "sit");
+    const thead = el("thead"), headRow = el("tr"), tbody = el("tbody");
+    const names = ["Situation", "Before", "After", "Described?"];
+    for (const name of names) {
+      const th = el("th", "", name);
+      th.scope = "col";
+      headRow.append(th);
+    }
+    thead.append(headRow);
+    for (const row of list(part.rows)) {
+      // An unknown marker fails safe: it is shown as not described.
+      const raw = str(row.described).toLowerCase();
+      const described = Object.hasOwn(DESCRIBED, raw) ? raw : "unclear";
+      const tr = el("tr", described === "unchanged" ? "quiet" : "");
+      const changed = described !== "unchanged" && str(row.before) !== str(row.after);
+      const flagged = described === "no" || described === "unclear";
+      const cells = [
+        el("td", "", str(row.situation)), el("td", "", str(row.before)),
+        el("td", changed ? "now" : "", str(row.after)),
+        el("td", flagged ? "no" : "", described === "unclear" ? "Unclear" : DESCRIBED[described]),
+      ];
+      cells.forEach((cell, i) => {
+        cell.setAttribute("data-label", names[i]);
+        tr.append(cell);
+      });
+      tbody.append(tr);
+    }
+    add(table, thead, tbody);
+    frame.append(table);
+    add(frag, frame, sourceLine(part));
+    return frag;
+  };
+
+  const widget = (item, marks) => {
+    if (!item || typeof item !== "object") return null;
+    let node;
+    switch (item.kind) {
+      case "heading": node = el("p", "w-heading", str(item.text)); break;
+      case "text": node = el("p", "w-text", str(item.text)); break;
+      case "badge": node = el("span", "w-badge", str(item.text)); break;
+      case "input": node = el("span", "w-input", str(item.text) || "Input"); break;
+      case "image": node = el("div", "w-image", str(item.text) || "Image"); break;
+      case "button": {
+        const variant = ["primary", "new"].includes(item.variant) ? " " + item.variant : "";
+        node = el("span", "w-btn" + variant, str(item.text) || "Button");
+        if (item.variant === "new") {
+          node.append(hidden(" (a style the design system does not have)"));
+          marks.add("new");
+        }
+        break;
+      }
+      case "row": {
+        node = el("div", "w-row");
+        const left = el("span"), right = el("span");
+        const kids = list(item.items).map((kid) => widget(kid, marks)).filter(Boolean);
+        const split = Number.isInteger(item.split) ? item.split : Math.max(kids.length - 1, 1);
+        kids.forEach((kid, i) => (i < split ? left : right).append(kid));
+        add(node, left, right);
+        break;
+      }
+      default: return null;
+    }
+    if (item.changed === true) {
+      node.classList.add("changed");
+      node.append(hidden(" (changed)"));
+      marks.add("changed");
+    }
+    return node;
+  };
+
+  const screenSide = (side, caption, after, marks) => {
+    const box = el("div", after ? "screen after" : "screen");
+    const data = side && typeof side === "object" ? side : {};
+    const shot = str(data.image);
+    const source = shot ? imageSource(shot) : null;
+    box.append(el("p", "cap", caption + (source ? " · screenshot" : " · redrawn")));
+    box.dataset.shown = source ? "screenshot" : "redrawn";
+    if (source) {
+      const img = el("img");
+      img.alt = caption + " screenshot from the pull request";
+      img.referrerPolicy = "no-referrer";
+      img.loading = "lazy";
+      img.addEventListener("error", () => img.replaceWith(el("p", "empty", "The screenshot did not load here. Its address is below.")));
+      img.src = source;
+      box.append(img);
+      if (!source.startsWith("data:")) {
+        const addr = link(source, source);
+        addr.classList.add("addr");
+        box.append(addr);
+      }
+    } else {
+      for (const item of list(data.items)) {
+        const node = widget(item, marks);
+        if (node) box.append(node);
+      }
+      if (shot) box.append(el("span", "addr", "Screenshot address not shown as an image: " + shot));
+    }
+    return box;
+  };
+  const sideShown = (side) => Boolean(side && typeof side === "object" && (str(side.image) || list(side.items).length));
+  const hasScreens = (part) => Boolean(part && typeof part === "object" && (sideShown(part.before) || sideShown(part.after)));
+  const hasText = (part) => Boolean(part && typeof part === "object" && (str(part.none) || str(part.before) || str(part.after)));
+
+  const screens = (part) => {
+    const frag = document.createDocumentFragment();
+    const marks = new Set();
+    const grid = el("div", "screens");
+    const before = screenSide(part.before, "Before", false, marks), after = screenSide(part.after, "After", true, marks);
+    add(grid, before, after);
+    frag.append(grid);
+    const shots = [before, after].filter((side) => side.dataset.shown === "screenshot").length;
+    const shownText = shots === 2 ? SOURCES.screenshot
+      : shots === 0 ? "Redrawn from the diff, not from a screenshot."
+      : "One side is a screenshot attached to the pull request; the other is redrawn from the diff.";
+    frag.append(el("p", "source", [shownText, str(part.sourceNote)].filter(Boolean).join(" ")));
+    const legend = [];
+    if (marks.has("changed")) legend.push("Blue ring: changed by this pull request.");
+    if (marks.has("new")) legend.push("Dashed orange: a style the design system does not have.");
+    if (legend.length) frag.append(el("p", "legend", legend.join(" ")));
+    const steps = list(part.path).filter((step) => step && str(step.step));
+    if (steps.length) {
+      frag.append(el("h3", "sec-title spaced", "Where it sits in the path"));
+      const walk = el("ol", "walk");
+      steps.forEach((step, i) => {
+        const li = el("li", step.changed === true ? "on" : "");
+        if (i) li.append(el("i", "", "→"));
+        const box = el("span", "", str(step.step));
+        if (step.changed === true) box.append(hidden(" (the step this changes)"));
+        li.append(box);
+        walk.append(li);
+      });
+      frag.append(walk);
+    }
+    const parts = list(part.components).filter((c) => c && str(c.name));
+    if (parts.length) {
+      frag.append(el("h3", "sec-title spaced", "Components"));
+      const box = el("div", "parts");
+      const NAMES = { kept: "Kept", dropped: "No longer used here", added: "New", changed: "Changed" };
+      for (const c of parts) {
+        const status = Object.hasOwn(NAMES, c.status) ? c.status : "changed";
+        const chip = el("div", { added: "part added", changed: "part changed-part", dropped: "part gone" }[status] || "part");
+        add(chip, el("small", "", str(c.note) || NAMES[status]), el("span", "name", str(c.name)));
+        const colors = list(c.swatches).filter((color) => HEX.test(color));
+        if (colors.length) {
+          const sw = el("span", "swatches");
+          for (const color of colors) {
+            const swatch = el("span");
+            const dot = el("i");
+            dot.style.backgroundColor = color;
+            add(swatch, dot, document.createTextNode(color));
+            sw.append(swatch);
+          }
+          chip.append(sw);
+        }
+        box.append(chip);
+      }
+      frag.append(box);
+    }
+    return frag;
+  };
+
+  const differingWords = (before, after) => {
+    const a = before.split(/(\s+)/), b = after.split(/(\s+)/);
+    let start = 0;
+    while (start < a.length && start < b.length && a[start] === b[start]) start += 1;
+    let end = 0;
+    while (end < a.length - start && end < b.length - start && a[a.length - 1 - end] === b[b.length - 1 - end]) end += 1;
+    return [[a, start, a.length - end], [b, start, b.length - end]];
+  };
+  const markedText = ([tokens, from, to]) => {
+    const p = el("p");
+    add(p, document.createTextNode(tokens.slice(0, from).join("")));
+    if (to > from) p.append(el("mark", "", tokens.slice(from, to).join("")));
+    p.append(document.createTextNode(tokens.slice(Math.max(to, from)).join("")));
+    return p;
+  };
+  const textChange = (part) => {
+    const frag = document.createDocumentFragment();
+    if (str(part.none)) {
+      frag.append(el("p", "", str(part.none)));
+    } else {
+      const [beforeMarks, afterMarks] = differingWords(str(part.before), str(part.after));
+      const grid = el("div", "beforeafter");
+      const before = el("div", "ba"), after = el("div", "ba after");
+      add(before, el("p", "cap", "Before"), markedText(beforeMarks));
+      add(after, el("p", "cap", "After"), markedText(afterMarks));
+      add(grid, before, after);
+      frag.append(grid);
+    }
+    frag.append(sourceLine(part));
+    return frag;
+  };
+
+  const placementText = (item) => {
+    const kinds = item.sensitiveKinds.join(", ");
+    if (!item.hold) return "Under the hold line, V × U " + item.product + ".";
+    if (item.product < 3) return "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
+    if (kinds) return "Over the hold line, V × U " + item.product + ", and it touches a sensitive kind: " + kinds + ".";
+    return "Over the hold line, V × U " + item.product + ".";
+  };
+
+  const notesFor = (pr) => across.filter((note) => list(note.refs).map(str).includes(fullRef(pr)));
+
+  const choices = new Map();
+  const verdictBox = el("textarea");
+  const progress = document.getElementById("bar-progress");
+  const railStates = new Map();
+  let lastCopied = "";
+  const nextUndecided = (after) => {
+    const start = after ? ordered.indexOf(after) + 1 : 0;
+    return ordered.slice(start).concat(ordered.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
+  };
+  const refreshVerdicts = () => {
+    const lines = [];
+    for (const item of ordered) {
+      const choice = choices.get(item);
+      if (!choice.verdict) continue;
+      const notes = choice.notes.value.replace(/\s+/g, " ").trim();
+      lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + VERDICTS[choice.verdict].toLowerCase() + " | " + notes);
+    }
+    verdictBox.value = lines.join("\n");
+  };
+  const refreshProgress = () => {
+    let decided = 0;
+    for (const item of ordered) {
+      const choice = choices.get(item);
+      const word = choice.verdict ? VERDICTS[choice.verdict] : "";
+      if (word) decided += 1;
+      item.overviewState.textContent = word ? "Your Verdict: " + word : "";
+      const railState = railStates.get(item);
+      if (railState) {
+        railState.textContent = word || "Undecided";
+        railState.classList.toggle("done", Boolean(word));
+      }
+    }
+    const next = nextUndecided(null);
+    progress.textContent = total ? decided + " of " + total + " decided" + (next ? " · Next undecided ↓" : " · Copy Verdicts ↓") : "";
+    progress.href = "#" + (next ? next.id : "verdicts");
+  };
+  const choose = (item, key) => {
+    const choice = choices.get(item);
+    choice.verdict = choice.verdict === key ? null : key;
+    for (const button of choice.buttons) button.setAttribute("aria-pressed", String(button.dataset.verdict === choice.verdict));
+    remember(item.pr, choice.verdict, choice.notes.value);
+    refreshVerdicts();
+    refreshProgress();
+  };
+
+  const block = (item) => {
+    const pr = item.pr;
+    const article = el("article", item.hold ? "block hold" : "block");
+    article.id = item.id;
+    const head = el("div", "block-head");
+    const title = el("h2");
+    title.tabIndex = -1;
+    item.node = article;
+    item.heading = title;
+    add(title, el("span", "rank", item.rank), document.createTextNode(str(pr.title) || "Untitled"));
+    const verdict = el("div", "verdict");
+    const seg = el("div", "seg");
+    seg.setAttribute("role", "group");
+    seg.setAttribute("aria-label", "Verdict for " + label(pr));
+    const notes = el("input", "notes");
+    notes.type = "text";
+    notes.placeholder = "Notes for the Verdict";
+    notes.setAttribute("aria-label", "Notes for " + label(pr));
+    const saved = recall(pr);
+    const choice = { verdict: saved && Object.hasOwn(VERDICTS, saved.verdict) ? saved.verdict : null, notes, buttons: [] };
+    notes.value = saved && typeof saved.notes === "string" ? saved.notes : "";
+    choices.set(item, choice);
+    for (const [key, text] of Object.entries(VERDICTS)) {
+      const button = el("button", "", text);
+      button.type = "button";
+      button.dataset.verdict = key;
+      button.setAttribute("aria-pressed", String(choice.verdict === key));
+      button.addEventListener("click", () => choose(item, key));
+      choice.buttons.push(button);
+      seg.append(button);
+    }
+    notes.addEventListener("input", () => {
+      remember(pr, choice.verdict, notes.value);
+      refreshVerdicts();
+    });
+    add(verdict, seg, notes);
+    add(head, title, verdict);
+    const size = pr.size || {};
+    const meta = el("p", "meta block-meta");
+    const facts = [label(pr), str(pr.owner) || "No owner",
+      "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " in " + plural(size.files, "file", "files") : ""),
+      str(pr.status)].filter(Boolean);
+    meta.append(document.createTextNode(facts.join(" · ") + " · "));
+    meta.append(link("Open on GitHub", pr.url));
+    add(article, head, meta);
+    article.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
+    for (const note of notesFor(pr)) {
+      const box = el("p", "xnote");
+      add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
+      article.append(box);
+    }
+
+    const cols = el("div", "cols");
+    const main = el("div", "main-col");
+    const changes = el("section");
+    changes.append(el("h3", "sec-title", "What is different for " + (str(pr.audience) ? "a " + str(pr.audience) : "a user")));
+    let shown = false;
+    if (pr.situations && list(pr.situations.rows).length) { changes.append(situations(pr.situations)); shown = true; }
+    if (hasScreens(pr.screens)) {
+      if (shown) changes.append(el("h3", "sec-title spaced", "On screen"));
+      changes.append(screens(pr.screens));
+      shown = true;
+    }
+    if (hasText(pr.text)) { changes.append(textChange(pr.text)); shown = true; }
+    if (!shown) changes.append(el("p", "empty", "Nothing reported."));
+    main.append(changes);
+    const code = list(pr.code).filter((c) => c && list(c.lines).length);
+    const codeBox = el("section");
+    if (!code.length) add(codeBox, el("h3", "sec-title", "The code behind it"), el("p", "empty", "Nothing singled out."));
+    for (const c of code) {
+      codeBox.append(el("h3", "sec-title", [str(c.title) || "The code behind it", str(c.file)].filter(Boolean).join(" · ")));
+      const pre = el("pre");
+      for (const line of list(c.lines)) {
+        const text = String(line);
+        pre.append(el("span", text.startsWith("+") ? "add" : text.startsWith("-") ? "del" : "ctx", text));
+      }
+      codeBox.append(pre);
+    }
+    main.append(codeBox);
+    if (str(pr.feedback)) {
+      const bots = el("p", "bots");
+      add(bots, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
+      main.append(bots);
+    }
+    if (str(pr.rest)) main.append(el("p", "rest-line", "Rest of the diff: " + str(pr.rest)));
+
+    const side = el("div", "side-col");
+    const read = el("section", "read");
+    const r = pr.read || {};
+    const dl = el("dl");
+    for (const [key, name] of [["judgment", "Judgment"], ["check", "Check yourself"], ["notExamined", "Not examined"]]) {
+      const value = str(r[key]);
+      add(dl, el("dt", "", name), el("dd", value ? (key === "judgment" ? "judgment" : "") : "empty", value || "Nothing."));
+    }
+    add(read, el("h3", "sec-title", "The agent's read"), dl);
+    add(side, read,
+      panel(item.undo === 3 ? "If it is wrong · a revert does not undo it" : "If it is wrong", pr.ifWrong, item.undo === 3),
+      panel("What proves it", pr.proof), panel("Asked for?", pr.asked));
+    add(cols, main, side);
+    article.append(cols);
+    return article;
+  };
+  for (const item of ordered) page.append(block(item));
+
+  const closingList = (rows, detail, none, sealed) => {
+    const frag = document.createDocumentFragment();
+    if (!rows.length) {
+      frag.append(el("p", "empty", none));
+      return frag;
+    }
+    const ul = el("ul", "crows");
+    for (const row of rows) {
+      const li = el("li", "crow");
+      if (row.id) li.id = row.id;
+      const name = el("div");
+      if (sealed) name.append(el("span", "seal"));
+      add(name, link(str(row.title) || "Untitled", row.url), el("span", "where", " · " + label(row)));
+      add(li, name, el("div", str(row[detail]) ? "" : "empty", str(row[detail]) || "Nothing to add."));
+      ul.append(li);
+    }
+    frag.append(ul);
+    return frag;
+  };
+  const inProgress = records(round.inProgress);
+  const progressBox = el("section", "closing");
+  progressBox.id = "in-progress";
+  add(progressBox, el("h2", "", "Still in progress"), closingList(inProgress, "note", "None in progress.", false));
+  const mergedBox = el("section", "closing");
+  mergedBox.id = "merged";
+  add(mergedBox, el("h2", "", "Merged recently"),
+    el("p", "meta", str(merged.window) || "The window was not stated."),
+    el("h3", "", "Changed after your Verdict"), closingList(changedAfter, "summary", "None changed after your Verdict.", true),
+    el("h3", "", "Merged without you"), closingList(mergedWithout, "reason", "None merged without you.", true));
+  add(page, mergedBox, progressBox);
+
+  const box = el("section", "verdicts");
+  box.id = "verdicts";
+  const boxHead = el("div", "verdicts-head");
+  const copy = el("button", "copy", "Copy Verdicts");
+  copy.type = "button";
+  const status = el("span", "meta", storage
+    ? "Your choices stay in this browser, so a reload loses nothing. Copy them into the conversation when you are done."
+    : "This browser keeps nothing, so copy your Verdicts before closing the page.");
+  status.setAttribute("aria-live", "polite");
+  copy.addEventListener("click", async () => {
+    if (!verdictBox.value) { status.textContent = "No Verdicts chosen yet."; return; }
+    const text = verdictBox.value;
+    try {
+      await navigator.clipboard.writeText(text);
+      lastCopied = text;
+      status.textContent = "Copied. Paste them into the conversation.";
+    } catch (error) {
+      verdictBox.focus();
+      verdictBox.select();
+      status.textContent = "Copy did not work here. The text is selected; copy it by hand.";
+    }
+  });
+  verdictBox.readOnly = true;
+  verdictBox.setAttribute("aria-label", "Chosen Verdicts, one line per pull request");
+  const keys = el("p", "keys");
+  for (const [k, what] of [["j", "next"], ["k", "previous"], ["n", "next undecided"], ["m", "merge"], ["c", "request changes"], ["d", "defer"], ["x", "not applicable"]]) {
+    add(keys, el("kbd", "", k), document.createTextNode(" " + what + "   "));
+  }
+  add(boxHead, el("h2", "", "Your Verdicts"), copy, status);
+  add(box, boxHead, verdictBox, keys);
+  page.append(box);
+  window.addEventListener("beforeunload", (event) => {
+    if (verdictBox.value && verdictBox.value !== lastCopied) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  });
+
+  const railGroup = (items, hold) => {
+    const frag = document.createDocumentFragment();
+    if (!items.length) return frag;
+    const h = el("h2");
+    add(h, el("span", hold ? "seal" : "ring"), document.createTextNode(groupName(hold)));
+    const ol = el("ol");
+    for (const item of items) {
+      const li = el("li");
+      const a = inPage("", item.id);
+      const state = el("span", "r-state");
+      railStates.set(item, state);
+      item.railLink = a;
+      add(a, el("span", "r-rank", item.rank), el("span", "r-title", str(item.pr.title) || "Untitled"), state);
+      li.append(a);
+      ol.append(li);
+    }
+    add(frag, h, ol);
+    return frag;
+  };
+  const railLinks = el("div", "r-links");
+  if (changedAfter.length || mergedWithout.length) railLinks.append(inPage("Merged recently", "merged"));
+  railLinks.append(inPage("Your Verdicts", "verdicts"));
+  add(rail, railGroup(over, true), railGroup(under, false), railLinks);
+
+  const current = () => {
+    const line = window.innerHeight * 0.3;
+    let found = null;
+    for (const item of ordered) {
+      if (item.node.getBoundingClientRect().top <= line) found = item;
+    }
+    return found;
+  };
+  // A Verdict key acts only on a block that still spans that line, so the
+  // closing sections and the Verdicts box below the last block set nothing.
+  const spansLine = (item) => Boolean(item) && item.node.getBoundingClientRect().bottom > window.innerHeight * 0.3;
+  const go = (item) => {
+    if (!item) return;
+    item.node.scrollIntoView({ block: "start" });
+    item.heading.focus({ preventScroll: true });
+  };
+  if ("IntersectionObserver" in window) {
+    let marked = null;
+    const watcher = new IntersectionObserver(() => {
+      const here = current();
+      if (here === marked) return;
+      if (marked) marked.railLink.setAttribute("aria-current", "false");
+      if (here) here.railLink.setAttribute("aria-current", "true");
+      marked = here;
+    }, { rootMargin: "0px 0px -70% 0px" });
+    for (const item of ordered) watcher.observe(item.node);
+  }
+  const decide = (key) => (here) => spansLine(here) && choose(here, key);
+  const KEY_ACTIONS = {
+    j: (here) => go(ordered[Math.min(ordered.indexOf(here) + 1, ordered.length - 1)]),
+    k: (here) => go(ordered[Math.max(ordered.indexOf(here) - 1, 0)]),
+    n: (here) => go(nextUndecided(here)),
+    m: decide("merge"),
+    c: decide("changes"),
+    d: decide("defer"),
+    x: decide("na"),
+  };
+  document.addEventListener("keydown", (event) => {
+    const action = KEY_ACTIONS[event.key];
+    if (!action || event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
+    if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+    if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
+    event.preventDefault();
+    action(current());
+  });
+
+  refreshVerdicts();
+  refreshProgress();
+})();
+</script>
+</body>
+</html>

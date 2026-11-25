@@ -9,8 +9,8 @@ renders, previews, inspection files, dependency links), goes in a per-run
 temporary directory outside the working directory, and final artifacts go only
 to an explicitly approved external or private destination.
 
-The root `outputs/` directory stays ignored as a privacy safeguard; it is not
-an approved storage location.
+The root `outputs/` and `tmp/` directories stay ignored as a privacy safeguard;
+neither is an approved storage location.
 
 Before staging or committing, inspect all untracked paths and confirm that no
 personal or business artifacts are present.

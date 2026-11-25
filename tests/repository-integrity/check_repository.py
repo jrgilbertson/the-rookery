@@ -23,6 +23,8 @@ FIXTURE_RUNNERS = (
     "tests/personal-chief-of-staff/fixtures/run-sample-checks.py",
     "tests/repository-integrity/check_catalog.py",
     "tests/repository-integrity/check_repository.py",
+    "tests/reviewing-prs/fixtures/run-standin-checks.py",
+    "tests/reviewing-prs/fixtures/run-template-checks.py",
     "tests/routing/fixtures/run-routing-checks.py",
 )
 
@@ -444,6 +446,7 @@ def main() -> int:
             "docs/reports",
             "docs/pulse-reports",
             "outputs",
+            "tmp",
         ):
             regular_path = repository / regular_name
             regular_path.parent.mkdir(parents=True, exist_ok=True)
@@ -471,6 +474,7 @@ def main() -> int:
             "docs/reports/force-added.md",
             "docs/pulse-reports/force-added.md",
             "outputs/force-added.md",
+            "tmp/force-added.md",
         ):
             transient_path = repository / transient_name
             transient_path.parent.mkdir(parents=True, exist_ok=True)

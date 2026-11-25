@@ -17,7 +17,7 @@ length given; the page is read in one sitting across many pull requests.
   "scope": "8 open pull requests across acme · built from the raw diffs · nothing has been written to GitHub",
   "generated": "Built 2026-11-24 22:40 PST",
   "notices": ["The open list for acme stopped at 1,000 results."],
-  "across": [{"label": "Read together", "text": "ledger-app #418 and #421 both change how an upgrade is billed. Merge #421 first."}],
+  "across": [{"label": "Read together", "text": "ledger-app #418 and #421 both change how an upgrade is billed. Merge #421 first.", "refs": ["acme/ledger-app#418", "acme/ledger-app#421"]}],
   "prs": [],
   "inProgress": [],
   "merged": {"window": "", "without": [], "changedAfter": []}
@@ -31,7 +31,9 @@ length given; the page is read in one sitting across many pull requests.
   discovery list or a repository that could not be read. Empty when none.
 - `across`: notes that span pull requests, each one sentence: two that change
   the same files or behavior with a merge order, or a theme that repeats.
-  Label each `Read together`, `Merge order`, or `Repeats`.
+  Label each `Read together`, `Merge order`, or `Repeats`. List in `refs` each
+  pull request the note names, as `owner/repo#number`; the page repeats the note
+  in those blocks so the operator sees it while deciding.
 - `prs`: one entry per held, unclassified, and dependency-bot pull request.
   In-progress ones go in `inProgress`.
 
@@ -96,7 +98,8 @@ row when it shows the boundary of the change.
 
 `described` is `yes` when the title, body, or linked issue mentions the case,
 `no` when nothing does, and `unchanged` for a boundary row. The page marks
-every `no` row in orange. Write concrete values, such as amounts, exit codes,
+every `no` row in orange, and shows any other value as "Unclear", marked the
+same way. Write concrete values, such as amounts, exit codes,
 or messages, and keep each cell under about 40 characters.
 
 **Screens.** Before and after, each either a real screenshot or a schematic.
@@ -141,12 +144,12 @@ or messages, and keep each cell under about 40 characters.
 The page labels each side as a screenshot or redrawn, so there is no source
 field for screens.
 
-**Text.** Either the wording before and after, with the changed words in
-`markBefore` and `markAfter`, or `none` saying there is no user-visible
-change and what changes instead.
+**Text.** Either the wording before and after, or `none` saying there is no
+user-visible change and what changes instead. The page finds and marks the
+words that differ.
 
 ```json
-"text": {"before": "Thank you for you business.", "after": "Thank you for your business.", "markBefore": "you", "markAfter": "your", "source": "diff"}
+"text": {"before": "Thank you for you business.", "after": "Thank you for your business.", "source": "diff"}
 "text": {"none": "No user-visible change. Vite's release notes for 6.3.2 list one dev-server fix.", "source": "diff"}
 ```
 

@@ -22,9 +22,12 @@ looked" surface. GitHub Releases mirror its entries.
   It fills a page template it ships with the round: a risk overview ranked
   by verification effort times undo cost and split at the hold line, then
   one block per pull request showing what changes for a user, as a table of
-  situations before and after or as screens side by side. The page follows
-  the system's light or dark setting, carries a strict Content Security
-  Policy, and renders pull request text as text. It records each Verdict on
+  situations before and after or as screens side by side. Shipped risk, such
+  as a merge without the operator, is counted in the headline. A rail on wide
+  screens, a progress count, and keyboard keys move through the round, and
+  choices survive a reload in that browser. The page follows the system's
+  light or dark setting, carries a strict Content Security Policy, and
+  renders pull request text as text. It records each Verdict on
   the pull request as a three-line comment naming the reviewed commit. It
   merges a pull request nobody owns only when its head is still that commit,
   and hands an owned one back to its owner. Synthetic Skill Eval cases are

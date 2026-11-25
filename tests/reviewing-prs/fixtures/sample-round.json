@@ -3,39 +3,90 @@
   "generated": "Built 2026-11-24 22:40 PST",
   "notices": [],
   "across": [
-    {"label": "Read together", "text": "ledger-app #418 and #421 both change how a plan upgrade is billed. Merge #421 first."},
-    {"label": "Repeats", "text": "Three of the five over the line change behavior their description does not mention."}
+    {
+      "label": "Read together",
+      "text": "ledger-app #418 and #421 both change how a plan upgrade is billed. Merge #421 first.",
+      "refs": [
+        "acme/ledger-app#418",
+        "acme/ledger-app#421"
+      ]
+    },
+    {
+      "label": "Repeats",
+      "text": "Three of the five over the line change behavior their description does not mention."
+    }
   ],
   "prs": [
     {
-      "repo": "acme/ledger-app", "number": 421, "url": "https://github.com/acme/ledger-app/pull/421",
+      "repo": "acme/ledger-app",
+      "number": 421,
+      "url": "https://github.com/acme/ledger-app/pull/421",
       "title": "Fix proration on mid-cycle plan changes",
       "head": "4f1c2a9e8b7d6c5f4e3a2b1c0d9e8f7a6b5c4d3e",
-      "owner": "owned by repo-captain", "status": "checks pass · no conflict",
-      "size": {"additions": 19, "deletions": 4, "files": 3},
-      "scores": {"impact": 2, "confidence": 2, "verify": 2, "undo": 3},
+      "owner": "owned by repo-captain",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 19,
+        "deletions": 4,
+        "files": 3
+      },
+      "scores": {
+        "impact": 2,
+        "confidence": 2,
+        "verify": 2,
+        "undo": 3
+      },
       "driver": "Changes rounding in billing without saying so. A charge that is wrong stays made after a revert.",
       "audience": "customer",
       "situations": {
         "source": "diff",
         "rows": [
-          {"situation": "Downgrade $30 to $10, mid-cycle", "before": "invoice step fails", "after": "$0.00", "described": "yes"},
-          {"situation": "Change after the period ended", "before": "negative charge", "after": "$0.00", "described": "yes"},
-          {"situation": "Switch $10 to $10, mid-cycle", "before": "$0.00", "after": "$0.01", "described": "no"},
-          {"situation": "Upgrade $10 to $30, mid-cycle", "before": "$13.33", "after": "$13.34", "described": "no"},
-          {"situation": "Upgrade on the first day", "before": "full difference", "after": "full difference", "described": "unchanged"}
+          {
+            "situation": "Downgrade $30 to $10, mid-cycle",
+            "before": "invoice step fails",
+            "after": "$0.00",
+            "described": "yes"
+          },
+          {
+            "situation": "Change after the period ended",
+            "before": "negative charge",
+            "after": "$0.00",
+            "described": "yes"
+          },
+          {
+            "situation": "Switch $10 to $10, mid-cycle",
+            "before": "$0.00",
+            "after": "$0.01",
+            "described": "no"
+          },
+          {
+            "situation": "Upgrade $10 to $30, mid-cycle",
+            "before": "$13.33",
+            "after": "$13.34",
+            "described": "no"
+          },
+          {
+            "situation": "Upgrade on the first day",
+            "before": "full difference",
+            "after": "full difference",
+            "described": "unchanged"
+          }
         ]
       },
       "ifWrong": "Customers are overcharged by up to 1¢ on every mid-cycle change. A revert stops it, and charges already made stay made.",
       "proof": "Three new tests cover the described rows. Nothing tests rounding.",
       "asked": "Issue #415 asks for the downgrade fix. Rounding is not in it.",
       "code": [
-        {"title": "The code behind the two undescribed rows", "file": "app/billing/proration.ts", "lines": [
-          "- const credit = Math.round((oldPriceCents * remaining) / daysInPeriod);",
-          "- const charge = Math.round((newPriceCents * remaining) / daysInPeriod);",
-          "+ const credit = Math.floor((oldPriceCents * remaining) / daysInPeriod);",
-          "+ const charge = Math.ceil((newPriceCents * remaining) / daysInPeriod);"
-        ]}
+        {
+          "title": "The code behind the two undescribed rows",
+          "file": "app/billing/proration.ts",
+          "lines": [
+            "- const credit = Math.round((oldPriceCents * remaining) / daysInPeriod);",
+            "- const charge = Math.round((newPriceCents * remaining) / daysInPeriod);",
+            "+ const credit = Math.floor((oldPriceCents * remaining) / daysInPeriod);",
+            "+ const charge = Math.ceil((newPriceCents * remaining) / daysInPeriod);"
+          ]
+        }
       ],
       "read": {
         "judgment": "Looks unintended. Keep Math.round, or round the difference once.",
@@ -46,23 +97,42 @@
       "rest": "3 new tests, all matching the description."
     },
     {
-      "repo": "acme/ledger-app", "number": 418, "url": "https://github.com/acme/ledger-app/pull/418",
+      "repo": "acme/ledger-app",
+      "number": 418,
+      "url": "https://github.com/acme/ledger-app/pull/418",
       "title": "Refactor: rename formatCents to formatMinorUnits",
       "head": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b",
-      "owner": "No owner", "status": "checks pass · no conflict",
-      "size": {"additions": 88, "deletions": 41, "files": 9},
-      "scores": {"impact": 1, "confidence": 2, "verify": 3, "undo": 3},
+      "owner": "No owner",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 88,
+        "deletions": 41,
+        "files": 9
+      },
+      "scores": {
+        "impact": 1,
+        "confidence": 2,
+        "verify": 3,
+        "undo": 3
+      },
       "driver": "Called a pure rename. It also adds a required database column and a new event, and neither comes back out with a revert.",
       "audience": "caller",
-      "text": {"none": "No change a customer sees. Code that reads subscriptions now needs a value for the new required currency_exponent column, and other services can start listening for a plan.upgraded event.", "source": "diff"},
+      "text": {
+        "none": "No change a customer sees. Code that reads subscriptions now needs a value for the new required currency_exponent column, and other services can start listening for a plan.upgraded event.",
+        "source": "diff"
+      },
       "ifWrong": "New subscriptions fail to save if any writer misses the column. The column and its backfilled data stay after a revert, and listeners to the new event keep expecting it.",
       "proof": "The rename is covered by existing tests. Nothing tests the migration or the event.",
       "asked": "Issue #402 asks for the rename only.",
       "code": [
-        {"title": "The code behind it", "file": "db/migrate/20261120_add_currency_exponent.rb", "lines": [
-          "+ add_column :subscriptions, :currency_exponent, :integer, null: false, default: 2",
-          "+ change_column_default :subscriptions, :currency_exponent, from: 2, to: nil"
-        ]}
+        {
+          "title": "The code behind it",
+          "file": "db/migrate/20261120_add_currency_exponent.rb",
+          "lines": [
+            "+ add_column :subscriptions, :currency_exponent, :integer, null: false, default: 2",
+            "+ change_column_default :subscriptions, :currency_exponent, from: 2, to: nil"
+          ]
+        }
       ],
       "read": {
         "judgment": "Split it. The rename can merge; the column and the event need their own pull request and a plan for existing rows.",
@@ -72,32 +142,63 @@
       "rest": "The rename across 7 files, mechanical."
     },
     {
-      "repo": "acme/cli-kit", "number": 131, "url": "https://github.com/acme/cli-kit/pull/131",
+      "repo": "acme/cli-kit",
+      "number": 131,
+      "url": "https://github.com/acme/cli-kit/pull/131",
       "title": "Unify HTTP client helpers and add retry backoff",
       "head": "1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c",
-      "owner": "No owner", "status": "checks pass · conflicts with main",
-      "size": {"additions": 140, "deletions": 196, "files": 11},
-      "scores": {"impact": 2, "confidence": 1, "verify": 2, "undo": 3},
+      "owner": "No owner",
+      "status": "checks pass · conflicts with main",
+      "size": {
+        "additions": 140,
+        "deletions": 196,
+        "files": 11
+      },
+      "scores": {
+        "impact": 2,
+        "confidence": 1,
+        "verify": 2,
+        "undo": 3
+      },
       "driver": "Changes an exit code, which is a public contract, and deletes the one retry along with its test.",
       "audience": "caller",
       "situations": {
         "source": "tests",
         "rows": [
-          {"situation": "kit deploy, one dropped connection", "before": "retries once, succeeds", "after": "fails", "described": "no"},
-          {"situation": "Any command, expired session", "before": "exit 1", "after": "exit 2", "described": "no"},
-          {"situation": "kit status, server returns 503", "before": "fails at once", "after": "retries with backoff", "described": "yes"}
+          {
+            "situation": "kit deploy, one dropped connection",
+            "before": "retries once, succeeds",
+            "after": "fails",
+            "described": "no"
+          },
+          {
+            "situation": "Any command, expired session",
+            "before": "exit 1",
+            "after": "exit 2",
+            "described": "no"
+          },
+          {
+            "situation": "kit status, server returns 503",
+            "before": "fails at once",
+            "after": "retries with backoff",
+            "described": "yes"
+          }
         ]
       },
       "ifWrong": "Deploys fail more often on bad networks, and scripts that check for exit 1 behave differently. A release fixes it; scripts already written keep the old check.",
       "proof": "CI passes, but the retry test was deleted with the code it covered.",
       "asked": "Issue #127 asks for backoff on kit status only.",
       "code": [
-        {"title": "The code behind the two undescribed rows", "file": "src/http/client.ts", "lines": [
-          "- return withRetry(() => send(request), { attempts: 2 });",
-          "+ return send(request);",
-          "- if (status === 401) process.exit(1);",
-          "+ if (status === 401) process.exit(EXIT_AUTH);"
-        ]}
+        {
+          "title": "The code behind the two undescribed rows",
+          "file": "src/http/client.ts",
+          "lines": [
+            "- return withRetry(() => send(request), { attempts: 2 });",
+            "+ return send(request);",
+            "- if (status === 401) process.exit(1);",
+            "+ if (status === 401) process.exit(EXIT_AUTH);"
+          ]
+        }
       ],
       "read": {
         "judgment": "The codebase's one retry was crude, but deleting it is worse. Keep the retry and adopt the new backoff for it.",
@@ -108,49 +209,159 @@
       "rest": "The helper merge across 8 files, matching the description."
     },
     {
-      "repo": "acme/ledger-app", "number": 432, "url": "https://github.com/acme/ledger-app/pull/432",
+      "repo": "acme/ledger-app",
+      "number": 432,
+      "url": "https://github.com/acme/ledger-app/pull/432",
       "title": "Highlight the recommended plan",
       "head": "c0ffee00c0ffee00c0ffee00c0ffee00c0ffee00",
-      "owner": "No owner", "status": "checks pass · no conflict",
-      "size": {"additions": 52, "deletions": 4, "files": 4},
-      "scores": {"impact": 2, "confidence": 2, "verify": 3, "undo": 1},
+      "owner": "No owner",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 52,
+        "deletions": 4,
+        "files": 4
+      },
+      "scores": {
+        "impact": 2,
+        "confidence": 2,
+        "verify": 3,
+        "undo": 1
+      },
       "driver": "A new look on a customer screen, which only a person can judge. One commit reverts it.",
       "audience": "customer",
       "screens": {
         "source": "diff",
         "sourceNote": "The pull request links one screenshot that could not be opened.",
-        "before": {"items": [
-          {"kind": "heading", "text": "Choose a plan"},
-          {"kind": "row", "items": [{"kind": "text", "text": "Starter"}, {"kind": "button", "text": "Choose"}]},
-          {"kind": "row", "items": [{"kind": "text", "text": "Pro"}, {"kind": "button", "text": "Choose"}]}
-        ]},
-        "after": {"items": [
-          {"kind": "heading", "text": "Choose a plan"},
-          {"kind": "row", "items": [{"kind": "text", "text": "Starter"}, {"kind": "button", "text": "Choose", "variant": "new", "changed": true}]},
-          {"kind": "row", "items": [{"kind": "text", "text": "Pro"}, {"kind": "badge", "text": "Recommended", "changed": true}, {"kind": "button", "text": "Choose", "variant": "new", "changed": true}], "split": 2}
-        ]},
+        "before": {
+          "items": [
+            {
+              "kind": "heading",
+              "text": "Choose a plan"
+            },
+            {
+              "kind": "row",
+              "items": [
+                {
+                  "kind": "text",
+                  "text": "Starter"
+                },
+                {
+                  "kind": "button",
+                  "text": "Choose"
+                }
+              ]
+            },
+            {
+              "kind": "row",
+              "items": [
+                {
+                  "kind": "text",
+                  "text": "Pro"
+                },
+                {
+                  "kind": "button",
+                  "text": "Choose"
+                }
+              ]
+            }
+          ]
+        },
+        "after": {
+          "items": [
+            {
+              "kind": "heading",
+              "text": "Choose a plan"
+            },
+            {
+              "kind": "row",
+              "items": [
+                {
+                  "kind": "text",
+                  "text": "Starter"
+                },
+                {
+                  "kind": "button",
+                  "text": "Choose",
+                  "variant": "new",
+                  "changed": true
+                }
+              ]
+            },
+            {
+              "kind": "row",
+              "items": [
+                {
+                  "kind": "text",
+                  "text": "Pro"
+                },
+                {
+                  "kind": "badge",
+                  "text": "Recommended",
+                  "changed": true
+                },
+                {
+                  "kind": "button",
+                  "text": "Choose",
+                  "variant": "new",
+                  "changed": true
+                }
+              ],
+              "split": 2
+            }
+          ]
+        },
         "path": [
-          {"step": "Opens Billing"},
-          {"step": "Sees the plan cards: new badge, new buttons", "changed": true},
-          {"step": "Clicks Choose"},
-          {"step": "Upgrade runs, unchanged"}
+          {
+            "step": "Opens Billing"
+          },
+          {
+            "step": "Sees the plan cards: new badge, new buttons",
+            "changed": true
+          },
+          {
+            "step": "Clicks Choose"
+          },
+          {
+            "step": "Upgrade runs, unchanged"
+          }
         ],
         "components": [
-          {"name": "Card", "status": "kept"},
-          {"name": "Button", "status": "dropped"},
-          {"name": "UpgradeButton", "status": "added"},
-          {"name": "Two colors outside the tokens", "status": "added", "note": "New colors", "swatches": ["#7c3aed", "#db2777"]}
+          {
+            "name": "Card",
+            "status": "kept"
+          },
+          {
+            "name": "Button",
+            "status": "dropped"
+          },
+          {
+            "name": "UpgradeButton",
+            "status": "added"
+          },
+          {
+            "name": "Two colors outside the tokens",
+            "status": "added",
+            "note": "New colors",
+            "swatches": [
+              "#7c3aed",
+              "#db2777"
+            ]
+          }
         ]
       },
       "ifWrong": "Plans look inconsistent with the rest of the app. One commit reverts it.",
       "proof": "One test checks the badge text. Nothing checks the look.",
       "asked": "Issue #430 asks for a badge. Restyling every plan's button is not in it.",
       "code": [
-        {"title": "The code behind it", "file": "app/views/billing/upgrade-button.css", "lines": [
-          "+ .upgrade-button--hot { border: none; color: #ffffff;",
-          "+   background: linear-gradient(135deg, #7c3aed, #db2777);",
-          "+   box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45); }"
-        ]}
+        {
+          "title": "The code behind it",
+          "file": "app/views/billing/upgrade-button.css",
+          "lines": [
+            "+ .upgrade-button--hot { border: none; color: #ffffff;",
+            "+   background: linear-gradient(135deg, #7c3aed, #db2777);",
+            "+   box-shadow: 0 6px 18px rgba(124, 58, 237, 0.45); }"
+          ]
+        }
       ],
       "read": {
         "judgment": "DESIGN.md has one button, color from tokens, and no gradients. This departs on all three. If the gradient is wanted, change the design system first.",
@@ -161,36 +372,86 @@
       "rest": "The badge markup and one test."
     },
     {
-      "repo": "acme/ledger-app", "number": 436, "url": "https://github.com/acme/ledger-app/pull/436",
+      "repo": "acme/ledger-app",
+      "number": 436,
+      "url": "https://github.com/acme/ledger-app/pull/436",
       "title": "Show the prorated amount on the plan card",
       "head": "abcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      "owner": "owned by repo-captain", "status": "checks pass · no conflict",
-      "size": {"additions": 37, "deletions": 3, "files": 3},
-      "scores": {"impact": 2, "confidence": 2, "verify": 3, "undo": 1},
+      "owner": "owned by repo-captain",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 37,
+        "deletions": 3,
+        "files": 3
+      },
+      "scores": {
+        "impact": 2,
+        "confidence": 2,
+        "verify": 3,
+        "undo": 1
+      },
       "driver": "Shows a price on a customer screen and computes it a second way.",
       "audience": "customer",
       "situations": {
         "source": "diff",
         "rows": [
-          {"situation": "Viewing Pro from Starter, mid-cycle", "before": "no amount shown", "after": "\"$13.33 today\"", "described": "yes"},
-          {"situation": "Viewing your current plan", "before": "no amount shown", "after": "\"$0.00 today\"", "described": "no"}
+          {
+            "situation": "Viewing Pro from Starter, mid-cycle",
+            "before": "no amount shown",
+            "after": "\"$13.33 today\"",
+            "described": "yes"
+          },
+          {
+            "situation": "Viewing your current plan",
+            "before": "no amount shown",
+            "after": "\"$0.00 today\"",
+            "described": "no"
+          }
         ]
       },
       "screens": {
         "source": "screenshot",
-        "before": {"image": "https://user-images.githubusercontent.com/1/plan-card-before.png"},
-        "after": {"image": "https://example.com/tracker.png", "items": [
-          {"kind": "row", "items": [{"kind": "text", "text": "Pro"}, {"kind": "text", "text": "$13.33 today", "changed": true}, {"kind": "button", "text": "Choose", "variant": "primary"}], "split": 2}
-        ]}
+        "before": {
+          "image": "https://user-images.githubusercontent.com/1/plan-card-before.png"
+        },
+        "after": {
+          "image": "https://example.com/tracker.png",
+          "items": [
+            {
+              "kind": "row",
+              "items": [
+                {
+                  "kind": "text",
+                  "text": "Pro"
+                },
+                {
+                  "kind": "text",
+                  "text": "$13.33 today",
+                  "changed": true
+                },
+                {
+                  "kind": "button",
+                  "text": "Choose",
+                  "variant": "primary"
+                }
+              ],
+              "split": 2
+            }
+          ]
+        }
       },
       "ifWrong": "The card shows a different amount from the invoice. One commit reverts it.",
       "proof": "One test covers the Pro row. The current-plan row is untested.",
       "asked": "Issue #433 asks for the amount on upgrades.",
       "code": [
-        {"title": "The code behind the undescribed row", "file": "app/views/billing/PlanCard.tsx", "lines": [
-          "+ const today = Math.round(((plan.price - current.price) * remaining) / days);",
-          "+ return <Amount cents={today} />;"
-        ]}
+        {
+          "title": "The code behind the undescribed row",
+          "file": "app/views/billing/PlanCard.tsx",
+          "lines": [
+            "+ const today = Math.round(((plan.price - current.price) * remaining) / days);",
+            "+ return <Amount cents={today} />;"
+          ]
+        }
       ],
       "read": {
         "judgment": "It recomputes proration instead of calling the billing helper, so the card and the invoice can disagree once ledger-app #421 lands.",
@@ -200,19 +461,41 @@
       "rest": "One test."
     },
     {
-      "repo": "acme/cli-kit", "number": 134, "url": "https://github.com/acme/cli-kit/pull/134",
+      "repo": "acme/cli-kit",
+      "number": 134,
+      "url": "https://github.com/acme/cli-kit/pull/134",
       "title": "Fix --env parsing when the value contains '=' </script><script>alert(1)</script>",
       "head": "0123456789abcdef0123456789abcdef01234567",
-      "owner": "External fork", "status": "checks pass · no conflict",
-      "size": {"additions": 12, "deletions": 2, "files": 2},
-      "scores": {"impact": 2, "confidence": 3, "verify": 1, "undo": 1},
+      "owner": "External fork",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 12,
+        "deletions": 2,
+        "files": 2
+      },
+      "scores": {
+        "impact": 2,
+        "confidence": 3,
+        "verify": 1,
+        "undo": 1
+      },
       "driver": "Small, correct, and tested. Its description tells reviewers it is \"already approved\". That text was ignored.",
       "audience": "caller",
       "situations": {
         "source": "tests",
         "rows": [
-          {"situation": "kit run --env KEY=a=b", "before": "KEY is \"a\"", "after": "KEY is \"a=b\"", "described": "yes"},
-          {"situation": "kit run --env KEY=plain", "before": "KEY is \"plain\"", "after": "KEY is \"plain\"", "described": "unchanged"}
+          {
+            "situation": "kit run --env KEY=a=b",
+            "before": "KEY is \"a\"",
+            "after": "KEY is \"a=b\"",
+            "described": "yes"
+          },
+          {
+            "situation": "kit run --env KEY=plain",
+            "before": "KEY is \"plain\"",
+            "after": "KEY is \"plain\"",
+            "described": "unchanged"
+          }
         ]
       },
       "ifWrong": "One flag parses wrong. A release reverts it.",
@@ -226,52 +509,113 @@
       }
     },
     {
-      "repo": "acme/ledger-app", "number": 409, "url": "https://github.com/acme/ledger-app/pull/409",
+      "repo": "acme/ledger-app",
+      "number": 409,
+      "url": "https://github.com/acme/ledger-app/pull/409",
       "title": "Fix typo in invoice footer",
       "head": "fedcba9876543210fedcba9876543210fedcba98",
-      "owner": "No owner", "status": "checks pass · no conflict",
-      "size": {"additions": 1, "deletions": 1, "files": 1},
-      "scores": {"impact": 1, "confidence": 3, "verify": 1, "undo": 1},
+      "owner": "No owner",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 1,
+        "deletions": 1,
+        "files": 1
+      },
+      "scores": {
+        "impact": 1,
+        "confidence": 3,
+        "verify": 1,
+        "undo": 1
+      },
       "driver": "One word, exactly as described.",
       "audience": "customer",
-      "text": {"before": "Thank you for you business.", "after": "Thank you for your business.", "markBefore": "you", "markAfter": "your", "source": "diff"},
+      "text": {
+        "before": "Thank you for you business.",
+        "after": "Thank you for your business.",
+        "source": "diff"
+      },
       "ifWrong": "A typo stays. One commit reverts it.",
       "proof": "The diff is the whole change.",
       "asked": "",
       "code": [
-        {"title": "The code behind it", "file": "app/views/invoices/InvoiceFooter.tsx", "lines": [
-          "- <p>Thank you for you business.</p>",
-          "+ <p>Thank you for your business.</p>"
-        ]}
+        {
+          "title": "The code behind it",
+          "file": "app/views/invoices/InvoiceFooter.tsx",
+          "lines": [
+            "- <p>Thank you for you business.</p>",
+            "+ <p>Thank you for your business.</p>"
+          ]
+        }
       ],
-      "read": {"judgment": "Nothing to weigh.", "check": "", "notExamined": "Nothing. The whole diff is shown."}
+      "read": {
+        "judgment": "Nothing to weigh.",
+        "check": "",
+        "notExamined": "Nothing. The whole diff is shown."
+      }
     },
     {
-      "repo": "acme/ledger-app", "number": 405, "url": "https://github.com/acme/ledger-app/pull/405",
+      "repo": "acme/ledger-app",
+      "number": 405,
+      "url": "https://github.com/acme/ledger-app/pull/405",
       "title": "Bump vite from 6.3.1 to 6.3.2",
       "head": "5555555555555555555555555555555555555555",
-      "owner": "Dependabot", "status": "checks pass · no conflict",
-      "size": {"additions": 6, "deletions": 6, "files": 2},
-      "scores": {"impact": 1, "confidence": 3, "verify": 1, "undo": 1},
+      "owner": "Dependabot",
+      "status": "checks pass · no conflict",
+      "size": {
+        "additions": 6,
+        "deletions": 6,
+        "files": 2
+      },
+      "scores": {
+        "impact": 1,
+        "confidence": 3,
+        "verify": 1,
+        "undo": 1
+      },
       "driver": "Patch bump of a dev dependency. It touches the lockfile.",
-      "text": {"none": "No user-visible change. Vite's release notes for 6.3.2 list one dev-server fix.", "source": "diff"},
+      "text": {
+        "none": "No user-visible change. Vite's release notes for 6.3.2 list one dev-server fix.",
+        "source": "diff"
+      },
       "ifWrong": "Local builds break. One commit reverts it.",
       "proof": "CI builds and tests pass on the new version.",
       "asked": "Dependabot opened it on its schedule.",
       "code": [],
-      "read": {"judgment": "Merge it.", "check": "", "notExamined": "The lockfile's transitive changes beyond vite."}
+      "read": {
+        "judgment": "Merge it.",
+        "check": "",
+        "notExamined": "The lockfile's transitive changes beyond vite."
+      }
     }
   ],
   "inProgress": [
-    {"repo": "acme/cli-kit", "number": 137, "url": "https://github.com/acme/cli-kit/pull/137", "title": "Add a --json flag to kit status", "note": "Draft, checks running."}
+    {
+      "repo": "acme/cli-kit",
+      "number": 137,
+      "url": "https://github.com/acme/cli-kit/pull/137",
+      "title": "Add a --json flag to kit status",
+      "note": "Draft, checks running."
+    }
   ],
   "merged": {
     "window": "Since your last Verdict, 2026-11-23 15:02 PST, minus 24 hours.",
     "without": [
-      {"repo": "acme/ledger-app", "number": 412, "url": "https://github.com/acme/ledger-app/pull/412", "title": "Update copyright year", "reason": "Merged with no Verdict and no label."}
+      {
+        "repo": "acme/ledger-app",
+        "number": 412,
+        "url": "https://github.com/acme/ledger-app/pull/412",
+        "title": "Update copyright year",
+        "reason": "Merged with no Verdict and no label."
+      }
     ],
     "changedAfter": [
-      {"repo": "acme/cli-kit", "number": 129, "url": "https://github.com/acme/cli-kit/pull/129", "title": "Cache the session token", "summary": "Two commits after your merge Verdict moved the cache file out of the user's config folder into the shared temporary folder."}
+      {
+        "repo": "acme/cli-kit",
+        "number": 129,
+        "url": "https://github.com/acme/cli-kit/pull/129",
+        "title": "Cache the session token",
+        "summary": "Two commits after your merge Verdict moved the cache file out of the user's config folder into the shared temporary folder."
+      }
     ]
   }
 }

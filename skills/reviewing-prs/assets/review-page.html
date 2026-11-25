@@ -8,12 +8,12 @@
 <link rel="icon" href="data:,">
 <title>Review Round</title>
 <style>
-/* The Rookery design system (DESIGN.md): Chalk Paper carries data, navy is the
-   subject, cobalt is movement, graphite is structure, Dispatch Paper carries
-   notes, and orange marks only what needs the operator's intervention. */
+/* The Rookery design system (DESIGN.md, including Working Pages): Chalk Paper
+   carries data, navy is the subject, cobalt is movement, graphite is structure,
+   Dispatch Paper carries notes, and orange marks only what needs the operator. */
 :root {
   color-scheme: light;
-  --paper: #F6F7FA; --sheet: #FFFFFF; --mist: #E3E9F7; --dispatch: #F0EBE5;
+  --paper: #F6F7FA; --sheet: #FFFFFF; --mist: #E3E9F7; --stake: #E3E9F7; --dispatch: #F0EBE5;
   --hairline: rgb(71 87 122 / 0.32); --hairline-soft: rgb(71 87 122 / 0.16);
   --ink: #042458; --ink-soft: #47577A; --route: #0050CC;
   --signal: #DC6C36; --signal-ink: #963E12;
@@ -24,12 +24,11 @@
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
-/* Night paper: the same field manual on a drafting table after dark. Low
-   saturation keeps navy from turning into a blue glow and orange scarce. */
+/* Night Paper: the same field manual on a drafting table after dark. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --dispatch: #29251F;
+    --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --stake: #34415C; --dispatch: #29251F;
     --hairline: rgb(167 175 192 / 0.30); --hairline-soft: rgb(167 175 192 / 0.15);
     --ink: #ECEEF3; --ink-soft: #A7AFC0; --route: #93AEEF;
     --signal: #E08A5E; --signal-ink: #F0A57E;
@@ -39,7 +38,7 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --dispatch: #29251F;
+  --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --stake: #34415C; --dispatch: #29251F;
   --hairline: rgb(167 175 192 / 0.30); --hairline-soft: rgb(167 175 192 / 0.15);
   --ink: #ECEEF3; --ink-soft: #A7AFC0; --route: #93AEEF;
   --signal: #E08A5E; --signal-ink: #F0A57E;
@@ -47,106 +46,118 @@
   --chosen: #ECEEF3; --on-chosen: #14161B;
 }
 * { box-sizing: border-box; }
-html { background: var(--paper); scrollbar-color: var(--ink-soft) var(--paper); }
+html { background: var(--paper); scrollbar-color: var(--ink-soft) var(--paper); scroll-padding-top: 72px; }
 body { margin: 0; background: var(--paper); font: 16px/1.5 var(--serif); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
 ::selection { background: var(--mist); color: var(--ink); }
-h1, h2, h3, p { margin: 0; }
+h1, h2, h3, p, dl, dd { margin: 0; }
 h1 { font: 400 2.6rem/1.08 var(--display); letter-spacing: -0.01em; text-wrap: balance; }
 h2 { font: 600 1.2rem/1.3 var(--serif); }
-h3 { font: 600 1rem/1.3 var(--serif); }
+p, li, dd { text-wrap: pretty; }
 a { color: var(--route); text-underline-offset: 3px; text-decoration-thickness: 1px; }
 button, input, textarea { font: inherit; color: inherit; caret-color: var(--route); }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
+[tabindex="-1"]:focus { outline: none; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 pre { margin: 6px 0 0; padding: 10px 12px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.8rem/1.55 var(--mono); }
-pre span { display: block; padding: 0 4px; }
+pre span { display: block; padding: 2px 8px 2px 2.3em; text-indent: -1.6em; }
 pre .add { color: var(--add); background: var(--add-wash); }
 pre .del { color: var(--del); background: var(--del-wash); }
 pre .ctx { color: var(--ink-soft); }
 
-/* Small labels use the compact sans DESIGN.md allows for dense labels. */
-.sec-title, .meta, .source, .where, .legend, .cap, .scores small, .vu small, .read .label, .bots b, .part small, .bar-note, .bar-count, .theme, .seg button, .notes, .copy, .over-head small, .crow .where {
-  font-family: var(--sans);
-}
+/* Labels use the compact sans DESIGN.md allows for dense labels, never below 0.7rem. */
+.sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
+.read dt, .bots b, .part small, .bar-note, .bar-progress, .theme, .seg button, .notes, .copy,
+.over-head small, .rail, .keys, .xnote b { font-family: var(--sans); }
 .meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
 .source { margin-top: 6px; }
 .empty { color: var(--ink-soft); font-style: italic; }
-.sec-title { font-size: 0.72rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 6px; }
-.sec-title.spaced { margin-top: 16px; }
+.sec-title { font-size: 0.72rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 6px; line-height: 1.4; overflow-wrap: anywhere; text-wrap: balance; }
+.sec-title.spaced { margin-top: 18px; }
 
 /* A seal is the one orange mark: something needs the operator. A ring is its quiet twin. */
 .seal, .ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .seal { background: var(--signal); }
 .ring { border: 1.5px solid var(--ink-soft); }
 
-.bar { position: sticky; top: 0; z-index: 9; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 18px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--hairline); }
+.bar { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--hairline); }
 .bar strong { font: 400 1.25rem/1 var(--display); }
-.bar-note { color: var(--ink-soft); font-size: 0.8rem; }
-.bar-count { margin-left: auto; font-size: 0.82rem; }
-.bar-count:empty { display: none; }
-.theme { align-self: center; border: 1px solid var(--hairline); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 4px 12px; font-size: 0.8rem; }
+.bar-note { color: var(--ink-soft); font-size: 0.8rem; flex: 1 1 320px; }
+.bar-progress { margin-left: auto; font-size: 0.85rem; font-weight: 600; }
+.theme { border: 1px solid var(--hairline); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 32px; }
 .theme:hover { border-color: var(--ink-soft); }
-.bar-count:empty + .theme { margin-left: auto; }
-main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
-.lede { max-width: 70ch; margin-bottom: 30px; }
-.lede p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; }
-.notices { margin: 14px 0 0; padding: 0; list-style: none; }
-.notices li { display: flex; align-items: baseline; gap: 10px; margin-top: 6px; padding: 8px 12px; border: 1px solid var(--hairline); background: var(--sheet); font-size: 0.95rem; }
+
+.shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
+.rail { display: none; }
+main { padding: 40px 0 80px; min-width: 0; }
+.lede { max-width: 72ch; margin-bottom: 30px; }
+.lede p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; max-width: 66ch; }
+.notices { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.notices li { display: flex; align-items: baseline; gap: 10px; padding: 9px 14px; border: 1px solid var(--hairline); background: var(--sheet); font-size: 0.97rem; }
+.notices .seal { transform: translateY(-1px); }
 
 .over { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; margin-bottom: 16px; }
 .over-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; padding: 14px 20px 12px; border-bottom: 1px solid var(--hairline); }
 .over-head small { font-size: 0.82rem; color: var(--ink-soft); }
 .over > .empty { padding: 12px 20px; }
-.orow { display: grid; grid-template-columns: 60px minmax(0, 1.25fr) minmax(0, 1.6fr) 200px; gap: 18px; padding: 14px 20px; border-top: 1px solid var(--hairline-soft); align-items: center; }
-.over-head + .orow { border-top: 0; }
+.orows { list-style: none; margin: 0; padding: 0; }
+.orow { display: grid; grid-template-columns: 60px minmax(0, 1.2fr) minmax(0, 1.5fr) 320px; gap: 18px; padding: 14px 20px; border-top: 1px solid var(--hairline-soft); align-items: center; }
+.orow:first-child { border-top: 0; }
 .vu { display: grid; place-items: center; align-content: center; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1.55rem/1 var(--display); color: var(--ink-soft); text-align: center; }
 .over.hold .vu { border-color: var(--ink); color: var(--ink); }
-.vu small { display: block; margin-top: 2px; font-size: 0.55rem; font-weight: 600; letter-spacing: 0.04em; color: var(--ink-soft); }
-.orow b { display: block; font-weight: 600; line-height: 1.3; }
-.where { display: block; margin-top: 2px; font-size: 0.78rem; color: var(--ink-soft); }
+.vu small { display: block; margin-top: 2px; font-size: 0.7rem; font-weight: 600; color: var(--ink-soft); }
+.orow a.title { display: block; font-weight: 600; line-height: 1.3; color: var(--ink); text-decoration: none; }
+.orow a.title:hover { text-decoration: underline; }
+.where { display: block; margin-top: 2px; font-size: 0.8rem; color: var(--ink-soft); }
+.state { display: inline-block; margin-top: 4px; font-size: 0.78rem; font-weight: 650; }
+.state:empty { display: none; }
 .orow p { font-size: 0.95rem; }
-.scores { display: grid; grid-template-columns: repeat(4, 1fr) 1.4fr; gap: 4px; text-align: center; }
+.scores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 4px; text-align: center; }
 .scores span { border: 1px solid var(--hairline-soft); border-radius: 2px; padding: 3px 0 2px; font-weight: 600; font-size: 0.95rem; }
-.scores span small { display: block; font-size: 0.58rem; font-weight: 600; letter-spacing: 0.03em; color: var(--ink-soft); }
-.scores span.three { background: var(--mist); border-color: var(--ink-soft); font-weight: 700; }
+.scores span small { display: block; font-size: 0.7rem; font-weight: 600; color: var(--ink-soft); }
+.scores span.three { background: var(--stake); border-color: var(--ink-soft); font-weight: 700; }
+.scores span.three small { color: var(--ink); }
 .scores span.lev { border-color: var(--hairline); }
+.key { margin: -4px 0 18px; color: var(--ink-soft); font-size: 0.8rem; max-width: 90ch; }
 .across { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 30px; font-size: 0.95rem; }
 .across span { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 8px 12px; }
 
-.block { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 22px 24px 24px; margin-bottom: 20px; scroll-margin-top: 64px; }
-.block-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline-soft); }
+.block { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 22px 24px 24px; margin-bottom: 20px; }
+.block-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
 .block-head h2 { flex: 1 1 320px; display: flex; align-items: center; gap: 12px; }
-.block-head .meta { flex: 1 1 100%; order: 3; }
 .rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1rem/1 var(--display); color: var(--ink-soft); }
 .block.hold .rank { border-color: var(--ink); color: var(--ink); }
 .verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
 .seg { display: inline-flex; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); }
-.seg button { border: 0; background: none; padding: 6px 13px; font-size: 0.82rem; border-right: 1px solid var(--hairline); }
+.seg button { border: 0; background: none; padding: 6px 13px; min-height: 36px; font-size: 0.82rem; border-right: 1px solid var(--hairline); }
 .seg button:last-child { border-right: 0; }
 .seg button:hover { background: var(--mist); }
 .seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 650; }
-.notes { width: 260px; max-width: 100%; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
+.notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
 .notes::placeholder { color: var(--ink-soft); }
-.lenses, .under { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 26px; }
-.under { margin-top: 20px; }
-.lens-stack { display: grid; gap: 12px; align-content: start; }
-.lens { border: 1px solid var(--hairline-soft); background: var(--paper); padding: 10px 14px; font-size: 0.95rem; }
-.lens.risk .sec-title { display: flex; align-items: center; gap: 8px; color: var(--signal-ink); }
-.lens.risk .sec-title::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--signal); }
-.frame-table { border: 1px solid var(--hairline); overflow-x: auto; }
+.block-meta { margin: 8px 0 0; }
+.driver { margin-top: 10px; max-width: 80ch; }
+.xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
+.xnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
+.main-col, .side-col { display: grid; gap: 18px; min-width: 0; }
+.panel { padding-top: 10px; border-top: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.panel p { max-width: 70ch; }
+.panel.risk .sec-title { display: flex; align-items: center; gap: 8px; color: var(--signal-ink); }
+.panel.risk .sec-title::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--signal); }
+.frame-table { border: 1px solid var(--hairline); }
 .sit { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
 .sit th { text-align: left; font: 600 0.7rem/1.3 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); padding: 8px 10px; border-bottom: 1px solid var(--hairline); background: var(--paper); }
 .sit td { padding: 8px 10px; border-bottom: 1px solid var(--hairline-soft); vertical-align: top; }
-.sit tr:last-child td { border-bottom: 0; }
+.sit tbody tr:last-child td { border-bottom: 0; }
 .sit td.now { font-weight: 700; }
 .sit td.no { font: 650 0.85rem/1.4 var(--sans); color: var(--signal-ink); white-space: nowrap; }
 .sit td.no::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); margin-right: 7px; vertical-align: 1px; }
-.sit tr.unsaid td { background: var(--dispatch); }
 .sit tr.quiet td { color: var(--ink-soft); }
-.screens, .beforeafter { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.screens, .beforeafter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .screen, .ba { border: 1px solid var(--hairline); padding: 12px; background: var(--paper); font-size: 0.92rem; min-width: 0; }
 .screen.after, .ba.after { background: var(--sheet); border-color: var(--ink-soft); }
-.cap { font-size: 0.68rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+.cap { font-size: 0.7rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
 .screen img { display: block; max-width: 100%; height: auto; border: 1px solid var(--hairline); }
 .screen .addr { display: block; margin-top: 6px; font: 0.75rem/1.4 var(--sans); overflow-wrap: anywhere; }
 .w-heading { font-weight: 600; margin: 4px 0; }
@@ -156,58 +167,98 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
 .w-btn { display: inline-block; padding: 3px 12px; border-radius: 2px; font: 600 0.78rem/1.6 var(--sans); border: 1px solid var(--route); color: var(--route); }
 .w-btn.primary { background: var(--route); color: var(--sheet); }
 .w-btn.new { border: 1.5px dashed var(--signal); color: var(--signal-ink); }
-.w-badge { display: inline-block; padding: 0 7px; border-radius: 999px; font: 650 0.68rem/1.6 var(--sans); border: 1px solid var(--ink-soft); color: var(--ink-soft); }
+.w-badge { display: inline-block; padding: 0 7px; border-radius: 999px; font: 650 0.7rem/1.6 var(--sans); border: 1px solid var(--ink-soft); color: var(--ink-soft); }
 .w-input { display: block; border: 1px solid var(--hairline); padding: 4px 8px; color: var(--ink-soft); background: var(--sheet); font: 0.8rem/1.4 var(--sans); margin: 4px 0; }
 .w-image { display: grid; place-items: center; height: 56px; border: 1px dashed var(--hairline); color: var(--ink-soft); font: 0.75rem/1.4 var(--sans); margin: 4px 0; }
 .changed { outline: 2px solid var(--route); outline-offset: 2px; }
-.ba mark { background: none; color: inherit; font-weight: 700; text-decoration: underline 2px var(--route); text-underline-offset: 3px; padding: 0 1px; }
-.walk { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px 0; margin-top: 2px; }
-.walk div { flex: 1 1 110px; border: 1px solid var(--hairline); padding: 8px 10px; background: var(--paper); font-size: 0.88rem; }
-.walk div.on { border: 2px solid var(--route); background: var(--sheet); font-weight: 600; }
-.walk i { align-self: center; padding: 0 7px; color: var(--route); font-style: normal; font-family: var(--sans); }
+.ba mark { background: none; color: inherit; font-weight: 700; text-decoration: underline 2px var(--route); text-underline-offset: 3px; }
+.walk { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.walk li { flex: 1 1 120px; display: flex; align-items: center; gap: 6px; }
+.walk li > span { flex: 1; border: 1px solid var(--hairline); padding: 8px 10px; background: var(--paper); font-size: 0.88rem; align-self: stretch; }
+.walk li.on > span { border: 2px solid var(--route); background: var(--sheet); font-weight: 600; }
+.walk i { color: var(--route); font-style: normal; font-family: var(--sans); }
 .parts { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.9rem; }
 .part { border: 1px solid var(--hairline); padding: 7px 12px; background: var(--paper); }
 .part.added, .part.changed-part { border-color: var(--route); background: var(--sheet); }
 .part.gone { color: var(--ink-soft); }
 .part.gone .name { text-decoration: line-through; }
-.part small { display: block; font-size: 0.66rem; font-weight: 650; letter-spacing: 0.03em; color: var(--ink-soft); }
-.swatches { display: flex; gap: 6px; margin-top: 4px; }
-.swatches span { width: 18px; height: 18px; border: 1px solid var(--hairline); }
-.read { font-size: 0.95rem; background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 12px 14px; align-self: start; }
-.read p { margin-bottom: 6px; }
-.read p:last-child { margin-bottom: 0; }
-.read .label { display: inline-block; min-width: 112px; font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); }
-.bots { margin-top: 14px; padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.part small { display: block; font-size: 0.7rem; font-weight: 650; color: var(--ink-soft); }
+.swatches { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; font: 0.72rem/1.4 var(--mono); color: var(--ink-soft); }
+.swatches span { display: inline-flex; align-items: center; gap: 5px; }
+.swatches i { width: 16px; height: 16px; border: 1px solid var(--hairline); }
+.read { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 12px 14px; font-size: 0.95rem; }
+.read dl { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 10px; }
+.read dt { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); padding-top: 3px; }
+.read dd.judgment { font-weight: 600; }
+.bots { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
 .bots b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
-.rest-line { margin-top: 12px; color: var(--ink-soft); font-size: 0.9rem; }
+.rest-line { color: var(--ink-soft); font-size: 0.9rem; }
 .legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; }
 
 .closing { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 18px 22px; margin-bottom: 16px; }
 .closing h2 { margin-bottom: 4px; }
-.closing h3 { margin: 14px 0 2px; }
+.closing h3 { font: 600 1rem/1.3 var(--serif); margin: 14px 0 2px; }
+.crows { list-style: none; margin: 0; padding: 0; }
 .crow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 4px 18px; padding: 8px 0; font-size: 0.95rem; }
 .crow + .crow { border-top: 1px solid var(--hairline-soft); }
 .crow .where { display: inline; }
-.verdicts { scroll-margin-top: 64px; background: var(--sheet); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 16px 20px; margin-top: 26px; }
+.crow .seal { margin-right: 8px; }
+.verdicts { background: var(--sheet); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 16px 20px; margin-top: 26px; }
 .verdicts textarea { display: block; width: 100%; min-height: 4.5em; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--paper); font: 0.8rem/1.5 var(--mono); resize: vertical; }
 .verdicts-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
-.copy { border: 1px solid var(--chosen); background: var(--chosen); color: var(--on-chosen); border-radius: 2px; padding: 6px 16px; font-weight: 650; font-size: 0.85rem; }
+.copy { border: 1px solid var(--chosen); background: var(--chosen); color: var(--on-chosen); border-radius: 2px; padding: 6px 16px; min-height: 36px; font-weight: 650; font-size: 0.85rem; }
 .copy:hover { opacity: 0.9; }
+.keys { margin-top: 8px; color: var(--ink-soft); font-size: 0.78rem; }
+.keys kbd { font: 0.75rem/1 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 1px 5px; background: var(--paper); }
+
+/* Desktop: a rail keeps the map of the round in view beside the current block. */
+@media (min-width: 1180px) {
+  .shell { max-width: 1600px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; }
+  .rail { display: block; position: sticky; top: 58px; align-self: start; max-height: calc(100vh - 58px); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
+  .rail h2 { font: 650 0.72rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 16px 0 6px; display: flex; align-items: center; gap: 8px; }
+  .rail h2:first-of-type { margin-top: 0; }
+  .rail p { color: var(--ink-soft); margin-bottom: 4px; }
+  .rail ol { list-style: none; margin: 0; padding: 0; }
+  .rail a { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; padding: 6px 8px; color: var(--ink); text-decoration: none; border-radius: 2px; }
+  .rail a:hover { background: var(--mist); }
+  .rail a[aria-current="true"] { background: var(--mist); box-shadow: inset 0 0 0 1px var(--hairline); }
+  .rail .r-rank { font: 400 0.95rem/1.3 var(--display); color: var(--ink-soft); }
+  .rail .r-title { font: 0.85rem/1.3 var(--serif); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .rail .r-state { grid-column: 2; font-size: 0.72rem; color: var(--ink-soft); }
+  .rail .r-state.done { color: var(--ink); font-weight: 650; }
+  .rail .r-links { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--hairline-soft); display: grid; gap: 2px; }
+  .rail .r-links a { display: block; color: var(--route); text-decoration: underline; text-underline-offset: 3px; }
+}
 @media (max-width: 980px) {
-  .bar { position: static; padding: 10px 16px; }
-  main { padding: 26px 16px 60px; }
+  .bar { padding: 10px 16px; gap: 6px 12px; }
+  .bar-note { display: none; }
+  .shell { padding: 0 16px; }
+  main { padding: 26px 0 60px; }
   h1 { font-size: 2.1rem; }
   .block { padding: 16px 14px 18px; }
   .orow { grid-template-columns: 56px minmax(0, 1fr); padding: 12px 14px; }
   .orow > p, .orow > .scores { grid-column: 1 / -1; }
-  .lenses, .under, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
+  .cols, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
   .verdict { margin-left: 0; }
+  .seg button, .notes, .copy, .theme { min-height: 44px; }
+  .read dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .read dd + dt { margin-top: 6px; }
+}
+@media (max-width: 560px) {
+  .sit thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .sit tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 12px; padding: 10px; border-bottom: 1px solid var(--hairline-soft); }
+  .sit tbody tr:last-child { border-bottom: 0; }
+  .sit td { display: block; padding: 0; border: 0; }
+  .sit td:first-child { grid-column: 1 / -1; font-weight: 600; margin-bottom: 4px; }
+  .sit td[data-label]::before { content: attr(data-label); display: block; font: 600 0.7rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+  .sit td:first-child::before { display: none; }
+  .sit td.no { grid-column: 1 / -1; margin-top: 4px; }
 }
 </style>
 </head>
 <body>
-<header class="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-count" id="bar-count" href="#verdicts"></a><button type="button" class="theme" id="theme"></button></header>
-<main id="page"><noscript>This page needs JavaScript turned on to show the round.</noscript></main>
+<header class="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><button type="button" class="theme" id="theme"></button></header>
+<div class="shell"><nav class="rail" id="rail" aria-label="Pull requests in this round"></nav><main id="page"><noscript>This page needs JavaScript turned on to show the round.</noscript></main></div>
 <script type="application/json" id="round-data">
 {{ROUND_DATA}}
 </script>
@@ -216,6 +267,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
 (() => {
   const root = document.documentElement;
   const page = document.getElementById("page");
+  const rail = document.getElementById("rail");
 
   // Theme: follow the system until the toggle is used; the choice is not stored.
   const themeButton = document.getElementById("theme");
@@ -243,8 +295,10 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     for (const kid of kids) if (kid) parent.append(kid);
     return parent;
   };
+  const hidden = (text) => el("span", "vh", text);
   const str = (value) => (typeof value === "string" ? value.trim() : "");
   const list = (value) => (Array.isArray(value) ? value : []);
+  const plural = (count, one, many) => count + " " + (count === 1 ? one : many);
 
   let round;
   try {
@@ -275,6 +329,11 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     anchor.rel = "noopener noreferrer";
     return anchor;
   };
+  const inPage = (text, id, cls) => {
+    const anchor = el("a", cls || "", text);
+    anchor.href = "#" + id;
+    return anchor;
+  };
   const imageSource = (address) => {
     const value = str(address);
     if (DATA_IMAGE.test(value)) return value;
@@ -296,15 +355,70 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
   const over = prs.filter((item) => item.hold).sort(byProduct);
   const under = prs.filter((item) => !item.hold).sort(byProduct);
   const ordered = over.concat(under);
-  ordered.forEach((item, position) => { item.rank = position + 1; });
+  ordered.forEach((item, position) => {
+    item.rank = position + 1;
+    item.id = "pr-" + item.rank;
+  });
 
   const shortRepo = (repo) => str(repo).split("/").pop() || str(repo);
   const label = (pr) => shortRepo(pr.repo) + " #" + (pr.number ?? "?");
+  const fullRef = (pr) => str(pr.repo) + "#" + (pr.number ?? "");
   const joinNames = (names) => names.length < 2 ? names.join("") : names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
 
   document.getElementById("bar-note").textContent = [str(round.scope), str(round.generated)].filter(Boolean).join(" · ");
 
-  // Lede
+  // Verdicts are kept in this browser only, keyed to the reviewed head, so a
+  // moved head starts blank. Nothing leaves the machine.
+  const STORE = "reviewing-prs:";
+  const storeKey = (pr) => STORE + fullRef(pr) + "@" + str(pr.head);
+  const storage = (() => {
+    try {
+      const probe = window.localStorage;
+      probe.getItem(STORE + "probe");
+      return probe;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const recall = (pr) => {
+    if (!storage) return null;
+    try {
+      const saved = JSON.parse(storage.getItem(storeKey(pr)) || "null");
+      return saved && typeof saved === "object" ? saved : null;
+    } catch (error) {
+      return null;
+    }
+  };
+  const remember = (pr, verdict, notes) => {
+    if (!storage) return;
+    try {
+      if (!verdict && !notes) storage.removeItem(storeKey(pr));
+      else storage.setItem(storeKey(pr), JSON.stringify({ verdict, notes, saved: Date.now() }));
+    } catch (error) {
+      /* Storage full or blocked: the page still works without it. */
+    }
+  };
+  if (storage) {
+    try {
+      const month = 30 * 24 * 60 * 60 * 1000;
+      for (let i = storage.length - 1; i >= 0; i -= 1) {
+        const key = storage.key(i);
+        if (!key || !key.startsWith(STORE)) continue;
+        const saved = JSON.parse(storage.getItem(key) || "null");
+        if (!saved || !(Date.now() - saved.saved < month)) storage.removeItem(key);
+      }
+    } catch (error) {
+      /* Ignore a malformed entry; it expires with the rest. */
+    }
+  }
+
+  const merged = round.merged && typeof round.merged === "object" ? round.merged : {};
+  const mergedWithout = list(merged.without).filter((row) => row && typeof row === "object");
+  const changedAfter = list(merged.changedAfter).filter((row) => row && typeof row === "object");
+  mergedWithout.forEach((row, i) => { row.id = "merged-" + (i + 1); });
+  changedAfter.forEach((row, i) => { row.id = "changed-" + (i + 1); });
+
+  // Lede: the round's state in one sentence, then what already shipped without the operator.
   const lede = el("header", "lede");
   const total = ordered.length;
   let headline;
@@ -315,53 +429,75 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
   const impactNames = ordered.filter((item) => item.impact === 3).map((item) => label(item.pr));
   const impactText = impactNames.length === 0 ? "None scores 3 on impact."
     : joinNames(impactNames) + (impactNames.length === 1 ? " scores" : " score") + " 3 on impact.";
-  add(lede, el("h1", "", headline), el("p", "", "Ranked by verification effort times undo cost, highest first. " + impactText));
-  const notices = list(round.notices).map(str).filter(Boolean);
-  if (notices.length) {
-    const ul = el("ul", "notices");
-    for (const notice of notices) {
-      const li = el("li");
-      add(li, el("span", "seal"), el("span", "", notice));
-      ul.append(li);
-    }
-    lede.append(ul);
+  const shipped = [];
+  if (mergedWithout.length) shipped.push(plural(mergedWithout.length, "pull request", "pull requests") + " merged without you");
+  if (changedAfter.length) shipped.push(plural(changedAfter.length, "pull request", "pull requests") + " changed after your Verdict");
+  const shippedText = shipped.length ? " Since your last review, " + joinNames(shipped) + "." : "";
+  add(lede, el("h1", "", headline), el("p", "", "Ranked by verification effort times undo cost, highest first. " + impactText + shippedText));
+  const notices = el("ul", "notices");
+  for (const notice of list(round.notices).map(str).filter(Boolean)) {
+    const li = el("li");
+    add(li, el("span", "seal"), el("span", "", notice));
+    notices.append(li);
   }
+  for (const [rows, what] of [[changedAfter, "changed after your Verdict"], [mergedWithout, "merged without you"]]) {
+    for (const row of rows) {
+      const li = el("li");
+      const text = el("span");
+      add(text, inPage(label(row) + " " + what, row.id), document.createTextNode(": " + (str(row.summary) || str(row.reason) || str(row.title))));
+      add(li, el("span", "seal"), text);
+      notices.append(li);
+    }
+  }
+  if (notices.children.length) lede.append(notices);
   page.replaceChildren(lede);
 
   // Risk overview
-  // A 3 is tinted where it raises the stakes: impact, verification effort, undo cost.
-  const scoreCell = (value, name, tint) => {
-    const cell = el("span", tint && value === 3 ? "three" : "", value ?? "?");
-    cell.append(el("small", "", name));
-    return cell;
-  };
+  const SCORE_NAMES = [["impact", "impact", true], ["confidence", "confidence", false], ["verify", "verify", true], ["undo", "undo", true]];
+  const stateWords = { merge: "Merge", changes: "Request changes", defer: "Defer" };
   const overviewGroup = (items, hold) => {
     const section = el("section", hold ? "over hold" : "over");
     const head = el("div", "over-head");
-    add(head, el("span", hold ? "seal" : "ring"), el("h2", "", hold ? "Over the hold line" : "Under the hold line"),
+    add(head, el("span", hold && items.length ? "seal" : "ring"), el("h2", "", hold ? "Over the hold line" : "Under the hold line"),
       el("small", "", hold ? "verification effort × undo cost is 3 or more" : "verification effort × undo cost is 2 or less"));
     section.append(head);
     if (!items.length) {
       section.append(el("p", "empty", hold ? "None over the hold line." : "None under the hold line."));
       return section;
     }
+    const rows = el("ol", "orows");
     for (const item of items) {
-      const row = el("div", "orow");
+      const row = el("li", "orow");
       const vu = el("div", "vu", item.product);
       vu.append(el("small", "", "V × U"));
+      vu.setAttribute("aria-label", "Verification effort times undo cost: " + item.product);
       const name = el("div");
-      add(name, el("b", "", str(item.pr.title) || "Untitled"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
+      item.overviewState = el("span", "state");
+      add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")), item.overviewState);
       const scores = el("div", "scores");
+      const spoken = [];
+      for (const [key, word, tint] of SCORE_NAMES) {
+        const value = item[key];
+        const cell = el("span", tint && value === 3 ? "three" : "", value ?? "?");
+        cell.append(el("small", "", word));
+        cell.setAttribute("aria-hidden", "true");
+        scores.append(cell);
+        spoken.push(word + " " + (value ?? "unknown"));
+      }
       const lev = el("span", "lev", item.leverage === null ? "?" : item.leverage.toFixed(2));
       lev.append(el("small", "", "leverage"));
-      add(scores, scoreCell(item.impact, "impact", true), scoreCell(item.confidence, "conf.", false),
-        scoreCell(item.verify, "verify", true), scoreCell(item.undo, "undo", true), lev);
+      lev.setAttribute("aria-hidden", "true");
+      scores.append(lev);
+      scores.setAttribute("role", "img");
+      scores.setAttribute("aria-label", spoken.join(", ") + ", leverage " + (item.leverage === null ? "unknown" : item.leverage.toFixed(2)));
       add(row, vu, name, el("p", "", str(item.pr.driver)), scores);
-      section.append(row);
+      rows.append(row);
     }
+    section.append(rows);
     return section;
   };
-  add(page, overviewGroup(over, true), overviewGroup(under, false));
+  add(page, overviewGroup(over, true), overviewGroup(under, false),
+    el("p", "key", "V × U is verification effort times undo cost, each scored 1 to 3; it sets the order. Leverage, impact times confidence divided by V × U, is shown for reference."));
 
   const across = list(round.across).filter((note) => note && str(note.text));
   if (across.length) {
@@ -381,40 +517,55 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     screenshot: "Taken from a screenshot attached to the pull request.",
     diff: "Worked out by reading the diff, not by running it.",
   };
-  const sourceLine = (part, diffText) => {
+  const sourceLine = (part) => {
     const key = Object.hasOwn(SOURCES, part.source) ? part.source : "diff";
-    const text = key === "diff" && diffText ? diffText : SOURCES[key];
-    return el("p", "source", [text, str(part.sourceNote)].filter(Boolean).join(" "));
+    return el("p", "source", [SOURCES[key], str(part.sourceNote)].filter(Boolean).join(" "));
   };
   const panel = (title, text, risk) => {
-    const box = el("div", risk ? "lens risk" : "lens");
+    const box = el("section", risk ? "panel risk" : "panel");
     const body = str(text);
-    add(box, el("p", "sec-title", title), el("p", body ? "" : "empty", body || "Nothing to report."));
+    add(box, el("h3", "sec-title", title), el("p", body ? "" : "empty", body || "Nothing to report."));
     return box;
   };
 
+  const DESCRIBED = { yes: "Yes", no: "No", unchanged: "unchanged" };
   const situations = (part) => {
     const frag = document.createDocumentFragment();
     const frame = el("div", "frame-table");
     const table = el("table", "sit");
-    const head = el("tr");
-    for (const name of ["Situation", "Before", "After", "Described?"]) head.append(el("th", "", name));
-    table.append(head);
-    for (const row of list(part.rows)) {
-      const described = str(row.described).toLowerCase();
-      const tr = el("tr", described === "unchanged" ? "quiet" : described === "no" ? "unsaid" : "");
-      const changed = described !== "unchanged" && str(row.before) !== str(row.after);
-      add(tr, el("td", "", str(row.situation)), el("td", "", str(row.before)),
-        el("td", changed ? "now" : "", str(row.after)),
-        el("td", described === "no" ? "no" : "", described === "yes" ? "Yes" : described === "no" ? "No" : "unchanged"));
-      table.append(tr);
+    const thead = el("thead"), headRow = el("tr"), tbody = el("tbody");
+    const names = ["Situation", "Before", "After", "Described?"];
+    for (const name of names) {
+      const th = el("th", "", name);
+      th.scope = "col";
+      headRow.append(th);
     }
+    thead.append(headRow);
+    for (const row of list(part.rows)) {
+      // An unknown marker fails safe: it is shown as not described.
+      const raw = str(row.described).toLowerCase();
+      const described = Object.hasOwn(DESCRIBED, raw) ? raw : "unclear";
+      const tr = el("tr", described === "unchanged" ? "quiet" : "");
+      const changed = described !== "unchanged" && str(row.before) !== str(row.after);
+      const flagged = described === "no" || described === "unclear";
+      const cells = [
+        el("td", "", str(row.situation)), el("td", "", str(row.before)),
+        el("td", changed ? "now" : "", str(row.after)),
+        el("td", flagged ? "no" : "", described === "unclear" ? "Unclear" : DESCRIBED[described]),
+      ];
+      cells.forEach((cell, i) => {
+        cell.setAttribute("data-label", names[i]);
+        tr.append(cell);
+      });
+      tbody.append(tr);
+    }
+    add(table, thead, tbody);
     frame.append(table);
     add(frag, frame, sourceLine(part));
     return frag;
   };
 
-  const widget = (item) => {
+  const widget = (item, marks) => {
     if (!item || typeof item !== "object") return null;
     let node;
     switch (item.kind) {
@@ -426,13 +577,16 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
       case "button": {
         const variant = ["primary", "new"].includes(item.variant) ? " " + item.variant : "";
         node = el("span", "w-btn" + variant, str(item.text) || "Button");
-        if (item.variant === "new") node.title = "A style the design system does not have";
+        if (item.variant === "new") {
+          node.append(hidden(" (a style the design system does not have)"));
+          marks.add("new");
+        }
         break;
       }
       case "row": {
         node = el("div", "w-row");
         const left = el("span"), right = el("span");
-        const kids = list(item.items).map(widget).filter(Boolean);
+        const kids = list(item.items).map((kid) => widget(kid, marks)).filter(Boolean);
         const split = Number.isInteger(item.split) ? item.split : Math.max(kids.length - 1, 1);
         kids.forEach((kid, i) => (i < split ? left : right).append(kid));
         add(node, left, right);
@@ -440,12 +594,16 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
       }
       default: return null;
     }
-    if (item.changed === true) node.classList.add("changed");
+    if (item.changed === true) {
+      node.classList.add("changed");
+      node.append(hidden(" (changed)"));
+      marks.add("changed");
+    }
     return node;
   };
 
   // Each side says what it shows: a screenshot, or a schematic redrawn from the diff.
-  const screenSide = (side, caption, after) => {
+  const screenSide = (side, caption, after, marks) => {
     const box = el("div", after ? "screen after" : "screen");
     const data = side && typeof side === "object" ? side : {};
     const shot = str(data.image);
@@ -454,9 +612,11 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     box.dataset.shown = source ? "screenshot" : "redrawn";
     if (source) {
       const img = el("img");
-      img.src = source;
-      img.alt = caption + " screenshot";
+      img.alt = caption + " screenshot from the pull request";
       img.referrerPolicy = "no-referrer";
+      img.loading = "lazy";
+      img.addEventListener("error", () => img.replaceWith(el("p", "empty", "The screenshot did not load here. Its address is below.")));
+      img.src = source;
       box.append(img);
       if (!source.startsWith("data:")) {
         const addr = link(source, source);
@@ -465,7 +625,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
       }
     } else {
       for (const item of list(data.items)) {
-        const node = widget(item);
+        const node = widget(item, marks);
         if (node) box.append(node);
       }
       if (shot) box.append(el("span", "addr", "Screenshot address not shown as an image: " + shot));
@@ -475,8 +635,9 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
 
   const screens = (part) => {
     const frag = document.createDocumentFragment();
+    const marks = new Set();
     const grid = el("div", "screens");
-    const before = screenSide(part.before, "Before", false), after = screenSide(part.after, "After", true);
+    const before = screenSide(part.before, "Before", false, marks), after = screenSide(part.after, "After", true, marks);
     add(grid, before, after);
     frag.append(grid);
     const shots = [before, after].filter((side) => side.dataset.shown === "screenshot").length;
@@ -484,22 +645,27 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
       : shots === 0 ? "Redrawn from the diff, not from a screenshot."
       : "One side is a screenshot attached to the pull request; the other is redrawn from the diff.";
     frag.append(el("p", "source", [shownText, str(part.sourceNote)].filter(Boolean).join(" ")));
-    if (grid.querySelector(".w-btn.new, .changed")) {
-      frag.append(el("p", "legend", "Blue ring: changed by this pull request. Dashed orange: a style the design system does not have."));
-    }
+    const legend = [];
+    if (marks.has("changed")) legend.push("Blue ring: changed by this pull request.");
+    if (marks.has("new")) legend.push("Dashed orange: a style the design system does not have.");
+    if (legend.length) frag.append(el("p", "legend", legend.join(" ")));
     const steps = list(part.path).filter((step) => step && str(step.step));
     if (steps.length) {
-      frag.append(el("p", "sec-title spaced", "Where it sits in the path"));
-      const walk = el("div", "walk");
+      frag.append(el("h3", "sec-title spaced", "Where it sits in the path"));
+      const walk = el("ol", "walk");
       steps.forEach((step, i) => {
-        if (i) walk.append(el("i", "", "→"));
-        walk.append(el("div", step.changed === true ? "on" : "", str(step.step)));
+        const li = el("li", step.changed === true ? "on" : "");
+        if (i) li.append(el("i", "", "→"));
+        const box = el("span", "", str(step.step));
+        if (step.changed === true) box.append(hidden(" (the step this changes)"));
+        li.append(box);
+        walk.append(li);
       });
       frag.append(walk);
     }
     const parts = list(part.components).filter((c) => c && str(c.name));
     if (parts.length) {
-      frag.append(el("p", "sec-title spaced", "Components"));
+      frag.append(el("h3", "sec-title spaced", "Components"));
       const box = el("div", "parts");
       const NAMES = { kept: "Kept", dropped: "No longer used here", added: "New", changed: "Changed" };
       for (const c of parts) {
@@ -510,10 +676,11 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
         if (colors.length) {
           const sw = el("span", "swatches");
           for (const color of colors) {
-            const dot = el("span");
+            const swatch = el("span");
+            const dot = el("i");
             dot.style.backgroundColor = color;
-            dot.title = color;
-            sw.append(dot);
+            add(swatch, dot, document.createTextNode(color));
+            sw.append(swatch);
           }
           chip.append(sw);
         }
@@ -524,12 +691,20 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     return frag;
   };
 
-  const marked = (text, mark) => {
+  // Mark the words that differ between before and after, found by comparing them.
+  const differingWords = (before, after) => {
+    const a = before.split(/(\s+)/), b = after.split(/(\s+)/);
+    let start = 0;
+    while (start < a.length && start < b.length && a[start] === b[start]) start += 1;
+    let end = 0;
+    while (end < a.length - start && end < b.length - start && a[a.length - 1 - end] === b[b.length - 1 - end]) end += 1;
+    return [[a, start, a.length - end], [b, start, b.length - end]];
+  };
+  const markedText = ([tokens, from, to]) => {
     const p = el("p");
-    const value = str(text), target = str(mark);
-    const at = target ? value.indexOf(target) : -1;
-    if (at < 0) { p.textContent = value; return p; }
-    add(p, document.createTextNode(value.slice(0, at)), el("mark", "", target), document.createTextNode(value.slice(at + target.length)));
+    add(p, document.createTextNode(tokens.slice(0, from).join("")));
+    if (to > from) p.append(el("mark", "", tokens.slice(from, to).join("")));
+    p.append(document.createTextNode(tokens.slice(Math.max(to, from)).join("")));
     return p;
   };
   const textChange = (part) => {
@@ -537,10 +712,11 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     if (str(part.none)) {
       frag.append(el("p", "", str(part.none)));
     } else {
+      const [beforeMarks, afterMarks] = differingWords(str(part.before), str(part.after));
       const grid = el("div", "beforeafter");
       const before = el("div", "ba"), after = el("div", "ba after");
-      add(before, el("p", "cap", "Before"), marked(part.before, part.markBefore));
-      add(after, el("p", "cap", "After"), marked(part.after, part.markAfter));
+      add(before, el("p", "cap", "Before"), markedText(beforeMarks));
+      add(after, el("p", "cap", "After"), markedText(afterMarks));
       add(grid, before, after);
       frag.append(grid);
     }
@@ -548,36 +724,56 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     return frag;
   };
 
+  const notesFor = (pr) => across.filter((note) => list(note.refs).map(str).includes(fullRef(pr)));
+
   const choices = new Map();
   const verdictBox = el("textarea");
   const verdictWords = { merge: "merge", changes: "request changes", defer: "defer" };
-  const refreshVerdicts = () => {
+  const progress = document.getElementById("bar-progress");
+  const railStates = new Map();
+  let lastCopied = "";
+  const nextUndecided = (after) => {
+    const start = after ? ordered.indexOf(after) + 1 : 0;
+    return ordered.slice(start).concat(ordered.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
+  };
+  const refresh = () => {
     const lines = [];
+    let decided = 0;
     for (const item of ordered) {
       const choice = choices.get(item);
-      if (!choice || !choice.verdict) continue;
+      const word = choice.verdict ? stateWords[choice.verdict] : "";
+      item.overviewState.textContent = word ? "Your Verdict: " + word : "";
+      const railState = railStates.get(item);
+      if (railState) {
+        railState.textContent = word || "Undecided";
+        railState.classList.toggle("done", Boolean(word));
+      }
+      if (!choice.verdict) continue;
+      decided += 1;
       const notes = choice.notes.value.replace(/\s+/g, " ").trim();
-      lines.push(str(item.pr.repo) + "#" + item.pr.number + " @ " + str(item.pr.head) + " | " + verdictWords[choice.verdict] + " | " + notes);
+      lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + verdictWords[choice.verdict] + " | " + notes);
     }
     verdictBox.value = lines.join("\n");
-    document.getElementById("bar-count").textContent = lines.length
-      ? lines.length + (lines.length === 1 ? " Verdict chosen ↓" : " Verdicts chosen ↓") : "";
+    const next = nextUndecided(null);
+    progress.textContent = total ? decided + " of " + total + " decided" + (next ? " · Next undecided ↓" : " · Copy Verdicts ↓") : "";
+    progress.href = "#" + (next ? next.id : "verdicts");
+  };
+  const choose = (item, key) => {
+    const choice = choices.get(item);
+    choice.verdict = choice.verdict === key ? null : key;
+    for (const button of choice.buttons) button.setAttribute("aria-pressed", String(button.dataset.verdict === choice.verdict));
+    remember(item.pr, choice.verdict, choice.notes.value);
+    refresh();
   };
 
   const block = (item) => {
     const pr = item.pr;
     const article = el("article", item.hold ? "block hold" : "block");
-    article.id = "pr-" + item.rank;
+    article.id = item.id;
     const head = el("div", "block-head");
     const title = el("h2");
+    title.tabIndex = -1;
     add(title, el("span", "rank", item.rank), document.createTextNode(str(pr.title) || "Untitled"));
-    const size = pr.size || {};
-    const meta = el("span", "meta");
-    const facts = [label(pr), str(pr.owner) || "No owner",
-      "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " · " + size.files + (size.files === 1 ? " file" : " files") : ""),
-      "V × U " + item.product, str(pr.status)].filter(Boolean);
-    meta.append(document.createTextNode(facts.join(" · ") + " · "));
-    meta.append(link("Open on GitHub", pr.url));
     const verdict = el("div", "verdict");
     const seg = el("div", "seg");
     seg.setAttribute("role", "group");
@@ -586,49 +782,59 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
     notes.type = "text";
     notes.placeholder = "Notes for the Verdict";
     notes.setAttribute("aria-label", "Notes for " + label(pr));
-    const choice = { verdict: null, notes };
+    const saved = recall(pr);
+    const choice = { verdict: saved && Object.hasOwn(verdictWords, saved.verdict) ? saved.verdict : null, notes, buttons: [] };
+    notes.value = saved && typeof saved.notes === "string" ? saved.notes : "";
     choices.set(item, choice);
-    for (const [key, text] of [["merge", "Merge"], ["changes", "Changes"], ["defer", "Defer"]]) {
+    for (const [key, text] of [["merge", "Merge"], ["changes", "Request changes"], ["defer", "Defer"]]) {
       const button = el("button", "", text);
       button.type = "button";
-      button.setAttribute("aria-pressed", "false");
-      button.addEventListener("click", () => {
-        choice.verdict = choice.verdict === key ? null : key;
-        for (const other of seg.querySelectorAll("button")) other.setAttribute("aria-pressed", String(other === button && choice.verdict === key));
-        refreshVerdicts();
-      });
+      button.dataset.verdict = key;
+      button.setAttribute("aria-pressed", String(choice.verdict === key));
+      button.addEventListener("click", () => choose(item, key));
+      choice.buttons.push(button);
       seg.append(button);
     }
-    notes.addEventListener("input", refreshVerdicts);
+    notes.addEventListener("input", () => {
+      remember(pr, choice.verdict, notes.value);
+      refresh();
+    });
     add(verdict, seg, notes);
-    add(head, title, meta, verdict);
-    article.append(head);
+    add(head, title, verdict);
+    const size = pr.size || {};
+    const meta = el("p", "meta block-meta");
+    const facts = [label(pr), str(pr.owner) || "No owner",
+      "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " in " + plural(size.files, "file", "files") : ""),
+      str(pr.status)].filter(Boolean);
+    meta.append(document.createTextNode(facts.join(" · ") + " · "));
+    meta.append(link("Open on GitHub", pr.url));
+    add(article, head, meta);
+    if (str(pr.driver)) article.append(el("p", "driver", (item.hold ? "Over the hold line, V × U " : "Under the hold line, V × U ") + item.product + ". " + str(pr.driver)));
+    for (const note of notesFor(pr)) {
+      const box = el("p", "xnote");
+      add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
+      article.append(box);
+    }
 
-    const lenses = el("div", "lenses");
-    const main = el("div");
-    main.append(el("p", "sec-title", "What is different for " + (str(pr.audience) ? "a " + str(pr.audience) : "a user")));
+    const cols = el("div", "cols");
+    const main = el("div", "main-col");
+    const changes = el("section");
+    changes.append(el("h3", "sec-title", "What is different for " + (str(pr.audience) ? "a " + str(pr.audience) : "a user")));
     let shown = false;
-    if (pr.situations && list(pr.situations.rows).length) { main.append(situations(pr.situations)); shown = true; }
+    if (pr.situations && list(pr.situations.rows).length) { changes.append(situations(pr.situations)); shown = true; }
     if (pr.screens && typeof pr.screens === "object") {
-      if (shown) main.append(el("p", "sec-title spaced", "On screen"));
-      main.append(screens(pr.screens));
+      if (shown) changes.append(el("h3", "sec-title spaced", "On screen"));
+      changes.append(screens(pr.screens));
       shown = true;
     }
-    if (pr.text && typeof pr.text === "object") { main.append(textChange(pr.text)); shown = true; }
-    if (!shown) main.append(el("p", "empty", "Nothing reported."));
-    const stack = el("div", "lens-stack");
-    add(stack, panel("If it is wrong", pr.ifWrong, item.undo === 3), panel("What proves it", pr.proof), panel("Asked for?", pr.asked));
-    add(lenses, main, stack);
-    article.append(lenses);
-
-    const under = el("div", "under");
-    const codeBox = el("div");
+    if (pr.text && typeof pr.text === "object") { changes.append(textChange(pr.text)); shown = true; }
+    if (!shown) changes.append(el("p", "empty", "Nothing reported."));
+    main.append(changes);
     const code = list(pr.code).filter((c) => c && list(c.lines).length);
-    if (!code.length) {
-      add(codeBox, el("p", "sec-title", "The code behind it"), el("p", "empty", "Nothing singled out."));
-    }
+    const codeBox = el("section");
+    if (!code.length) add(codeBox, el("h3", "sec-title", "The code behind it"), el("p", "empty", "Nothing singled out."));
     for (const c of code) {
-      codeBox.append(el("p", "sec-title", [str(c.title) || "The code behind it", str(c.file)].filter(Boolean).join(" · ")));
+      codeBox.append(el("h3", "sec-title", [str(c.title) || "The code behind it", str(c.file)].filter(Boolean).join(" · ")));
       const pre = el("pre");
       for (const line of list(c.lines)) {
         const text = String(line);
@@ -636,52 +842,63 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
       }
       codeBox.append(pre);
     }
-    const read = el("div", "read");
-    const r = pr.read || {};
-    read.append(el("p", "sec-title", "The agent's read"));
-    for (const [key, name] of [["judgment", "Judgment"], ["check", "Check yourself"], ["notExamined", "Not examined"]]) {
-      const p = el("p");
-      const value = str(r[key]);
-      add(p, el("span", "label", name), el("span", value ? "" : "empty", value || "Nothing."));
-      read.append(p);
-    }
-    add(under, codeBox, read);
-    article.append(under);
-
+    main.append(codeBox);
     if (str(pr.feedback)) {
       const bots = el("p", "bots");
       add(bots, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
-      article.append(bots);
+      main.append(bots);
     }
-    if (str(pr.rest)) article.append(el("p", "rest-line", "Rest of the diff: " + str(pr.rest)));
+    if (str(pr.rest)) main.append(el("p", "rest-line", "Rest of the diff: " + str(pr.rest)));
+
+    const side = el("div", "side-col");
+    const read = el("section", "read");
+    const r = pr.read || {};
+    const dl = el("dl");
+    for (const [key, name] of [["judgment", "Judgment"], ["check", "Check yourself"], ["notExamined", "Not examined"]]) {
+      const value = str(r[key]);
+      add(dl, el("dt", "", name), el("dd", value ? (key === "judgment" ? "judgment" : "") : "empty", value || "Nothing."));
+    }
+    add(read, el("h3", "sec-title", "The agent's read"), dl);
+    add(side, read,
+      panel(item.undo === 3 ? "If it is wrong · a revert does not undo it" : "If it is wrong", pr.ifWrong, item.undo === 3),
+      panel("What proves it", pr.proof), panel("Asked for?", pr.asked));
+    add(cols, main, side);
+    article.append(cols);
     return article;
   };
   for (const item of ordered) page.append(block(item));
 
   // Closing rows
-  const closingRow = (row, detail) => {
-    const div = el("div", "crow");
-    const name = el("div");
-    add(name, link(str(row.title) || "Untitled", row.url), el("span", "where", " · " + label(row)));
-    add(div, name, el("div", str(row[detail]) ? "" : "empty", str(row[detail]) || "Nothing to add."));
-    return div;
-  };
-  const closingList = (rows, detail, none) => {
+  const closingList = (rows, detail, none, sealed) => {
     const frag = document.createDocumentFragment();
-    const items = list(rows).filter((row) => row && typeof row === "object");
-    if (!items.length) frag.append(el("p", "empty", none));
-    for (const row of items) frag.append(closingRow(row, detail));
+    if (!rows.length) {
+      frag.append(el("p", "empty", none));
+      return frag;
+    }
+    const ul = el("ul", "crows");
+    for (const row of rows) {
+      const li = el("li", "crow");
+      if (row.id) li.id = row.id;
+      const name = el("div");
+      if (sealed) name.append(el("span", "seal"));
+      add(name, link(str(row.title) || "Untitled", row.url), el("span", "where", " · " + label(row)));
+      add(li, name, el("div", str(row[detail]) ? "" : "empty", str(row[detail]) || "Nothing to add."));
+      ul.append(li);
+    }
+    frag.append(ul);
     return frag;
   };
-  const progress = el("section", "closing");
-  add(progress, el("h2", "", "Still in progress"), closingList(round.inProgress, "note", "None in progress."));
-  const merged = round.merged && typeof round.merged === "object" ? round.merged : {};
+  const inProgress = list(round.inProgress).filter((row) => row && typeof row === "object");
+  const progressBox = el("section", "closing");
+  progressBox.id = "in-progress";
+  add(progressBox, el("h2", "", "Still in progress"), closingList(inProgress, "note", "None in progress.", false));
   const mergedBox = el("section", "closing");
+  mergedBox.id = "merged";
   add(mergedBox, el("h2", "", "Merged since your last review"),
     el("p", "meta", str(merged.window) || "The window was not stated."),
-    el("h3", "", "Merged without you"), closingList(merged.without, "reason", "None merged without you."),
-    el("h3", "", "Changed after your Verdict"), closingList(merged.changedAfter, "summary", "None changed after your Verdict."));
-  add(page, progress, mergedBox);
+    el("h3", "", "Changed after your Verdict"), closingList(changedAfter, "summary", "None changed after your Verdict.", true),
+    el("h3", "", "Merged without you"), closingList(mergedWithout, "reason", "None merged without you.", true));
+  add(page, mergedBox, progressBox);
 
   // Verdicts to copy
   const box = el("section", "verdicts");
@@ -689,24 +906,107 @@ main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 80px; }
   const boxHead = el("div", "verdicts-head");
   const copy = el("button", "copy", "Copy Verdicts");
   copy.type = "button";
-  const status = el("span", "meta", "Choose a Verdict on any pull request, then copy them into the conversation.");
+  const status = el("span", "meta", storage
+    ? "Your choices are kept in this browser, tied to each reviewed head, until you copy them into the conversation."
+    : "This browser keeps nothing, so copy your Verdicts before closing the page.");
   status.setAttribute("aria-live", "polite");
   copy.addEventListener("click", async () => {
     if (!verdictBox.value) { status.textContent = "No Verdicts chosen yet."; return; }
     try {
       await navigator.clipboard.writeText(verdictBox.value);
+      lastCopied = verdictBox.value;
       status.textContent = "Copied. Paste them into the conversation.";
     } catch (error) {
       verdictBox.focus();
       verdictBox.select();
+      lastCopied = verdictBox.value;
       status.textContent = "Copy did not work here. The text is selected; copy it by hand.";
     }
   });
   verdictBox.readOnly = true;
   verdictBox.setAttribute("aria-label", "Chosen Verdicts, one line per pull request");
+  const keys = el("p", "keys");
+  for (const [k, what] of [["j", "next"], ["k", "previous"], ["n", "next undecided"], ["m", "merge"], ["c", "request changes"], ["d", "defer"]]) {
+    add(keys, el("kbd", "", k), document.createTextNode(" " + what + "   "));
+  }
   add(boxHead, el("h2", "", "Your Verdicts"), copy, status);
-  add(box, boxHead, verdictBox);
+  add(box, boxHead, verdictBox, keys);
   page.append(box);
+  window.addEventListener("beforeunload", (event) => {
+    if (verdictBox.value && verdictBox.value !== lastCopied) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  });
+
+  // Rail: the map of the round, kept beside the blocks on wide screens.
+  const railGroup = (items, hold) => {
+    const frag = document.createDocumentFragment();
+    if (!items.length) return frag;
+    const h = el("h2");
+    add(h, el("span", hold ? "seal" : "ring"), document.createTextNode(hold ? "Over the hold line" : "Under the hold line"));
+    const ol = el("ol");
+    for (const item of items) {
+      const li = el("li");
+      const a = inPage("", item.id);
+      const state = el("span", "r-state");
+      railStates.set(item, state);
+      item.railLink = a;
+      add(a, el("span", "r-rank", item.rank), el("span", "r-title", str(item.pr.title) || "Untitled"), state);
+      li.append(a);
+      ol.append(li);
+    }
+    add(frag, h, ol);
+    return frag;
+  };
+  const railLinks = el("div", "r-links");
+  if (changedAfter.length || mergedWithout.length) railLinks.append(inPage("Merged since your last review", "merged"));
+  railLinks.append(inPage("Your Verdicts", "verdicts"));
+  add(rail, railGroup(over, true), railGroup(under, false), railLinks);
+
+  // The current block is the one under the upper third of the window.
+  const current = () => {
+    const line = window.innerHeight * 0.3;
+    let found = null;
+    for (const item of ordered) {
+      if (document.getElementById(item.id).getBoundingClientRect().top <= line) found = item;
+    }
+    return found;
+  };
+  const go = (item) => {
+    if (!item) return;
+    const heading = document.querySelector("#" + item.id + " h2");
+    document.getElementById(item.id).scrollIntoView({ block: "start" });
+    heading.focus({ preventScroll: true });
+  };
+  if ("IntersectionObserver" in window) {
+    const watcher = new IntersectionObserver(() => {
+      const here = current();
+      for (const item of ordered) item.railLink.setAttribute("aria-current", String(item === here));
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    for (const item of ordered) watcher.observe(document.getElementById(item.id));
+  }
+  document.addEventListener("keydown", (event) => {
+    if (event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
+    if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+    const here = current();
+    const at = ordered.indexOf(here);
+    const actions = {
+      j: () => go(ordered[Math.min(at + 1, ordered.length - 1)]),
+      k: () => go(ordered[Math.max(at - 1, 0)]),
+      n: () => go(nextUndecided(here)),
+      m: () => here && choose(here, "merge"),
+      c: () => here && choose(here, "changes"),
+      d: () => here && choose(here, "defer"),
+    };
+    const action = actions[event.key];
+    if (action) {
+      event.preventDefault();
+      action();
+    }
+  });
+
+  refresh();
 })();
 </script>
 </body>

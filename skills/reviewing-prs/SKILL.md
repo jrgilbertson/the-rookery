@@ -281,7 +281,10 @@ platform's opener when there is one. Read
 [references/review-page.md](references/review-page.md) before writing the
 data. It says what each field holds and how to fill each panel. The page
 ranks the round itself, gives every pull request the same block, and builds
-the Verdict text the operator copies back.
+the Verdict text the operator copies back. It keeps the operator's choices
+and notes in that browser's local storage, tied to each reviewed head, so a
+reload loses nothing; tell the operator so when a note may hold something
+private.
 
 Keep the reply short: the path, one line per pull request in the page's order
 with what drives its score, and a request for Verdicts. If no browser can

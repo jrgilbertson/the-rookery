@@ -8,20 +8,22 @@ real GitHub credentials.
 
 ## Cases
 
-Three no-skill Baseline runs against real repositories, made before the skill
-was written, handled discovery, leverage ordering, and file conflicts. They
-failed in six ways. Those runs read private repositories and are not
-published. Four cases rebuild the failures with invented data. The fifth
-covers required behavior that no Baseline run was asked for, so it names no
-observed failure yet.
+The set is two cases, kept small on purpose. Add a case when a failure
+returns after its fix, as [SKILLS.md](../../SKILLS.md#improving-from-real-use)
+describes.
 
-| Case | Baseline failure it rebuilds | Fixture |
+| Case | Failure it keeps | Fixture |
 | --- | --- | --- |
-| [new-view-missing-screenshot](cases/new-view-missing-screenshot/case.yaml) | 1. Scored a new customer-facing page at verification effort 2. 3. Did not say screenshots were missing | `fixtures/new-view-missing-screenshot` |
-| [hidden-stored-names](cases/hidden-stored-names/case.yaml) | 2. Did not call out new stored and published names | `fixtures/hidden-stored-names` |
-| [wide-refactor-phantom-change](cases/wide-refactor-phantom-change/case.yaml) | 4. Wrote the riskiest cards from descriptions without reading the diffs | `fixtures/wide-refactor-phantom-change` |
-| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | 5. Verdict lines in a different format each run. 6. Ignored who owned a pull request when merging | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | None observed. Covers the digest of what merged without the operator and the review page's hardening. Drop it if the Baseline passes | `fixtures/conflicts-impact-digest-html` |
+| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, the agent merged pull requests straight from the Verdicts, including one another session owned and one with conflicting owner lines, and posted no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, the agent built no review page | `fixtures/conflicts-impact-digest-html` |
+
+Three more cases ran once and were removed on 2026-11-24:
+`new-view-missing-screenshot`, `hidden-stored-names`, and
+`wide-refactor-phantom-change`. In the
+[first run](records/2026-11-24-first-run/README.md) the no-skill agent also
+caught the mislabeled new view, the hidden stored names, and the missing
+retry backoff, so those cases measured the model more than the skill. Git
+history keeps them.
 
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's request, `case.yaml` describes a good result and names the failure
@@ -31,8 +33,8 @@ reply, listed in its `turns.json`. Its `prompt.md` is the first turn, so a singl
 reaches the review page. Fixture dates are fixed around 2026-11-20, and the
 one prompt that names a time window gives an absolute date.
 
-The five-case set SHA-256 is
-`4b96375dd1787b1d3fdecb149df018bdd1ddb8a8afd7520c5d7266c6c5d755c3`. From this
+The two-case set SHA-256 is
+`03caa8de219befbac17cdf82c3a6e8948113c8026ef6b6b46acf62601e7a028a`. From this
 directory, reproduce it with:
 
 ```sh

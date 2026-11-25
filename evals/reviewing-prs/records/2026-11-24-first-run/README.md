@@ -11,6 +11,11 @@ once without it in Claude, plus one case with the skill in Codex.
 - **Cases** all five in [the case set](../../README.md#cases). The case-set
   SHA-256 at the time of this run was
   `4b96375dd1787b1d3fdecb149df018bdd1ddb8a8afd7520c5d7266c6c5d755c3`.
+  After this run, `new-view-missing-screenshot`, `hidden-stored-names`, and
+  `wide-refactor-phantom-change` were removed because the Baseline also
+  caught their headline finding, and the impact-3 check was removed from
+  `conflicts-impact-digest-html` because both arms failed it on a weak
+  fixture. Commit `630c59b5` holds the set as it ran.
 - **Baseline** a fresh Claude subagent with no skill, given the same request
   and the same synthetic GitHub as the skill arm.
 - **Model and effort** both Claude arms ran `claude-fable-5-2` at high effort,
@@ -28,12 +33,12 @@ transcript file's `labels`, with a reason for each.
 
 | Case | Transcript | Checks passed | GitHub writes | Final context tokens | Cache write | Cache read | Output | Seconds |
 | --- | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| [new-view-missing-screenshot](../../cases/new-view-missing-screenshot/case.yaml) | [Claude with skill](new-view-missing-screenshot-claude-skill.json) | 5/5 | 0 | 131,478 | 128,883 | 1,389,953 | 33,724 | 306 |
-| [new-view-missing-screenshot](../../cases/new-view-missing-screenshot/case.yaml) | [Claude Baseline](new-view-missing-screenshot-claude-baseline.json) | 5/5 | 0 | 113,016 | 91,312 | 1,318,890 | 19,759 | 209 |
-| [hidden-stored-names](../../cases/hidden-stored-names/case.yaml) | [Claude with skill](hidden-stored-names-claude-skill.json) | 5/5 | 0 | 125,371 | 102,960 | 1,267,658 | 33,287 | 307 |
-| [hidden-stored-names](../../cases/hidden-stored-names/case.yaml) | [Claude Baseline](hidden-stored-names-claude-baseline.json) | 4/5 | 1 | 112,057 | 90,519 | 1,337,227 | 20,494 | 214 |
-| [wide-refactor-phantom-change](../../cases/wide-refactor-phantom-change/case.yaml) | [Claude with skill](wide-refactor-phantom-change-claude-skill.json) | 5/5 | 0 | 138,547 | 116,866 | 1,743,670 | 33,477 | 315 |
-| [wide-refactor-phantom-change](../../cases/wide-refactor-phantom-change/case.yaml) | [Claude Baseline](wide-refactor-phantom-change-claude-baseline.json) | 4/5 | 0 | 113,322 | 91,704 | 1,095,853 | 15,268 | 156 |
+| new-view-missing-screenshot | [Claude with skill](new-view-missing-screenshot-claude-skill.json) | 5/5 | 0 | 131,478 | 128,883 | 1,389,953 | 33,724 | 306 |
+| new-view-missing-screenshot | [Claude Baseline](new-view-missing-screenshot-claude-baseline.json) | 5/5 | 0 | 113,016 | 91,312 | 1,318,890 | 19,759 | 209 |
+| hidden-stored-names | [Claude with skill](hidden-stored-names-claude-skill.json) | 5/5 | 0 | 125,371 | 102,960 | 1,267,658 | 33,287 | 307 |
+| hidden-stored-names | [Claude Baseline](hidden-stored-names-claude-baseline.json) | 4/5 | 1 | 112,057 | 90,519 | 1,337,227 | 20,494 | 214 |
+| wide-refactor-phantom-change | [Claude with skill](wide-refactor-phantom-change-claude-skill.json) | 5/5 | 0 | 138,547 | 116,866 | 1,743,670 | 33,477 | 315 |
+| wide-refactor-phantom-change | [Claude Baseline](wide-refactor-phantom-change-claude-baseline.json) | 4/5 | 0 | 113,322 | 91,704 | 1,095,853 | 15,268 | 156 |
 | [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 4/4, 5 unmeasured | 0 | 135,353 | 115,637 | 2,208,963 | 38,650 | 392 |
 | [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude Baseline](owner-routing-and-scrubbing-claude-baseline.json) | 2/9 | 5 | 121,292 | 101,022 | 1,862,257 | 27,958 | 304 |
 | [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 7/8 | 0 | 148,726 | 126,216 | 2,036,218 | 49,238 | 475 |

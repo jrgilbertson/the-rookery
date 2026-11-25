@@ -341,7 +341,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     const s = pr.scores || {};
     const impact = score(s.impact), confidence = score(s.confidence), verify = score(s.verify), undo = score(s.undo);
     // A missing or invalid score fails safe: the pull request sorts to the top of the held group.
-    const product = verify && undo ? verify * undo : 9;
+    const product = impact && confidence && verify && undo ? verify * undo : 9;
     const leverage = impact && confidence && verify && undo ? (impact * confidence) / (verify * undo) : null;
     // A sensitive kind holds a pull request whatever its score (the first hold test).
     const sensitiveKinds = (typeof pr.sensitiveKind === "string" ? [pr.sensitiveKind] : list(pr.sensitiveKind)).map(str).filter(Boolean);
@@ -349,7 +349,7 @@ main { padding: 40px 0 80px; min-width: 0; }
       hold: product >= 3 || sensitiveKinds.length > 0 };
   });
   const groupName = (hold) => (hold ? "Over the hold line" : "Under the hold line");
-  const byProduct = (a, b) => b.product - a.product || (b.leverage ?? -1) - (a.leverage ?? -1) || a.index - b.index;
+  const byProduct = (a, b) => b.product - a.product || (b.leverage ?? Infinity) - (a.leverage ?? Infinity) || a.index - b.index;
   const over = prs.filter((item) => item.hold).sort(byProduct);
   const under = prs.filter((item) => !item.hold).sort(byProduct);
   const ordered = over.concat(under);

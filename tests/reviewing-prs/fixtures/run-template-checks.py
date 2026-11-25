@@ -200,6 +200,24 @@ def check_rendered(page: str, scratch: Path, original: dict) -> None:
           f"choosing Not applicable must build its Verdict line: {verdict.get('line')!r}")
 
 
+def check_incomplete_scores(raw: str, scratch: Path) -> None:
+    variant = json.loads(raw)
+    for pr in variant["prs"]:
+        if pr["number"] == 134:
+            pr["scores"].pop("confidence")
+    page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    (scratch / "render.js").write_text(RENDER)
+    (scratch / "page.html").write_text(page)
+    node = shutil.which("node")
+    result = subprocess.run([node, str(scratch / "render.js"), str(scratch / "page.html")], capture_output=True, text=True, check=False) if node else None
+    if result is None or result.returncode != 0:
+        failures.append("the page's script failed to run on a round with a missing score")
+        return
+    number = {pr["title"]: pr["number"] for pr in variant["prs"]}
+    held = [number.get(row["title"]) for group in json.loads(result.stdout)["groups"] if group["hold"] for row in group["rows"]]
+    check(held[:1] == [134], f"a pull request missing any score must sort to the top of the held group: {held}")
+
+
 def main() -> int:
     template = TEMPLATE.read_text()
     check_template(template)
@@ -214,6 +232,8 @@ def main() -> int:
         page, data = fill(raw, Path(scratch))
         check_filled(page, data, original)
         check_rendered(page, Path(scratch), original)
+    with tempfile.TemporaryDirectory() as scratch:
+        check_incomplete_scores(raw, Path(scratch))
     if failures:
         for failure in failures:
             print(f"FAIL {failure}")

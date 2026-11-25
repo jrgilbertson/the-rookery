@@ -93,15 +93,32 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    `gh pr view <number> -R <owner>/<repo> --json number,title,body,author,url,headRefOid,headRefName,baseRefName,isCrossRepository,headRepositoryOwner,labels,additions,deletions,changedFiles,files,mergeable,mergeStateStatus,statusCheckRollup,closingIssuesReferences,comments,reviews,updatedAt`.
    Then read its review threads, which show whether each point was resolved:
    `gh api graphql -f query='query($owner: String!, $repo: String!, $number: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $number) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body } } } } } } }' -f owner=<owner> -f repo=<repo> -F number=<number>`.
-5. List what merged without the operator, for the digest at the bottom of the
-   page. Use the window the operator names, or the last 72 hours. Per owner,
-   run
-   `gh search prs --owner <owner> --merged --merged-at ">=<date>" --limit 1000 --json repository,number,title,url`
-   once with `--label review:auto-merged` and once with
-   `--label review:human-merged`. From the second list keep only pull
-   requests that carry a `Fleet: verdict-delta` comment written by the
-   operator's login. Those changed after the operator's Verdict and merged
-   without a second look.
+5. List what merged since the operator last reviewed, for the end of the
+   page. Labels add detail here but decide nothing.
+   1. Find the operator's most recent Verdict comment: a comment by their
+      login whose first line starts with `Verdict:`. Per owner, run
+      `gh search prs --owner <owner> --commenter <login> --sort updated --limit 100 --json repository,number,updatedAt`,
+      then read each result's `comments` with `gh pr view`, newest first,
+      until a pull request was last updated before the newest Verdict found.
+   2. Start the window 24 hours before that comment, so a pull request that
+      merged after the last page was built but before its Verdicts were
+      posted is not missed. With no Verdict, use the period the operator
+      names, or the last 72 hours. State the window on the page.
+   3. Per owner, run
+      `gh search prs --owner <owner> --merged --merged-at ">=<start>" --limit 1000 --json repository,number,title,url`.
+      Run the item 3 check on any repository this returns that you did not
+      already keep, and skip those the operator cannot merge in.
+   4. For each, read
+      `gh pr view <number> -R <owner>/<repo> --json headRefOid,mergedAt,labels,comments`
+      and find the operator's newest Verdict comment on it. Compare its
+      `Head:` with `headRefOid`, the pull request's final head, not the
+      merge commit, which a squash or rebase replaces. With no Verdict, or
+      with `request changes` at the final head, list it as **merged without
+      the operator**, with the reason and any `review:` label. With a
+      different head, list it as **changed after the Verdict**, summarized
+      from a `Fleet: verdict-delta` comment by the operator's login when
+      there is one, or else by naming both heads. With a merge Verdict at
+      the final head, leave it out.
 
 Do not narrow the list to passing or "ready" pull requests. A held pull
 request drifts into conflict while it waits, and that is when the operator

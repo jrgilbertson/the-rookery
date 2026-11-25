@@ -296,8 +296,9 @@ Three GitHub labels that show where a pull request stands in review.
 under [Merge Approval](#merge-approval). `review:human-merged` replaces
 `review:held` once GitHub confirms that a held pull request merged after a
 merge [Verdict](#verdict). The labels are for visibility and reporting. A
-review reads every open pull request, so a missing or stale label never hides
-one, and no label permits a merge.
+review reads every open pull request, and every one merged since the
+operator's last Verdicts, so a missing or stale label never hides one, and no
+label permits a merge.
 
 ## Evaluation
 

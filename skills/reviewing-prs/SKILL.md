@@ -116,7 +116,7 @@ Decide ownership first. It controls who merges in step 5.
   exactly the operator's login, and the body holds exactly one well-formed
   `Owner:` line whose `Operator:` field is that login.
 - **Ambiguous owner.** A same-repository pull request by the operator whose
-  body mentions `Owner:` in any other way: a malformed line, more than one
+  body mentions `Owner:`, in any letter case, in any other way: a malformed line, more than one
   line even when they match, or another operator's login.
 - **No owner.** A same-repository pull request by the operator with no
   `Owner:` line.
@@ -127,8 +127,8 @@ Then put each open pull request in one bucket:
    by the operator's login: if the newest one is a Verdict that was never
    carried out, flag it at the top of the card and say whether the head has
    moved since.
-2. **Unclassified.** Everything not in another bucket: every external pull
-   request, every one with no owner or an ambiguous one, and a trusted-owner
+2. **Unclassified.** Everything not in another bucket: every other external
+   pull request, every one with no owner or an ambiguous one, and a trusted-owner
    pull request without `review:held` whose checks have finished. Full card.
 3. **In progress.** A trusted owner, no `review:held`, and checks or its
    owner still working. One collapsed row: title, repository, owner, age.
@@ -235,7 +235,8 @@ from this section, and keep the round's other temporary files beside it.
   `<`, `>`, and `&` in the JSON written as `\u003c`, `\u003e`, and
   `\u0026`, so no title or body can close the block.
 - One inline script, carrying that nonce, that reads the block and builds the
-  page with `createElement` and `textContent`. Never `innerHTML`,
+  page with `createElement` and `textContent`, and attaches handlers with
+  `addEventListener`. The policy silently blocks `on…` attributes. Never `innerHTML`,
   `outerHTML`, `insertAdjacentHTML`, `document.write`, or HTML assembled from
   strings.
 - Image and link addresses checked before use: `https:` only, images only
@@ -244,8 +245,8 @@ from this section, and keep the round's other temporary files beside it.
   not load from a local page, so show each image's address as a link too.
 - No form, no external script, style, or font, and no network request.
 
-Before handing the page over, check the file: the policy and nonce are
-present, the data block contains no literal `<` character, and outside the
+Before handing the page over, check the file: the policy is present and its
+nonce matches the script's, the data block contains no literal `<` character, and outside the
 data block there is no pull request text and none of the banned calls.
 
 **Page layout**, top to bottom:
@@ -290,9 +291,11 @@ too.
 
 **Prepare each comment.** Put the operator's notes on one line. Remove
 credentials and tokens from every comment. For a public repository, also
-remove local file paths, and check each repository-shaped name in the notes
-with `gh repo view <name> --json visibility`: remove it unless that shows
-`PUBLIC`. Write each comment body to a file in the round's temporary
+remove paths from outside the repository, such as home-directory and other
+absolute paths, and check each `owner/name` in the notes that is not a path
+in this pull request's diff with `gh repo view <name> --json visibility`:
+remove it when that shows a private or internal repository, and when it
+fails for a name whose owner is the operator or one of their organizations. Write each comment body to a file in the round's temporary
 directory.
 
 **Echo before any write.** In plain text in the conversation, list every
@@ -308,9 +311,11 @@ the operator to confirm. Change nothing on GitHub until they do.
 After they confirm, handle the pull requests one at a time, following the
 suggested order inside a conflict group:
 
-1. **Reread** `headRefOid`, `state`, `mergeStateStatus`, and
-   `statusCheckRollup` with `gh pr view`. If it is no longer open, post
-   nothing and report that. If the head differs from the card's, stop on
+1. **Reread** `headRefOid`, `state`, `mergeStateStatus`,
+   `statusCheckRollup`, `body`, `labels`, and `isCrossRepository` with
+   `gh pr view`. If it is no longer open, post nothing and report that. If
+   its ownership from step 2 has changed, such as an `Owner:` line added
+   since the card was built, stop on this pull request and tell the operator. If the head differs from the card's, stop on
    this pull request, post nothing, and show the operator what changed with
    `gh api "repos/<owner>/<repo>/compare/<card-sha>...<new-sha>"`. Their
    Verdict covered the commit they saw.
@@ -329,9 +334,9 @@ suggested order inside a conflict group:
      message: `Verdict posted on <owner>/<repo>#<number> at <short-sha>`. If
      Orca is missing or no live session answers to that role, tell the
      operator now that nobody was notified. The comment stays as the record.
-     For a `merge` Verdict only, offer to merge it directly. Do so only if
-     the operator says yes for that pull request, and then by the direct
-     merge rule below.
+     For a `merge` Verdict only, offer to merge it directly, naming any
+     label that would create. Do so only if the operator says yes for that
+     pull request, and then by the direct merge rule below.
    - **Ambiguous owner.** Do not merge. Tell the operator the line could not
      be read and quote it.
    - **No owner or external, `merge`.** Follow the direct merge rule.
@@ -355,8 +360,8 @@ If it allows more than one, use the one its recent merged pull requests used,
 or ask. Before merging, check for a merge queue with
 `gh api graphql -f query='{ repository(owner: "<owner>", name: "<repo>") { mergeQueue(branch: "<base>") { id } } }'`.
 When that returns a queue, enqueue instead with the GraphQL
-`enqueuePullRequest` mutation and its `expectedHeadOid` set to the reviewed
-SHA.
+`enqueuePullRequest` mutation, with `pullRequestId` from
+`gh pr view --json id` and `expectedHeadOid` set to the reviewed SHA.
 
 **Report** each pull request's outcome when the round ends: the comment
 link, then merged at which commit, queued, handed to which owner, not

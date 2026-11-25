@@ -26,8 +26,8 @@ observed failure yet.
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's request, `case.yaml` describes a good result and names the failure
 it came from, and each file in `graders/` is one statement to judge.
-`owner-routing-and-scrubbing` has three operator turns, listed in its
-`turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
+`owner-routing-and-scrubbing` has three operator turns and one conditional
+reply, listed in its `turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
 reaches the review page. Fixture dates are fixed around 2026-11-20, and the
 one prompt that names a time window gives an absolute date.
 

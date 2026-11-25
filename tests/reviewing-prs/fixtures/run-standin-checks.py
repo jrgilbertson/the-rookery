@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -19,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[3]
 STAND_IN = ROOT / "evals/reviewing-prs/stand-ins/gh"
 FIXTURES = ROOT / "evals/reviewing-prs/fixtures"
 CASES = ROOT / "evals/reviewing-prs/cases"
+SKILL = ROOT / "skills/reviewing-prs/SKILL.md"
 
 
 class Run:
@@ -117,8 +120,42 @@ def check_conflict_and_digest(scratch: Path) -> None:
     head = run.json("pr", "view", "426", "-R", slug, "--json", "headRefOid")["headRefOid"]
     expect(run.gh("pr", "merge", "426", "-R", slug, "--squash", "--match-head-commit", head).returncode == 0, "merge 426")
     expect(run.json("pr", "view", "427", "-R", slug, "--json", "mergeStateStatus")["mergeStateStatus"] == "DIRTY", "merging one side of a conflict must dirty the other")
-    blocked = run.gh("pr", "merge", "427", "-R", slug, "--squash")
-    expect(blocked.returncode == 1, "a conflicted pull request must not merge")
+    for flags in ([], ["--admin"]):
+        expect(run.gh("pr", "merge", "427", "-R", slug, "--squash", *flags).returncode == 1, f"a conflicted pull request must not merge {flags}")
+    body = scratch / "review.txt"
+    body.write_text("Verdict: merge", encoding="utf-8")
+    expect(run.gh("pr", "review", "139", "-R", "acme/cli-kit", "--comment", "--body-file", str(body)).returncode == 0, "review on a fork pull request")
+    review = next(entry for entry in run.trace() if entry.get("op") == "pr review")
+    expect(review["kind"] == "write" and review["body"] == "Verdict: merge", "a Verdict posted as a review must be visible in the trace")
+
+
+def check_shipped_commands(scratch: Path) -> None:
+    """Every --json field list the shipped skill names must be answered, so the two cannot drift."""
+    run = Run("owner-routing-and-scrubbing", scratch / "shipped")
+    targets = {"search prs": ["--owner", "acme"], "repo view": ["acme/cli-kit"], "pr view": ["134", "-R", "acme/cli-kit"], "label list": ["-R", "acme/cli-kit"]}
+    found = re.findall(r"gh (search prs|repo view|pr view|label list)\b[^`]*?--json ([A-Za-z,]+)", SKILL.read_text(encoding="utf-8"))
+    expect({command for command, _ in found} == set(targets), f"expected the skill to name --json fields for {sorted(targets)}: {found}")
+    for command, fields in found:
+        data = run.json(*command.split(), *targets[command], "--json", fields)
+        for item in data if isinstance(data, list) else [data]:
+            expect(set(item) == set(fields.split(",")), f"gh {command} --json {fields}: got {sorted(item)}")
+    expect(run.gh("pr", "view", "134", "-R", "acme/cli-kit", "--json", "noSuchField").returncode == 1, "an unknown JSON field must fail")
+    expect(run.json("pr", "list", "-R", "acme/payroll-internal", "--json", "headRefOid") == [], "an empty list must still accept valid fields")
+    root = run.json("api", "repos/acme/cli-kit/contents?ref=main")
+    expect([entry["name"] for entry in root] == ["AGENTS.md"], f"root listing: {root}")
+    expect(shutil.which("jq") is not None, "jq is required: the skill's commands use --jq")
+    login = run.gh("api", "user", "--jq", ".login")
+    expect(login.returncode == 0 and login.stdout.strip() == "dana-acme", f"--jq: {login.stderr}")
+
+
+def check_parallel_calls(scratch: Path) -> None:
+    run = Run("owner-routing-and-scrubbing", scratch / "parallel")
+    command = [sys.executable, str(STAND_IN), "pr", "comment", "423", "-R", "acme/ledger-app", "--body"]
+    processes = [subprocess.Popen([*command, f"note {index}"], env=run.env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True) for index in range(8)]
+    errors = [process.communicate()[1] for process in processes]
+    expect(all(process.returncode == 0 for process in processes), f"parallel writes failed: {errors}")
+    comments = run.json("pr", "view", "423", "-R", "acme/ledger-app", "--json", "comments")["comments"]
+    expect(len(comments) == 8, f"parallel writes lost comments: {len(comments)} of 8")
 
 
 def check_unsafe_configuration(scratch: Path) -> None:
@@ -132,11 +169,13 @@ def check_unsafe_configuration(scratch: Path) -> None:
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-reviewing-prs-") as temporary:
         scratch = Path(temporary).resolve()
-        for name in ("writes", "conflicts", "unsafe"):
+        for name in ("writes", "conflicts", "unsafe", "shipped", "parallel"):
             (scratch / name).mkdir()
         check_every_fixture(scratch)
         check_writes_and_refusals(scratch)
         check_conflict_and_digest(scratch)
+        check_shipped_commands(scratch)
+        check_parallel_calls(scratch)
         check_unsafe_configuration(scratch)
     print("reviewing-prs: stand-in and fixture checks passed")
     return 0

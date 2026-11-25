@@ -94,7 +94,9 @@
           "isDraft": false,
           "headRefOid": "15ed78f61f401db5bd5890b4eb37fcddbbf8f1bd",
           "headRefName": "pagination-off-by-one",
-          "labels": [],
+          "labels": [
+            "review:held"
+          ],
           "createdAt": "2026-11-20T08:00:00Z",
           "updatedAt": "2026-11-20T08:10:00Z",
           "mergeable": "MERGEABLE",

@@ -24,6 +24,7 @@ stand-in's contract, 4 not configured or unsafe paths.
 from __future__ import annotations
 
 import base64
+import fcntl
 import hashlib
 import json
 import os
@@ -33,12 +34,14 @@ import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import unquote_plus
 
-SUPPORTED = """Supported: api (GET user, user/orgs, repos/..., search/issues; narrow graphql),
+SUPPORTED = """Available here: api (GET user, user/orgs, repos/..., search/issues; narrow graphql),
 search prs, pr view|list|diff|checks|comment|edit|merge|review, issue view,
 repo view|list, label list|create, auth status."""
 ARGV = sys.argv[1:]
 _trace_path: Path | None = None
+_lock = None  # held until the process exits
 
 
 def trace(kind: str, **detail: object) -> None:
@@ -55,7 +58,7 @@ def die(message: str, code: int, kind: str = "error", **detail: object) -> None:
 
 
 def refuse(message: str, **detail: object) -> None:
-    die(f"{message}\nThis is a synthetic GitHub. {SUPPORTED}", 3, "refused", **detail)
+    die(f"{message}\n{SUPPORTED}", 3, "refused", **detail)
 
 
 def not_found(what: str) -> None:
@@ -70,7 +73,7 @@ def in_git_work_tree(path: Path) -> bool:
 
 
 def load_state() -> tuple[dict, Path]:
-    global _trace_path
+    global _trace_path, _lock
     world_env = os.environ.get("GH_STANDIN_WORLD")
     state_env = os.environ.get("GH_STANDIN_STATE")
     if not world_env or not state_env:
@@ -88,6 +91,9 @@ def load_state() -> tuple[dict, Path]:
         if leaf.is_symlink() or (leaf.exists() and not leaf.is_file()):
             die(f"{leaf.name} must be a regular file", 4)
     _trace_path = trace_path
+    # Agents issue calls in parallel. Hold one lock from the first read to exit.
+    _lock = open(os.open(state_dir / "lock", os.O_WRONLY | os.O_CREAT, 0o600), "w")
+    fcntl.flock(_lock, fcntl.LOCK_EX)
     if not state_path.exists():
         if not world_path.is_file():
             die(f"world not found: {world_path}", 4)
@@ -98,7 +104,7 @@ def load_state() -> tuple[dict, Path]:
 
 
 def save_state(state: dict, state_path: Path) -> None:
-    temporary = state_path.with_suffix(".tmp")
+    temporary = state_path.with_suffix(f".{os.getpid()}.tmp")
     with open(os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w", encoding="utf-8") as handle:
         json.dump(state, handle)
     os.replace(temporary, state_path)
@@ -177,7 +183,7 @@ def emit(data: object, options: dict, fields: list[str] | None = None, text: str
         return
     jq_binary = shutil.which("jq")
     if not jq_binary:
-        refuse("--jq needs the jq program on PATH in this stand-in")
+        die("stand-in is not configured: --jq needs the jq program on PATH", 4)
     result = subprocess.run([jq_binary, "-r", jq], input=json.dumps(data), capture_output=True, text=True, check=False)
     if result.returncode != 0:
         die(f"jq error: {result.stderr.strip()}", 1)
@@ -272,6 +278,15 @@ def pull_object(state: dict, slug: str, number: str) -> dict:
         "mergeCommit": {"oid": pull["mergeCommit"]} if pull.get("mergeCommit") else None,
         "autoMergeRequest": pull.get("autoMergeRequest"),
     }
+
+
+PULL_FIELDS = [
+    "id", "number", "title", "body", "state", "isDraft", "closed", "url", "author", "headRefOid", "headRefName",
+    "baseRefName", "isCrossRepository", "headRepositoryOwner", "headRepository", "maintainerCanModify", "labels",
+    "additions", "deletions", "changedFiles", "files", "mergeable", "mergeStateStatus", "statusCheckRollup",
+    "closingIssuesReferences", "comments", "commits", "reviews", "latestReviews", "reviewDecision", "createdAt",
+    "updatedAt", "mergedAt", "closedAt", "mergedBy", "mergeCommit", "autoMergeRequest",
+]
 
 
 def search_object(state: dict, slug: str, number: str) -> dict:
@@ -404,7 +419,7 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
     for term in " ".join(terms).split():
         key, colon, value = term.partition(":")
         value = value.strip('"')
-        if not colon:
+        if not colon or not re.fullmatch(r"[a-z-]+", key) or not value:
             text_terms.append(term.lower())
         elif key in ("org", "user", "owner"):
             filters.setdefault("owner", []).append(value)
@@ -512,7 +527,7 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         found = search(state, filters, options.get("search", []))[: int(one(options, "limit", "30"))]
         pulls = [pull_object(state, slug, str(item["number"])) for item in found]
         text = "\n".join(f"{pull['number']}\t{pull['title']}\t{pull['headRefName']}\t{pull['state']}" for pull in pulls)
-        emit(pulls, options, fields=list(pulls[0]) if pulls else list(search_object_fields()), text=text)
+        emit(pulls, options, fields=PULL_FIELDS, text=text)
         trace("read", op="pr list", repo=slug)
         return
     if sub == "view":
@@ -527,7 +542,7 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         if options.get("comments"):
             for comment in pull["comments"]:
                 lines += ["--", f"author:\t{comment['author']['login']}", f"created:\t{comment['createdAt']}", "", comment["body"]]
-        emit(pull, options, fields=list(pull), text="\n".join(lines))
+        emit(pull, options, fields=PULL_FIELDS, text="\n".join(lines))
         trace("read", op="pr view", repo=slug, number=number)
         return
     if sub == "diff":
@@ -606,7 +621,7 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
             trace("write", result="auto-merge enabled", **attempt)
             print(f"Pull request {slug}#{number} will be automatically merged when all requirements are met")
             return
-        if not clean and not options.get("admin"):
+        if not clean and (not options.get("admin") or pull.get("mergeStateStatus") == "DIRTY"):
             die(f"Pull request {slug}#{number} is not mergeable: merge state is {pull['mergeStateStatus']}", 1, **attempt)
         pull.update(state="MERGED", mergedAt=now(state), mergedBy=state["viewer"]["login"], mergeCommit=hashlib.sha1(f"{slug}#{number}".encode()).hexdigest())
         for other in pull.get("conflictsWith", []):
@@ -622,11 +637,15 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         slug, number = find_pull(state, options, positionals)
         pull = state["repos"][slug]["pulls"][number]
         kind = next((name for name in ("approve", "request-changes", "comment") if options.get(name)), "comment")
+        review_body = one(options, "body", "")
+        if not review_body and one(options, "body-file"):
+            source = one(options, "body-file")
+            review_body = sys.stdin.read() if source == "-" else Path(source).read_text(encoding="utf-8")
         if kind != "comment" and pull["author"] == state["viewer"]["login"]:
             die(f"failed to create review: Can not {kind.replace('-', ' ')} on your own pull request", 1, op="pr review", repo=slug, number=number, review=kind)
-        pull.setdefault("reviews", []).append({"author": {"login": state["viewer"]["login"]}, "state": kind.upper().replace("-", "_"), "body": one(options, "body", "")})
+        pull.setdefault("reviews", []).append({"author": {"login": state["viewer"]["login"]}, "state": kind.upper().replace("-", "_"), "body": review_body})
         save_state(state, state_path)
-        trace("write", op="pr review", repo=slug, number=number, review=kind, body=one(options, "body", ""))
+        trace("write", op="pr review", repo=slug, number=number, review=kind, body=review_body)
         return
     refuse(f"`pr {sub}` is outside the stand-in's contract", op=f"pr {sub}")
 
@@ -722,7 +741,7 @@ def cmd_api(state: dict, args: list[str]) -> None:
     if endpoint == "graphql":
         document = fields.get("query", "")
         if "enqueuePullRequest" in document:
-            die('{"errors":[{"message":"Merge queue is not enabled for this branch in this synthetic GitHub"}]}', 1, op="graphql enqueuePullRequest", document=document)
+            die('{"errors":[{"message":"Merge queue is not enabled for this branch"}]}', 1, op="graphql enqueuePullRequest", document=document)
         if "mutation" in document:
             refuse("GraphQL mutations are outside the stand-in's contract; use gh pr comment, gh pr edit, gh pr merge, or gh label create", op="graphql mutation", document=document)
         if "mergeQueue" in document:
@@ -748,7 +767,7 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
     if endpoint == "user/orgs":
         return [{"login": org} for org in state.get("orgs", [])]
     if endpoint == "search/issues":
-        items = search(state, {}, [query.get("q", "").replace("+", " ")])
+        items = search(state, {}, [unquote_plus(query.get("q", ""))])
         return {"total_count": len(items), "incomplete_results": False, "items": [rest_pull(state, item["repository"]["nameWithOwner"], str(item["number"])) for item in items]}
     owner_repos = re.fullmatch(r"(?:orgs|users)/([^/]+)/repos|user/repos", endpoint)
     if owner_repos:
@@ -771,16 +790,17 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
     if tail == "pulls":
         wanted = query.get("state", "open")
         return [rest_pull(state, slug, number) for number, pull in pulls.items() if wanted == "all" or (pull["state"] == "OPEN") == (wanted == "open")]
-    if tail.startswith("contents/"):
+    if tail == "contents" or tail.startswith("contents/"):
         path = tail[len("contents/"):].rstrip("/")
         tree = repo.get("contents", {}).get(query.get("ref", repo["defaultBranch"]), {})
         if path in tree:
             if "raw" in headers:
                 return tree[path]
             return {"type": "file", "path": path, "name": path.rsplit("/", 1)[-1], "encoding": "base64", "content": base64.b64encode(tree[path].encode()).decode()}
-        children = sorted({name[len(path) + 1:].split("/")[0] for name in tree if name.startswith(path + "/")})
+        prefix = f"{path}/" if path else ""
+        children = sorted({name[len(prefix):].split("/")[0] for name in tree if name.startswith(prefix)})
         if children:
-            return [{"name": child, "path": f"{path}/{child}", "type": "file" if f"{path}/{child}" in tree else "dir"} for child in children]
+            return [{"name": child, "path": prefix + child, "type": "file" if prefix + child in tree else "dir"} for child in children]
         not_found(f"{path} at {query.get('ref', repo['defaultBranch'])}")
     match = re.fullmatch(r"(pulls|issues)/(\d+)(?:/(files|comments|commits|reviews|labels))?", tail)
     if match:
@@ -826,15 +846,15 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
 
 def main() -> None:
     if not ARGV or ARGV[0] in ("--version", "version"):
-        print("gh version 2.104.0 (synthetic stand-in for the reviewing-prs Skill Eval)")
+        print("gh version 2.104.0 (2026-11-12)")
         return
     if ARGV[0] in ("help", "--help", "-h") or ARGV[-1] in ("--help", "-h"):
-        print(f"Synthetic GitHub CLI stand-in. {SUPPORTED}")
+        print(SUPPORTED)
         return
     state, state_path = load_state()
     command, rest = ARGV[0], ARGV[1:]
     if command == "auth" and rest[:1] == ["status"]:
-        print(f"github.com\n  Logged in to github.com account {state['viewer']['login']} (synthetic)")
+        print(f"github.com\n  ✓ Logged in to github.com account {state['viewer']['login']} (keyring)")
         trace("read", op="auth status")
     elif command == "api":
         cmd_api(state, rest)

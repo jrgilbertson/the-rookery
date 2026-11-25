@@ -21,7 +21,8 @@ looked" surface. GitHub Releases mirror its entries.
   the round to a private local page. It records each Verdict on the pull
   request as a three-line comment naming the reviewed commit. It merges a
   pull request nobody owns only when its head is still that commit, and
-  hands an owned one back to its owner. Synthetic Skill Eval cases are under
+  hands an owned one back to its owner. The page carries a strict Content
+  Security Policy and renders pull request text as text. Synthetic Skill Eval cases are under
   `evals/reviewing-prs/`.
 - `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels
   (`review:held`, `review:auto-merged`, `review:human-merged`).
@@ -93,6 +94,8 @@ looked" surface. GitHub Releases mirror its entries.
   branch.
 - `WORKFLOWS.md` Ship describes Review Rounds and Verdicts through
   `reviewing-prs`, the two hold tests, and the three PR review labels.
+  `coordinating-work` is unchanged: it still holds on its earlier list and
+  writes no labels.
 - `managing-issues` asks for a Verification criterion that requires
   before-and-after screenshots, or a named preview walkthrough, on a change
   users will see.

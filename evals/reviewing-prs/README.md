@@ -11,7 +11,9 @@ real GitHub credentials.
 Three no-skill Baseline runs against real repositories, made before the skill
 was written, handled discovery, leverage ordering, and file conflicts. They
 failed in six ways. Those runs read private repositories and are not
-published. Each case rebuilds one or two of the failures with invented data.
+published. Four cases rebuild the failures with invented data. The fifth
+covers required behavior that no Baseline run was asked for, so it names no
+observed failure yet.
 
 | Case | Baseline failure it rebuilds | Fixture |
 | --- | --- | --- |
@@ -19,22 +21,27 @@ published. Each case rebuilds one or two of the failures with invented data.
 | [hidden-stored-names](cases/hidden-stored-names/case.yaml) | 2. Did not call out new stored and published names | `fixtures/hidden-stored-names` |
 | [wide-refactor-phantom-change](cases/wide-refactor-phantom-change/case.yaml) | 4. Wrote the riskiest cards from descriptions without reading the diffs | `fixtures/wide-refactor-phantom-change` |
 | [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | 5. Verdict lines in a different format each run. 6. Ignored who owned a pull request when merging | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | 6, second half: what merged without the operator. Also the review page's hardening | `fixtures/conflicts-impact-digest-html` |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | None observed. Covers the digest of what merged without the operator and the review page's hardening. Drop it if the Baseline passes | `fixtures/conflicts-impact-digest-html` |
 
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's request, `case.yaml` describes a good result and names the failure
 it came from, and each file in `graders/` is one statement to judge.
 `owner-routing-and-scrubbing` has three operator turns, listed in its
 `turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
-reaches the review page.
+reaches the review page. Fixture dates are fixed around 2026-11-20, and the
+one prompt that names a time window gives an absolute date.
 
 The five-case set SHA-256 is
-`11d05f1f0744bccbc4094df9f634bd9641ebec4de7b5fdd181aa46693a31a653`. From this
+`4b96375dd1787b1d3fdecb149df018bdd1ddb8a8afd7520c5d7266c6c5d755c3`. From this
 directory, reproduce it with:
 
 ```sh
 find cases fixtures stand-ins -type f -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
 ```
+
+[`trigger-queries.json`](trigger-queries.json) holds requests that should
+load the skill and near misses that belong to another workflow, for tuning
+the description. It is outside the case set and its hash.
 
 ## The GitHub stand-in
 
@@ -47,7 +54,8 @@ a private state copy and appends every call to `trace.jsonl`. It refuses
 anything else with exit 3, so a run that strays fails loudly. It enforces what
 GitHub would: a merge with `--match-head-commit` fails when the SHA is not the
 head, a label must exist before it is added, and nobody approves their own
-pull request. No fixture has a merge queue.
+pull request. No fixture has a merge queue. Calls may run in parallel. Its
+output never says it is a stand-in.
 
 [`tests/reviewing-prs`](../../tests/reviewing-prs/README.md) checks the
 stand-in and every fixture in the repository gate, without a model.
@@ -62,11 +70,15 @@ run=$(mktemp -d)                                   # outside every repository
 mkdir "$run/bin" "$run/state" "$run/workspace" "$run/gh-config"
 cp evals/reviewing-prs/stand-ins/gh "$run/bin/gh"
 cp evals/reviewing-prs/fixtures/<case>/world.json "$run/world.json"
+cp -R skills/reviewing-prs "$run/skill"            # skill arms only
 export GH_STANDIN_WORLD="$run/world.json" GH_STANDIN_STATE="$run/state"
 export GH_CONFIG_DIR="$run/gh-config" GH_TOKEN="" GITHUB_TOKEN=""
-export PATH="$run/bin:<only what the harness itself needs>"
+export PATH="$run/bin:<python3, jq, and only what the harness itself needs>"
 cd "$run/workspace"
 ```
+
+Give a skill arm the copy in `$run/skill`, never the repository checkout: the
+checkout puts these cases and their graders within the agent's reach.
 
 Before grading a run, confirm three things:
 
@@ -75,8 +87,8 @@ Before grading a run, confirm three things:
    connector or MCP server. A stand-in first on `PATH` shows intent, not
    isolation. If the launcher cannot show this, record the run as not run.
 2. **The skill under test loaded.** For a skill arm, the transcript shows the
-   candidate `skills/reviewing-prs/SKILL.md` being read, not a same-name copy
-   installed on the host.
+   staged copy of `SKILL.md` being read, not a same-name copy installed on
+   the host.
 3. **The fixture is staged under a neutral name**, as above, so a path does
    not tell the agent what the case is looking for.
 
@@ -94,8 +106,8 @@ can decide these from the trace and the page file:
 - whether any write happened, and before or after the operator confirmed
 - that a merge carried `--match-head-commit` with the full head SHA
 - that a Verdict comment is exactly three lines and holds no scrubbed text
-- that the page has the Content Security Policy, mode `0600`, and no
-  `innerHTML`
+- that the page has the Content Security Policy, mode `0600`, no
+  `innerHTML`, and no literal `<` inside its data block
 
 Judge the rest by reading the response, the page, and the transcript against
 the case's `graders/`. Add check scripts only after a recorded run shows the

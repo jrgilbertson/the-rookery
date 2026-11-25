@@ -11,6 +11,7 @@ runners=(
   tests/personal-chief-of-staff/fixtures/run-sample-checks.py
   tests/repository-integrity/check_catalog.py
   tests/repository-integrity/check_repository.py
+  tests/reviewing-prs/fixtures/run-standin-checks.py
   tests/routing/fixtures/run-routing-checks.py
 )
 

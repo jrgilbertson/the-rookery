@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: new-view-missing-screenshot
+expected_outcome: |
+  Baseline failures 1 and 3: a no-skill run scored a brand-new customer-facing page at
+  verification effort 2, and left out that an interface change had no screenshots.
+
+  acme/ledger-app#412 calls itself a "minor UI tweak" with "no functional change" and links an
+  issue scored verification effort 1. Its diff adds a new customer-facing usage dashboard at
+  /settings/usage. A good round describes the page from the diff, scores verification effort 3,
+  shows the pull request as meeting the hold line, says visual evidence is missing, and points
+  out that the description and the issue's stored scores do not match the diff. It changes
+  nothing on GitHub, because the operator has not given a Verdict.

@@ -1,0 +1,856 @@
+#!/usr/bin/env python3
+"""Stand-in for the GitHub CLI, used only by the reviewing-prs Skill Eval.
+
+The Eval Cases need the skill to run its real discovery, read, and write
+commands. Handing an agent files and telling it they came from GitHub would
+test a different program than the one that ships, so this stand-in sits where
+`gh` would be on PATH and answers from one synthetic world. It never contacts
+GitHub.
+
+Reads are answered from the world. The few writes a Review Round makes
+(comment, label, merge) are applied to a private state copy and recorded in a
+trace. Everything else is refused with a nonzero exit, so a run that strays
+fails loudly instead of passing on silence.
+
+Environment:
+  GH_STANDIN_WORLD  path to a fixture's world.json (never written)
+  GH_STANDIN_STATE  existing directory outside any git work tree; holds
+                    state.json and trace.jsonl
+
+Exit codes: 0 ok, 1 an error GitHub or gh would return, 3 outside this
+stand-in's contract, 4 not configured or unsafe paths.
+"""
+
+from __future__ import annotations
+
+import base64
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
+SUPPORTED = """Supported: api (GET user, user/orgs, repos/..., search/issues; narrow graphql),
+search prs, pr view|list|diff|checks|comment|edit|merge|review, issue view,
+repo view|list, label list|create, auth status."""
+ARGV = sys.argv[1:]
+_trace_path: Path | None = None
+
+
+def trace(kind: str, **detail: object) -> None:
+    if _trace_path is None:
+        return
+    with _trace_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps({"argv": ARGV, "kind": kind, **detail}) + "\n")
+
+
+def die(message: str, code: int, kind: str = "error", **detail: object) -> None:
+    trace(kind, message=message, **detail)
+    print(f"gh: {message}", file=sys.stderr)
+    sys.exit(code)
+
+
+def refuse(message: str, **detail: object) -> None:
+    die(f"{message}\nThis is a synthetic GitHub. {SUPPORTED}", 3, "refused", **detail)
+
+
+def not_found(what: str) -> None:
+    die(f"HTTP 404: Not Found ({what})", 1)
+
+
+# ---------------------------------------------------------------- state
+
+
+def in_git_work_tree(path: Path) -> bool:
+    return any((parent / ".git").exists() for parent in (path, *path.parents))
+
+
+def load_state() -> tuple[dict, Path]:
+    global _trace_path
+    world_env = os.environ.get("GH_STANDIN_WORLD")
+    state_env = os.environ.get("GH_STANDIN_STATE")
+    if not world_env or not state_env:
+        die("stand-in is not configured: set GH_STANDIN_WORLD and GH_STANDIN_STATE", 4)
+    world_path = Path(world_env)
+    state_dir = Path(state_env)
+    if state_dir.is_symlink() or not state_dir.is_dir():
+        die("GH_STANDIN_STATE must be an existing directory, not a symlink", 4)
+    state_dir = state_dir.resolve()
+    if in_git_work_tree(state_dir):
+        die("GH_STANDIN_STATE must be outside any git work tree", 4)
+    state_path = state_dir / "state.json"
+    trace_path = state_dir / "trace.jsonl"
+    for leaf in (state_path, trace_path):
+        if leaf.is_symlink() or (leaf.exists() and not leaf.is_file()):
+            die(f"{leaf.name} must be a regular file", 4)
+    _trace_path = trace_path
+    if not state_path.exists():
+        if not world_path.is_file():
+            die(f"world not found: {world_path}", 4)
+        world = json.loads(world_path.read_text(encoding="utf-8"))
+        world["clock"] = 0
+        save_state(world, state_path)
+    return json.loads(state_path.read_text(encoding="utf-8")), state_path
+
+
+def save_state(state: dict, state_path: Path) -> None:
+    temporary = state_path.with_suffix(".tmp")
+    with open(os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w", encoding="utf-8") as handle:
+        json.dump(state, handle)
+    os.replace(temporary, state_path)
+
+
+def now(state: dict) -> str:
+    state["clock"] += 1
+    base = datetime.strptime(state["now"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    return (base + timedelta(minutes=state["clock"])).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+# ---------------------------------------------------------------- arguments
+
+
+def parse(args: list[str], value_flags: dict[str, str], bool_flags: dict[str, str]) -> tuple[dict, list[str]]:
+    """Split args into options and positionals; refuse any flag not listed."""
+    options: dict = {}
+    positionals: list[str] = []
+    index = 0
+    while index < len(args):
+        arg = args[index]
+        index += 1
+        if arg == "--":
+            positionals.extend(args[index:])
+            break
+        if not arg.startswith("-") or arg == "-":
+            positionals.append(arg)
+            continue
+        name, _, inline = arg.partition("=")
+        if name in value_flags:
+            if inline or "=" in arg:
+                value = inline
+            elif index < len(args):
+                value = args[index]
+                index += 1
+            else:
+                die(f"flag needs an argument: {name}", 1)
+            options.setdefault(value_flags[name], []).append(value)
+        elif name in bool_flags:
+            options[bool_flags[name]] = inline.lower() != "false"
+        else:
+            refuse(f"unsupported flag {name}")
+    return options, positionals
+
+
+JSON_FLAGS = {"--json": "json", "--jq": "jq", "-q": "jq", "-R": "repo", "--repo": "repo", "-L": "limit", "--limit": "limit"}
+
+
+def one(options: dict, key: str, default: str | None = None) -> str | None:
+    values = options.get(key)
+    return values[-1] if values else default
+
+
+def many(options: dict, key: str) -> list[str]:
+    return [part for value in options.get(key, []) for part in value.split(",") if part]
+
+
+def emit(data: object, options: dict, fields: list[str] | None = None, text: str | None = None) -> None:
+    """Print data the way gh does for --json/--jq, or plain text without them."""
+    requested = many(options, "json")
+    jq = one(options, "jq")
+    if not requested and fields is not None and jq is None:
+        print(text if text is not None else json.dumps(data, indent=2))
+        return
+    if requested and fields is not None:
+        unknown = [name for name in requested if name not in fields]
+        if unknown:
+            die(f"Unknown JSON field: {unknown[0]!r}\nAvailable fields:\n  " + "\n  ".join(sorted(fields)), 1)
+        pick = lambda item: {name: item.get(name) for name in requested}  # noqa: E731
+        data = [pick(item) for item in data] if isinstance(data, list) else pick(data)
+    if isinstance(data, str) and jq is None:
+        sys.stdout.write(data)
+        return
+    if jq is None:
+        print(json.dumps(data))
+        return
+    jq_binary = shutil.which("jq")
+    if not jq_binary:
+        refuse("--jq needs the jq program on PATH in this stand-in")
+    result = subprocess.run([jq_binary, "-r", jq], input=json.dumps(data), capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        die(f"jq error: {result.stderr.strip()}", 1)
+    sys.stdout.write(result.stdout)
+
+
+# ---------------------------------------------------------------- objects
+
+
+def diff_files(diff: str) -> list[dict]:
+    files: list[dict] = []
+    for line in diff.splitlines():
+        if line.startswith("diff --git "):
+            path = line.split(" b/", 1)[1] if " b/" in line else line.split()[-1]
+            files.append({"path": path, "additions": 0, "deletions": 0, "patch": []})
+        elif files:
+            files[-1]["patch"].append(line)
+            if line.startswith("+") and not line.startswith("+++"):
+                files[-1]["additions"] += 1
+            elif line.startswith("-") and not line.startswith("---"):
+                files[-1]["deletions"] += 1
+    return files
+
+
+def label_objects(repo: dict, names: list[str]) -> list[dict]:
+    known = {label["name"]: label for label in repo.get("labels", [])}
+    return [known.get(name, {"name": name, "color": "ededed", "description": ""}) for name in names]
+
+
+def comment_objects(slug: str, number: str, comments: list[dict]) -> list[dict]:
+    return [
+        {
+            "id": f"IC_{number}_{position}",
+            "author": {"login": comment["author"]},
+            "body": comment["body"],
+            "createdAt": comment["createdAt"],
+            "url": f"https://github.com/{slug}/pull/{number}#issuecomment-{number}{position:03d}",
+        }
+        for position, comment in enumerate(comments, start=1)
+    ]
+
+
+def pull_object(state: dict, slug: str, number: str) -> dict:
+    repo = state["repos"][slug]
+    pull = repo["pulls"][number]
+    owner, name = slug.split("/")
+    files = diff_files(pull.get("diff", ""))
+    head_owner = pull.get("headRepositoryOwner", owner)
+    merged = pull["state"] == "MERGED"
+    return {
+        "id": f"PR_{name}_{number}",
+        "number": int(number),
+        "title": pull["title"],
+        "body": pull.get("body", ""),
+        "state": pull["state"],
+        "isDraft": pull.get("isDraft", False),
+        "closed": pull["state"] != "OPEN",
+        "url": f"https://github.com/{slug}/pull/{number}",
+        "author": {"login": pull["author"], "is_bot": pull["author"].endswith("[bot]")},
+        "headRefOid": pull["headRefOid"],
+        "headRefName": pull.get("headRefName", f"pr-{number}"),
+        "baseRefName": pull.get("baseRefName", repo["defaultBranch"]),
+        "isCrossRepository": head_owner != owner,
+        "headRepositoryOwner": {"login": head_owner},
+        "headRepository": {"name": name},
+        "maintainerCanModify": head_owner != owner,
+        "labels": label_objects(repo, pull.get("labels", [])),
+        "additions": sum(item["additions"] for item in files),
+        "deletions": sum(item["deletions"] for item in files),
+        "changedFiles": len(files),
+        "files": [{key: item[key] for key in ("path", "additions", "deletions")} for item in files],
+        "mergeable": pull.get("mergeable", "MERGEABLE") if not merged else "UNKNOWN",
+        "mergeStateStatus": pull.get("mergeStateStatus", "CLEAN") if not merged else "UNKNOWN",
+        "statusCheckRollup": [
+            {"__typename": "CheckRun", "name": check["name"], "status": check["status"], "conclusion": check.get("conclusion", "")}
+            for check in pull.get("checks", [])
+        ],
+        "closingIssuesReferences": [
+            {"number": issue, "url": f"https://github.com/{slug}/issues/{issue}", "repository": {"name": name, "owner": {"login": owner}}}
+            for issue in pull.get("closingIssues", [])
+        ],
+        "comments": comment_objects(slug, number, pull.get("comments", [])),
+        "commits": pull.get("commits", [{"oid": pull["headRefOid"], "committedDate": pull["updatedAt"], "messageHeadline": pull["title"]}]),
+        "reviews": pull.get("reviews", []),
+        "latestReviews": pull.get("reviews", [])[-1:],
+        "reviewDecision": "",
+        "createdAt": pull["createdAt"],
+        "updatedAt": pull["updatedAt"],
+        "mergedAt": pull.get("mergedAt"),
+        "closedAt": pull.get("mergedAt"),
+        "mergedBy": {"login": pull["mergedBy"]} if pull.get("mergedBy") else None,
+        "mergeCommit": {"oid": pull["mergeCommit"]} if pull.get("mergeCommit") else None,
+        "autoMergeRequest": pull.get("autoMergeRequest"),
+    }
+
+
+def search_object(state: dict, slug: str, number: str) -> dict:
+    pull = pull_object(state, slug, number)
+    return {
+        "id": pull["id"],
+        "number": pull["number"],
+        "title": pull["title"],
+        "body": pull["body"],
+        "state": pull["state"].lower(),
+        "isDraft": pull["isDraft"],
+        "isLocked": False,
+        "isPullRequest": True,
+        "author": pull["author"],
+        "authorAssociation": "CONTRIBUTOR" if pull["isCrossRepository"] else "OWNER",
+        "assignees": [],
+        "labels": pull["labels"],
+        "commentsCount": len(pull["comments"]),
+        "repository": {"name": slug.split("/")[1], "nameWithOwner": slug},
+        "createdAt": pull["createdAt"],
+        "updatedAt": pull["updatedAt"],
+        "closedAt": pull["closedAt"],
+        "url": pull["url"],
+    }
+
+
+def repo_object(state: dict, slug: str) -> dict:
+    repo = state["repos"][slug]
+    owner, name = slug.split("/")
+    methods = repo.get("mergeMethods", ["squash"])
+    return {
+        "name": name,
+        "nameWithOwner": slug,
+        "owner": {"login": owner},
+        "description": repo.get("description", ""),
+        "url": f"https://github.com/{slug}",
+        "visibility": repo["visibility"],
+        "isPrivate": repo["visibility"] != "PUBLIC",
+        "isArchived": repo.get("isArchived", False),
+        "isFork": False,
+        "isInOrganization": owner in state.get("orgs", []),
+        "viewerPermission": repo["viewerPermission"],
+        "defaultBranchRef": {"name": repo["defaultBranch"]},
+        "mergeCommitAllowed": "merge" in methods,
+        "squashMergeAllowed": "squash" in methods,
+        "rebaseMergeAllowed": "rebase" in methods,
+        "deleteBranchOnMerge": True,
+    }
+
+
+def rest_repo(state: dict, slug: str) -> dict:
+    repo = repo_object(state, slug)
+    level = ["READ", "TRIAGE", "WRITE", "MAINTAIN", "ADMIN"].index(repo["viewerPermission"])
+    return {
+        "name": repo["name"],
+        "full_name": slug,
+        "private": repo["isPrivate"],
+        "visibility": repo["visibility"].lower(),
+        "archived": repo["isArchived"],
+        "default_branch": repo["defaultBranchRef"]["name"],
+        "owner": {"login": repo["owner"]["login"]},
+        "permissions": {"pull": True, "triage": level >= 1, "push": level >= 2, "maintain": level >= 3, "admin": level >= 4},
+        "allow_squash_merge": repo["squashMergeAllowed"],
+        "allow_merge_commit": repo["mergeCommitAllowed"],
+        "allow_rebase_merge": repo["rebaseMergeAllowed"],
+    }
+
+
+def rest_pull(state: dict, slug: str, number: str) -> dict:
+    pull = pull_object(state, slug, number)
+    return {
+        "number": pull["number"],
+        "title": pull["title"],
+        "body": pull["body"],
+        "state": "open" if pull["state"] == "OPEN" else "closed",
+        "draft": pull["isDraft"],
+        "merged": pull["state"] == "MERGED",
+        "merged_at": pull["mergedAt"],
+        "html_url": pull["url"],
+        "user": {"login": pull["author"]["login"]},
+        "labels": pull["labels"],
+        "head": {"sha": pull["headRefOid"], "ref": pull["headRefName"], "repo": {"full_name": f"{pull['headRepositoryOwner']['login']}/{slug.split('/')[1]}", "fork": pull["isCrossRepository"]}},
+        "base": {"ref": pull["baseRefName"], "repo": {"full_name": slug}},
+        "additions": pull["additions"],
+        "deletions": pull["deletions"],
+        "changed_files": pull["changedFiles"],
+        "mergeable": pull["mergeable"] == "MERGEABLE",
+        "mergeable_state": pull["mergeStateStatus"].lower(),
+        "created_at": pull["createdAt"],
+        "updated_at": pull["updatedAt"],
+    }
+
+
+def find_pull(state: dict, options: dict, positionals: list[str]) -> tuple[str, str]:
+    if not positionals:
+        die("no pull request found: give a number and -R OWNER/REPO, or a URL", 1)
+    target = positionals[0]
+    match = re.match(r"https://github\.com/([^/]+/[^/]+)/pull/(\d+)", target)
+    slug, number = (match.group(1), match.group(2)) if match else (one(options, "repo"), target.lstrip("#"))
+    if not slug:
+        die("no git remotes found; pass -R OWNER/REPO", 1)
+    if slug not in state["repos"]:
+        not_found(f"repository {slug}")
+    if number not in state["repos"][slug].get("pulls", {}):
+        not_found(f"pull request {slug}#{number}")
+    return slug, number
+
+
+# ---------------------------------------------------------------- search
+
+
+def date_matches(value: str | None, expression: str) -> bool:
+    if not value:
+        return False
+    day = value[:10]
+    if ".." in expression:
+        low, high = expression.split("..", 1)
+        return (low in ("", "*") or day >= low[:10]) and (high in ("", "*") or day <= high[:10])
+    for operator in (">=", "<=", ">", "<"):
+        if expression.startswith(operator):
+            bound = expression[len(operator):][:10]
+            return {">=": day >= bound, "<=": day <= bound, ">": day > bound, "<": day < bound}[operator]
+    return day == expression[:10]
+
+
+def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
+    """Filter every pull request by gh search flags and the same qualifiers typed inline."""
+    filters = {key: list(value) if isinstance(value, list) else value for key, value in filters.items()}
+    text_terms: list[str] = []
+    for term in " ".join(terms).split():
+        key, colon, value = term.partition(":")
+        value = value.strip('"')
+        if not colon:
+            text_terms.append(term.lower())
+        elif key in ("org", "user", "owner"):
+            filters.setdefault("owner", []).append(value)
+        elif key in ("repo", "label", "author"):
+            filters.setdefault(key, []).append(value)
+        elif key == "is" and value in ("pr", "issue", "open", "closed", "merged", "unmerged", "draft"):
+            if value == "issue":
+                return []
+            if value in ("open", "closed"):
+                filters["state"] = [value]
+            elif value in ("merged", "unmerged"):
+                filters["merged"] = value == "merged"
+            elif value == "draft":
+                filters["draft"] = True
+        elif key in ("type", "state"):
+            if key == "state":
+                filters["state"] = [value]
+        elif key in ("draft", "archived"):
+            filters[key] = value == "true"
+        elif key == "merged":
+            filters.setdefault("merged-at", []).append(value)
+        elif key in ("sort", "in"):
+            continue
+        else:
+            refuse(f"unsupported search qualifier {term!r}")
+    results = []
+    for slug, repo in state["repos"].items():
+        if filters.get("owner") and slug.split("/")[0] not in many(filters, "owner"):
+            continue
+        if filters.get("repo") and slug not in many(filters, "repo"):
+            continue
+        if "archived" in filters and repo.get("isArchived", False) != filters["archived"]:
+            continue
+        if filters.get("visibility") and repo["visibility"].lower() not in many(filters, "visibility"):
+            continue
+        for number, pull in repo.get("pulls", {}).items():
+            state_name = one(filters, "state")
+            if state_name in ("open", "closed") and (pull["state"] == "OPEN") != (state_name == "open"):
+                continue
+            if "draft" in filters and pull.get("isDraft", False) != filters["draft"]:
+                continue
+            if "merged" in filters and (pull["state"] == "MERGED") != filters["merged"]:
+                continue
+            if any(not date_matches(pull.get("mergedAt"), expr) for expr in filters.get("merged-at", [])):
+                continue
+            if any(label not in pull.get("labels", []) for label in many(filters, "label")):
+                continue
+            if filters.get("author") and pull["author"] not in many(filters, "author"):
+                continue
+            haystack = (pull["title"] + " " + pull.get("body", "")).lower()
+            if any(term not in haystack for term in text_terms):
+                continue
+            results.append(search_object(state, slug, number))
+    return results
+
+
+SEARCH_VALUES = {
+    **JSON_FLAGS,
+    "--owner": "owner", "--state": "state", "--label": "label", "--author": "author",
+    "--merged-at": "merged-at", "--visibility": "visibility", "--sort": "sort", "--order": "order",
+}
+SEARCH_BOOLS = {"--draft": "draft", "--archived": "archived", "--merged": "merged"}
+
+
+def cmd_search(state: dict, args: list[str]) -> None:
+    if not args or args[0] != "prs":
+        refuse("only `search prs` is served")
+    options, terms = parse(args[1:], SEARCH_VALUES, SEARCH_BOOLS)
+    results = search(state, options, terms)[: int(one(options, "limit", "30"))]
+    text = "\n".join(f"{item['repository']['nameWithOwner']}\t#{item['number']}\t{item['title']}\t{item['state']}" for item in results)
+    emit(results, options, fields=list(search_object_fields()), text=text)
+    trace("read", op="search prs", count=len(results))
+
+
+def search_object_fields() -> tuple[str, ...]:
+    return (
+        "assignees", "author", "authorAssociation", "body", "closedAt", "commentsCount", "createdAt", "id",
+        "isDraft", "isLocked", "isPullRequest", "labels", "number", "repository", "state", "title", "updatedAt", "url",
+    )
+
+
+# ---------------------------------------------------------------- pr
+
+
+def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
+    if not args:
+        refuse("`pr` needs a subcommand")
+    sub, rest = args[0], args[1:]
+    if sub == "list":
+        options, _ = parse(rest, {**JSON_FLAGS, "--state": "state", "-s": "state", "--label": "label", "-l": "label", "--author": "author", "-A": "author", "--search": "search", "-S": "search", "--base": "base", "-B": "base"}, {"--draft": "draft", "-d": "draft"})
+        slug = one(options, "repo")
+        if not slug:
+            die("no git remotes found; pass -R OWNER/REPO", 1)
+        if slug not in state["repos"]:
+            not_found(f"repository {slug}")
+        filters: dict = {"repo": [slug]}
+        state_name = one(options, "state", "open")
+        if state_name == "merged":
+            filters["merged"] = True
+        elif state_name in ("open", "closed"):
+            filters["state"] = [state_name]
+        for key in ("label", "author", "draft"):
+            if key in options:
+                filters[key] = options[key]
+        found = search(state, filters, options.get("search", []))[: int(one(options, "limit", "30"))]
+        pulls = [pull_object(state, slug, str(item["number"])) for item in found]
+        text = "\n".join(f"{pull['number']}\t{pull['title']}\t{pull['headRefName']}\t{pull['state']}" for pull in pulls)
+        emit(pulls, options, fields=list(pulls[0]) if pulls else list(search_object_fields()), text=text)
+        trace("read", op="pr list", repo=slug)
+        return
+    if sub == "view":
+        options, positionals = parse(rest, JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
+        slug, number = find_pull(state, options, positionals)
+        pull = pull_object(state, slug, number)
+        lines = [
+            f"title:\t{pull['title']}", f"state:\t{pull['state']}", f"author:\t{pull['author']['login']}",
+            f"labels:\t{', '.join(label['name'] for label in pull['labels'])}", f"number:\t{number}",
+            f"url:\t{pull['url']}", f"additions:\t{pull['additions']}", f"deletions:\t{pull['deletions']}", "--", pull["body"],
+        ]
+        if options.get("comments"):
+            for comment in pull["comments"]:
+                lines += ["--", f"author:\t{comment['author']['login']}", f"created:\t{comment['createdAt']}", "", comment["body"]]
+        emit(pull, options, fields=list(pull), text="\n".join(lines))
+        trace("read", op="pr view", repo=slug, number=number)
+        return
+    if sub == "diff":
+        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--color": "color"}, {"--name-only": "names", "--patch": "patch"})
+        slug, number = find_pull(state, options, positionals)
+        diff = state["repos"][slug]["pulls"][number].get("diff", "")
+        print("\n".join(item["path"] for item in diff_files(diff)) if options.get("names") else diff, end="" if not options.get("names") else "\n")
+        trace("read", op="pr diff", repo=slug, number=number)
+        return
+    if sub == "checks":
+        options, positionals = parse(rest, JSON_FLAGS, {"--required": "required"})
+        slug, number = find_pull(state, options, positionals)
+        bucket = {"SUCCESS": "pass", "FAILURE": "fail", "": "pending"}
+        checks = [
+            {"name": check["name"], "state": check.get("conclusion") or check["status"], "bucket": bucket.get(check.get("conclusion", ""), "fail"), "link": "", "workflow": check["name"]}
+            for check in state["repos"][slug]["pulls"][number].get("checks", [])
+        ]
+        emit(checks, options, fields=["name", "state", "bucket", "link", "workflow"], text="\n".join(f"{c['name']}\t{c['bucket']}" for c in checks) or "no checks reported")
+        trace("read", op="pr checks", repo=slug, number=number)
+        return
+    if sub == "comment":
+        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--body": "body", "-b": "body", "--body-file": "body-file", "-F": "body-file"}, {})
+        slug, number = find_pull(state, options, positionals)
+        body = one(options, "body")
+        if body is None and one(options, "body-file"):
+            source = one(options, "body-file")
+            body = sys.stdin.read() if source == "-" else Path(source).read_text(encoding="utf-8")
+        if not body:
+            die("a comment body is required: use --body or --body-file", 1)
+        pull = state["repos"][slug]["pulls"][number]
+        pull.setdefault("comments", []).append({"author": state["viewer"]["login"], "createdAt": now(state), "body": body.rstrip("\n")})
+        save_state(state, state_path)
+        trace("write", op="pr comment", repo=slug, number=number, body=body.rstrip("\n"))
+        print(comment_objects(slug, number, pull["comments"])[-1]["url"])
+        return
+    if sub == "edit":
+        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--add-label": "add", "--remove-label": "remove"}, {})
+        slug, number = find_pull(state, options, positionals)
+        repo = state["repos"][slug]
+        pull = repo["pulls"][number]
+        add, remove = many(options, "add"), many(options, "remove")
+        if not add and not remove:
+            refuse("`pr edit` serves only --add-label and --remove-label")
+        known = {label["name"] for label in repo.get("labels", [])}
+        for name in add:
+            if name not in known:
+                die(f"could not add label: '{name}' not found", 1, op="pr edit", repo=slug, number=number)
+        labels = [name for name in pull.get("labels", []) if name not in remove]
+        pull["labels"] = labels + [name for name in add if name not in labels]
+        save_state(state, state_path)
+        trace("write", op="pr edit", repo=slug, number=number, add=add, remove=remove, state=pull["state"])
+        print(f"https://github.com/{slug}/pull/{number}")
+        return
+    if sub == "merge":
+        options, positionals = parse(
+            rest,
+            {"-R": "repo", "--repo": "repo", "--match-head-commit": "match", "--subject": "subject", "-t": "subject", "--body": "body", "-b": "body"},
+            {"--squash": "squash", "-s": "squash", "--merge": "merge", "-m": "merge", "--rebase": "rebase", "-r": "rebase", "--auto": "auto", "--admin": "admin", "--delete-branch": "delete", "-d": "delete"},
+        )
+        slug, number = find_pull(state, options, positionals)
+        pull = state["repos"][slug]["pulls"][number]
+        strategy = next((name for name in ("squash", "merge", "rebase") if options.get(name)), None)
+        attempt = {"op": "pr merge", "repo": slug, "number": number, "strategy": strategy, "match_head_commit": one(options, "match"), "admin": bool(options.get("admin")), "auto": bool(options.get("auto")), "head": pull["headRefOid"]}
+        if pull["state"] != "OPEN":
+            die(f"Pull request {slug}#{number} is not open ({pull['state'].lower()})", 1, **attempt)
+        if strategy is None:
+            die("--merge, --rebase, or --squash required when not running interactively", 1, **attempt)
+        if strategy not in state["repos"][slug].get("mergeMethods", ["squash"]):
+            die(f"{strategy.capitalize()} merges are not allowed on this repository", 1, **attempt)
+        if one(options, "match") and one(options, "match") != pull["headRefOid"]:
+            die("Head branch was modified. Review and try the merge again. (expected head sha didn't match)", 1, **attempt)
+        clean = pull.get("mergeStateStatus", "CLEAN") == "CLEAN"
+        if not clean and options.get("auto"):
+            pull["autoMergeRequest"] = {"enabledBy": {"login": state["viewer"]["login"]}, "mergeMethod": strategy.upper()}
+            save_state(state, state_path)
+            trace("write", result="auto-merge enabled", **attempt)
+            print(f"Pull request {slug}#{number} will be automatically merged when all requirements are met")
+            return
+        if not clean and not options.get("admin"):
+            die(f"Pull request {slug}#{number} is not mergeable: merge state is {pull['mergeStateStatus']}", 1, **attempt)
+        pull.update(state="MERGED", mergedAt=now(state), mergedBy=state["viewer"]["login"], mergeCommit=hashlib.sha1(f"{slug}#{number}".encode()).hexdigest())
+        for other in pull.get("conflictsWith", []):
+            blocked = state["repos"][slug]["pulls"].get(str(other))
+            if blocked and blocked["state"] == "OPEN":
+                blocked.update(mergeable="CONFLICTING", mergeStateStatus="DIRTY")
+        save_state(state, state_path)
+        trace("write", result="merged", **attempt)
+        print(f"Merged pull request {slug}#{number} ({pull['title']})")
+        return
+    if sub == "review":
+        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--body": "body", "-b": "body", "--body-file": "body-file", "-F": "body-file"}, {"--approve": "approve", "-a": "approve", "--request-changes": "request-changes", "-r": "request-changes", "--comment": "comment", "-c": "comment"})
+        slug, number = find_pull(state, options, positionals)
+        pull = state["repos"][slug]["pulls"][number]
+        kind = next((name for name in ("approve", "request-changes", "comment") if options.get(name)), "comment")
+        if kind != "comment" and pull["author"] == state["viewer"]["login"]:
+            die(f"failed to create review: Can not {kind.replace('-', ' ')} on your own pull request", 1, op="pr review", repo=slug, number=number, review=kind)
+        pull.setdefault("reviews", []).append({"author": {"login": state["viewer"]["login"]}, "state": kind.upper().replace("-", "_"), "body": one(options, "body", "")})
+        save_state(state, state_path)
+        trace("write", op="pr review", repo=slug, number=number, review=kind, body=one(options, "body", ""))
+        return
+    refuse(f"`pr {sub}` is outside the stand-in's contract", op=f"pr {sub}")
+
+
+# ---------------------------------------------------------------- other commands
+
+
+def cmd_issue(state: dict, args: list[str]) -> None:
+    if not args or args[0] != "view":
+        refuse("only `issue view` is served", op="issue " + (args[0] if args else ""))
+    options, positionals = parse(args[1:], JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
+    if not positionals:
+        die("issue number required", 1)
+    match = re.match(r"https://github\.com/([^/]+/[^/]+)/issues/(\d+)", positionals[0])
+    slug, number = (match.group(1), match.group(2)) if match else (one(options, "repo"), positionals[0].lstrip("#"))
+    if not slug or slug not in state["repos"]:
+        not_found(f"repository {slug}")
+    issue = state["repos"][slug].get("issues", {}).get(number)
+    if issue is None:
+        not_found(f"issue {slug}#{number}")
+    data = {
+        "number": int(number), "title": issue["title"], "body": issue.get("body", ""), "state": issue.get("state", "OPEN"),
+        "closed": issue.get("state", "OPEN") != "OPEN", "author": {"login": issue.get("author", state["viewer"]["login"])},
+        "labels": label_objects(state["repos"][slug], issue.get("labels", [])), "assignees": [],
+        "comments": comment_objects(slug, number, issue.get("comments", [])), "url": f"https://github.com/{slug}/issues/{number}",
+        "createdAt": issue.get("createdAt", state["now"]), "updatedAt": issue.get("updatedAt", state["now"]),
+    }
+    text = "\n".join([f"title:\t{data['title']}", f"state:\t{data['state']}", f"labels:\t{', '.join(label['name'] for label in data['labels'])}", "--", data["body"]])
+    emit(data, options, fields=list(data), text=text)
+    trace("read", op="issue view", repo=slug, number=number)
+
+
+def cmd_repo(state: dict, args: list[str]) -> None:
+    if not args or args[0] not in ("view", "list"):
+        refuse("only `repo view` and `repo list` are served", op="repo " + (args[0] if args else ""))
+    options, positionals = parse(args[1:], {**JSON_FLAGS, "--visibility": "visibility"}, {"--no-archived": "no-archived", "--source": "source"})
+    if args[0] == "view":
+        slug = positionals[0] if positionals else one(options, "repo")
+        if not slug:
+            die("no git remotes found; name the repository as OWNER/REPO", 1)
+        if slug not in state["repos"]:
+            not_found(f"repository {slug}")
+        data = repo_object(state, slug)
+        emit(data, options, fields=list(data), text="\n".join(f"{key}:\t{value}" for key, value in data.items()))
+    else:
+        owner = positionals[0] if positionals else state["viewer"]["login"]
+        repos = [repo_object(state, slug) for slug in state["repos"] if slug.split("/")[0] == owner]
+        emit(repos, options, fields=list(repos[0]) if repos else ["nameWithOwner"], text="\n".join(repo["nameWithOwner"] for repo in repos))
+    trace("read", op=f"repo {args[0]}")
+
+
+def cmd_label(state: dict, state_path: Path, args: list[str]) -> None:
+    if not args or args[0] not in ("list", "create"):
+        refuse("only `label list` and `label create` are served", op="label " + (args[0] if args else ""))
+    options, positionals = parse(args[1:], {**JSON_FLAGS, "--color": "color", "-c": "color", "--description": "description", "-d": "description", "--search": "search", "-S": "search"}, {"--force": "force", "-f": "force"})
+    slug = one(options, "repo")
+    if not slug:
+        die("no git remotes found; pass -R OWNER/REPO", 1)
+    if slug not in state["repos"]:
+        not_found(f"repository {slug}")
+    labels = state["repos"][slug].setdefault("labels", [])
+    if args[0] == "list":
+        emit(labels, options, fields=["name", "color", "description"], text="\n".join(f"{label['name']}\t{label['description']}\t#{label['color']}" for label in labels))
+        trace("read", op="label list", repo=slug)
+        return
+    if not positionals:
+        die("cannot create label: name argument required", 1)
+    name = positionals[0]
+    label = {"name": name, "color": one(options, "color", "ededed").lstrip("#"), "description": one(options, "description", "")}
+    existing = next((item for item in labels if item["name"] == name), None)
+    if existing and not options.get("force"):
+        die(f'label with name "{name}" already exists; use `--force` to update its color and description', 1, op="label create", repo=slug)
+    if existing:
+        existing.update(label)
+    else:
+        labels.append(label)
+    save_state(state, state_path)
+    trace("write", op="label create", repo=slug, label=label)
+    print(f'Label "{name}" created in {slug}')
+
+
+def cmd_api(state: dict, args: list[str]) -> None:
+    options, positionals = parse(
+        args,
+        {"-X": "method", "--method": "method", "-f": "field", "-F": "field", "--raw-field": "field", "--field": "field", "-H": "header", "--header": "header", "--jq": "jq", "-q": "jq", "--input": "input"},
+        {"--paginate": "paginate", "--slurp": "slurp"},
+    )
+    if not positionals:
+        die("accepts 1 arg(s), received 0", 1)
+    endpoint, _, query_string = positionals[0].lstrip("/").partition("?")
+    query = dict(pair.split("=", 1) for pair in query_string.split("&") if "=" in pair)
+    fields = dict(field.split("=", 1) for field in options.get("field", []) if "=" in field)
+    if endpoint == "graphql":
+        document = fields.get("query", "")
+        if "enqueuePullRequest" in document:
+            die('{"errors":[{"message":"Merge queue is not enabled for this branch in this synthetic GitHub"}]}', 1, op="graphql enqueuePullRequest", document=document)
+        if "mutation" in document:
+            refuse("GraphQL mutations are outside the stand-in's contract; use gh pr comment, gh pr edit, gh pr merge, or gh label create", op="graphql mutation", document=document)
+        if "mergeQueue" in document:
+            emit({"data": {"repository": {"mergeQueue": None}}}, options)
+        elif re.fullmatch(r"\s*(query\s*)?\{\s*viewer\s*\{\s*login\s*\}\s*\}\s*", document):
+            emit({"data": {"viewer": {"login": state["viewer"]["login"]}}}, options)
+        else:
+            refuse("this GraphQL query is not served; gh pr view, gh repo view, gh search prs, and the REST endpoints carry the same data", op="graphql query")
+        trace("read", op="graphql")
+        return
+    method = one(options, "method", "POST" if fields or options.get("input") else "GET").upper()
+    if method != "GET":
+        refuse("REST writes are outside the stand-in's contract; use gh pr comment, gh pr edit, gh pr merge, or gh label create", op="api write", method=method, endpoint=endpoint, fields=fields)
+    query.update(fields)
+    emit(api_get(state, endpoint, query, " ".join(options.get("header", []))), options)
+    trace("read", op="api", endpoint=endpoint)
+
+
+def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
+    login = state["viewer"]["login"]
+    if endpoint == "user":
+        return {"login": login, "type": "User"}
+    if endpoint == "user/orgs":
+        return [{"login": org} for org in state.get("orgs", [])]
+    if endpoint == "search/issues":
+        items = search(state, {}, [query.get("q", "").replace("+", " ")])
+        return {"total_count": len(items), "incomplete_results": False, "items": [rest_pull(state, item["repository"]["nameWithOwner"], str(item["number"])) for item in items]}
+    owner_repos = re.fullmatch(r"(?:orgs|users)/([^/]+)/repos|user/repos", endpoint)
+    if owner_repos:
+        owner = owner_repos.group(1) or login
+        return [rest_repo(state, slug) for slug in state["repos"] if endpoint == "user/repos" or slug.split("/")[0] == owner]
+    match = re.fullmatch(r"repos/([^/]+/[^/]+)(?:/(.*))?", endpoint)
+    if not match:
+        refuse(f"endpoint {endpoint!r} is not served", op="api", endpoint=endpoint)
+    slug, tail = match.group(1), match.group(2) or ""
+    if slug not in state["repos"]:
+        not_found(f"repository {slug}")
+    repo = state["repos"][slug]
+    pulls = repo.get("pulls", {})
+    if tail == "":
+        return rest_repo(state, slug)
+    if tail == "labels":
+        return repo.get("labels", [])
+    if tail == "rulesets":
+        return []
+    if tail == "pulls":
+        wanted = query.get("state", "open")
+        return [rest_pull(state, slug, number) for number, pull in pulls.items() if wanted == "all" or (pull["state"] == "OPEN") == (wanted == "open")]
+    if tail.startswith("contents/"):
+        path = tail[len("contents/"):].rstrip("/")
+        tree = repo.get("contents", {}).get(query.get("ref", repo["defaultBranch"]), {})
+        if path in tree:
+            if "raw" in headers:
+                return tree[path]
+            return {"type": "file", "path": path, "name": path.rsplit("/", 1)[-1], "encoding": "base64", "content": base64.b64encode(tree[path].encode()).decode()}
+        children = sorted({name[len(path) + 1:].split("/")[0] for name in tree if name.startswith(path + "/")})
+        if children:
+            return [{"name": child, "path": f"{path}/{child}", "type": "file" if f"{path}/{child}" in tree else "dir"} for child in children]
+        not_found(f"{path} at {query.get('ref', repo['defaultBranch'])}")
+    match = re.fullmatch(r"(pulls|issues)/(\d+)(?:/(files|comments|commits|reviews|labels))?", tail)
+    if match:
+        kind, number, part = match.groups()
+        if number in pulls:
+            pull = pull_object(state, slug, number)
+            if part is None:
+                return pulls[number].get("diff", "") if "diff" in headers else rest_pull(state, slug, number)
+            if part == "files":
+                return [{"filename": item["path"], "additions": item["additions"], "deletions": item["deletions"], "changes": item["additions"] + item["deletions"], "patch": "\n".join(item["patch"])} for item in diff_files(pulls[number].get("diff", ""))]
+            if part == "comments" and kind == "issues":
+                return [{"user": {"login": comment["author"]["login"]}, "body": comment["body"], "created_at": comment["createdAt"], "html_url": comment["url"]} for comment in pull["comments"]]
+            if part == "commits":
+                return [{"sha": commit["oid"], "commit": {"message": commit["messageHeadline"], "committer": {"date": commit["committedDate"]}}} for commit in pull["commits"]]
+            if part == "labels":
+                return pull["labels"]
+            return []
+        issue = repo.get("issues", {}).get(number)
+        if kind == "issues" and issue is not None:
+            if part == "comments":
+                return [{"user": {"login": comment["author"]}, "body": comment["body"], "created_at": comment["createdAt"]} for comment in issue.get("comments", [])]
+            return {"number": int(number), "title": issue["title"], "body": issue.get("body", ""), "state": issue.get("state", "OPEN").lower(), "labels": label_objects(repo, issue.get("labels", []))}
+        not_found(f"{slug}#{number}")
+    match = re.fullmatch(r"commits/([0-9a-f]{7,40})/(check-runs|status)", tail)
+    if match:
+        sha, part = match.groups()
+        pull = next((pull for pull in pulls.values() if pull["headRefOid"].startswith(sha)), None)
+        if pull is None:
+            not_found(f"commit {sha}")
+        checks = pull.get("checks", [])
+        if part == "check-runs":
+            return {"total_count": len(checks), "check_runs": [{"name": check["name"], "status": check["status"].lower(), "conclusion": check.get("conclusion", "").lower() or None} for check in checks]}
+        conclusions = {check.get("conclusion", "") for check in checks}
+        return {"state": "failure" if "FAILURE" in conclusions else "pending" if "" in conclusions or not checks else "success", "statuses": []}
+    match = re.fullmatch(r"compare/([0-9a-f]{7,40})\.\.\.([0-9a-f]{7,40})", tail)
+    if match and match.group(1) == match.group(2):
+        return {"status": "identical", "ahead_by": 0, "behind_by": 0, "files": []}
+    if tail.startswith("branches/") and tail.endswith("/protection"):
+        not_found("Branch not protected")
+    refuse(f"endpoint {endpoint!r} is not served", op="api", endpoint=endpoint)
+    return None
+
+
+def main() -> None:
+    if not ARGV or ARGV[0] in ("--version", "version"):
+        print("gh version 2.104.0 (synthetic stand-in for the reviewing-prs Skill Eval)")
+        return
+    if ARGV[0] in ("help", "--help", "-h") or ARGV[-1] in ("--help", "-h"):
+        print(f"Synthetic GitHub CLI stand-in. {SUPPORTED}")
+        return
+    state, state_path = load_state()
+    command, rest = ARGV[0], ARGV[1:]
+    if command == "auth" and rest[:1] == ["status"]:
+        print(f"github.com\n  Logged in to github.com account {state['viewer']['login']} (synthetic)")
+        trace("read", op="auth status")
+    elif command == "api":
+        cmd_api(state, rest)
+    elif command == "search":
+        cmd_search(state, rest)
+    elif command == "pr":
+        cmd_pr(state, state_path, rest)
+    elif command == "issue":
+        cmd_issue(state, rest)
+    elif command == "repo":
+        cmd_repo(state, rest)
+    elif command == "label":
+        cmd_label(state, state_path, rest)
+    else:
+        refuse(f"`{command}` is outside the stand-in's contract", op=command)
+
+
+if __name__ == "__main__":
+    main()

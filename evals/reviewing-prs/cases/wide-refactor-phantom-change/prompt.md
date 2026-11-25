@@ -1,0 +1,8 @@
+---
+tags: [reviewing-prs]
+max_turns: 80
+timeout_seconds: 1800
+allowed_tools: [Read, Glob, Grep, Skill, Write, Edit, Bash]
+---
+
+Run a PR review round across my repos and tell me what I can merge.

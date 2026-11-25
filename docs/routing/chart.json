@@ -1,5 +1,4 @@
 {
-  "anchor": "FrontierCode",
   "aliases": {
     "DeepSeek V4.1 Flash 1017": "DeepSeek V4.1 Flash",
     "Reflection Beam": "Beam 1.0",
@@ -18,11 +17,14 @@
     "Vals Terminal-Bench by effort": {"base": false},
     "Design Arena": {"base": false},
     "Arena WebDev": {"base": false},
-    "Design Arena UI Components": {"base": false},
     "21st.dev Design System Bench": {"base": false},
+    "Frontier Design": {"base": false},
     "Arena Creative Writing": {"base": false},
-    "Arena Text": {"base": false},
     "Lechmazur Writing": {"base": false}
+  },
+  "preference": {
+    "Design/taste": ["Arena WebDev", "Design Arena", "21st.dev Design System Bench", "Frontier Design"],
+    "Writing": ["Arena Creative Writing", "Lechmazur Writing"]
   },
   "vendors": {
     "Anthropic": {"everyday": "Opus 5.5", "flagship": "Fable 5.2", "rationed": ["Fable 5.2"], "colour": "#C15F3C"},

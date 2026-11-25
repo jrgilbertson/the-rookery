@@ -1,12 +1,14 @@
 {
-  "anchor": "Alder",
   "aliases": {"Thrift Mini": "Thrift"},
   "suites": {
     "Alder": {"base": true},
     "Birch": {"base": true},
     "Elm": {"base": true},
-    "Cedar": {"base": false}
+    "Cedar": {"base": false},
+    "Fir": {"base": false},
+    "Gorse": {"base": false}
   },
+  "preference": {"Writing": ["Fir", "Gorse"]},
   "vendors": {
     "Anthropic": {"everyday": "Alpha", "flagship": "Alpha", "rationed": [], "colour": "#C15F3C"},
     "OpenAI": {"everyday": "Solo", "flagship": "Gamma", "rationed": [], "colour": "#10A37F"}

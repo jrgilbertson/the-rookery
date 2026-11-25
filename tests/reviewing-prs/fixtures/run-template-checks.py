@@ -19,16 +19,20 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-TEMPLATE = ROOT / "skills/reviewing-prs/assets/review-page.html"
+SKILL_DIR = ROOT / "skills/reviewing-prs"
+TEMPLATE = SKILL_DIR / "assets/review-page.html"
+SKILL = SKILL_DIR / "SKILL.md"
 SAMPLE = Path(__file__).resolve().parent / "sample-round.json"
 
-# The steps the skill prescribes, run with POSIX sh. $dir holds round.json.
-FILL = r"""
-set -eu
-nonce=$(openssl rand -hex 16)
-sed -e 's/&/\\u0026/g' -e 's/</\\u003c/g' -e 's/>/\\u003e/g' "$dir/round.json" > "$dir/data.json"
-sed -e "s/{{NONCE}}/$nonce/g" -e '/^{{ROUND_DATA}}$/{' -e "r $dir/data.json" -e 'd' -e '}' "$template" > "$dir/review.html"
-"""
+
+def fill_commands() -> str:
+    """The shell block the skill ships under "Build the page", run as written."""
+    text = SKILL.read_text()
+    section = text.split("**Build the page.**", 1)[1]
+    match = re.search(r"```sh\n(.*?)```", section, re.S)
+    if not match:
+        raise SystemExit("FAIL SKILL.md has no shell block under 'Build the page'")
+    return "set -eu\n" + match.group(1).replace("<skill-dir>", '"$skill_dir"')
 
 BANNED = re.compile(r"innerHTML|outerHTML|insertAdjacentHTML|document\.write|\son[a-z]+\s*=|<form\b|<iframe\b|<object\b|<embed\b|eval\(|new Function")
 DATA_BLOCK = re.compile(r'<script type="application/json" id="round-data">\n(.*?)\n</script>', re.S)
@@ -55,8 +59,11 @@ def check_template(text: str) -> None:
 
 def fill(round_data: str, scratch: Path) -> tuple[str, str]:
     (scratch / "round.json").write_text(round_data)
-    subprocess.run(["sh", "-c", FILL], env={"PATH": "/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin", "dir": str(scratch), "template": str(TEMPLATE)}, check=True)
-    return (scratch / "review.html").read_text(), (scratch / "data.json").read_text()
+    subprocess.run(["sh", "-c", fill_commands()], cwd=scratch, check=True,
+                   env={"PATH": "/usr/bin:/bin:/usr/local/bin:/opt/homebrew/bin", "skill_dir": str(SKILL_DIR)})
+    page = scratch / "review.html"
+    check(page.stat().st_mode & 0o077 == 0, "the filled page is readable by other users")
+    return page.read_text(), (scratch / "data.json").read_text()
 
 
 def check_filled(page: str, data: str, original: dict) -> None:

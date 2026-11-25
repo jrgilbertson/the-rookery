@@ -13,18 +13,22 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- `reviewing-prs`, a Markdown-only skill that runs one Review Round across
-  every repository the operator can merge in. It reads each open pull request
-  from its raw diff at a fixed head commit, scores verification effort and
-  undo cost from what the diff shows, lists stored and published names,
-  flags claims the diff does not support and missing screenshots, checks
-  interface changes against the repository's design system when it has one,
-  and writes the round to a private local page. It records each Verdict on the pull
-  request as a three-line comment naming the reviewed commit. It merges a
-  pull request nobody owns only when its head is still that commit, and
-  hands an owned one back to its owner. The page carries a strict Content
-  Security Policy and renders pull request text as text. Synthetic Skill Eval cases are under
-  `evals/reviewing-prs/`.
+- `reviewing-prs`, a skill that runs one Review Round across every
+  repository the operator can merge in. It reads each open pull request from
+  its raw diff at a fixed head commit, scores verification effort and undo
+  cost from what the diff shows, lists stored and published names, flags
+  claims the diff does not support and missing screenshots, and checks
+  interface changes against the repository's design system when it has one.
+  It fills a page template it ships with the round: a risk overview ranked
+  by verification effort times undo cost and split at the hold line, then
+  one block per pull request showing what changes for a user, as a table of
+  situations before and after or as screens side by side. The page follows
+  the system's light or dark setting, carries a strict Content Security
+  Policy, and renders pull request text as text. It records each Verdict on
+  the pull request as a three-line comment naming the reviewed commit. It
+  merges a pull request nobody owns only when its head is still that commit,
+  and hands an owned one back to its owner. Synthetic Skill Eval cases are
+  under `evals/reviewing-prs/`.
 - `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels
   (`review:held`, `review:auto-merged`, `review:human-merged`).
 - `docs/adr/001-verdict-trust-by-convention.md` records why a Verdict comment

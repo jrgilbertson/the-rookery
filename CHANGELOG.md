@@ -64,6 +64,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Sessions audit covers every configured harness, reading Antigravity, Grok,
+  and other JSONL transcripts that `ce-retro`'s extractors do not recognize
+  through `ce-retro`'s raw-JSONL fallback. Each host now also checks for
+  operational drift: failed or missed automations, reverts and same-day fixups
+  of `review:auto-merged` changes, crashed or stalled orchestrator sessions,
+  expired sign-ins, and installed skills or a main checkout that differ from
+  the repository. The new check renumbers the prompt's later steps, so update
+  saved jobs from the definition.
 - `ROUTING.md` weighs each preference row's sources equally instead of
   following one board. Design/taste averages Arena WebDev, Design Arena,
   21st.dev Design System Bench, and the new Frontier Design benchmark, where

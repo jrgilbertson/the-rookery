@@ -18,7 +18,7 @@
   "cache_write": 124051,
   "output": 23836,
   "reported_total_tokens": 124648,
-  "duration_seconds": 633.1
+  "duration_seconds": 245.9
  },
  "github_trace": {
   "calls": 57,

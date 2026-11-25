@@ -123,6 +123,9 @@ shapes they must parse.
 
 - [Review page, 2026-11-24](records/2026-11-24-review-page/README.md): each
   case once with the skill and once without, in Claude.
+- [Simplify pass, 2026-11-25](records/2026-11-25-simplify-pass/README.md):
+  each case once with the skill at `dc81d24e`, in Claude, against the
+  previous record's skill arms.
 
 Commit each record under
 `records/<date>-<slug>/` with the fields

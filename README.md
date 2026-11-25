@@ -84,7 +84,7 @@ The [automation catalog](automations/README.md) contains copyable prompts,
 schedules, prerequisites, and setup instructions. Configure these jobs in Orca
 separately from installing skills.
 
-- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment.
+- [Sessions audit (local and remote)](automations/sessions-audit.md). Use `ce-retro` to review recent AI sessions on each host for improvements to the coding environment, and check each host for operational drift.
 - [Daily learning](automations/daily-learning.md). Run `daily-learning` read-only overnight across vault activity, local and paired remote AI sessions, and Anki status, then author approved updates interactively when you reply.
 - [Analytics gap audit](automations/analytics-gap-audit.md). Find shipped user actions without analytics and tracked events that never arrive, and recommend fixes for approval.
 - [Design system audit](automations/design-system-audit.md). Review every page against the design contract and recommend fixes for drift and recurring design problems.

@@ -41,7 +41,8 @@ replace the reference to The Rookery with your own repository.
 Sessions audit invokes `ce-retro` on each host separately, with required skills
 available to the selected agent on each host. The remote job runs first and
 the local job merges both hosts' findings into one list; see
-[Consolidation](sessions-audit.md#consolidation).
+[Consolidation](sessions-audit.md#consolidation). Each job also checks its
+host for operational drift.
 
 Some prompts invoke an existing skill; others describe the review directly.
 Orca runs the prompt on a schedule; an invoked skill tells the agent how to do

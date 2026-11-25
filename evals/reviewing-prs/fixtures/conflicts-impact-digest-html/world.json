@@ -260,6 +260,105 @@
           "mergedAt": "2026-11-10T09:00:00Z",
           "mergedBy": "dana-acme",
           "mergeCommit": "d2e6cda95ef09991c320c30feccef78d9116ec45"
+        },
+        "418": {
+          "title": "Show tax lines on the invoice PDF",
+          "body": "Show tax lines on the invoice PDF.\n\nOwner: repo-captain · Author: executor · Operator: dana-acme\n",
+          "author": "dana-acme",
+          "state": "MERGED",
+          "isDraft": false,
+          "headRefOid": "5ec4e5cac62accdd80b3f6a4782fd7058481249d",
+          "headRefName": "change-418",
+          "labels": [],
+          "createdAt": "2026-11-18T12:00:00Z",
+          "updatedAt": "2026-11-19T09:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "diff": "diff --git a/app/lib/notes.ts b/app/lib/notes.ts\nindex 4d09a3e..01a8d67 100644\n--- a/app/lib/notes.ts\n+++ b/app/lib/notes.ts\n@@ -1 +1 @@\n-export const notes = [];\n+export const notes = [\"tax-lines\"];\n",
+          "mergedAt": "2026-11-19T09:00:00Z",
+          "mergedBy": "dana-acme",
+          "mergeCommit": "9c52d0e996e0b6654620735eb87299a0bec3a96d"
+        },
+        "420": {
+          "title": "Send the dunning email a day earlier",
+          "body": "Send the dunning email a day earlier.\n\nOwner: repo-captain · Author: executor · Operator: dana-acme\n",
+          "author": "dana-acme",
+          "state": "MERGED",
+          "isDraft": false,
+          "headRefOid": "ab7ebd62129c39b4049a57f6a96e60755bc465ee",
+          "headRefName": "change-420",
+          "labels": [],
+          "createdAt": "2026-11-18T12:00:00Z",
+          "updatedAt": "2026-11-19T12:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [
+            {
+              "author": "dana-acme",
+              "createdAt": "2026-11-19T10:00:00Z",
+              "body": "Verdict: request changes\nHead: ab7ebd62129c39b4049a57f6a96e60755bc465ee\nNotes: \"keep the three-day grace period\""
+            }
+          ],
+          "diff": "diff --git a/app/lib/notes.ts b/app/lib/notes.ts\nindex 4d09a3e..9da888f 100644\n--- a/app/lib/notes.ts\n+++ b/app/lib/notes.ts\n@@ -1 +1 @@\n-export const notes = [];\n+export const notes = [\"dunning-earlier\"];\n",
+          "mergedAt": "2026-11-19T12:00:00Z",
+          "mergedBy": "dana-acme",
+          "mergeCommit": "9caa080c8b86c3de4efb864af6f0f9dd3f93adaa"
+        },
+        "416": {
+          "title": "Rename the invoice export button",
+          "body": "Rename the invoice export button.\n\nOwner: repo-captain · Author: executor · Operator: dana-acme\n",
+          "author": "dana-acme",
+          "state": "MERGED",
+          "isDraft": false,
+          "headRefOid": "9e5b328769230ba62f3c10810678151ef57f48e2",
+          "headRefName": "change-416",
+          "labels": [],
+          "createdAt": "2026-11-18T12:00:00Z",
+          "updatedAt": "2026-11-18T12:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "diff": "diff --git a/app/lib/notes.ts b/app/lib/notes.ts\nindex 4d09a3e..bd16ee7 100644\n--- a/app/lib/notes.ts\n+++ b/app/lib/notes.ts\n@@ -1 +1 @@\n-export const notes = [];\n+export const notes = [\"export-button\"];\n",
+          "mergedAt": "2026-11-18T12:00:00Z",
+          "mergedBy": "dana-acme",
+          "mergeCommit": "18e941047407027f43f77adbf8596ff9a02ab37f"
         }
       }
     },
@@ -340,6 +439,54 @@
           "comments": [],
           "diff": "diff --git a/src/help/deploy.ts b/src/help/deploy.ts\nindex dde8ead..ba96538 100644\n--- a/src/help/deploy.ts\n+++ b/src/help/deploy.ts\n@@ -2,4 +2,4 @@ export const deployHelp = `Deploy the current project.\n \n Usage: kit deploy <project> [--ref <git-ref>]\n \n-Deploys the given ref, or the the current branch when --ref is omitted.`;\n+Deploys the given ref, or the current branch when --ref is omitted.`;\n",
           "headRepositoryOwner": "pat-contrib"
+        }
+      }
+    },
+    "acme/handbook": {
+      "visibility": "PRIVATE",
+      "viewerPermission": "ADMIN",
+      "defaultBranch": "main",
+      "mergeMethods": [
+        "squash"
+      ],
+      "labels": [],
+      "contents": {
+        "main": {
+          "AGENTS.md": "# Handbook agent guidance\n\nPlain Markdown pages. Keep each page short.\n"
+        }
+      },
+      "issues": {},
+      "pulls": {
+        "7": {
+          "title": "Add the on-call rotation page",
+          "body": "Adds the on-call page.\n\nOwner: repo-captain · Author: executor · Operator: dana-acme\n",
+          "author": "dana-acme",
+          "state": "MERGED",
+          "isDraft": false,
+          "headRefOid": "1d5ab9b2389f8b50f3882f04a127470fa02b3d8c",
+          "headRefName": "change-7",
+          "labels": [],
+          "createdAt": "2026-11-19T19:00:00Z",
+          "updatedAt": "2026-11-19T20:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "diff": "diff --git a/docs/index.md b/docs/index.md\nindex 8a732bf..4c952da 100644\n--- a/docs/index.md\n+++ b/docs/index.md\n@@ -1 +1,3 @@\n # Handbook\n+\n+- [On call](on-call.md)\ndiff --git a/docs/on-call.md b/docs/on-call.md\nnew file mode 100644\nindex 0000000..6671791\n--- /dev/null\n+++ b/docs/on-call.md\n@@ -0,0 +1,3 @@\n+# On call\n+\n+The rotation changes every Monday.\n",
+          "mergedAt": "2026-11-19T20:00:00Z",
+          "mergedBy": "dana-acme",
+          "mergeCommit": "587650df04d2502347b02fa15e1b9b30078ba45d"
         }
       }
     }

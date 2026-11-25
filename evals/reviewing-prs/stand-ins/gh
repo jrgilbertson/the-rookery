@@ -36,7 +36,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import unquote_plus
 
-SUPPORTED = """Available here: api (GET user, user/orgs, repos/..., search/issues; narrow graphql),
+SUPPORTED = """Available here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue, reviewThreads),
 search prs, pr view|list|diff|checks|comment|edit|merge|review, issue view,
 repo view|list, label list|create, auth status."""
 ARGV = sys.argv[1:]
@@ -398,18 +398,37 @@ def find_pull(state: dict, options: dict, positionals: list[str]) -> tuple[str, 
 # ---------------------------------------------------------------- search
 
 
+def moment(text: str, end_of_day: bool = False) -> datetime:
+    """A GitHub search date or date-time, compared the way GitHub compares it."""
+    text = text.strip().strip('"')
+    if len(text) == 10:
+        return datetime.fromisoformat(text + ("T23:59:59+00:00" if end_of_day else "T00:00:00+00:00"))
+    stamp = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    return stamp if stamp.tzinfo else stamp.replace(tzinfo=timezone.utc)
+
+
 def date_matches(value: str | None, expression: str) -> bool:
+    """Compare full timestamps; a bare date covers its whole day, as on GitHub."""
     if not value:
         return False
-    day = value[:10]
-    if ".." in expression:
-        low, high = expression.split("..", 1)
-        return (low in ("", "*") or day >= low[:10]) and (high in ("", "*") or day <= high[:10])
-    for operator in (">=", "<=", ">", "<"):
-        if expression.startswith(operator):
-            bound = expression[len(operator):][:10]
-            return {">=": day >= bound, "<=": day <= bound, ">": day > bound, "<": day < bound}[operator]
-    return day == expression[:10]
+    at = moment(value)
+    try:
+        if ".." in expression:
+            low, high = expression.split("..", 1)
+            return (low in ("", "*") or at >= moment(low)) and (high in ("", "*") or at <= moment(high, end_of_day=True))
+        for operator in (">=", "<=", ">", "<"):
+            if expression.startswith(operator):
+                bound = expression[len(operator):]
+                return {
+                    ">=": at >= moment(bound),
+                    "<=": at <= moment(bound, end_of_day=True),
+                    ">": at > moment(bound, end_of_day=True),
+                    "<": at < moment(bound),
+                }[operator]
+        return moment(expression) <= at <= moment(expression, end_of_day=True)
+    except ValueError:
+        refuse(f"unsupported date {expression!r}")
+        return False
 
 
 def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
@@ -423,7 +442,7 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
             text_terms.append(term.lower())
         elif key in ("org", "user", "owner"):
             filters.setdefault("owner", []).append(value)
-        elif key in ("repo", "label", "author"):
+        elif key in ("repo", "label", "author", "commenter"):
             filters.setdefault(key, []).append(value)
         elif key == "is" and value in ("pr", "issue", "open", "closed", "merged", "unmerged", "draft"):
             if value == "issue":
@@ -469,10 +488,20 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
                 continue
             if filters.get("author") and pull["author"] not in many(filters, "author"):
                 continue
-            haystack = (pull["title"] + " " + pull.get("body", "")).lower()
+            commenters = {comment["author"] for comment in pull.get("comments", [])}
+            if any(login not in commenters for login in many(filters, "commenter")):
+                continue
+            fields = many(filters, "match") or ["title", "body"]
+            haystack = " ".join(
+                [pull["title"]] * ("title" in fields) + [pull.get("body", "")] * ("body" in fields)
+                + [comment["body"] for comment in pull.get("comments", [])] * ("comments" in fields)
+            ).lower()
             if any(term not in haystack for term in text_terms):
                 continue
             results.append(search_object(state, slug, number))
+    if one(filters, "sort") in ("updated", "created"):
+        key = "updatedAt" if one(filters, "sort") == "updated" else "createdAt"
+        results.sort(key=lambda item: item[key], reverse=one(filters, "order", "desc") != "asc")
     return results
 
 
@@ -480,6 +509,7 @@ SEARCH_VALUES = {
     **JSON_FLAGS,
     "--owner": "owner", "--state": "state", "--label": "label", "--author": "author",
     "--merged-at": "merged-at", "--visibility": "visibility", "--sort": "sort", "--order": "order",
+    "--commenter": "commenter", "--match": "match",
 }
 SEARCH_BOOLS = {"--draft": "draft", "--archived": "archived", "--merged": "merged"}
 
@@ -746,6 +776,18 @@ def cmd_api(state: dict, args: list[str]) -> None:
             refuse("GraphQL mutations are outside the stand-in's contract; use gh pr comment, gh pr edit, gh pr merge, or gh label create", op="graphql mutation", document=document)
         if "mergeQueue" in document:
             emit({"data": {"repository": {"mergeQueue": None}}}, options)
+        elif "reviewThreads" in document:
+            slug = f"{fields.get('owner', '')}/{fields.get('repo', '')}"
+            if slug not in state["repos"] or fields.get("number", "") not in state["repos"][slug]["pulls"]:
+                die('{"errors":[{"message":"Could not resolve to a PullRequest"}]}', 1, op="graphql reviewThreads", slug=slug)
+            threads = state["repos"][slug]["pulls"][fields["number"]].get("reviewThreads", [])
+            nodes = [
+                {"isResolved": thread.get("isResolved", False), "comments": {"nodes": [
+                    {"author": {"login": comment["author"]}, "body": comment["body"]} for comment in thread.get("comments", [])
+                ]}}
+                for thread in threads
+            ]
+            emit({"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": nodes}}}}}, options)
         elif re.fullmatch(r"\s*(query\s*)?\{\s*viewer\s*\{\s*login\s*\}\s*\}\s*", document):
             emit({"data": {"viewer": {"login": state["viewer"]["login"]}}}, options)
         else:

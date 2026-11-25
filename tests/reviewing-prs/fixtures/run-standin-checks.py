@@ -113,8 +113,16 @@ def check_writes_and_refusals(scratch: Path) -> None:
 def check_conflict_and_digest(scratch: Path) -> None:
     run = Run("conflicts-impact-digest-html", scratch / "conflicts")
     slug = "acme/ledger-app"
-    merged = run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", ">=2026-11-17", "--label", "review:human-merged", "--json", "number")
-    expect(sorted(item["number"] for item in merged) == [411, 419], f"merged digest search: {merged}")
+    commented = run.json("search", "prs", "--owner", "acme", "--commenter", "dana-acme", "--sort", "updated", "--json", "repository,number,updatedAt")
+    stamps = [item["updatedAt"] for item in commented]
+    expect(stamps == sorted(stamps, reverse=True) and {419, 420} <= {item["number"] for item in commented}, f"commenter search, newest first: {commented}")
+    expect(all(item["number"] not in (416, 418) for item in commented), "a pull request the operator never commented on must not match --commenter")
+    # The window starts 24 hours before the newest Verdict; #416 merged six hours earlier the same day.
+    merged = run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", ">=2026-11-18T18:00:00Z", "--json", "repository,number")
+    found = sorted((item["repository"]["nameWithOwner"], item["number"]) for item in merged)
+    expected = [("acme/handbook", 7)] + [(slug, number) for number in (411, 417, 418, 419, 420)]
+    expect(found == expected, f"merged-window search must compare full timestamps: {found}")
+    expect(len(run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", ">=2026-11-18", "--json", "number")) == 7, "a bare date covers its whole day")
     comments = run.json("pr", "view", "419", "-R", slug, "--json", "comments")["comments"]
     expect(any(comment["body"].startswith("Fleet: verdict-delta") for comment in comments), "the verdict-delta receipt must be readable")
     head = run.json("pr", "view", "426", "-R", slug, "--json", "headRefOid")["headRefOid"]
@@ -127,6 +135,19 @@ def check_conflict_and_digest(scratch: Path) -> None:
     expect(run.gh("pr", "review", "139", "-R", "acme/cli-kit", "--comment", "--body-file", str(body)).returncode == 0, "review on a fork pull request")
     review = next(entry for entry in run.trace() if entry.get("op") == "pr review")
     expect(review["kind"] == "write" and review["body"] == "Verdict: merge", "a Verdict posted as a review must be visible in the trace")
+
+
+def check_review_threads(scratch: Path) -> None:
+    """The skill reads review threads through one GraphQL query; the stand-in must answer it."""
+    run = Run("risk-overview-and-situations", scratch / "threads")
+    query = re.search(r"gh api graphql -f query='([^']*reviewThreads[^']*)'", SKILL.read_text(encoding="utf-8"))
+    expect(query is not None, "the skill must name its review-thread query")
+    answer = run.json("api", "graphql", "-f", f"query={query.group(1)}", "-f", "owner=acme", "-f", "repo=ledger-app", "-F", "number=441")
+    nodes = answer["data"]["repository"]["pullRequest"]["reviewThreads"]["nodes"]
+    expect(len(nodes) == 2 and all(node["isResolved"] for node in nodes), f"review threads: {nodes}")
+    expect(nodes[0]["comments"]["nodes"][-1]["body"] == "Out of scope for this fix.", "the declined answer must be readable")
+    missing = run.gh("api", "graphql", "-f", f"query={query.group(1)}", "-f", "owner=acme", "-f", "repo=ledger-app", "-F", "number=999")
+    expect(missing.returncode == 1, "a review-thread query for a missing pull request must fail")
 
 
 def check_shipped_commands(scratch: Path) -> None:
@@ -169,11 +190,12 @@ def check_unsafe_configuration(scratch: Path) -> None:
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-reviewing-prs-") as temporary:
         scratch = Path(temporary).resolve()
-        for name in ("writes", "conflicts", "unsafe", "shipped", "parallel"):
+        for name in ("writes", "conflicts", "threads", "unsafe", "shipped", "parallel"):
             (scratch / name).mkdir()
         check_every_fixture(scratch)
         check_writes_and_refusals(scratch)
         check_conflict_and_digest(scratch)
+        check_review_threads(scratch)
         check_shipped_commands(scratch)
         check_parallel_calls(scratch)
         check_unsafe_configuration(scratch)

@@ -3,7 +3,7 @@
 Each synthetic Eval Case runs against a fresh no-skill Baseline and against
 the same revision of `reviewing-prs` in Claude and in Codex. Every arm talks
 to the same synthetic GitHub: invented repositories (`acme/ledger-app`,
-`acme/cli-kit`), an invented operator, and invented pull requests. No arm has
+`acme/cli-kit`, `acme/handbook`), an invented operator, and invented pull requests. No arm has
 real GitHub credentials.
 
 ## Cases
@@ -15,24 +15,26 @@ describes.
 | Case | What it keeps | Fixture |
 | --- | --- | --- |
 | [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the Verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page | `fixtures/conflicts-impact-digest-html` |
-| [design-system-departures](cases/design-system-departures/case.yaml) | No observed failure yet. Checks an interface change against the repository's design system | `fixtures/design-system-departures` |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes Verdict | `fixtures/conflicts-impact-digest-html` |
+| [risk-overview-and-situations](cases/risk-overview-and-situations/case.yaml) | No observed failure yet. Checks that the page splits the round at the hold line, shows an undescribed change as a situation with its code, and says where each value came from | `fixtures/risk-overview-and-situations` |
 
 Three earlier cases were removed on 2026-11-24: a mislabeled new view, hidden
 stored names, and a description claiming work the diff lacked. A no-skill
 agent caught each of them, so they measured the model more than the skill. Git
-history keeps them.
+history keeps them. `design-system-departures` was removed the same day because
+both arms passed every check.
 
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's request, `case.yaml` describes a good result and names the failure
 it came from, and each file in `graders/` is one statement to judge.
 `owner-routing-and-scrubbing` has three operator turns and one conditional
 reply, listed in its `turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
-reaches the review page. Fixture dates are fixed around 2026-11-20, and the
-one prompt that names a time window gives an absolute date.
+reaches the review page. Fixture dates are fixed around 2026-11-20. The
+digest case's merged window comes from the last Verdict comment in its
+fixture, so no prompt names a date.
 
 The three-case set SHA-256 is
-`78c192fdc47b024a9a68a0bf259107e2ed25bc35e2b5267fbba75049c002749e`. From this
+`ccb2a2e45eb9118a5531737ddfb36c072e990d4b1e992aa476c8d7e32ae930fa`. From this
 directory, reproduce it with:
 
 ```sh
@@ -118,8 +120,8 @@ shapes they must parse.
 
 ## Eval Records
 
-- [Rerun, 2026-11-24](records/2026-11-24-rerun/README.md): each case once
-  with the skill and once without, in Claude.
+None yet for this case set. The 2026-11-24 rerun measured the earlier set and
+was removed with it.
 
 Commit each record under
 `records/<date>-<slug>/` with the fields

@@ -13,6 +13,23 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `repo-captain`, a skill that runs one persistent Captain per repository
+  in Orca. It plans with the operator, dispatches Executors directly or
+  through Domain Leads, serializes overlapping files and database
+  migrations, and keeps tracker issues current through `managing-issues`.
+  It is the only session that merges in its repository: it merges routine
+  pull requests once their evidence is shown, holds the rest for the
+  operator's Review Round, and carries out each Verdict, judging any change
+  since review on its own. Its behavior rests only on the operator's
+  recorded words and on live facts it rereads at every wake, so a restart
+  runs the same routine as any wake. It never blocks on the operator, never
+  triggers a review bot, and interrupts only for an exposure or a Captain
+  merge gone wrong. One Captain per repository can dispatch to any paired
+  machine. Synthetic Skill Eval cases are under `evals/repo-captain/`.
+- A review contract shared by `reviewing-prs` and `repo-captain`, shipped
+  as an identical copy in each skill. The repository checks fail when the
+  two copies differ.
+- `CONCEPTS.md` defines Captain and Domain Lead.
 - `reviewing-prs`, a skill that runs one Review Round across every
   repository the operator can merge in, including repositories shared with
   them as a collaborator, plus every pull request that asks for their
@@ -92,6 +109,19 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `reviewing-prs` reads its formats, trust rules, scores, and hold tests
+  from the shared review contract. It now posts a Verdict even when the
+  pull request's head moved after review, naming the reviewed commit and
+  telling the operator, and it holds an edit to the design system itself.
+- `managing-issues` lets a Captain, under its standing instruction, update
+  readiness and workflow labels, tighten Scope and Verification, raise
+  verification effort or undo cost, and change confidence from code
+  evidence. Lowering either score, changing impact, cancelling, and
+  creating follow-ups still need fresh approval.
+- `CONCEPTS.md` Merge Approval covers a Captain's charter, and Held Changes
+  and Verdict point to the review contract.
+- ADR 001 pins a merge under a Verdict to the head last judged, which may be
+  a later head whose change since review the contract judged routine.
 - Leverage scoring has two fixed anchors. A new user-facing view, flow, or
   concept scores 3 on verification effort, and any stored or published name
   (table, column, stored ID, event name, or public API) scores 3 on undo

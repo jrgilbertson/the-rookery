@@ -248,6 +248,42 @@ def check_rule_copies(repository: Path) -> None:
     require(run_checker(repository).returncode == 0, "repository without the rule failed")
 
 
+def check_contract_copies(repository: Path) -> None:
+    contract = "# Review contract\n\nA verdict names the reviewed head.\n"
+    first = repository / "skills/reviewing-prs/references/review-contract.md"
+    second = repository / "skills/repo-captain/references/review-contract.md"
+    for path in (first, second):
+        path.parent.mkdir(parents=True)
+
+    def write(first_text: str | None = contract, second_text: str | None = contract) -> None:
+        for path, text in ((first, first_text), (second, second_text)):
+            if text is None:
+                path.unlink(missing_ok=True)
+            else:
+                path.write_text(text, encoding="utf-8")
+
+    write()
+    clean = run_checker(repository)
+    require(clean.returncode == 0, f"matching contract copies failed: {clean.stderr}")
+    for arguments, diagnostic in (
+        ({"second_text": contract.replace("reviewed", "current")},
+         "skills/repo-captain/references/review-contract.md: differs from "
+         "skills/reviewing-prs/references/review-contract.md"),
+        # Byte equality: an extra trailing blank line is a difference.
+        ({"second_text": contract + "\n"},
+         "skills/repo-captain/references/review-contract.md: differs from "
+         "skills/reviewing-prs/references/review-contract.md"),
+        ({"second_text": None}, "skills/repo-captain/references/review-contract.md: missing"),
+        ({"first_text": None}, "skills/reviewing-prs/references/review-contract.md: missing"),
+    ):
+        write(**arguments)
+        result = run_checker(repository)
+        require(result.returncode == 1 and diagnostic in result.stderr,
+                f"contract copy check did not report {diagnostic!r}: {result.stderr}")
+    shutil.rmtree(repository / "skills")
+    require(run_checker(repository).returncode == 0, "repository without the contract failed")
+
+
 def check_yaml_arguments(repository: Path, temporary_root: Path) -> None:
     # Only workflow discovery is unrelated to this disposable YAML fixture.
     tools = temporary_root / "lint-tools"
@@ -420,6 +456,7 @@ def main() -> int:
         check_home_paths(repository)
         check_link_scanning(repository)
         check_rule_copies(repository)
+        check_contract_copies(repository)
 
         invalid_text = repository / "invalid-text.txt"
         for contents, diagnostic in (

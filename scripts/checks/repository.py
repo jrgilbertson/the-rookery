@@ -99,6 +99,13 @@ RULE_COPIES = (
     "skills/managing-issues/references/prioritization.md",
 )
 
+# Each skill ships its own copy of the review contract, because a package
+# cannot read another package's files. The copies must stay byte-identical.
+CONTRACT_COPIES = (
+    "skills/reviewing-prs/references/review-contract.md",
+    "skills/repo-captain/references/review-contract.md",
+)
+
 
 def candidate_files() -> list[Path]:
     result = subprocess.run(
@@ -284,10 +291,30 @@ def check_rule_copies(errors: list[str]) -> None:
             errors.append(f"{copy}: '{RULE_HEADING}' section differs from {RULE_SOURCE}")
 
 
+def check_contract_copies(errors: list[str]) -> None:
+    paths = [ROOT / copy for copy in CONTRACT_COPIES]
+    if not any(path.exists() for path in paths):
+        return
+    contents: list[bytes | None] = []
+    for copy, path in zip(CONTRACT_COPIES, paths):
+        if path.is_symlink():
+            contents.append(None)  # main() reports the symbolic link itself
+        elif not path.is_file():
+            errors.append(f"{copy}: missing; it must be a copy of the shared review contract")
+            contents.append(None)
+        else:
+            contents.append(path.read_bytes())
+    first = contents[0]
+    for copy, content in zip(CONTRACT_COPIES[1:], contents[1:]):
+        if first is not None and content is not None and content != first:
+            errors.append(f"{copy}: differs from {CONTRACT_COPIES[0]}")
+
+
 def main() -> int:
     errors: list[str] = []
     check_tracked_transient_paths(errors)
     check_rule_copies(errors)
+    check_contract_copies(errors)
     for path in candidate_files():
         if not safe_regular_file(path, errors):
             continue

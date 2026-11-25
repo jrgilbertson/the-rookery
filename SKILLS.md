@@ -15,7 +15,7 @@ skill.
 | [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md) | Validates the package against the standard and finds anything tied to one harness or one machine | Every change, before it ships |
 | `/doctor prompt-audit` (Claude Code) | Reads instruction files, skills, and agents for patterns written for older models, dead references, and contradictions | When a model changes |
 | `/skill-doctor` (Claude Code) | Reports each skill's listing cost and use | When a model changes, or when pruning |
-| `claude plugin eval` | Reruns case folders with and without a skill | A candidate runner for Skill Evals; no runner is chosen yet |
+| [Promptfoo](https://www.promptfoo.dev) | Runs Eval Cases on Claude and Codex, with and without a skill, and checks each result | The runner for Skill Evals; [`evals/managing-issues/`](evals/managing-issues/README.md) shows the setup |
 
 `/skill-doctor` needs Claude Code's feature flags, which
 `DISABLE_TELEMETRY=1` turns off. Its use counts include skills that were only
@@ -56,8 +56,9 @@ Then:
 5. **Check portability.** Run `checking-skill-portability`, then run one test
    request in Codex and in any other harness or model the skill must serve.
 6. **Keep the Eval Cases.** Move the test requests and their checks to
-   `evals/<skill>/`, outside the package, in the creator's case-folder layout.
-   They become the skill's Skill Eval, which runs again when a model changes.
+   `evals/<skill>/`, outside the package, as a Promptfoo suite laid out like
+   [`evals/managing-issues/`](evals/managing-issues/README.md). They become
+   the skill's Skill Eval, which runs again when a model changes.
    Drop an Eval Case that passes with and without the skill, because it
    measures nothing. Eval Cases in this public repository must be synthetic
    and safe to publish.
@@ -109,8 +110,6 @@ request and the skill, without the expected answer, in a disposable workspace,
 then read what it did. One forward test inside the current session with no
 outside effects needs no separate approval. A batch of runs, a run billed per
 call, or a run against a live system needs the skill owner's approval first.
-No runner is chosen yet. Until one is, any script that writes a complete Eval
-Record will do.
 
 ### Evidence integrity
 

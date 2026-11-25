@@ -38,7 +38,7 @@ newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
 no case depends on today's date.
 
 The eight-case set SHA-256 is
-`50257fa10b456e5b5269beea042088281234c6ec8556a1d06d78cb3581ba503d`. It
+`06d21464a6eca2f92d3f033c812b3cb110c7e0ce26a60cec2a91120a250fe2bd`. It
 covers the shared GitHub stand-in too. From this directory, reproduce it
 with:
 
@@ -59,7 +59,7 @@ substitute what it talks to instead of handing it files.
   answers from the staged world. For these cases it also runs a merge queue
   (a queued pull request merges or is ejected at the next turn, as the world
   lists), serves check runs on merge commits, creates a pull request from a
-  branch pushed to the staged remote, edits issues, and reads and writes the
+  branch pushed to the staged remote, edits and closes issues, and reads and writes the
   four score fields the way `managing-issues` does on GitHub.
 - **Orca.** [`stand-ins/orca`](stand-ins/orca) answers the Orca commands the
   skill names from the world's `orca` section: workers and their liveness,

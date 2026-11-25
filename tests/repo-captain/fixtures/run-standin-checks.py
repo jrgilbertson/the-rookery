@@ -280,8 +280,12 @@ def check_revert_and_tracker_writes(scratch: Path) -> None:
     expect(tracker.gh("issue", "edit", "546", "-R", SLUG, "--add-label", "no-such-label").returncode == 1, "an issue label must exist")
     edited = tracker.gh("issue", "edit", "546", "-R", f"github.com/{SLUG}", "--body-file", "-", stdin="## Scope\n\nTighter.\n")
     expect(edited.returncode == 0 and tracker.json("gh", "issue", "view", "546", "-R", SLUG, "--json", "body")["body"] == "## Scope\n\nTighter.\n", "issue edit replaces the body")
+    closed = tracker.gh("issue", "close", "546", "-R", SLUG, "--reason", "completed", "--comment", "Done in #551.")
+    after = tracker.json("gh", "issue", "view", "546", "-R", SLUG, "--json", "state,stateReason,comments")
+    expect(closed.returncode == 0 and after["state"] == "CLOSED" and after["stateReason"] == "COMPLETED"
+           and after["comments"][-1]["body"] == "Done in #551.", f"issue close marks the issue done with its comment: {closed.stderr} {after}")
     writes = [(entry["op"], entry.get("values")) for entry in tracker.trace("gh") if entry["kind"] == "write"]
-    expect(writes == [("set issue fields", {"Impact": 2, "Confidence": 2, "Verification effort": 1, "Undo cost": 3}), ("issue edit", None)], f"tracker writes must be traced: {writes}")
+    expect(writes == [("set issue fields", {"Impact": 2, "Confidence": 2, "Verification effort": 1, "Undo cost": 3}), ("issue edit", None), ("issue close", None)], f"tracker writes must be traced: {writes}")
 
 
 def check_reviewing_prs_still_passes() -> None:

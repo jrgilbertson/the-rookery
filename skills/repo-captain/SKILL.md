@@ -116,7 +116,8 @@ Run these steps in order every time:
    - a worker or Domain Lead that reads `unverifiable` or `lost` gets no
      second worker. Its files stay reserved, and it goes in the catch-up.
 5. **Act on unspent Verdicts**, under Verdicts below.
-6. **Merge routine pull requests**, under Merging below.
+6. **Merge routine pull requests**, under Merging below, and update the
+   tracker for every pull request you judged or merged, under Tracker.
 7. **Dispatch** within approved scope, or pull forward when scope is done.
 8. **Post new decisions and alerts.**
 9. **Arm the next wake** when any count in Wake timer is nonzero. Otherwise
@@ -291,10 +292,23 @@ and held like any other.
 
 ## Tracker
 
-Under the operator's standing instruction, make only the tracker edits that
-`managing-issues` grants a Captain, through that skill, and log each change
-with its old value, new value, and reason. Anything else waits for the
-operator.
+Keep issues current as work moves, in the same wake that learns of the
+change, so nobody needs a bookkeeping pass later. Make these edits through
+`managing-issues`, under the Captain clause the operator's standing
+instruction grants:
+
+- mark an issue In Progress when its leaf is dispatched, and Done when its
+  pull request merges
+- move a `needs-planning` issue to `ready` once a plan settles it
+- when a diff scores a higher verification effort or undo cost than its issue
+  stores, raise the stored score to match, so the tracker shows what the work
+  really is
+- change confidence up or down only from code evidence
+- tighten Scope or Verification when the work shows the issue was vague
+
+Log each change with its old value, new value, and reason. Lowering
+verification effort or undo cost, changing impact, cancelling, and creating a
+follow-up issue wait for the operator.
 
 ## Operator attention
 

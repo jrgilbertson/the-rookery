@@ -44,7 +44,7 @@ from urllib.parse import unquote_plus
 
 SUPPORTED = """Available here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,
 mergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),
-search prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit,
+search prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,
 repo view|list, label list|create, auth status."""
 ARGV = sys.argv[1:]
 _trace_path: Path | None = None
@@ -854,8 +854,23 @@ def find_issue(state: dict, options: dict, positionals: list[str]) -> tuple[str,
 
 
 def cmd_issue(state: dict, state_path: Path, args: list[str]) -> None:
-    if not args or args[0] not in ("view", "list", "edit"):
-        refuse("only `issue view`, `issue list`, and `issue edit` are served", op="issue " + (args[0] if args else ""))
+    if not args or args[0] not in ("view", "list", "edit", "close"):
+        refuse("only `issue view`, `issue list`, `issue edit`, and `issue close` are served", op="issue " + (args[0] if args else ""))
+    if args[0] == "close":
+        options, positionals = parse(args[1:], {**REPO_FLAGS, "--reason": "reason", "-r": "reason", "--comment": "comment", "-c": "comment"}, {})
+        slug, number, issue = find_issue(state, options, positionals)
+        reason = one(options, "reason", "completed")
+        if reason not in ("completed", "not planned"):
+            die(f"invalid reason: {reason}", 1, op="issue close", repo=slug, number=number)
+        comment = one(options, "comment")
+        if comment is not None:
+            issue.setdefault("comments", []).append({"author": state["viewer"]["login"], "createdAt": tick(state), "body": comment})
+        issue["state"], issue["stateReason"] = "CLOSED", reason.upper().replace(" ", "_")
+        issue["updatedAt"] = tick(state)
+        save_state(state, state_path)
+        trace("write", op="issue close", repo=slug, number=number, reason=reason, comment=comment)
+        print(f"✓ Closed issue {slug}#{number}")
+        return
     if args[0] == "view":
         options, positionals = parse(args[1:], JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
         slug, number, _ = find_issue(state, options, positionals)

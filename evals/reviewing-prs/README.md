@@ -27,14 +27,14 @@ both arms passed every check.
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's request, `case.yaml` describes a good result and names the failure
 it came from, and each file in `graders/` is one statement to judge.
-`owner-routing-and-scrubbing` has three operator turns and one conditional
-reply, listed in its `turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
+`owner-routing-and-scrubbing` has three operator turns, listed in its
+`turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
 reaches the review page. Fixture dates are fixed around 2026-11-20, and the
-digest case's merged window is the skill's default 7 days, so no prompt names
-a date.
+digest case's prompt names the merged window's start, so no case depends on
+today's date.
 
 The three-case set SHA-256 is
-`b88ba7c716930a5e832230726b4eaad0d84f03f48854f910addb1a43ac92bdae`. From this
+`3d813afffd2be671f444c767f36768e00afec24a772a13c4a123e59067bd1ff9`. From this
 directory, reproduce it with:
 
 ```sh

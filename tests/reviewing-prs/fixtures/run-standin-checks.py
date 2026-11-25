@@ -178,8 +178,8 @@ def check_shipped_commands(scratch: Path) -> None:
     run = Run("owner-routing-and-scrubbing", scratch / "shipped")
     typed = re.findall(r"`[^`]*<(?:default-branch|base|branch|head-branch)>[^`]*`", SKILL.read_text(encoding="utf-8"))
     expect(not typed, f"a branch name from GitHub must reach a command through a shell variable, not typed in: {typed}")
-    targets = {"search prs": ["--owner", "acme"], "repo view": ["acme/cli-kit"], "pr view": ["134", "-R", "acme/cli-kit"], "label list": ["-R", "acme/cli-kit"]}
-    found = re.findall(r"gh (search prs|repo view|pr view|label list)\b[^`]*?--json ([A-Za-z,]+)", SKILL.read_text(encoding="utf-8"))
+    targets = {"search prs": ["--owner", "acme"], "repo view": ["acme/cli-kit"], "pr view": ["134", "-R", "acme/cli-kit"]}
+    found = re.findall(r"gh (search prs|repo view|pr view)\b[^`]*?--json ([A-Za-z,]+)", SKILL.read_text(encoding="utf-8"))
     expect({command for command, _ in found} == set(targets), f"expected the skill to name --json fields for {sorted(targets)}: {found}")
     for command, fields in found:
         data = run.json(*command.split(), *targets[command], "--json", fields)

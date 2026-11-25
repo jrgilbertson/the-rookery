@@ -32,9 +32,9 @@ looked" surface. GitHub Releases mirror its entries.
   renders pull request text as text. It records each Verdict on
   the pull request as a three-line comment naming the reviewed commit, and
   answers a review request with a review. A `not applicable` Verdict posts
-  nothing and removes the operator from a review request. It merges a pull request nobody owns only when its head is still that commit,
-  and hands an owned one back to its owner. Synthetic Skill Eval cases are
-  under `evals/reviewing-prs/`.
+  nothing and removes the operator from a review request. It never merges or
+  changes a label: the session that owns a pull request acts on its Verdict.
+  Synthetic Skill Eval cases are under `evals/reviewing-prs/`.
 - `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels
   (`review:held`, `review:auto-merged`, `review:human-merged`).
 - `docs/adr/001-verdict-trust-by-convention.md` records why a Verdict comment

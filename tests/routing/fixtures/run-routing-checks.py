@@ -73,20 +73,6 @@ def check_report() -> None:
     data = sections(result.stdout)
     suite, combined = data.get("suite figures", []), data.get("combined", [])
 
-    # The two formulas ROUTING.md states, on its own worked examples.
-    check(find(suite, suite="Alder", model="Alpha", effort="low").get("cost_per_pass") == "1.000",
-          "cost per pass at $0.60 and 60% should be 1.000")
-    check(find(suite, suite="Alder", model="Beta", effort="medium").get("cost_per_added_point") == "0.055",
-          "cost per added point from 48 at $0.21 to 50 at $0.32 should be 0.055")
-    beta = find(suite, suite="Alder", model="Beta", effort="medium")
-    check(beta.get("cost_per_pass") == "missing", "a row with no pass rate should report cost per pass as missing")
-    check(find(suite, suite="Alder", model="Alpha", effort="max").get("cost_per_added_point") == "no gain",
-          "a step that loses quality should report no gain")
-    check(find(suite, suite="Alder", model="Thrift", effort="low").get("cost_per_pass") == "no passes",
-          "a setting that was tested and passed nothing should say so, not read as missing")
-    check(find(suite, suite="Alder", model="Thrift", effort="medium").get("cost_per_added_point") == "cheaper",
-          "a step that gains quality for less money should read as cheaper, not as a negative price")
-
     # Both suites rank Gamma > Alpha > Beta at high, so the combined score must too.
     quality = {name: float(find(combined, model=name, effort="high").get("combined_quality", "nan"))
                for name in ("Gamma", "Alpha", "Beta")}
@@ -96,33 +82,33 @@ def check_report() -> None:
     check(solo.get("suites") == "1 of 3", f"one-suite model not flagged: {solo}")
     check(find(combined, model="Alpha", effort="high").get("suites") == "3 of 3", "a model every suite tested is flagged wrongly")
     check(find(combined, model="Beta", effort="high").get("suites") == "2 of 3", "a model one suite skipped is flagged wrongly")
-    # Gamma at high beats every other setting on quality for less money than
-    # Alpha at high, so it is on the frontier and Alpha at high is not.
-    check(find(combined, model="Gamma", effort="high").get("frontier") == "frontier", "the best cheap setting should be on the frontier")
-    check(find(combined, model="Alpha", effort="high").get("frontier") == "", "a setting beaten on both quality and cost is not on the frontier")
+    check(find(suite, suite="Birch", model="Alpha", effort="high").get("minutes") == "9.0",
+          "the suite figures should carry each setting's time per task")
+    check(set(suite[0]) == {"suite", "model", "effort", "score", "pass_rate", "cost_usd", "minutes"}
+          and "frontier" not in combined[0], "the report should show only figures the method uses")
 
     # The knee is the last effort before a step costs more than 20% extra per added point.
     knees = {row["model"]: row["effort"] for row in combined if row.get("best_value") == "yes"}
-    # Alpha: low to medium costs about 9% a point, medium to high about 58%.
+    # Alpha: low to medium costs about 8% a point, medium to high about 53%.
     check(knees.get("Alpha") == "medium", f"Alpha should stop before its expensive step to high: {knees}")
-    # Line pays about 17.5% a point at every step, so it climbs to its top effort.
+    # Line pays about 12% a point at every step, so it climbs to its top effort.
     check(knees.get("Line") == "max", f"a model whose every step is cheap should reach its top effort: {knees}")
     # Peak scores less at max than at high, so max is left out before the climb.
     check(knees.get("Peak") == "high", f"an effort a cheaper one beats must never be the knee: {knees}")
-    # Twin: medium to high costs about 17% a point, high to max 47%.
+    # Twin: medium to high costs about 11% a point, high to max 32%.
     check(knees.get("Twin") == "high", f"Twin should take the cheap step and refuse the dear one: {knees}")
     # Thrift's low effort costs more and scores less than its medium.
     check(knees.get("Thrift") == "medium", f"a model whose lowest effort is beaten should start above it: {knees}")
-    # Beta's first step costs about 80% a point, so it stays at its lowest effort.
+    # Beta's first step costs about 59% a point, so it stays at its lowest effort.
     check(knees.get("Beta") == "low", f"a model whose first step is too dear should stay at its lowest effort: {knees}")
     check(sum(1 for row in combined if row.get("best_value") not in ("", "yes")) == 0, "the best_value column should hold only yes or nothing")
 
     # The charted models at their knees, in order. A better-scoring setting goes first only when
-    # its extra cost is at most 20% for each point it adds. Beta low scores 10.5 more than Gamma low
-    # for about 7% a point, so it goes first. Alpha medium scores 14.8 more than Gamma low for
-    # about 61% a point, so the cheaper Gamma goes ahead of it; Alpha beats Solo low at about 17%.
+    # its extra cost is at most 20% for each point it adds. Beta low scores 12.5 more than Gamma low
+    # for about 6% a point, so it goes first. Alpha medium scores 16 more than Gamma low for about
+    # 56% a point, so the cheaper Gamma goes ahead of it; Alpha beats Solo medium at about 5% a point.
     listed = [(row["model"], row["effort"]) for row in data.get("candidates", [])]
-    check(listed == [("Beta", "low"), ("Gamma", "low"), ("Alpha", "medium"), ("Solo", "low")],
+    check(listed == [("Beta", "low"), ("Gamma", "low"), ("Alpha", "medium"), ("Solo", "medium")],
           f"candidates should be ordered by the 20% trade-off at each model's knee: {listed}")
 
     # Executor rows start from each vendor's everyday model and Team lead rows from its flagship.
@@ -159,8 +145,6 @@ def check_report() -> None:
         writing = {row["model"]: row for row in sections(earlier.stdout).get("preference", []) if row["role"] == "Writing"}
         check(writing.get("Alpha", {}).get("sources") == "1 of 2",
               f"a preference source with no reads by the report date should be left out of the score: {writing}")
-    check(find(suite, suite="Birch", model="Alpha", effort="high").get("minutes") == "9.0",
-          "the suite figures should carry each setting's time per task")
     # Combined cost is a multiple of each suite's typical current-model setting, not dollars no suite charged.
     check(find(combined, model="Alpha", effort="medium").get("relative_cost") == "1.49",
           "combined cost should be a multiple of a typical charted setting, not dollars")
@@ -286,9 +270,8 @@ def check_report() -> None:
     again = run("report", "--data", str(SYNTHETIC))
     check(again.stdout == result.stdout, "two runs on the same data differ")
 
-    # A suite that tested a model at one effort gives an opinion about the
-    # model, so it should move every effort of that model by the same amount
-    # and leave the shape of the curve alone.
+    # A setting's score averages only the suites that tested that setting, so a
+    # suite that tested a model at one effort moves that effort and no other.
     def beta(data: Path) -> dict[str, float]:
         rows = sections(run("report", "--data", str(data)).stdout).get("combined", [])
         return {row["effort"]: float(row["combined_quality"]) for row in rows if row["model"] == "Beta"}
@@ -300,8 +283,8 @@ def check_report() -> None:
             handle.write("Elm,4.0,Beta,high,45,,2.00,,2026-01-01,https://example.com/elm\n")
         before, after = beta(SYNTHETIC), beta(target)
         shifts = {effort: round(after[effort] - before[effort], 1) for effort in before}
-        check(max(shifts.values()) - min(shifts.values()) <= 0.2 and abs(shifts["high"]) >= 0.5,
-              f"a one-effort suite should shift the whole curve evenly: {shifts}")
+        check(shifts["low"] == 0 and shifts["medium"] == 0 and abs(shifts["high"]) >= 0.5,
+              f"a one-effort suite should move only the effort it tested: {shifts}")
 
 
 def check_validation() -> None:
@@ -489,7 +472,7 @@ def check_import() -> None:
 
 SVG = "{http://www.w3.org/2000/svg}"
 NAVY = "#042458"
-CHARTS = ("routing-base.svg", "routing-base-providers.svg", "routing-base-suites.svg", "routing-table.svg")
+CHARTS = ("routing-base.svg", "routing-table.svg")
 
 
 def check_charts() -> None:
@@ -537,13 +520,6 @@ def check_charts() -> None:
         labels = [el for el in headline.iter(f"{SVG}text") if el.get("class") == "line-label"]
         check(len(labels) == 4, f"each line should carry one label: {len(labels)}")
 
-        # Each provider gets a panel, and the other providers' models sit behind it as context.
-        apart = ElementTree.parse(first / "routing-base-providers.svg").getroot()
-        providers = {el.get("data-provider") for el in apart.iter(f"{SVG}g") if el.get("data-provider")}
-        check(providers == {"Anthropic", "OpenAI"}, f"the provider chart should hold one panel per provider: {providers}")
-        ghosts = [el.get("data-model") for el in apart.iter(f"{SVG}polyline") if el.get("class") == "context"]
-        check(sorted(ghosts) == ["Alpha", "Beta", "Gamma", "Solo"], f"each model should appear once as context in the other panel: {ghosts}")
-
         # No label may cover a data point, in any of the charts.
         for name in (chart for chart in CHARTS if chart != "routing-table.svg"):
             root = ElementTree.parse(first / name).getroot()
@@ -564,17 +540,11 @@ def check_charts() -> None:
                 left = float(el.get("x")) - (wide if el.get("text-anchor") == "end" else 0)
                 top = float(el.get("y")) - size
                 covered = [p for p in points if left < p[0] < left + wide and top < p[1] < top + size + 3]
-                # Panels in the suites chart sit inside shifted groups, so only same-group points are comparable there.
-                if name != "routing-base-suites.svg":
-                    check(not covered, f"{name}: label {text!r} covers a data point")
-                    for other in boxes:
-                        clash = left < other[2] and other[0] < left + wide and top < other[3] and other[1] < top + size
-                        check(not clash, f"{name}: label {text!r} overlaps label {other[4]!r}")
-                    boxes.append((left, top, left + wide, top + size, text))
-
-        suites = ElementTree.parse(first / "routing-base-suites.svg").getroot()
-        panels = {el.get("data-suite") for el in suites.iter(f"{SVG}g") if el.get("data-suite")}
-        check(panels == {"Alder", "Birch", "Elm"}, f"the suites chart should hold one panel per base suite: {panels}")
+                check(not covered, f"{name}: label {text!r} covers a data point")
+                for other in boxes:
+                    clash = left < other[2] and other[0] < left + wide and top < other[3] and other[1] < top + size
+                    check(not clash, f"{name}: label {text!r} overlaps label {other[4]!r}")
+                boxes.append((left, top, left + wide, top + size, text))
 
     # The committed charts must match what the committed data generates.
     committed = REPO_ROOT / "docs" / "assets"
@@ -621,11 +591,11 @@ def check_charts() -> None:
             shutil.copy(committed / name, tampered / name)
         with (tampered / CHARTS[0]).open("a") as handle:
             handle.write(" ")
-        (tampered / CHARTS[2]).unlink()
+        (tampered / CHARTS[1]).unlink()
         problems = stale_charts(tampered)
         check(any(CHARTS[0] in problem and "differs" in problem for problem in problems),
               f"the stale-chart gate missed a chart that differs: {problems}")
-        check(any(CHARTS[2] in problem and "missing" in problem for problem in problems),
+        check(any(CHARTS[1] in problem and "missing" in problem for problem in problems),
               f"the stale-chart gate missed a missing chart: {problems}")
 
 

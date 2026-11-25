@@ -71,8 +71,10 @@ looked" surface. GitHub Releases mirror its entries.
   and Lechmazur. Every base suite and preference source is now standardized on
   its own over the charted models it tested, with no anchor suite, and the
   step limit is rescaled from 40% to 20% a point to keep the same trade-off on
-  that scale. The Team lead row now goes by quality, and the Executor row keeps
-  the price order. The better-sibling rule compares two settings only
+  that scale. A setting's score is a plain mean of the suites that tested it,
+  with no logit or curve shift, and the page drops the frontier, per-pass cost,
+  and two secondary charts. The Team lead row now goes by quality, and the
+  Executor row keeps the price order. The better-sibling rule compares two settings only
   on the base suites that tested both, and lists the sibling at its best-value
   effort when that is higher. The routing checks now cover every row, and the
   data is refreshed to 2026-11-24.

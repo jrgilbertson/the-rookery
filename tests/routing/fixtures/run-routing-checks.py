@@ -156,6 +156,8 @@ def check_report() -> None:
         chart.write_text(chart.read_text().replace(
             '"models": [', '"models": [\n    {"model": "Peak", "provider": "xAI", "status": "current"},\n'
             '    {"model": "Line", "provider": "Google", "status": "current"},'))
+        names = target / "models.csv"
+        names.write_text(names.read_text() + "Peak,Peak,xAI,current,\nLine,Line,Google,current,\n")
         order = [row["model"] for row in sections(run("report", "--data", str(target)).stdout).get("candidates", [])]
         # Line's knee scores one point above Peak's for twenty times the cost, far past 20% a point, so Peak goes first.
         check("Peak" in order and "Line" in order and order.index("Peak") < order.index("Line"),
@@ -263,7 +265,7 @@ def check_report() -> None:
         out = run("report", "--data", str(SYNTHETIC), "--as-of", as_of)
         check(out.returncode == 2 and out.stdout.startswith("ERROR "), f"--as-of should refuse {as_of}, which is not YYYY-MM-DD: {out.stdout[:200]}")
 
-    # A suite may name a model differently; chart.json's aliases join the two.
+    # A suite may name a model differently; models.csv joins the two.
     check(find(combined, model="Thrift", effort="low").get("suites") == "2 of 3",
           "an aliased model name should count as the same model")
 
@@ -340,10 +342,23 @@ def check_validation() -> None:
         ("ten-character week date", swap("results.csv", ",2026-01-01,", ",2026-W01-4,"), "date_read"),
         ("unknown effort", swap("results.csv", "Alder,1.0,Alpha,low,", "Alder,1.0,Alpha,ultra,"), "ultra"),
         ("zero cost", swap("results.csv", ",0.60,", ",0,"), "cost_usd"),
-        ("unknown model status", swap("chart.json", '"superseded"', '"retired"'), "status"),
+        ("unknown model status", swap("chart.json", '"status": "superseded"', '"status": "retired"'), "status"),
         ("model with no provider", swap("chart.json", '"provider": "Anthropic", ', ""), "provider"),
         ("role-inputs.csv missing a column", swap("role-inputs.csv", ",says", ",notes"), "says"),
         ("no base suite", no_base, "base suite"),
+        ("frontier top of zero", swap("chart.json", '"top": 4', '"top": 0'), "frontier top"),
+        ("frontier top given as true", swap("chart.json", '"top": 4', '"top": true'), "frontier top"),
+        ("aliases still in chart.json", swap("chart.json", '"suites": {', '"aliases": {"Thrift Mini": "Thrift"},\n  "suites": {'), "models.csv"),
+        ("superseded list still in chart.json", swap("chart.json", '"min_suites": 2}', '"min_suites": 2, "superseded": ["Twin"]}'), "models.csv"),
+        ("another name pointing at a model with no row", swap("models.csv", "Thrift Mini,Thrift,", "Thrift Mini,Thrifty,"), "no row of its own"),
+        ("another name carrying its own maker", swap("models.csv", "Thrift Mini,Thrift,,,", "Thrift Mini,Thrift,Example,current,"), "leave its maker"),
+        ("a name listed twice", swap("models.csv", "Twin,Twin,", "Thrift,Twin,"), "listed twice"),
+        ("a model with a bad status", swap("models.csv", "Twin,Twin,Example,superseded", "Twin,Twin,Example,retired"), "status"),
+        ("a maker that disagrees with chart.json", swap("models.csv", "Alpha,Alpha,Anthropic", "Alpha,Alpha,OpenAI"), "maker"),
+        ("a routed model marked superseded", swap("models.csv", "Alpha,Alpha,Anthropic,current", "Alpha,Alpha,Anthropic,superseded"), "superseded"),
+        ("a chart.json model with no models.csv row", swap("models.csv", "Solo,Solo,OpenAI,current,\n", ""), "its own row"),
+        ("statuses that disagree", swap("models.csv", "Beta,Beta,OpenAI,superseded", "Beta,Beta,OpenAI,current"), "superseded"),
+        ("an effort label mapped to no effort", swap("efforts.csv", "na,none,", "na,ultra,"), "efforts.csv"),
         ("preference source missing from chart.json", swap("chart.json", '["Fir", "Gorse"]', '["Fir", "Dogwood"]'), "Dogwood"),
         ("preference source with one current model", swap("results.csv", "Gorse,1.0,Gamma,high,90", "Gorse,1.0,Beta,high,90"), "at least two"),
         ("a suite with fewer than three current-model settings",
@@ -455,12 +470,23 @@ def check_import() -> None:
         invalid.write_text((sources / "frontiercode-sample.json").read_text().replace('"xhigh"', '"ultra"'))
         refused = run("import", "--data", str(target), "--format", "frontiercode", "--file", str(invalid),
                       "--version", "9.9", "--date", "2026-02-02", "--url", "https://example.com/x")
-        check(refused.returncode != 0 and refused.stdout.startswith("ERROR ") and "ultra" in refused.stdout,
-              f"an import that fails validation should be refused: {refused.stdout}")
+        check(refused.returncode != 0 and refused.stdout.startswith("ERROR ") and "ultra" in refused.stdout and "efforts.csv" in refused.stdout,
+              f"an import with an effort label efforts.csv doesn't map should be refused and say so: {refused.stdout}")
         check(results.read_text() == snapshot, "an import that failed validation changed the results file")
         undated = run("import", "--data", str(target), "--format", "vulcanbench", "--file", str(sources / "vulcanbench-sample.csv"),
                       "--version", "9.9", "--date", "next tuesday", "--url", "https://example.com/x")
         check(undated.returncode != 0 and results.read_text() == snapshot, "an import with a malformed date should be refused")
+
+        # Every label must have its own row, even one already spelled like an effort.
+        labels = target / "efforts.csv"
+        kept_labels = labels.read_text()
+        labels.write_text("".join(line for line in kept_labels.splitlines(keepends=True) if not line.startswith("high,")))
+        unmapped = run("import", "--data", str(target), "--format", "table", "--suite", "Cedar",
+                       "--file", str(sources / "table-sample.csv"), "--version", "1.1", "--date", "2026-02-04", "--url", "https://example.com/cedar")
+        check(unmapped.returncode != 0 and "efforts.csv" in unmapped.stdout and "'high'" in unmapped.stdout,
+              f"a label efforts.csv has no row for should stop the import, even one spelled like an effort: {unmapped.stdout}")
+        check(results.read_text() == snapshot, "an import stopped on an unmapped label changed the results file")
+        labels.write_text(kept_labels)
 
         bad = Path(tmp) / "bad.json"
         bad.write_text('{"unexpected": true}')
@@ -472,7 +498,23 @@ def check_import() -> None:
 
 SVG = "{http://www.w3.org/2000/svg}"
 NAVY = "#042458"
-CHARTS = ("routing-base.svg", "routing-table.svg")
+CHARTS = ("routing-base.svg", "routing-frontier.svg", "routing-table.svg")
+
+
+def check_frontier_rules() -> None:
+    """Rank the frontier field by every scored effort, and keep every setting that ties a frontier setting exactly."""
+    sys.path.insert(0, str(REPO_ROOT / "scripts" / "routing"))
+    import evidence
+    data = evidence.load(SYNTHETIC)
+    point = evidence.Combined
+    data.frontier["top"] = 1
+    # Line's best score is at an effort no suite prices; it still outranks Peak.
+    field, _ = evidence.frontier_field(data, [point("Line", "low", 40, 1.0, 2), point("Line", "max", 90, None, 2),
+                                              point("Peak", "high", 60, 1.0, 2)])
+    check([line.model for line in field] == ["Line"], f"the field should rank models by every scored effort, priced or not: {[line.model for line in field]}")
+    data.frontier["top"] = 2
+    _, edge = evidence.frontier_field(data, [point("Peak", "high", 60, 1.0, 2), point("Line", "high", 60, 1.0, 2)])
+    check(sorted(p.model for p in edge) == ["Line", "Peak"], f"two settings at the same cost and score should both sit on the frontier: {edge}")
 
 
 def check_charts() -> None:
@@ -520,6 +562,24 @@ def check_charts() -> None:
         labels = [el for el in headline.iter(f"{SVG}text") if el.get("class") == "line-label"]
         check(len(labels) == 4, f"each line should carry one label: {len(labels)}")
 
+        # The frontier chart draws the top models scored by enough suites, leaving out superseded releases,
+        # and outlines each setting that no cheaper setting beats.
+        field = ElementTree.parse(first / "routing-frontier.svg").getroot()
+        lines = {el.get("data-model"): el for el in field.iter(f"{SVG}polyline") if el.get("class") == "series"}
+        check(set(lines) == {"Gamma", "Alpha", "Line", "Peak"},
+              f"the frontier chart should draw the top four current models scored by two suites, without Beta, Twin, Solo or Thrift: {sorted(lines)}")
+        check(lines.get("Alpha") is not None and lines["Alpha"].get("stroke") == "#C15F3C" and lines.get("Line") is not None and lines["Line"].get("stroke") == "#47577A",
+              "routed models keep their provider's colour and other makers are grey")
+        edge = [(el.get("data-model"), el.get("data-effort")) for el in field.iter(f"{SVG}circle") if el.get("class") == "frontier"]
+        check(edge == [("Peak", "low"), ("Gamma", "low"), ("Gamma", "medium"), ("Peak", "high"), ("Gamma", "high")],
+              f"the frontier should run from the cheapest setting through each cheaper-unbeaten one: {edge}")
+        check(not any(el.get("class") == "knee" for el in field.iter(f"{SVG}circle")), "the frontier chart marks the frontier, not best-value efforts")
+        words = " ".join("".join(el.itertext()) for el in field.iter(f"{SVG}text"))
+        check("Not routed here" in words and "Other makers" not in words and "On the frontier" in words,
+              "the frontier chart's key should call grey lines models not routed here, not other makers, and name the frontier mark")
+        bold = sorted("".join(el.itertext()) for el in field.iter(f"{SVG}text") if el.get("class") == "line-label" and el.get("font-weight") == "600")
+        check(bold == ["Gamma (3)", "Peak (2)"], f"the frontier chart should bold the models with a frontier setting, not the routed ones: {bold}")
+
         # No label may cover a data point, in any of the charts.
         for name in (chart for chart in CHARTS if chart != "routing-table.svg"):
             root = ElementTree.parse(first / name).getroot()
@@ -551,6 +611,7 @@ def check_charts() -> None:
     for problem in stale_charts(committed):
         failures.append(problem)
     failures.extend(page_alt_text_problems())
+    failures.extend(page_names_problems())
     failures.extend(recommendation_drift(REPO_ROOT / "docs" / "routing"))
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -597,6 +658,40 @@ def check_charts() -> None:
               f"the stale-chart gate missed a chart that differs: {problems}")
         check(any(CHARTS[1] in problem and "missing" in problem for problem in problems),
               f"the stale-chart gate missed a missing chart: {problems}")
+        (tampered / "routing-retired.svg").write_text("<svg/>")
+        check(any("routing-retired.svg" in problem and "no longer" in problem for problem in stale_charts(tampered)),
+              "the stale-chart gate missed a routing chart the generator no longer writes")
+
+    # A frontier block that no model can meet fails the charts command instead of drawing an empty chart.
+    with tempfile.TemporaryDirectory() as tmp:
+        data, out = Path(tmp) / "data", Path(tmp) / "out"
+        shutil.copytree(SYNTHETIC, data)
+        chart = data / "chart.json"
+        chart.write_text(chart.read_text().replace('"min_suites": 2', '"min_suites": 9'))
+        result = run("charts", "--data", str(data), "--out", str(out))
+        first = result.stdout.splitlines()[0] if result.stdout else ""
+        check(result.returncode != 0 and first.startswith("ERROR ") and "suite minimum" in first,
+              f"an unmeetable frontier suite minimum should fail the charts command: {first!r}")
+
+
+def page_names_problems() -> list[str]:
+    """ROUTING.md's model-name and effort-label tables must match models.csv and efforts.csv, as the report prints them."""
+    result = run("report", "--data", str(REPO_ROOT / "docs" / "routing"))
+    printed = result.stdout.split("# names\n", 1)
+    if result.returncode != 0 or len(printed) < 2:
+        return [f"report did not print its names section: {result.stdout[:200]}"]
+    want = [line for line in printed[1].strip().splitlines() if line.startswith("|")]
+    page = (REPO_ROOT / "ROUTING.md").read_text(encoding="utf-8")
+    heading = "### Names and effort labels\n"
+    if heading not in page:
+        return ["ROUTING.md has no Names and effort labels section"]
+    section = page.split(heading, 1)[1].split("\n### ", 1)[0]
+    have = [line for line in section.splitlines() if line.startswith("|")]
+    if have != want:
+        missing = [line for line in want if line not in have]
+        stale = [line for line in have if line not in want]
+        return [f"ROUTING.md's names tables differ from the report's names section; copy them over. Missing: {missing}; stale: {stale}"]
+    return []
 
 
 def page_alt_text_problems() -> list[str]:
@@ -653,7 +748,11 @@ def stale_charts(charts_dir: Path) -> list[str]:
         result = run("charts", "--data", str(REPO_ROOT / "docs" / "routing"), "--out", tmp)
         if result.returncode != 0:
             return [f"charts failed on the committed data: {result.stdout}{result.stderr}"]
-        for name in sorted(path.name for path in Path(tmp).iterdir()):
+        written = sorted(path.name for path in Path(tmp).iterdir())
+        for name in sorted(path.name for path in charts_dir.glob("routing-*.svg")):
+            if name not in written:
+                problems.append(f"{name} is in {charts_dir.name} but the charts command no longer writes it: delete it or restore its data")
+        for name in written:
             existing, fresh = charts_dir / name, Path(tmp) / name
             if not existing.is_file():
                 problems.append(f"{name} is missing from {charts_dir.name}: generate it with the charts command")
@@ -666,6 +765,7 @@ def main() -> int:
     check_report()
     check_validation()
     check_import()
+    check_frontier_rules()
     check_charts()
     if failures:
         for failure in failures:

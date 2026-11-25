@@ -113,7 +113,7 @@ another effort. A model's best score at any effort is its ceiling.
 
 How settings are listed. A setting at least as good for no more cost goes
 first. Otherwise the better-scoring setting goes first only when it costs at
-most 40% more for each point of quality it adds.
+most 20% more for each point of quality it adds.
 
 ### Best-Value Effort
 

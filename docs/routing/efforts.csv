@@ -1,0 +1,11 @@
+label,effort,sources
+na,none,FrontierCode
+none,none,"FrontierCode, AA, Vals, Design Arena"
+minimal,minimal,FrontierCode
+low,low,every base suite
+medium,medium,every base suite
+high,high,every base suite
+xhigh,xhigh,"FrontierCode, AA (Xhigh), Vals, Arena (xHigh)"
+extra-high,xhigh,VulcanBench
+extra high,xhigh,CursorBench
+max,max,every base suite

@@ -1,0 +1,60 @@
+name,model,maker,status,note
+Fable 5.2,Fable 5.2,Anthropic,current,Routed on ROUTING.md.
+Opus 5.5,Opus 5.5,Anthropic,current,Routed on ROUTING.md.
+GPT-6.2 Astra,GPT-6.2 Astra,OpenAI,current,Routed on ROUTING.md.
+GPT-6.2 Sol,GPT-6.2 Sol,OpenAI,current,Routed on ROUTING.md.
+Gemini 4 Neon,Gemini 4 Neon,Google,current,Routed on ROUTING.md.
+Gemini 4 Carbon,Gemini 4 Carbon,Google,current,Routed on ROUTING.md.
+Gemini 4 Hydrogen,Gemini 4 Hydrogen,Google,current,Routed on ROUTING.md.
+Grok 4.7,Grok 4.7,xAI,current,Routed on ROUTING.md.
+Beam 1.0,Beam 1.0,Reflection,current,
+Reflection Beam,Beam 1.0,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+DeepSeek V4.1 Flash,DeepSeek V4.1 Flash,DeepSeek,current,
+DeepSeek V4.1 Flash 1017,DeepSeek V4.1 Flash,,,The 1017 build is the release the other sources test.
+GLM-5.3,GLM-5.3,Zhipu,current,
+GLM 5.3,GLM-5.3,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+GLM-5.3-Flash,GLM-5.3-Flash,Zhipu,current,
+GLM 5.3 Flash,GLM-5.3-Flash,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+GLM-5.2,GLM-5.2,Zhipu,superseded,Replaced by GLM-5.3.
+GLM 5.2,GLM-5.2,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+Hy4,Hy4,Tencent,current,
+Tencent Hy4,Hy4,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+Ling 3.1 Flash,Ling 3.1 Flash,Ant Group,current,
+Ling-3.1-flash,Ling 3.1 Flash,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+MiMo-V2.6-Flash,MiMo-V2.6-Flash,Xiaomi,current,
+MiMo V2.6 Flash,MiMo-V2.6-Flash,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+MiMo-V2.6-Pro,MiMo-V2.6-Pro,Xiaomi,current,
+MiMo V2.6 Pro,MiMo-V2.6-Pro,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+MiniMax-M2.7,MiniMax-M2.7,MiniMax,superseded,Replaced by MiniMax-M3.
+MiniMax M2.7,MiniMax-M2.7,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+MiniMax-M3,MiniMax-M3,MiniMax,current,
+MiniMax M3,MiniMax-M3,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+MiniMax-M3.1-Flash,MiniMax-M3.1-Flash,MiniMax,current,
+MiniMax M3.1 Flash,MiniMax-M3.1-Flash,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+Qwen3.8 Max (0902),Qwen3.8 Max (0902),Alibaba,superseded,Replaced by Qwen4 Max.
+Qwen 3.8 Max 0902,Qwen3.8 Max (0902),,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+Qwen4 Max,Qwen4 Max,Alibaba,current,
+Qwen 4 Max,Qwen4 Max,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+Qwen4-Max,Qwen4 Max,,,"Same model; the sources differ only in spacing, hyphens, or a maker prefix."
+Muse Wonder,Muse Wonder,Meta,current,AA and Vals list it apart from Muse Wonder Full.
+Wonder,Muse Wonder,,,Vals links it to meta_muse-wonder.
+Muse Wonder Full,Muse Wonder Full,Meta,current,AA and Vals list it apart from Muse Wonder.
+Wonder Full,Muse Wonder Full,,,Vals links it to meta_muse-wonder-full.
+Muse Wonder 1.0,Muse Wonder 1.0,Meta,current,"FrontierCode's and 21st.dev's name. No source says whether it is Muse Wonder or Muse Wonder Full, so it stays separate."
+Fable 5.1,Fable 5.1,Anthropic,superseded,Replaced by Fable 5.2.
+Opus 5,Opus 5,Anthropic,superseded,Replaced by Opus 5.5.
+Opus 4.8,Opus 4.8,Anthropic,superseded,Replaced by Opus 5.5.
+GPT-6 Astra,GPT-6 Astra,OpenAI,superseded,Replaced by GPT-6.2 Astra.
+GPT-6.1 Sol,GPT-6.1 Sol,OpenAI,superseded,Replaced by GPT-6.2 Sol.
+GPT-6 Sol,GPT-6 Sol,OpenAI,superseded,Replaced by GPT-6.2 Sol.
+GPT-5.6 Sol,GPT-5.6 Sol,OpenAI,superseded,Replaced by GPT-6.2 Sol.
+GPT-5.6 Terra,GPT-5.6 Terra,OpenAI,superseded,Replaced by GPT-6.1 Terra.
+GPT-5.6 Luna,GPT-5.6 Luna,OpenAI,superseded,Replaced by GPT-6 Luna.
+GPT-5.5,GPT-5.5,OpenAI,superseded,Replaced by the GPT-6 models.
+Grok 4.6,Grok 4.6,xAI,superseded,Replaced by Grok 4.7.
+SWE-2,SWE-2,Cognition,superseded,Replaced by SWE-2.1.
+SWE-1.7,SWE-1.7,Cognition,superseded,Replaced by SWE-2.1.
+SWE-1.6,SWE-1.6,Cognition,superseded,Replaced by SWE-2.1.
+Kimi K3,Kimi K3,Moonshot,superseded,Replaced by Kimi K3.1 Pro.
+Inkling Small,Inkling Small,Thinking Machines,superseded,Replaced by Inkling 2 Small.
+Gemini 4 Argon,Gemini 4 Argon,Google,superseded,"Google pulled it from the Gemini app when Neon launched, and Antigravity drops it on 2026-11-30."

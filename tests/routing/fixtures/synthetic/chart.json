@@ -1,5 +1,4 @@
 {
-  "aliases": {"Thrift Mini": "Thrift"},
   "suites": {
     "Alder": {"base": true},
     "Birch": {"base": true},
@@ -9,6 +8,7 @@
     "Gorse": {"base": false}
   },
   "preference": {"Writing": ["Fir", "Gorse"]},
+  "frontier": {"top": 4, "min_suites": 2},
   "vendors": {
     "Anthropic": {"everyday": "Alpha", "flagship": "Alpha", "rationed": [], "colour": "#C15F3C"},
     "OpenAI": {"everyday": "Solo", "flagship": "Gamma", "rationed": [], "colour": "#10A37F"}

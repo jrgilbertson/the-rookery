@@ -47,6 +47,13 @@ immediately before the write. A reader's summary can be stale or wrong.
 must not hide a pull request, so discovery reads every open pull request and
 every decision rests on the diff.
 
+**Say what a list left out.** Every read from GitHub has a limit: a search
+stops at 1,000 results, and a GraphQL list at the `first` it asks for. When a
+read returns as many results as its limit, or a `totalCount` is higher than
+what came back, say on the page what may be missing: at the top of the round
+for a discovery or merged list, and in a pull request's block for its
+threads.
+
 **Nothing private goes to a public repository.** Step 5 says how to scrub a
 comment before it is posted.
 
@@ -92,8 +99,7 @@ Find the pull requests with `gh` alone, so the round works on any machine.
 2. For the login and each organization, list open pull requests:
    `gh search prs --owner <owner> --state open --archived=false --limit 1000 --json repository,number,title,author,labels,isDraft,updatedAt,url`.
    Leave drafts out, since they are not asking for review yet, and say at
-   the top of the round how many each owner has. If a query returns 1,000
-   results, say there that the list for that owner is cut off.
+   the top of the round how many each owner has.
 3. List the repositories other owners share with the operator as a
    collaborator:
    `gh api --paginate 'user/repos?affiliation=collaborator&per_page=100' --jq '.[] | select(.permissions.push and (.archived | not)) | .full_name'`.
@@ -114,18 +120,15 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    Then read all its review threads, which show whether each point was
    resolved:
    `gh api graphql --paginate -f query='query($owner: String!, $repo: String!, $number: Int!, $endCursor: String) { repository(owner: $owner, name: $repo) { pullRequest(number: $number) { reviewThreads(first: 100, after: $endCursor) { pageInfo { hasNextPage endCursor } nodes { isResolved comments(first: 50) { totalCount nodes { author { login } body } } } } } } }' -f owner=<owner> -f repo=<repo> -F number=<number>`.
-   When a thread's `totalCount` is over 50, say in its block that the
-   thread was cut off.
 7. List what merged recently, for the end of the page. Labels add detail
    here but decide nothing. The window is the period the operator names, or
    else the last 7 days; state it on the page. For each owner from item 2,
    run
    `gh search prs --owner <owner> --merged --merged-at ">=<start>" --archived=false --limit 1000 --json repository,number,title,url`,
    and for each repository from item 3 the same search with
-   `--repo <owner>/<repo>` in place of `--owner <owner>`. If one returns
-   1,000 results, say the list is cut off. Run the item 5 check on any
-   repository this returns that you did not already keep, and skip those
-   the operator cannot merge in.
+   `--repo <owner>/<repo>` in place of `--owner <owner>`. Run the item 5
+   check on any repository this returns that you did not already keep, and
+   skip those the operator cannot merge in.
    For each, read
    `gh pr view <number> -R <owner>/<repo> --json headRefOid,mergedAt,labels,comments`
    and find the operator's newest Verdict comment on it. Compare its

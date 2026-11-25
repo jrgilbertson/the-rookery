@@ -14,12 +14,13 @@ looked" surface. GitHub Releases mirror its entries.
 ### Added
 
 - `daily-learning`, a portable skill and paired daily Orca automation
-  (`automations/daily-learning.md`) that turns recent notes, reading
-  highlights, AI sessions, and optional flashcards into a capped learning
-  digest and approval-gated active-recall authoring. Host-specific overnight
-  discovery (bare Git vault mirror, paired remote Orca scan, and shared run
-  history) lives in the automation prompt so the skill works standalone without
-  a private config file.
+  (`automations/daily-learning.md`). The skill coaches a learning habit from
+  recent notes, reading highlights, AI sessions, and flashcards: a review that
+  changes nothing and recommends at most five items, then recall-first help
+  writing the ones the user picks, with each change approved first. The
+  automation reads the last day's vault mirror, local and paired remote AI
+  sessions, and Anki status, keeps no run history, and takes replies in the
+  run's own chat.
 - A chart in `ROUTING.md` of combined quality against cost at each effort
   setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
   computes the figures and draws the chart from the committed data, and the
@@ -64,13 +65,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `daily-learning` now carries explicitly `deferred` items from the most recent
-  daily run forward once (labeled `carried from <date>`, competing inside the
-  5-item cap before decaying), replaces per-ID remote `unread_sessions`
-  carry-forward with explicit `read_count`/`eligible_count` sampling disclosure,
-  and limits the full Anki backlog deferral warning to runs newly crossing the
-  threshold (reporting counts concisely on consecutive elevated runs).
-  `MACHINE-SETUP.md` now also verifies Antigravity's `.gemini/config/skills`
+- `MACHINE-SETUP.md` now also verifies Antigravity's `.gemini/config/skills`
   directory alongside Codex and Claude Code.
 - `coordinating-work` aligns setup, operation, and revive with Orca v1.4.272
   behavior: recognizing runtime-fixed chat surfaces under persistent agent

@@ -13,7 +13,7 @@ between two jobs, with host-specific consolidation instructions below it.
 |---|---|---|---|
 | [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |
 | [Sessions audit (remote)](sessions-audit.md) | Review recent AI sessions on the remote host | Daily at 01:00 | America/Los_Angeles |
-| [Daily learning](daily-learning.md) | Curate daily personal learning recommendations from vault activity, local and paired remote AI sessions, and Anki status | Daily at 05:00 | America/Los_Angeles |
+| [Daily learning](daily-learning.md) | Recommend what to learn from the last day's vault changes, local and paired remote AI sessions, and Anki status | Daily at 05:00 | America/Los_Angeles |
 | [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and recommend fixes | Monday at 04:00 | America/Los_Angeles |
 | [Improve audit](improve-audit.md) | Survey the whole codebase with `improve` and recommend improvements | Tuesday at 04:00 | America/Los_Angeles |
 | [State-machine correctness audit](state-machine-audit.md) | Assess lifecycle correctness and recommend fixes | Sunday at 04:00 | America/Los_Angeles |
@@ -53,12 +53,10 @@ The prompts ask for recommendations in leverage order without defining it. The
 definition is the [Rank by leverage](../PRIORITIZATION.md#rank-by-leverage)
 section of `PRIORITIZATION.md`. Add that section to the selected agent's
 instructions so it scores findings the same way. [Daily learning](daily-learning.md)
-is the intentional exception: it invokes the `daily-learning` skill, orders its
-capped morning digest by qualitative learning value and strategic fit without
-Leverage scores, uses a 14-run lookback for recurrence and skew checks, records
-abstracted `decisions.md` entries without verbatim sensitive owner quotes, and
-transitions into approval-gated interactive authoring when you reply in the same
-thread while keeping its scheduled overnight pass strictly read-only.
+is the intentional exception: the `daily-learning` skill orders its digest by
+learning value and the owner's priorities, without Leverage scores. It is also
+the one automation without shared run state, because it runs on one host and
+its digest lives in the run's own Orca chat, where the owner replies.
 
 Keep local paths, repository selections, account identifiers, and enabled
 status in Orca. Run findings and the owner's decisions go in the shared run
@@ -70,8 +68,8 @@ excerpts and other private review evidence stay outside this public repository.
 Orca starts each run in a fresh worktree, and the same kind of project work
 runs on more than one machine; Sessions audit, for example, runs on a laptop
 and on a dev server. Local files would leave each run blind to what earlier
-runs found and what the owner already decided. Every automation therefore
-reads and writes one private Git repository, cloned to
+runs found and what the owner already decided. Every automation except
+Daily learning therefore reads and writes one private Git repository, cloned to
 `~/.local/state/automation-runs` on each host.
 
 - **Shared across machines.** Every host's runs read from and add to one

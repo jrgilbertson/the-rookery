@@ -249,7 +249,7 @@ Learn is about my knowledge rather than the system's. Some lessons come from a s
 
 I choose the tool based on what I need to do:
 
-- [`daily-learning`](skills/daily-learning/SKILL.md) (paired with the [daily learning automation](automations/daily-learning.md)). Turns recent notes, reading highlights, AI sessions, and optional flashcards into a capped learning digest and approval-gated active-recall authoring (pretest-first drafts, skeletons, 5W triage, and card rethinks). Works standalone on demand or overnight via the scheduled automation.
+- [`daily-learning`](skills/daily-learning/SKILL.md) (paired with the [daily learning automation](automations/daily-learning.md)). Recommends at most five things to learn from recent notes, reading highlights, AI sessions, and flashcards without changing anything, then helps write the ones you pick, recall first and with your approval. Works on demand or each morning through the scheduled automation.
 - [`personal-chief-of-staff`](skills/personal-chief-of-staff/SKILL.md). Uses configured sources for a daily, weekly, or quarterly review. Run it to reflect, understand where things stand, and decide what to do next across life and work.
 - [`reviewing-meetings`](skills/reviewing-meetings/SKILL.md). Turns completed meetings into draft notes and follow-up actions based on the meeting source. Run it after a meeting or when catching up. Each follow-up waits for approval before anything is written.
 - [`managing-personal-crm`](skills/managing-personal-crm/SKILL.md). Keeps relationship information in one note per person. Messages and other raw interactions stay in their original apps. Use it to prepare for a conversation, record an interaction, reconnect with someone overdue, or find who could help with current work.

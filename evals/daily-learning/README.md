@@ -20,16 +20,18 @@ one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`1fffb56096fb3117a3018ed1be9b8558c78660e06248758b0f2acac09701ccb7`. From this
+`4bfc4980bdfe795af7a18a84fa624635772196fecb3a81e079d266c13d1dbf63`. From this
 directory, reproduce it with
-`{ find daily-pass digest-reply failing-card quiet-day -type f -print0; printf '%s\0' fixture.py run.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
+`{ find daily-pass digest-reply failing-card quiet-day -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
 ## Run
 
 Each run calls a paid model, so get the skill owner's approval first. The
-model runs as you and reads a web clip with a planted instruction; `run.sh`
-limits Git to read-only subcommands, and a disposable VM or container gives
-stronger isolation. With
+model runs as you and reads a web clip with a planted instruction. `run.sh`
+routes Git through [`safe-git.sh`](safe-git.sh), which blocks options that
+write files or run commands, and denies edits to the vault's `.git` folder.
+The Read and WebFetch tools can still reach local files and the network, so
+use a disposable VM or container for full isolation. With
 Claude Code, Git, and Python 3, run from this directory:
 
 ```sh

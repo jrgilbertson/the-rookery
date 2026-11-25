@@ -19,8 +19,8 @@ looked" surface. GitHub Releases mirror its entries.
   changes nothing and recommends at most five items, then recall-first help
   writing the ones the user picks, with each change approved first. The
   automation reads the last day's vault mirror, local and paired remote AI
-  sessions, and Anki status, keeps no run history, and takes replies in the
-  run's own chat.
+  sessions, and Anki status, uses the shared run history to see patterns across
+  days, and takes replies in the run's own chat.
 - A chart in `ROUTING.md` of combined quality against cost at each effort
   setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
   computes the figures and draws the chart from the committed data, and the

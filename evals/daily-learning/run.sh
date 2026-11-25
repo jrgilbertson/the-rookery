@@ -5,8 +5,10 @@
 #
 # This calls a paid model. Get the skill owner's approval before running it.
 # The workspace includes a web clip with a planted instruction, so the model reads
-# hostile text while running as you. Git is limited to read-only subcommands;
-# for stronger isolation, run this in a disposable VM or container.
+# hostile text while running as you. Git is limited to read-only subcommands run
+# through safe-git.sh, and the model may not edit the vault's .git folder. The
+# Read and WebFetch tools can still reach files and the network, so for full
+# isolation run this in a disposable VM or container.
 # The run loads no user settings, installed skills, plugins, MCP servers or global
 # instructions (--setting-sources project, --strict-mcp-config). The with_skill arm
 # loads only skills/daily-learning at <git-revision> (default HEAD), staged as a
@@ -43,15 +45,22 @@ elif [ "$arm" != without_skill ]; then
   echo "arm must be with_skill or without_skill" >&2; exit 2
 fi
 
+# Every `git` the model runs goes through safe-git.sh.
+mkdir -p "$out/bin"
+cp "$here/safe-git.sh" "$out/bin/git"
+export SAFE_GIT_REAL
+SAFE_GIT_REAL=$(command -v git)
+
 # The prompt is the text after the settings block.
 prompt=$(awk 'n>=2 && (seen || NF) {seen=1; print} /^---$/{n++}' "$here/$case/prompt.md")
 cd "$ws"
 set +e
-claude -p "$prompt" \
+PATH="$out/bin:$PATH" claude -p "$prompt" \
   --model claude-opus-5-5 --effort high \
   --setting-sources project --strict-mcp-config --no-session-persistence \
   --permission-mode acceptEdits \
   --allowedTools "Read Glob Grep Edit Write WebSearch WebFetch Skill Bash(ls:*) Bash(stat:*) Bash(git log:*) Bash(git show:*) Bash(git diff:*) Bash(git status:*) Bash(git -C vault log:*) Bash(git -C vault show:*) Bash(git -C vault diff:*) Bash(git -C vault status:*)" \
+  --disallowedTools "Edit(vault/.git/**) Write(vault/.git/**)" \
   --max-budget-usd 3 \
   --output-format stream-json --verbose ${extra[@]+"${extra[@]}"} < /dev/null > "$out/events.jsonl" 2> "$out/stderr.txt"
 rc=$?

@@ -54,9 +54,8 @@ definition is the [Rank by leverage](../PRIORITIZATION.md#rank-by-leverage)
 section of `PRIORITIZATION.md`. Add that section to the selected agent's
 instructions so it scores findings the same way. [Daily learning](daily-learning.md)
 is the intentional exception: the `daily-learning` skill orders its digest by
-learning value and the owner's priorities, without Leverage scores. It is also
-the one automation without shared run state, because it runs on one host and
-its digest lives in the run's own Orca chat, where the owner replies.
+learning value and the owner's priorities, without Leverage scores, and the
+owner works the items they pick by replying in the run's own Orca chat.
 
 Keep local paths, repository selections, account identifiers, and enabled
 status in Orca. Run findings and the owner's decisions go in the shared run
@@ -68,8 +67,8 @@ excerpts and other private review evidence stay outside this public repository.
 Orca starts each run in a fresh worktree, and the same kind of project work
 runs on more than one machine; Sessions audit, for example, runs on a laptop
 and on a dev server. Local files would leave each run blind to what earlier
-runs found and what the owner already decided. Every automation except
-Daily learning therefore reads and writes one private Git repository, cloned to
+runs found and what the owner already decided. Every automation therefore
+reads and writes one private Git repository, cloned to
 `~/.local/state/automation-runs` on each host.
 
 - **Shared across machines.** Every host's runs read from and add to one

@@ -58,6 +58,7 @@ HOME_PATH = re.compile(
 HOME_PATH_EXAMPLES = {
     "automations/README.md": {"~" + "/.local/state/automation-runs"},
     "automations/agent-entropy-audit.md": {"~" + "/.local/state/automation-runs"},
+    "automations/daily-learning.md": {"~" + "/.local/state/automation-runs"},
     "automations/analytics-gap-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/design-system-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/improve-audit.md": {"~" + "/.local/state/automation-runs"},

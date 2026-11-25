@@ -126,6 +126,8 @@ shapes they must parse.
 - [Simplify pass, 2026-11-25](records/2026-11-25-simplify-pass/README.md):
   each case once with the skill at `dc81d24e`, in Claude, against the
   previous record's skill arms.
+- [Post only, 2026-11-25](records/2026-11-25-post-only/README.md): each case
+  once with the skill at `4f0a8a92`, after it stopped merging, in Claude.
 
 Commit each record under
 `records/<date>-<slug>/` with the fields

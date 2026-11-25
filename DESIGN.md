@@ -57,6 +57,10 @@ Navy signals authority, cobalt shows the sequence, and blue-gray defines support
 
 **The Two Papers Rule.** Mist Paper carries a scene; Chalk Paper carries data. A figure whose job is to be read, not looked at, goes on Chalk. Text inks must reach 4.5:1 on their paper, and Drafting Graphite does on both.
 
+### Night Paper
+
+An interactive page that people read at night, such as the review page the `reviewing-prs` skill ships, may follow the reader's dark setting. Night Paper is the same field manual on a drafting table after dark, not a navy screen. Its ground is a near-neutral graphite (`#14161B`, with sheets at `#1B1E25`) and its main ink is Chalk (`#ECEEF3`). Drafting Graphite lifts to `#A7AFC0`, Route Cobalt to `#93AEEF`, Signal Orange to `#E08A5E`, and Dispatch Paper darkens to a warm `#29251F`. Each role keeps its meaning, and every text ink still reaches 4.5:1 on its paper. Low saturation keeps navy from becoming a blue glow and keeps orange scarce.
+
 ## Typography
 
 **Display Font:** Didot for the primary title in repository-owned banners.

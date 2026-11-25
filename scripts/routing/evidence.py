@@ -48,7 +48,7 @@ RESULT_COLUMNS = (
 )
 ROLE_INPUT_COLUMNS = ("role", "source", "url", "date_read", "says")
 # The most extra cost, in percent, worth paying for each added point of combined quality.
-BEST_VALUE_STEP_LIMIT = 40.0
+BEST_VALUE_STEP_LIMIT = 20.0
 VENDOR_ROLES = (("Executor", "everyday"), ("Team lead", "flagship"))
 
 
@@ -98,7 +98,6 @@ class Data:
     history: list[Result]  # every read in the file
     suites: dict[str, bool]  # suite name -> in the base
     models: list[dict[str, str]]
-    anchor: str  # the base suite every other base suite is scaled against
     vendors: dict[str, dict]  # provider -> {"everyday": model, "flagship": model, "rationed": [models]}
     preference: dict[str, list[str]] = field(default_factory=dict)  # role -> the suites that score it, weighted equally
 
@@ -146,7 +145,6 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
         chart = json.loads((directory / "chart.json").read_text(encoding="utf-8"))
         suites = {name: bool(entry["base"]) for name, entry in chart["suites"].items()}
         models = [dict(entry) for entry in chart["models"]]
-        anchor = chart["anchor"]
         aliases = dict(chart.get("aliases", {}))
         vendors = {name: dict(entry) for name, entry in chart.get("vendors", {}).items()}
         preference = {role: list(names) for role, names in chart.get("preference", {}).items()}
@@ -160,8 +158,6 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
             for name in (entry["everyday"], entry["flagship"], *entry["rationed"]):
                 if (name, provider) not in listed:
                     raise DataError(f"chart.json: vendors names {name} for {provider}, but models does not list it under {provider}")
-        if not suites.get(anchor):
-            raise DataError(f"chart.json: anchor {anchor!r} is not a base suite")
         for entry in models:
             if entry["status"] not in ("current", "superseded"):
                 raise DataError(f"chart.json: status of {entry['model']} must be current or superseded")
@@ -210,7 +206,7 @@ def load(directory: Path, results_text: str | None = None, as_of: str | None = N
     for result in history:
         latest[result.suite] = max(latest.get(result.suite, ""), result.date_read)
     results = [result for result in history if result.date_read == latest[result.suite]]
-    return Data(results, history, suites, models, anchor, vendors, preference)
+    return Data(results, history, suites, models, vendors, preference)
 
 
 def cost_per_pass(result: Result) -> float | str:
@@ -253,69 +249,52 @@ class Combined:
 
 @dataclass(frozen=True)
 class Scaled:
-    quality: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> standard deviations from the anchor's mean
-    cost: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> log cost at the anchor's price level
-    overlap: dict[str, int]  # suite -> settings it shares with the anchor
+    quality: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> standard deviations from the suite's reference mean
+    cost: dict[str, dict[str, dict[str, float]]]  # suite -> model -> effort -> log cost relative to the suite's typical reference setting
+    reference: dict[str, int]  # suite -> settings it tested for the current charted models
 
 
 def scale(data: Data) -> Scaled:
-    """Put every base suite's scores and costs on the anchor suite's scale.
+    """Standardize every base suite on its own.
 
-    Each suite is scaled against the anchor on the settings the two share, so
-    a suite that tested only some models still joins.
+    Each suite's logit scores are z-scored over the settings it tested for the
+    current charted models, and its costs are taken relative to the geometric
+    mean of those settings' costs. Every suite counts the same; none is a
+    reference for the others.
     """
     base = data.base
     if not base:
         raise DataError("chart.json names no base suite")
-    by_suite = {name: {r.setting: r for r in data.results if r.suite == name} for name in base}
-    anchor = by_suite[data.anchor]
-    if len(anchor) < 3:
-        raise DataError(f"the anchor suite {data.anchor} holds fewer than three settings")
-    logits = [_logit(row.score) for row in anchor.values()]
-    mean, spread = statistics.fmean(logits), statistics.pstdev(logits)
-    if spread == 0:
-        raise DataError(f"every setting scores the same on {data.anchor}")
-    anchor_quality = {setting: (_logit(row.score) - mean) / spread for setting, row in anchor.items()}
-
-    # scaled[suite][model][effort] holds that suite's score on the anchor's scale.
-    scaled: dict[str, dict[str, dict[str, float]]] = {data.anchor: {}}
-    priced: dict[str, dict[str, dict[str, float]]] = {data.anchor: {}}
-    for (model, effort), value in anchor_quality.items():
-        scaled[data.anchor].setdefault(model, {})[effort] = value
-    for (model, effort), row in anchor.items():
-        if row.cost is not None:
-            priced[data.anchor].setdefault(model, {})[effort] = math.log(row.cost)
-    overlap: dict[str, int] = {}
-    for name, rows in by_suite.items():
-        if name == data.anchor:
-            continue
-        shared = sorted(set(rows) & set(anchor))
-        overlap[name] = len(shared)
-        if len(shared) < 3:
-            raise DataError(f"{name} shares fewer than three settings with the anchor {data.anchor}")
-        own = [_logit(rows[setting].score) for setting in shared]
-        target = [anchor_quality[setting] for setting in shared]
-        own_mean, own_spread = statistics.fmean(own), statistics.pstdev(own)
-        if own_spread == 0:
-            raise DataError(f"every setting {name} shares with the anchor scores the same")
-        scale, shift = statistics.pstdev(target) / own_spread, statistics.fmean(target)
-        # A suite's price level is how far its costs sit, at the median, from
-        # the anchor's for the same setting.
-        both = [s for s in shared if rows[s].cost is not None and anchor[s].cost is not None]
-        level = statistics.median(math.log(rows[s].cost) - math.log(anchor[s].cost) for s in both) if both else None
+    current = {entry["model"] for entry in data.models if entry["status"] == "current"}
+    scaled: dict[str, dict[str, dict[str, float]]] = {}
+    priced: dict[str, dict[str, dict[str, float]]] = {}
+    reference: dict[str, int] = {}
+    for name in base:
+        rows = {r.setting: r for r in data.results if r.suite == name}
+        chosen = [setting for setting in rows if setting[0] in current]
+        reference[name] = len(chosen)
+        if len(chosen) < 3:
+            raise DataError(f"{name} holds fewer than three settings for the current charted models")
+        logits = [_logit(rows[setting].score) for setting in chosen]
+        mean, spread = statistics.fmean(logits), statistics.pstdev(logits)
+        if spread == 0:
+            raise DataError(f"every current-model setting on {name} scores the same")
+        costs = [math.log(rows[setting].cost) for setting in chosen if rows[setting].cost is not None]
+        level = statistics.fmean(costs) if costs else None
         scaled[name], priced[name] = {}, {}
         for (model, effort), row in rows.items():
-            scaled[name].setdefault(model, {})[effort] = (_logit(row.score) - own_mean) * scale + shift
+            scaled[name].setdefault(model, {})[effort] = (_logit(row.score) - mean) / spread
             if row.cost is not None and level is not None:
                 priced[name].setdefault(model, {})[effort] = math.log(row.cost) - level
-    return Scaled(scaled, priced, overlap)
+    return Scaled(scaled, priced, reference)
 
 
 def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
-    """Put the base suites on one scale and average them.
+    """Average the standardized base suites.
 
-    A setting's score averages whichever suites tested it. Returns the
-    combined rows and each suite's count of settings shared with the anchor.
+    A setting's score averages whichever suites tested it, shown as 50 plus 10
+    for each standard deviation. Returns the combined rows and each suite's
+    count of reference settings.
     """
     scales = scale(data)
     scaled, priced = scales.quality, scales.cost
@@ -329,7 +308,7 @@ def combine(data: Data) -> tuple[list[Combined], dict[str, int]]:
                 model, effort, 50 + 10 * quality[effort],
                 math.exp(cost[effort]) if effort in cost else None, tested,
             ))
-    return combined, scales.overlap
+    return combined, scales.reference
 
 
 def _blend(cells: dict[str, dict[str, float]]) -> dict[str, float]:
@@ -460,7 +439,7 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
     effort, on the base suites that tested both settings, the cheapest such
     setting earns the slot, and the sibling is listed at that setting or at its
     own best-value effort, whichever is higher. The Executor row
-    follows the 40% price order; the Team lead row goes by combined quality,
+    follows the 20% price order; the Team lead row goes by combined quality,
     the cheaper setting first on a tie.
     """
     providers = {entry["model"]: entry["provider"] for entry in data.models if entry["status"] == "current"}
@@ -543,21 +522,8 @@ def best_value_settings(combined: list[Combined]) -> set[tuple[str, str]]:
     return {(model, effort) for model, effort in picks.items() if effort}
 
 
-def cost_unit(data: Data) -> float:
-    """The cost of a typical setting on the anchor suite: the geometric mean of its costs.
-
-    Combined cost is reported as a multiple of this, so 1 means a typical
-    setting and 2 means twice that, the way 50 on the quality scale means the
-    anchor suite's average.
-    """
-    costs = [result.cost for result in data.results if result.suite == data.anchor and result.cost]
-    if not costs:
-        raise DataError(f"the anchor suite {data.anchor} has no costs, so relative cost cannot be computed")
-    return math.exp(sum(math.log(cost) for cost in costs) / len(costs))
-
-
-def _relative(cost: float | None, unit: float) -> str:
-    return "missing" if cost is None else f"{cost / unit:.2f}"
+def _relative(cost: float | None) -> str:
+    return "missing" if cost is None else f"{cost:.2f}"
 
 
 def _money(value: float | str | None) -> str:
@@ -567,16 +533,14 @@ def _money(value: float | str | None) -> str:
 
 
 def report(data: Data) -> list[str]:
-    combined, overlap = combine(data)
-    unit = cost_unit(data)
+    combined, reference = combine(data)
     outside = [name for name, in_base in data.suites.items() if not in_base]
     verdict = (
         f"OK routing evidence: {len(data.results)} rows from the latest read of each suite, "
-        f"{len(data.history)} in the file; base suites: {', '.join(data.base)}; "
-        f"anchor: {data.anchor}"
+        f"{len(data.history)} in the file; base suites: {', '.join(data.base)}"
     )
-    if overlap:
-        verdict += "; settings shared with the anchor: " + ", ".join(f"{name} {count}" for name, count in overlap.items())
+    if reference:
+        verdict += "; current-model settings per suite: " + ", ".join(f"{name} {count}" for name, count in reference.items())
     if outside:
         verdict += f"; outside the base: {', '.join(outside)}"
     lines = [verdict, "# suite figures",
@@ -601,7 +565,7 @@ def report(data: Data) -> list[str]:
               "\t".join(("model", "effort", "combined_quality", "relative_cost", "suites", "best_value", "frontier"))]
     for row in combined:
         lines.append("\t".join((
-            row.model, row.effort, f"{row.quality:.1f}", _relative(row.cost, unit),
+            row.model, row.effort, f"{row.quality:.1f}", _relative(row.cost),
             f"{row.suites} of {len(data.base)}", "yes" if (row.model, row.effort) in marked else "",
             "frontier" if (row.model, row.effort) in best else "",
         )))
@@ -611,7 +575,7 @@ def report(data: Data) -> list[str]:
     lines += ["# candidates", "\t".join(("model", "provider", "effort", "combined_quality", "relative_cost", "suites", "frontier"))]
     for pick in order(at_best_value):
         lines.append("\t".join((
-            pick.model, providers[pick.model], pick.effort, f"{pick.quality:.1f}", _relative(pick.cost, unit),
+            pick.model, providers[pick.model], pick.effort, f"{pick.quality:.1f}", _relative(pick.cost),
             f"{pick.suites} of {len(data.base)}", "frontier" if (pick.model, pick.effort) in best else "",
         )))
     lines += ["# rows", "\t".join(("role", "provider", "model", "effort", "combined_quality", "relative_cost", "replaces"))]
@@ -621,7 +585,7 @@ def report(data: Data) -> list[str]:
         lines[0] += "; left out of rows: " + ", ".join(skipped)
     for role, pick, replaced in built:
         lines.append("\t".join((
-            role, providers[pick.model], pick.model, pick.effort, f"{pick.quality:.1f}", _relative(pick.cost, unit), replaced,
+            role, providers[pick.model], pick.model, pick.effort, f"{pick.quality:.1f}", _relative(pick.cost), replaced,
         )))
     lines += ["# preference", "\t".join(("role", "provider", "model", "effort", "preference_score", "sources", "choice"))]
     chosen: dict[str, set[str]] = {}
@@ -964,9 +928,6 @@ def _provider_grid(series: list[Series], styles: dict[str, tuple[str, str]], sca
 def charts(data: Data) -> dict[str, str]:
     """Build the chart files as SVG text, keyed by file name."""
     combined, _ = combine(data)
-    unit = cost_unit(data)
-    combined = [Combined(row.model, row.effort, row.quality, None if row.cost is None else row.cost / unit, row.suites)
-                for row in combined]
     base = data.base
     read = max(result.date_read for result in data.results if result.suite in base)
     versions = {result.suite: result.suite_version for result in data.results}
@@ -974,8 +935,8 @@ def charts(data: Data) -> dict[str, str]:
     if not everyone:
         raise DataError("none of the models chart.json lists has results with a cost")
     scale = Scale.of(everyone)
-    y_label = f"Combined quality (50 = {data.anchor} average)"
-    x_label = f"Relative cost per task (1 = a typical {data.anchor} setting), log scale"
+    y_label = "Combined quality (50 = the average charted setting)"
+    x_label = "Relative cost per task (1 = a typical charted setting), log scale"
     efforts = [effort for effort in EFFORTS if any(point.effort == effort for line in everyone for point in line.points)]
     notes = [f"{FOOTER} The marker's shape names the effort.",
              f"The number beside a name counts the suites that tested it at any effort, of {len(base)}. Data read {read}.",

@@ -24,7 +24,7 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 **Last reviewed: 2026-11-24**
 
-![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Sol (`gpt-6.2-sol`) at max. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at medium.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at high.](docs/assets/routing-table.svg)
 
 Each row names one model from each of three providers, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
@@ -38,11 +38,11 @@ Grok 4.7 comes fourth in every row, so it has no slot. In the base, GPT-6.2 Sol 
 
 ### What each model gains as you raise its effort
 
-![One chart of combined quality against relative cost per task for nine models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-24, Gemini 4 Neon at high scores about 61 at 2.0 times the cost of a typical setting, and Gemini 4 Carbon at high about 61.5 at 3.9 times. Fable 5.2 at high scores about 62 at 4.9 times. GPT-6.2 Astra's best value is medium, about 59 at 1.1 times. GPT-6.2 Sol reaches about 58 at medium for a third of a typical setting's cost, and about 59 at max for three quarters of it. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
+![One chart of combined quality against relative cost per task for nine models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-24, Gemini 4 Neon at high scores about 56 at the cost of a typical charted setting, and Gemini 4 Carbon at high about 58 at 1.8 times. Fable 5.2 at high scores about 60 at 2.5 times. GPT-6.2 Astra's best value is high, about 54 at 0.8 times. GPT-6.2 Sol reaches about 49 at medium for a fifth of a typical setting's cost. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
 
 The chart puts five benchmark suites on one scale, so every model shares the same axes. Colour names the provider, a dash tells one provider's models apart, and each marker's shape names the effort, as the key above the chart shows. The chart covers coding and general work, and it shows the current models from the four providers, whether or not I can run them today.
 
-A soft ring in the line's own colour marks each model's best-value effort, the last step up that costs at most 40% more per point of quality. [The rules](#the-rules) define it.
+A soft ring in the line's own colour marks each model's best-value effort, the last step up that costs at most 20% more per point of quality. [The rules](#the-rules) define it.
 
 The middle of the chart is crowded. These panels show one provider at a time on the same axes, with the other providers' models drawn faintly behind.
 
@@ -57,40 +57,40 @@ The middle of the chart is crowded. These panels show one provider at a time on 
 
 ### Why these models
 
-[How I update the table](#how-i-update-the-table) explains the method. The base table shows each charted model at its best-value effort, in the price order. Relative cost is a multiple of a typical FrontierCode setting's cost. A model off the frontier has another setting that scores higher for less, and fewer suites means a less certain position.
+[How I update the table](#how-i-update-the-table) explains the method. The base table shows each charted model at its best-value effort, in the price order. Relative cost is a multiple of a typical charted setting's cost. A model off the frontier has another setting that scores higher for less, and fewer suites means a less certain position.
 
 | Model | Best value | Combined quality | Relative cost | Suites | On the frontier |
 |---|---|---|---|---|---|
-| GPT-6.2 Sol | medium | 57.8 | 0.37 | 3 of 5 | yes |
-| Gemini 4 Neon | high | 60.8 | 2.02 | 4 of 5 | yes |
-| GPT-6.2 Astra | medium | 58.7 | 1.11 | 4 of 5 | no |
-| Fable 5.2 | medium | 60.2 | 2.23 | 4 of 5 | no |
-| Gemini 4 Hydrogen | high | 58.8 | 1.56 | 3 of 5 | no |
-| Gemini 4 Carbon | high | 61.5 | 3.93 | 4 of 5 | yes |
-| Opus 5.5 | high | 59.1 | 2.32 | 5 of 5 | no |
-| Gemini 4 Argon | high | 58.0 | 4.62 | 4 of 5 | no |
-| Grok 4.7 | medium | 53.5 | 3.03 | 3 of 5 | no |
+| GPT-6.2 Sol | medium | 49.1 | 0.20 | 3 of 5 | yes |
+| Gemini 4 Neon | high | 55.8 | 1.03 | 4 of 5 | yes |
+| Fable 5.2 | medium | 55.5 | 1.13 | 4 of 5 | no |
+| GPT-6.2 Astra | high | 53.7 | 0.84 | 4 of 5 | yes |
+| Gemini 4 Hydrogen | high | 52.2 | 0.70 | 3 of 5 | yes |
+| Gemini 4 Carbon | high | 58.1 | 1.77 | 4 of 5 | yes |
+| Opus 5.5 | high | 52.8 | 1.18 | 5 of 5 | no |
+| Gemini 4 Argon | high | 50.3 | 2.08 | 4 of 5 | no |
+| Grok 4.7 | medium | 41.5 | 1.36 | 3 of 5 | no |
 
 #### Team lead
 
-The row starts from each vendor's flagship and goes by quality. Two flagships give way to a better sibling. Gemini 4 Neon at high beats Carbon at high on the suites that tested both, 62.4 to 61.6, for about two thirds of the cost. GPT-6.2 Sol at max (59.1, cost 0.74) beats Astra at its best-value effort, medium (58.7, cost 1.11). By quality the row reads Neon (60.8), Fable 5.2 at medium (60.2), then Sol (59.1). AA-Briefcase, the closest measure of leading work, puts Neon at high (1631), Fable at medium (1623), and Sol at max (1612) within each other's intervals of about 10 points, so it doesn't change the order.
+The row starts from each vendor's flagship and goes by quality. Gemini 4 Neon at high gives Google's slot a better sibling: it beats Carbon at high on the suites that tested both, 60.0 to 58.2, for about two thirds of the cost. By quality the row reads Neon (55.8), Fable 5.2 at medium (55.5), then GPT-6.2 Astra at high (53.7). AA-Briefcase, the closest measure of leading work, puts Neon at high (1631) and Fable at medium (1623) within each other's intervals of about 10 points, and Astra at high lower (1570), so it agrees with the order.
 
 Revisit when a suite measures plan quality and downstream success for these releases with the same Executor.
 
 #### Executor
 
-The row starts from each vendor's everyday model and follows the price order. Neon takes Google's slot: at medium it beats Hydrogen at high on the suites that tested both, 59.5 to 58.9, for about 85% of the cost, and it is listed at its best-value effort, high. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
+The row starts from each vendor's everyday model and follows the price order. Neon takes Google's slot: at medium it beats Hydrogen at high on the suites that tested both, 53.8 to 52.4, for about 85% of the cost, and it is listed at its best-value effort, high. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
 
 Two adjustments, both to the order:
 
 - **Opus 5.5 moves to first \*.** The method puts Sol first, then Neon, then Opus. Opus is the worker I rely on day to day, and the coding suites split: VulcanBench puts Opus at high above Sol at medium (91.1 against 88.9), and FrontierCode puts it below (36.3 against 38.3). This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
-- **Gemini 4 Neon at high moves to second \*.** It scores 3.0 points more than Sol at medium (60.8 against 57.8) at about 5.5 times the API cost. On subscriptions that gap is smaller, and the quality is worth it. This reverses if the Coding Agent Index or Terminal-Bench by effort tests Neon at high beside Sol at medium and Sol matches or beats it, or if my own sessions stop bearing it out.
+- **Gemini 4 Neon at high moves to second \*.** It scores 6.7 points more than Sol at medium (55.8 against 49.1) at about five times the API cost. On subscriptions that gap is smaller, and the quality is worth it. This reverses if the Coding Agent Index or Terminal-Bench by effort tests Neon at high beside Sol at medium and Sol matches or beats it, or if my own sessions stop bearing it out.
 
 Revisit when the Coding Agent Index tests Opus 5.5 at high, or when Terminal-Bench by effort adds Sol or Neon.
 
 #### Design/taste
 
-Four sources score this row, weighted equally, and each provider's best-scoring model takes its slot. Each source is put on its own scale, where 50 is its average and 10 points is one standard deviation, and a model's score is the mean of its source scores. That mean isn't rescaled, so its spread can be narrower than 10 points per standard deviation.
+Four sources score this row, weighted equally, and each provider's best-scoring model takes its slot. Each source is standardized over the current models it lists, where 50 is their average and 10 points is one standard deviation, and a model's score is the mean of its source scores. That mean isn't rescaled, so its spread can be narrower than 10 points per standard deviation.
 
 | Model | Arena WebDev | Design Arena | 21st.dev Design System Bench | Frontier Design | Score |
 |---|---|---|---|---|---|
@@ -140,11 +140,12 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 ### The rules
 
 - **Compare settings.** A setting is one model at one effort. A model is better when its listed setting scores higher, whatever it could reach at another effort.
-- **A point of quality is worth up to 40% more cost.** This one figure sets both the best-value effort and the price order.
-- **The best-value effort is the last step worth its extra cost.** First drop any effort that a cheaper effort of the same model beats. Then climb from the cheapest and stop before the first step that costs more than 40% extra for each added point. Each model is listed at its best-value effort unless a rule below names another.
+- **Standardize every source.** Each suite and preference source is put on its own scale over the current charted models it tested: 50 is their average and 10 points is one standard deviation. A setting's score averages the sources that tested it, and no source is a reference for the others.
+- **A point of quality is worth up to 20% more cost.** This one figure sets both the best-value effort and the price order. A point is a tenth of a standard deviation among the charted settings.
+- **The best-value effort is the last step worth its extra cost.** First drop any effort that a cheaper effort of the same model beats. Then climb from the cheapest and stop before the first step that costs more than 20% extra for each added point. Each model is listed at its best-value effort unless a rule below names another.
 - **The Executor row starts from each vendor's everyday model, and the Team lead row from its flagship.** Vendors name these in their own guidance. When a vendor's sources disagree, the everyday model is the one its own coding tool runs by default to do the work.
 - **A better sibling takes the slot.** If another current model from the same vendor scores higher for less at any effort, compared on the base suites that tested both settings, its cheapest such setting earns the slot. The sibling is listed at that setting or at its own best-value effort, whichever is higher. Comparing only shared suites keeps a model from losing ground for having been tested more widely. A rationed model never takes a slot this way. A vendor rations a model when its plans cap the model's use, count it faster against the allowance, or bill it to credits.
-- **The Executor row follows the price order.** A setting at least as good for no more cost goes first. Otherwise the better-scoring setting goes first only when it costs at most 40% more for each point it adds. Past that, the cheaper one goes first. If every remaining setting is beaten by another, the best-scoring one goes next. The base table uses the same order.
+- **The Executor row follows the price order.** A setting at least as good for no more cost goes first. Otherwise the better-scoring setting goes first only when it costs at most 20% more for each point it adds. Past that, the cheaper one goes first. If every remaining setting is beaten by another, the best-scoring one goes next. The base table uses the same order.
 - **The Team lead row goes by quality.** The higher combined score goes first, and the cheaper setting breaks a tie. A lead's decisions carry the outcome, so cost only sets each model's effort and decides whether a sibling takes a slot.
 - **Preference rows weigh their sources equally.** Design/taste and Writing each have their own sources, since cost doesn't measure taste, and each operator counts once. Each source is standardized across the current models it lists, taking a model's best score at any effort, and a model's score is the mean over the sources that list it. Each provider's best-scoring model takes its slot, best first, at its best-value effort.
 - **Three providers per row, one model each.** A row takes the first three providers in its order.
@@ -154,7 +155,7 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 
 | Source | Operator | Feeds | Kind of evidence | What it is and how it's used |
 |---|---|---|---|---|
-| [FrontierCode](https://cognition.com/frontiercode) | Cognition | The base | Measured | Coding tasks run in each model's own tool, scored on merge quality with a pass rate and cost. The base's anchor: the other base suites are scaled to it. |
+| [FrontierCode](https://cognition.com/frontiercode) | Cognition | The base | Measured | Coding tasks run in each model's own tool, scored on merge quality with a pass rate and cost. One of the five base suites. |
 | [VulcanBench](https://vulcanbench.com/leaderboard.html) | VulcanBench | The base | Measured | 23 coding tasks scored on tests passed and code quality, which models judge, with cost and time. One of the five base suites. |
 | [CursorBench](https://cursor.com/cursorbench) | Cursor | The base | Measured | Ambiguous multi-file coding tasks, with a score and cost per task. One of the five base suites; it tests no current OpenAI model. |
 | [AA Intelligence Index](https://artificialanalysis.ai/leaderboards/models) | Artificial Analysis | The base | Measured | A composite of nine evaluations, mostly general knowledge work, with cost and time per task. One of the five base suites. |
@@ -186,11 +187,11 @@ The script reports three figures wherever a suite publishes the inputs.
 
 **Cost per pass = average cost per attempt ÷ pass rate.** At $0.60 per attempt and a 60% pass rate, the calculation is $0.60 ÷ 0.60 = **$1.00 per pass**. Only FrontierCode and VulcanBench publish a pass rate. An index, a preference score, or a partial-credit percentage isn't one.
 
-**Cost per additional quality point = increase in task cost ÷ increase in quality score.** Moving from 48 points at $0.21 to 50 points at $0.32 costs $0.11 ÷ 2 = **$0.055 per additional point**. The 40% rule states the same idea as a percentage: that step raises cost by 52% for two points, which is 26% per point. The example uses raw points for simplicity; the rule itself compares combined points.
+**Cost per additional quality point = increase in task cost ÷ increase in quality score.** Moving from 48 points at $0.21 to 50 points at $0.32 costs $0.11 ÷ 2 = **$0.055 per additional point**. The 20% rule states the same idea as a percentage: that step raises cost by 52% for two points, which is 26% per point, past the limit. The example uses raw points for simplicity; the rule itself compares combined points.
 
 **Time per task** is each suite's own figure in minutes, where it publishes one.
 
-To combine the base suites, the script stretches each percent score with a logit and scales each suite against FrontierCode on the settings the two share. A setting's combined score averages the suites that tested it, where 50 is the FrontierCode average and 10 points is one standard deviation. Combined cost is a geometric mean of the suites' costs, each adjusted to FrontierCode's level. The page shows it as relative cost: a multiple of a typical FrontierCode setting's cost, the geometric mean of all its settings. A relative cost of 2 means twice that. It compares settings with each other and is not a bill. When a suite tested a model at only some efforts, it moves that model's whole curve up or down without bending it.
+To combine the base suites, the script stretches each percent score with a logit and standardizes each suite over the settings it tested for the current charted models. A setting's combined score averages the suites that tested it, where 50 is an average charted setting and 10 points is one standard deviation. Each suite's costs are taken as a multiple of its typical charted setting, the geometric mean of those settings' costs, and combined cost is the geometric mean across suites. The page shows it as relative cost, so a relative cost of 2 means twice a typical charted setting. It compares settings with each other and is not a bill. When a suite tested a model at only some efforts, it moves that model's whole curve up or down without bending it.
 
 These rules prevent the easiest mistakes:
 
@@ -205,7 +206,7 @@ These rules prevent the easiest mistakes:
 
 ### Running a refresh
 
-Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite in use. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the anchor, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
+Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite in use. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
 
 `results.csv` is append-only while a source is in use. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read. To retire a source, delete its rows, its `chart.json` entry, and its `role-inputs.csv` row, so it can't be counted by accident.
 

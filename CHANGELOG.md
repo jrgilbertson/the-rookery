@@ -68,8 +68,11 @@ looked" surface. GitHub Releases mirror its entries.
   following one board. Design/taste averages Arena WebDev, Design Arena,
   21st.dev Design System Bench, and the new Frontier Design benchmark, where
   professional designers vote blind; Writing averages Arena creative writing
-  and Lechmazur. The Team lead row now goes by quality, and the Executor row
-  keeps the 40% price order. The better-sibling rule compares two settings only
+  and Lechmazur. Every base suite and preference source is now standardized on
+  its own over the charted models it tested, with no anchor suite, and the
+  step limit is rescaled from 40% to 20% a point to keep the same trade-off on
+  that scale. The Team lead row now goes by quality, and the Executor row keeps
+  the price order. The better-sibling rule compares two settings only
   on the base suites that tested both, and lists the sibling at its best-value
   effort when that is higher. The routing checks now cover every row, and the
   data is refreshed to 2026-11-24.

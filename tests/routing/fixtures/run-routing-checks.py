@@ -67,8 +67,8 @@ def check_report() -> None:
     check(result.returncode == 0, f"report failed: {result.stdout}{result.stderr}")
     first = result.stdout.splitlines()[0] if result.stdout else ""
     check(first.startswith("OK "), f"line 1 is not an OK verdict: {first!r}")
-    check("anchor: Alder" in first and "Birch 23" in first and "Elm 6" in first,
-          f"line 1 should name the anchor and each suite's overlap with it: {first!r}")
+    check("current-model settings per suite: Alder 10, Birch 7, Elm 6" in first and "anchor" not in first,
+          f"line 1 should give each suite's count of current-model settings, with no anchor: {first!r}")
     check("outside the base: Cedar" in first, f"non-base suite not named: {first!r}")
     data = sections(result.stdout)
     suite, combined = data.get("suite figures", []), data.get("combined", [])
@@ -101,15 +101,15 @@ def check_report() -> None:
     check(find(combined, model="Gamma", effort="high").get("frontier") == "frontier", "the best cheap setting should be on the frontier")
     check(find(combined, model="Alpha", effort="high").get("frontier") == "", "a setting beaten on both quality and cost is not on the frontier")
 
-    # The knee is the last effort before a step costs more than 40% extra per added point.
+    # The knee is the last effort before a step costs more than 20% extra per added point.
     knees = {row["model"]: row["effort"] for row in combined if row.get("best_value") == "yes"}
-    # Alpha: low to medium costs about 7% a point, medium to high about 49%.
+    # Alpha: low to medium costs about 9% a point, medium to high about 58%.
     check(knees.get("Alpha") == "medium", f"Alpha should stop before its expensive step to high: {knees}")
-    # Line pays about 19% a point at every step, so it climbs to its top effort.
+    # Line pays about 17.5% a point at every step, so it climbs to its top effort.
     check(knees.get("Line") == "max", f"a model whose every step is cheap should reach its top effort: {knees}")
     # Peak scores less at max than at high, so max is left out before the climb.
     check(knees.get("Peak") == "high", f"an effort a cheaper one beats must never be the knee: {knees}")
-    # Twin: medium to high costs about 18% a point, high to max 50%.
+    # Twin: medium to high costs about 17% a point, high to max 47%.
     check(knees.get("Twin") == "high", f"Twin should take the cheap step and refuse the dear one: {knees}")
     # Thrift's low effort costs more and scores less than its medium.
     check(knees.get("Thrift") == "medium", f"a model whose lowest effort is beaten should start above it: {knees}")
@@ -118,11 +118,12 @@ def check_report() -> None:
     check(sum(1 for row in combined if row.get("best_value") not in ("", "yes")) == 0, "the best_value column should hold only yes or nothing")
 
     # The charted models at their knees, in order. A better-scoring setting goes first only when
-    # its extra cost is at most 40% for each point it adds. Alpha medium scores 4.7 more than
-    # Beta low for about 82% more cost a point, so the cheaper Beta goes first.
+    # its extra cost is at most 20% for each point it adds. Beta low scores 10.5 more than Gamma low
+    # for about 7% a point, so it goes first. Alpha medium scores 14.8 more than Gamma low for
+    # about 61% a point, so the cheaper Gamma goes ahead of it; Alpha beats Solo low at about 17%.
     listed = [(row["model"], row["effort"]) for row in data.get("candidates", [])]
-    check(listed == [("Gamma", "high"), ("Beta", "low"), ("Alpha", "medium"), ("Solo", "medium")],
-          f"candidates should be ordered by the 40% trade-off at each model's knee: {listed}")
+    check(listed == [("Beta", "low"), ("Gamma", "low"), ("Alpha", "medium"), ("Solo", "low")],
+          f"candidates should be ordered by the 20% trade-off at each model's knee: {listed}")
 
     # Executor rows start from each vendor's everyday model and Team lead rows from its flagship.
     # Solo medium is OpenAI's everyday model, but Gamma high scores higher for less, so it takes the slot.
@@ -160,9 +161,9 @@ def check_report() -> None:
               f"a preference source with no reads by the report date should be left out of the score: {writing}")
     check(find(suite, suite="Birch", model="Alpha", effort="high").get("minutes") == "9.0",
           "the suite figures should carry each setting's time per task")
-    # Combined cost is shown relative to the anchor suite's typical setting, not as dollars no suite charged.
-    check(find(combined, model="Alpha", effort="medium").get("relative_cost") == "1.09",
-          "combined cost should be a multiple of the anchor suite's typical setting, not dollars")
+    # Combined cost is a multiple of each suite's typical current-model setting, not dollars no suite charged.
+    check(find(combined, model="Alpha", effort="medium").get("relative_cost") == "1.49",
+          "combined cost should be a multiple of a typical charted setting, not dollars")
 
     with tempfile.TemporaryDirectory() as tmp:
         target = Path(tmp) / "data"
@@ -172,7 +173,7 @@ def check_report() -> None:
             '"models": [', '"models": [\n    {"model": "Peak", "provider": "xAI", "status": "current"},\n'
             '    {"model": "Line", "provider": "Google", "status": "current"},'))
         order = [row["model"] for row in sections(run("report", "--data", str(target)).stdout).get("candidates", [])]
-        # Line's knee scores one point above Peak's for twenty times the cost, far past 40% a point, so Peak goes first.
+        # Line's knee scores one point above Peak's for twenty times the cost, far past 20% a point, so Peak goes first.
         check("Peak" in order and "Line" in order and order.index("Peak") < order.index("Line"),
               f"a setting that costs far more for one more point should be listed after the cheaper one: {order}")
         # A rationed sibling never replaces an everyday model, however well it scores.
@@ -200,7 +201,7 @@ def check_report() -> None:
     v, vm = vendor("V", "Pick", ("Pick", "Cheap", "Cheaper"))
     w, wm = vendor("W", "Solo", ("Solo", "Dear"))
     u, um = vendor("U", "Top", ("Top",))
-    data = ev.Data([], [], {}, vm + wm + um, "A", {"V": v, "W": w, "U": u})
+    data = ev.Data([], [], {}, vm + wm + um, {"V": v, "W": w, "U": u})
     rows = [C("Pick", "low", 50, 1.0, 1), C("Pick", "high", 51, 2.0, 1),
             C("Cheap", "low", 54, 0.9, 1), C("Cheaper", "low", 53, 0.5, 1),
             C("Solo", "low", 40, 1.0, 1), C("Dear", "low", 60, 9.0, 1), C("Top", "low", 70, 0.4, 1)]
@@ -212,7 +213,7 @@ def check_report() -> None:
     # The Executor row follows the price order, and the Team lead row goes by quality.
     p, pm = vendor("P", "Cheap", ("Cheap",))
     q, qm = vendor("Q", "Best", ("Best",))
-    pair = ev.Data([], [], {}, pm + qm, "A", {"P": p, "Q": q})
+    pair = ev.Data([], [], {}, pm + qm, {"P": p, "Q": q})
     both = [C("Cheap", "low", 55, 0.5, 1), C("Best", "low", 60, 5.0, 1)]
     by_role = {}
     for role, pick, _ in ev.vendor_rows(pair, both):
@@ -223,7 +224,7 @@ def check_report() -> None:
     # only suite they share, but S2 tested only Sib and drags its combined score below Pick's.
     import math
     s, sm = vendor("S", "Pick", ("Pick", "Sib", "Lone"))
-    solo_data = ev.Data([], [], {}, sm, "A", {"S": s})
+    solo_data = ev.Data([], [], {}, sm, {"S": s})
     settings = [C("Pick", "high", 60, 2.0, 1), C("Sib", "high", 52, 1.0, 2)]
     scales = ev.Scaled({"S1": {"Pick": {"high": 1.0}, "Sib": {"high": 1.2}}, "S2": {"Sib": {"high": -1.0}}},
                        {"S1": {"Pick": {"high": math.log(2.0)}, "Sib": {"high": math.log(1.0)}}, "S2": {}}, {})
@@ -239,23 +240,24 @@ def check_report() -> None:
     # max, above its best-value effort of low, so it stays at max.
     r, rm = vendor("R", "Base", ("Base", "Rise"))
     t_, tm = vendor("T", "Floor", ("Floor", "Top"))
-    rise = ev.Data([], [], {}, rm + tm, "A", {"R": r, "T": t_})
+    rise = ev.Data([], [], {}, rm + tm, {"R": r, "T": t_})
     listed = {pick.model: pick.effort for role, pick, _ in ev.vendor_rows(rise, [
         C("Base", "high", 55, 2.0, 1), C("Rise", "medium", 56, 1.5, 1), C("Rise", "high", 60, 2.5, 1),
         C("Floor", "high", 50.5, 1.2, 1), C("Top", "low", 50, 0.5, 1), C("Top", "max", 51, 1.0, 1),
     ]) if role == "Executor"}
     check(listed.get("Rise") == "high", f"a sibling should be listed at its best-value effort when that is above the setting that won the slot: {listed}")
     check(listed.get("Top") == "max", f"a sibling should stay at the setting that won the slot when that is above its best-value effort: {listed}")
-    # The order follows the 40% price, and a cycle falls back to the best-scoring setting.
-    a, b, c = C("A", "low", 50, 1.0, 1), C("B", "low", 51, 1.3, 1), C("C", "low", 52, 2.5, 1)
+    # The order follows the 20% price, and a cycle falls back to the best-scoring setting.
+    a, b, c = C("A", "low", 50, 1.0, 1), C("B", "low", 51, 1.15, 1), C("C", "low", 52, 1.5, 1)
     check([x.model for x in ev.order([c, b, a])] == ["B", "A", "C"],
-          f"B costs 30% more for a point and goes first; C costs about 63% a point more than B and goes last: {[x.model for x in ev.order([c, b, a])]}")
-    x, y, z = C("X", "low", 50, 1.0, 1), C("Y", "low", 51, 1.35, 1), C("Z", "low", 52, 1.85, 1)
+          f"B costs 15% more for a point and goes first; C costs about 30% a point more than B and goes last: {[x.model for x in ev.order([c, b, a])]}")
+    # Y beats X at 19% a point and Z beats Y at about 19%, but X beats Z at 21%: a cycle.
+    x, y, z = C("X", "low", 50, 1.0, 1), C("Y", "low", 51, 1.19, 1), C("Z", "low", 52, 1.42, 1)
     check([p.model for p in ev.order([x, y, z])][0] == "Z", "when every setting is beaten by another, the best-scoring one goes first")
-    # The knee stops before a step that costs more than 40% a point, even when the step is only just over.
-    check(ev.best_value_effort([C("K", "low", 50, 1.0, 1), C("K", "medium", 51, 1.42, 1)]) == "low", "a step at 42% a point should not be taken")
-    check(ev.best_value_effort([C("K", "low", 50, 1.0, 1), C("K", "medium", 51, 1.38, 1)]) == "medium", "a step at 38% a point should be taken")
-    check(ev.best_value_effort([C("K", "low", 50, 1.0, 1), C("K", "medium", 50, 1.0, 1), C("K", "high", 52, 1.5, 1)]) == "high",
+    # The knee stops before a step that costs more than 20% a point, even when the step is only just over.
+    check(ev.best_value_effort([C("K", "low", 50, 1.0, 1), C("K", "medium", 51, 1.22, 1)]) == "low", "a step at 22% a point should not be taken")
+    check(ev.best_value_effort([C("K", "low", 50, 1.0, 1), C("K", "medium", 51, 1.18, 1)]) == "medium", "a step at 18% a point should be taken")
+    check(ev.best_value_effort([C("K", "low", 50, 1.0, 1), C("K", "medium", 50, 1.0, 1), C("K", "high", 52, 1.35, 1)]) == "high",
           "two efforts at the same point should not stop the climb or crash it")
     # Inputs that used to crash now stop with an ERROR line.
     for name, mutate, says in (
@@ -361,11 +363,10 @@ def check_validation() -> None:
         ("no base suite", no_base, "base suite"),
         ("preference source missing from chart.json", swap("chart.json", '["Fir", "Gorse"]', '["Fir", "Dogwood"]'), "Dogwood"),
         ("preference source with one current model", swap("results.csv", "Gorse,1.0,Gamma,high,90", "Gorse,1.0,Beta,high,90"), "at least two"),
-        ("anchor that is not a base suite", swap("chart.json", '"anchor": "Alder"', '"anchor": "Cedar"'), "anchor"),
-        ("a suite that shares too few settings with the anchor",
+        ("a suite with fewer than three current-model settings",
          rows("Alder,1.0,Alpha,low,40" + tail, "Alder,1.0,Alpha,high,60" + tail, "Alder,1.0,Beta,low,50" + tail,
               "Birch,2.0,Alpha,low,70" + tail, "Elm,4.0,Alpha,low,10" + tail), "fewer than three"),
-        ("a suite whose shared settings all score the same",
+        ("a suite whose current-model settings all score the same",
          rows("Alder,1.0,Alpha,low,40" + tail, "Alder,1.0,Alpha,medium,50" + tail, "Alder,1.0,Alpha,high,60" + tail,
               "Birch,2.0,Alpha,low,50" + tail, "Birch,2.0,Alpha,medium,50" + tail, "Birch,2.0,Alpha,high,50" + tail,
               "Elm,4.0,Alpha,low,10" + tail, "Elm,4.0,Alpha,medium,20" + tail, "Elm,4.0,Alpha,high,30" + tail), "Birch"),

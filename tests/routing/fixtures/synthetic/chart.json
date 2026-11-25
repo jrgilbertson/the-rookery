@@ -1,5 +1,4 @@
 {
-  "anchor": "Alder",
   "aliases": {"Thrift Mini": "Thrift"},
   "suites": {
     "Alder": {"base": true},

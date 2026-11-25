@@ -118,6 +118,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `SKILLS.md` now instructs skill authors to ask for approval for authoring's
+  model test runs when the work starts, or name the approval in the brief, and
+  to stop and ask rather than skip the runs silently when approval is missing.
 - Improve audit checks the repository's tracker read-only with
   `managing-issues` before saving its report and names each covering open issue
   beside its finding, reporting a coverage gap if the tracker is unreachable or

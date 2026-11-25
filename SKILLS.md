@@ -25,6 +25,10 @@ to check. The `/claude-api` commands `build-eval`, `hillclimb`, and
 
 ## Creating a skill
 
+The model test runs in this section are part of authoring, so ask for approval
+to run them when the work starts, or name the approval in the brief. If approval
+is missing, stop and ask; never skip the runs silently.
+
 First check that a skill is needed. An installed skill, a plugin, or the model
 on its own may already do the job. Run two or three realistic requests without
 a skill and note what goes wrong or is missing. If nothing does, stop.

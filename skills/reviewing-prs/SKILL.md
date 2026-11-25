@@ -111,8 +111,11 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    review only.
 6. Read each pull request once and note its `headRefOid` as the reviewed head:
    `gh pr view <number> -R <owner>/<repo> --json number,title,body,author,url,headRefOid,headRefName,baseRefName,isCrossRepository,headRepositoryOwner,labels,additions,deletions,changedFiles,files,mergeable,mergeStateStatus,statusCheckRollup,closingIssuesReferences,comments,reviews,reviewRequests,updatedAt`.
-   Then read its review threads, which show whether each point was resolved:
-   `gh api graphql -f query='query($owner: String!, $repo: String!, $number: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $number) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body } } } } } } }' -f owner=<owner> -f repo=<repo> -F number=<number>`.
+   Then read all its review threads, which show whether each point was
+   resolved:
+   `gh api graphql --paginate -f query='query($owner: String!, $repo: String!, $number: Int!, $endCursor: String) { repository(owner: $owner, name: $repo) { pullRequest(number: $number) { reviewThreads(first: 100, after: $endCursor) { pageInfo { hasNextPage endCursor } nodes { isResolved comments(first: 50) { totalCount nodes { author { login } body } } } } } } }' -f owner=<owner> -f repo=<repo> -F number=<number>`.
+   When a thread's `totalCount` is over 50, say in its block that the
+   thread was cut off.
 7. List what merged recently, for the end of the page. Labels add detail
    here but decide nothing. The window is the period the operator names, or
    else the last 7 days; state it on the page. For each owner from item 2,

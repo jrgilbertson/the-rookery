@@ -164,13 +164,14 @@ def check_search_fidelity(scratch: Path) -> None:
 
 def check_review_threads(scratch: Path) -> None:
     run = Run("risk-overview-and-situations", scratch / "threads")
-    query = re.search(r"gh api graphql -f query='([^']*reviewThreads[^']*)'", SKILL.read_text(encoding="utf-8"))
-    expect(query is not None, "the skill must name its review-thread query")
-    answer = run.json("api", "graphql", "-f", f"query={query.group(1)}", "-f", "owner=acme", "-f", "repo=ledger-app", "-F", "number=441")
+    query = re.search(r"gh api graphql --paginate -f query='([^']*reviewThreads[^']*)'", SKILL.read_text(encoding="utf-8"))
+    expect(query is not None, "the skill must name its review-thread query, paginated")
+    expect(all(part in query.group(1) for part in ("$endCursor", "pageInfo", "totalCount")), "the review-thread query must page through threads and count comments")
+    answer = run.json("api", "graphql", "--paginate", "-f", f"query={query.group(1)}", "-f", "owner=acme", "-f", "repo=ledger-app", "-F", "number=441")
     nodes = answer["data"]["repository"]["pullRequest"]["reviewThreads"]["nodes"]
     expect(len(nodes) == 2 and all(node["isResolved"] for node in nodes), f"review threads: {nodes}")
     expect(nodes[0]["comments"]["nodes"][-1]["body"] == "Out of scope for this fix.", "the declined answer must be readable")
-    missing = run.gh("api", "graphql", "-f", f"query={query.group(1)}", "-f", "owner=acme", "-f", "repo=ledger-app", "-F", "number=999")
+    missing = run.gh("api", "graphql", "--paginate", "-f", f"query={query.group(1)}", "-f", "owner=acme", "-f", "repo=ledger-app", "-F", "number=999")
     expect(missing.returncode == 1, "a review-thread query for a missing pull request must fail")
 
 

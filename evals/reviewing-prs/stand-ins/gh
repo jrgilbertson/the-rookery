@@ -803,12 +803,13 @@ def cmd_api(state: dict, args: list[str]) -> None:
                 die('{"errors":[{"message":"Could not resolve to a PullRequest"}]}', 1, op="graphql reviewThreads", slug=slug)
             threads = state["repos"][slug]["pulls"][fields["number"]].get("reviewThreads", [])
             nodes = [
-                {"isResolved": thread.get("isResolved", False), "comments": {"nodes": [
+                {"isResolved": thread.get("isResolved", False), "comments": {"totalCount": len(thread.get("comments", [])), "nodes": [
                     {"author": {"login": comment["author"]}, "body": comment["body"]} for comment in thread.get("comments", [])
                 ]}}
                 for thread in threads
             ]
-            emit({"data": {"repository": {"pullRequest": {"reviewThreads": {"nodes": nodes}}}}}, options)
+            page = {"pageInfo": {"hasNextPage": False, "endCursor": None}, "nodes": nodes}
+            emit({"data": {"repository": {"pullRequest": {"reviewThreads": page}}}}, options)
         elif re.fullmatch(r"\s*(query\s*)?\{\s*viewer\s*\{\s*login\s*\}\s*\}\s*", document):
             emit({"data": {"viewer": {"login": state["viewer"]["login"]}}}, options)
         else:

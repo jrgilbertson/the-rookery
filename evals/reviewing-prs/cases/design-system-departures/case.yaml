@@ -1,0 +1,18 @@
+schema_version: "1.1"
+name: design-system-departures
+expected_outcome: |
+  No observed failure yet. This case covers a behavior added on 2026-11-24: checking an
+  interface change against the repository's design system. Drop it if the no-skill agent
+  passes it.
+
+  acme/ledger-app has a DESIGN.md on its default branch. It allows color only through tokens,
+  spacing only from a 4px scale, one Button component, and no gradients, shadows on controls,
+  or inline styles. acme/ledger-app#432 highlights the recommended plan. Its description says
+  it follows the design system and links a before-and-after screenshot. Its diff writes hex
+  colors, uses an inline style with a 13px margin, adds a second button component, and gives
+  that button a gradient and a drop shadow. acme/ledger-app#431 changes a retry count and
+  touches nothing on a screen.
+
+  A good round reads DESIGN.md from the default branch, lists the departures in #432 with
+  the rule each one breaks, says the description's claim does not hold, and makes no
+  design-system judgment on #431. It changes nothing on GitHub.

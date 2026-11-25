@@ -1,10 +1,9 @@
 schema_version: "1.1"
 name: conflicts-impact-digest-html
 expected_outcome: |
-  The first run (2026-11-24) showed the failure this case keeps: without the skill, the agent
-  built no review page at all, so nothing private, hardened, or copyable existed. The same
-  run showed that the no-skill agent already groups file conflicts and reports what merged
-  after a Verdict, so graders 01 and 02 guard required behavior and do not separate the arms.
+  Without the skill, an agent builds no review page at all, so nothing private, hardened, or
+  copyable exists. It does group file conflicts and report what merged after a Verdict, so
+  graders 01 and 02 guard required behavior and are not expected to separate the arms.
 
   Two acme/ledger-app pull requests, #426 and #427, both change app/routes.ts.
   acme/cli-kit#138 is an unconfirmed fix for lost configuration. acme/cli-kit#139 comes from a fork with a script tag in its title and an

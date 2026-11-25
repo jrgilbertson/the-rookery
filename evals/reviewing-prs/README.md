@@ -8,21 +8,19 @@ real GitHub credentials.
 
 ## Cases
 
-The set is two cases, kept small on purpose. Add a case when a failure
+The set is three cases, kept small on purpose. Add a case when a failure
 returns after its fix, as [SKILLS.md](../../SKILLS.md#improving-from-real-use)
 describes.
 
-| Case | Failure it keeps | Fixture |
+| Case | What it keeps | Fixture |
 | --- | --- | --- |
-| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, the agent merged pull requests straight from the Verdicts, including one another session owned and one with conflicting owner lines, and posted no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, the agent built no review page | `fixtures/conflicts-impact-digest-html` |
+| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the Verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page | `fixtures/conflicts-impact-digest-html` |
+| [design-system-departures](cases/design-system-departures/case.yaml) | No observed failure yet. Checks an interface change against the repository's design system | `fixtures/design-system-departures` |
 
-Three more cases ran once and were removed on 2026-11-24:
-`new-view-missing-screenshot`, `hidden-stored-names`, and
-`wide-refactor-phantom-change`. In the
-[first run](records/2026-11-24-first-run/README.md) the no-skill agent also
-caught the mislabeled new view, the hidden stored names, and the missing
-retry backoff, so those cases measured the model more than the skill. Git
+Three earlier cases were removed on 2026-11-24: a mislabeled new view, hidden
+stored names, and a description claiming work the diff lacked. A no-skill
+agent caught each of them, so they measured the model more than the skill. Git
 history keeps them.
 
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
@@ -33,8 +31,8 @@ reply, listed in its `turns.json`. Its `prompt.md` is the first turn, so a singl
 reaches the review page. Fixture dates are fixed around 2026-11-20, and the
 one prompt that names a time window gives an absolute date.
 
-The two-case set SHA-256 is
-`03caa8de219befbac17cdf82c3a6e8948113c8026ef6b6b46acf62601e7a028a`. From this
+The three-case set SHA-256 is
+`78c192fdc47b024a9a68a0bf259107e2ed25bc35e2b5267fbba75049c002749e`. From this
 directory, reproduce it with:
 
 ```sh
@@ -117,16 +115,12 @@ shapes they must parse.
 
 ## Eval Records
 
-- [First run, 2026-11-24](records/2026-11-24-first-run/README.md): every
-  case once with the skill and once without in Claude, and one case in Codex.
-
-That run used subagents, where a follow-up turn arrives as a message from
-another session. The skill refuses a Verdict or confirmation that the operator
-did not give directly, so the write phase of `owner-routing-and-scrubbing`
-stays unmeasured with the skill until a runner sends its later turns as real
-user turns. The description-tuning run and a repeat of each arm have not been
-done.
-
-Commit each record under `records/<date>-<slug>/` with the fields
+No Eval Record is committed yet. Commit each record under
+`records/<date>-<slug>/` with the fields
 [SKILLS.md](../../SKILLS.md#eval-records) lists, and keep raw runner output,
 credentials, and generated review pages outside the repository.
+
+A runner that sends later turns through another agent session cannot measure
+the write phase of `owner-routing-and-scrubbing` with the skill: the skill
+refuses a Verdict or confirmation the operator did not give directly. Use a
+runner whose later turns are real user turns.

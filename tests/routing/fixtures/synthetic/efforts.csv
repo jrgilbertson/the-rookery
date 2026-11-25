@@ -1,4 +1,11 @@
 label,effort,sources
 na,none,FrontierCode
+none,none,every suite
+minimal,minimal,FrontierCode
+low,low,every suite
+medium,medium,every suite
+high,high,every suite
+xhigh,xhigh,FrontierCode
 extra-high,xhigh,VulcanBench
 extra high,xhigh,Cedar
+max,max,every suite

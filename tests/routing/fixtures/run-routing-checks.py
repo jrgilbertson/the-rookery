@@ -477,6 +477,17 @@ def check_import() -> None:
                       "--version", "9.9", "--date", "next tuesday", "--url", "https://example.com/x")
         check(undated.returncode != 0 and results.read_text() == snapshot, "an import with a malformed date should be refused")
 
+        # Every label must have its own row, even one already spelled like an effort.
+        labels = target / "efforts.csv"
+        kept_labels = labels.read_text()
+        labels.write_text("".join(line for line in kept_labels.splitlines(keepends=True) if not line.startswith("high,")))
+        unmapped = run("import", "--data", str(target), "--format", "table", "--suite", "Cedar",
+                       "--file", str(sources / "table-sample.csv"), "--version", "1.1", "--date", "2026-02-04", "--url", "https://example.com/cedar")
+        check(unmapped.returncode != 0 and "efforts.csv" in unmapped.stdout and "'high'" in unmapped.stdout,
+              f"a label efforts.csv has no row for should stop the import, even one spelled like an effort: {unmapped.stdout}")
+        check(results.read_text() == snapshot, "an import stopped on an unmapped label changed the results file")
+        labels.write_text(kept_labels)
+
         bad = Path(tmp) / "bad.json"
         bad.write_text('{"unexpected": true}')
         broken = run("import", "--data", str(target), "--format", "frontiercode", "--file", str(bad),
@@ -488,6 +499,22 @@ def check_import() -> None:
 SVG = "{http://www.w3.org/2000/svg}"
 NAVY = "#042458"
 CHARTS = ("routing-base.svg", "routing-frontier.svg", "routing-table.svg")
+
+
+def check_frontier_rules() -> None:
+    """Rank the frontier field by every scored effort, and keep every setting that ties a frontier setting exactly."""
+    sys.path.insert(0, str(REPO_ROOT / "scripts" / "routing"))
+    import evidence
+    data = evidence.load(SYNTHETIC)
+    point = evidence.Combined
+    data.frontier["top"] = 1
+    # Line's best score is at an effort no suite prices; it still outranks Peak.
+    field, _ = evidence.frontier_field(data, [point("Line", "low", 40, 1.0, 2), point("Line", "max", 90, None, 2),
+                                              point("Peak", "high", 60, 1.0, 2)])
+    check([line.model for line in field] == ["Line"], f"the field should rank models by every scored effort, priced or not: {[line.model for line in field]}")
+    data.frontier["top"] = 2
+    _, edge = evidence.frontier_field(data, [point("Peak", "high", 60, 1.0, 2), point("Line", "high", 60, 1.0, 2)])
+    check(sorted(p.model for p in edge) == ["Line", "Peak"], f"two settings at the same cost and score should both sit on the frontier: {edge}")
 
 
 def check_charts() -> None:
@@ -738,6 +765,7 @@ def main() -> int:
     check_report()
     check_validation()
     check_import()
+    check_frontier_rules()
     check_charts()
     if failures:
         for failure in failures:

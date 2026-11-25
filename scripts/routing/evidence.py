@@ -972,17 +972,19 @@ def frontier_field(data: Data, combined: list[Combined]) -> tuple[list[Series], 
     skip = data.superseded | {entry["model"] for entry in data.models if entry["status"] == "superseded"}
     routed = {entry["model"]: entry["provider"] for entry in data.models if entry["status"] == "current"}
     scored = scale(data).quality
-    field_ = []
+    field_, peak = [], {}
     for model in sorted({row.model for row in combined} - skip):
         suites = sum(1 for suite in scored.values() if model in suite)
-        points = [row for row in _by_effort([r for r in combined if r.model == model]) if row.cost is not None]
+        rows = [r for r in combined if r.model == model]
+        points = [row for row in _by_effort(rows) if row.cost is not None]
         if suites >= config["min_suites"] and points:
             field_.append(Series(model, routed.get(model, ""), model in routed, suites, points))
-    field_ = sorted(field_, key=lambda line: (-max(point.quality for point in line.points), line.model))[:config["top"]]
+            peak[model] = max(row.quality for row in rows)  # rank by every scored effort, priced or not
+    field_ = sorted(field_, key=lambda line: (-peak[line.model], line.model))[:config["top"]]
     edge, best = [], -math.inf
     for point in sorted((point for line in field_ for point in line.points), key=lambda point: (point.cost, -point.quality)):
-        if point.quality > best:
-            edge.append(point)
+        if point.quality > best or (edge and (point.cost, point.quality) == (edge[-1].cost, edge[-1].quality)):
+            edge.append(point)  # a setting at exactly the same cost and score as a frontier one is on it too
             best = point.quality
     return field_, edge
 
@@ -1169,9 +1171,10 @@ def import_source(directory: Path, fmt: str, path: Path, version: str, date: str
     fresh = []
     for model, effort, score, pass_rate, cost, minutes in _source_rows(fmt, path):
         label = effort.strip().lower()
-        model, effort = model.removeprefix("Claude ").strip(), labels.get(label, label)
-        if effort not in EFFORTS:
+        model = model.removeprefix("Claude ").strip()
+        if label not in labels:
             raise DataError(f"{path.name}: {model} has effort label {label!r}, which efforts.csv doesn't map; add a row or leave the row out")
+        effort = labels[label]
         cells = io.StringIO()
         csv.writer(cells, lineterminator="").writerow((suite, version, model, effort, score, pass_rate, cost, minutes, date, url))
         fresh.append(((model, EFFORTS.index(effort) if effort in EFFORTS else -1), cells.getvalue()))

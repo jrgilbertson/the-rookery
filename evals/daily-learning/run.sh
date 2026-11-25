@@ -53,8 +53,9 @@ mkdir -p "$out/bin"
 cp "$here/safe-git.sh" "$out/bin/git"
 chmod 555 "$out/bin/git" "$out/bin"
 chmod -R a-w "$ws/vault/.git"
-export SAFE_GIT_REAL
+export SAFE_GIT_REAL SAFE_GIT_VAULT
 SAFE_GIT_REAL=$(command -v git)
+SAFE_GIT_VAULT="$ws/vault"
 
 # The prompt is the text after the settings block.
 prompt=$(awk 'n>=2 && (seen || NF) {seen=1; print} /^---$/{n++}' "$here/$case/prompt.md")
@@ -65,7 +66,7 @@ PATH="$out/bin:$PATH" claude -p "$prompt" \
   --setting-sources project --strict-mcp-config --no-session-persistence \
   --permission-mode acceptEdits \
   --allowedTools "Read Glob Grep Edit(./**) Write(./**) WebSearch WebFetch Skill Bash(ls:*) Bash(stat:*) Bash(git log:*) Bash(git show:*) Bash(git diff:*) Bash(git status:*) Bash(git -C vault log:*) Bash(git -C vault show:*) Bash(git -C vault diff:*) Bash(git -C vault status:*)" \
-  --disallowedTools "Edit(vault/.git/**) Write(vault/.git/**)" \
+  --disallowedTools "Edit(**/.git/**) Write(**/.git/**) Edit(**/.gitattributes) Write(**/.gitattributes)" \
   --max-budget-usd 3 \
   --output-format stream-json --verbose ${extra[@]+"${extra[@]}"} < /dev/null > "$out/events.jsonl" 2> "$out/stderr.txt"
 rc=$?

@@ -5,7 +5,7 @@
   `skills/daily-learning` tree is `16b79c4670fb58310f915620cfbff0df0697bede`.
 - **Cases** `daily-pass`, `digest-reply`, `failing-card`, and `quiet-day`. The
   case-set SHA-256 is
-  `b48134b06e84ca8805d7e7da2c16088915668aad08c0e43fd3ddb71a0c251f3a`; the
+  `0c6b7247c411cbd725758e8014e5f02e685ce8a67f3aca0a11c8c91da385bbab`; the
   [Skill Eval README](../../README.md) gives the command that reproduces it.
 - **Baseline** No skill: fresh Claude sessions with the same requests and the
   same workspaces, byte for byte.

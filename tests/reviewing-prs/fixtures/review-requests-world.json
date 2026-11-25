@@ -1,0 +1,155 @@
+{
+  "viewer": {
+    "login": "dana-acme"
+  },
+  "orgs": [
+    "acme"
+  ],
+  "now": "2026-11-20T17:00:00Z",
+  "repos": {
+    "acme/ledger-app": {
+      "visibility": "PRIVATE",
+      "viewerPermission": "ADMIN",
+      "defaultBranch": "main",
+      "mergeMethods": [
+        "squash"
+      ],
+      "labels": [],
+      "pulls": {
+        "450": {
+          "title": "Tidy the invoice list",
+          "body": "Tidy the invoice list.\n",
+          "author": "dana-acme",
+          "state": "OPEN",
+          "headRefOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "headRefName": "change",
+          "labels": [],
+          "createdAt": "2026-11-19T10:00:00Z",
+          "updatedAt": "2026-11-19T11:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "reviewRequests": [],
+          "diff": "diff --git a/README.md b/README.md\n--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-old\n+new\n"
+        }
+      }
+    },
+    "lee-labs/shared-tool": {
+      "visibility": "PRIVATE",
+      "viewerPermission": "WRITE",
+      "defaultBranch": "main",
+      "mergeMethods": [
+        "squash"
+      ],
+      "labels": [],
+      "pulls": {
+        "12": {
+          "title": "Add a retry to the uploader",
+          "body": "Add a retry to the uploader.\n",
+          "author": "lee-labs-dev",
+          "state": "OPEN",
+          "headRefOid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "headRefName": "change",
+          "labels": [],
+          "createdAt": "2026-11-19T10:00:00Z",
+          "updatedAt": "2026-11-19T11:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "reviewRequests": [
+            "dana-acme"
+          ],
+          "diff": "diff --git a/README.md b/README.md\n--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-old\n+new\n"
+        }
+      }
+    },
+    "lee-labs/handbook": {
+      "visibility": "PRIVATE",
+      "viewerPermission": "READ",
+      "defaultBranch": "main",
+      "mergeMethods": [
+        "squash"
+      ],
+      "labels": [],
+      "pulls": {
+        "3": {
+          "title": "Describe the release checklist",
+          "body": "Describe the release checklist.\n",
+          "author": "lee-labs-dev",
+          "state": "OPEN",
+          "headRefOid": "cccccccccccccccccccccccccccccccccccccccc",
+          "headRefName": "change",
+          "labels": [],
+          "createdAt": "2026-11-19T10:00:00Z",
+          "updatedAt": "2026-11-19T11:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "reviewRequests": [
+            "dana-acme",
+            "lee-labs/docs-team"
+          ],
+          "diff": "diff --git a/README.md b/README.md\n--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-old\n+new\n"
+        }
+      }
+    },
+    "other-co/sdk": {
+      "visibility": "PUBLIC",
+      "viewerPermission": "READ",
+      "defaultBranch": "main",
+      "mergeMethods": [
+        "squash"
+      ],
+      "labels": [],
+      "pulls": {
+        "88": {
+          "title": "Document the pagination helper",
+          "body": "Document the pagination helper.\n",
+          "author": "other-co-dev",
+          "state": "OPEN",
+          "headRefOid": "dddddddddddddddddddddddddddddddddddddddd",
+          "headRefName": "change",
+          "labels": [],
+          "createdAt": "2026-11-19T10:00:00Z",
+          "updatedAt": "2026-11-19T11:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "reviewRequests": [
+            "dana-acme"
+          ],
+          "diff": "diff --git a/README.md b/README.md\n--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-old\n+new\n"
+        }
+      },
+      "affiliation": "none"
+    }
+  }
+}

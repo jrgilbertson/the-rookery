@@ -32,7 +32,10 @@ title in the product team's language. Keep `Problem`, `Scope`, and
 `Verification`; add optional sections only when they prevent a material
 misreading. Each Verification criterion proves behavior promised by Problem and
 Scope, names an observable result or evidence requirement, and is false or
-unproven before completion.
+unproven before completion. For a change users will see, include a criterion
+that requires before-and-after screenshots, or a named preview walkthrough
+when nothing can capture them locally, so whoever checks the evidence at
+merge enforces it.
 
 Decompose only when the outcome needs more than one reviewable deliverable:
 

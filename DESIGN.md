@@ -9,6 +9,14 @@ colors:
   drafting-graphite: "#47577A"
   signal-orange: "#DC6C36"
   dispatch-paper: "#F0EBE5"
+  night-paper: "#14161B"
+  night-sheet: "#1B1E25"
+  night-chalk-ink: "#ECEEF3"
+  night-graphite: "#A7AFC0"
+  night-cobalt: "#93AEEF"
+  night-signal: "#E08A5E"
+  night-dispatch: "#29251F"
+  night-emphasis: "#34415C"
 ---
 
 # Design System: The Rookery
@@ -56,6 +64,10 @@ Navy signals authority, cobalt shows the sequence, and blue-gray defines support
 **The Ink Hierarchy Rule.** Raven Navy explains the subject, Route Cobalt explains movement, and Drafting Graphite explains supporting structure.
 
 **The Two Papers Rule.** Mist Paper carries a scene; Chalk Paper carries data. A figure whose job is to be read, not looked at, goes on Chalk. Text inks must reach 4.5:1 on their paper, and Drafting Graphite does on both.
+
+### Night Paper
+
+An interactive page that people read at night, such as the review page the `reviewing-prs` skill ships, may follow the reader's dark setting. Night Paper keeps every role of the palette on a near-neutral graphite ground. Its ground is a near-neutral graphite (`#14161B`, with sheets at `#1B1E25`) and its main ink is Chalk (`#ECEEF3`). Drafting Graphite lifts to `#A7AFC0`, Route Cobalt to `#93AEEF`, Signal Orange to `#E08A5E`, and Dispatch Paper darkens to a warm `#29251F`. Each role keeps its meaning, and every text ink still reaches 4.5:1 on its paper. Saturation stays low, so the ground does not read as blue and orange stays scarce.
 
 ## Typography
 
@@ -114,6 +126,18 @@ The illustrations show physical depth without glossy card shadows, bloom, or flo
 Organic corvid silhouettes break against precise field geometry. Circular route nodes, seals, apertures, calibration rings, and return loops repeatedly mark the state of the work. Straight-edged jigs, gates, frames, and folded paper give each abstract job a physical form. Corners follow the depicted material. Cut paper may soften; wood and metal keep constructed edges. Do not apply one generic rounded-card radius throughout the scene.
 
 **The Mechanism Has Consequence Rule.** Every aperture, gate, jig, ring, or bridge must make the stage's operation clearer; remove decorative machinery that does not change the explanation.
+
+## Working Pages
+
+A working page is an interactive page someone uses to decide something, such as the review page the `reviewing-prs` skill ships. It keeps the plates' palette, type families, and paper roles; the rules below cover the parts a plate does not have.
+
+- **Papers.** Chalk Paper is the ground, and each section sits on a white sheet held by a Drafting Graphite hairline. Dispatch Paper carries notes someone wrote, such as an agent's read, a note across items, or review feedback. Data that needs attention does not use Dispatch Paper.
+- **Type.** Didot sets the page headline and numerals at 1rem or larger only, because its hairlines thin out at small sizes and on Night Paper. Baskerville sets body text and titles. A compact system sans sets labels, buttons, and metadata, never smaller than 0.7rem (11px). A working page loads no web fonts, so the Georgia fallback for both serifs is intended.
+- **Parts.** Containers and controls take a 2px radius, the corner of cut card stock; circles are kept for route nodes, ranks, and seals. A segmented control shows its chosen option as a Raven Navy fill with Chalk text, reversed at night. Focus is a 2px Route Cobalt ring. Controls are at least 36px tall, and 44px on narrow screens. Nothing casts a shadow.
+- **Orange.** A small Signal Orange seal marks what needs the operator: behavior a change did not describe, a change a revert cannot undo, a notice that leaves the work incomplete, anything that shipped without the operator's decision or changed after it, and a style outside the design system in a redrawn screen. Orange never fills an area and never marks an empty state; an empty group takes the graphite ring. Each orange mark also says what it means in words.
+- **Movement.** Route Cobalt marks what a change moved: a ring around a changed element and a heavier border on the changed step of a path.
+- **Diff colors.** Code diffs use green and red, a deliberate departure like the routing chart's provider colors, because readers expect them. Added lines are `#0B5D3B` on `#EAF3EE` and removed lines `#8F2A1F` on `#F7E9E6`; at night they are `#9BD3B5` on `#1C2A23` and `#F0A99D` on `#33201D`. Each pair reaches 7:1.
+- **Emphasis at night.** An emphasized cell uses Night Emphasis (`#34415C`) at night, because Mist Paper's night value sits too close to the sheet to read as a step.
 
 ## Do's and Don'ts
 

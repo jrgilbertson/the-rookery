@@ -20,6 +20,9 @@ configuration sample against
 and the shipped personal-chief-of-staff source-map sample
 against the version 3 shape in
 [source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md).
+The [Reviewing PRs checks](reviewing-prs/README.md) exercise the synthetic
+GitHub stand-in and fixtures that its Skill Eval runs against, and the review
+page template the skill ships.
 The repository-integrity tests also exercise malformed packages and unsafe
 paths. The routing checks run the shipped
 [routing evidence script](../scripts/routing/evidence.py) against synthetic

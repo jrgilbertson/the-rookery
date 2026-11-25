@@ -15,8 +15,11 @@ inside a repository is rejected.
 same shell steps the skill prescribes. It then confirms the security policy
 and its nonce, that the template builds no HTML from strings and loads
 nothing external, and that the page's data block matches the escaped data
-file byte for byte and still parses. It reads the page as text, so it cannot
-tell whether the page looks right.
+file byte for byte and still parses. It then runs the page's own script in
+Node against a minimal stand-in for the DOM and checks where each pull request
+lands: which side of the hold line, in what order, and whether a sensitive
+kind is named. It needs `node` on `PATH`, and it cannot tell whether the page
+looks right.
 
 Run both through the complete repository gate:
 

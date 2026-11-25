@@ -75,6 +75,7 @@ is exactly `data.json` and holds no literal `<`. Pull request text can hold
   "size": {"additions": 19, "deletions": 4, "files": 3},
   "scores": {"impact": 2, "confidence": 2, "verify": 2, "undo": 3},
   "driver": "Changes rounding in billing without saying so. A charge that is wrong stays made after a revert.",
+  "sensitiveKind": "money",
   "audience": "customer",
   "ifWrong": "", "proof": "", "asked": "",
   "code": [],
@@ -93,8 +94,12 @@ is exactly `data.json` and holds no literal `<`. Pull request text can hold
   product yourself; the page does. A missing score sorts the pull request to
   the top of the held group.
 - `driver`: one or two sentences saying what drives the score, written for
-  the overview. When the pull request is held only because it touches a
-  sensitive kind, name the kind here, since the overview groups by score.
+  the overview.
+- `sensitiveKind`: each sensitive kind from step 3's first hold test that the
+  pull request touches, such as `CI workflow`, `access and authorization`, or
+  `dependency lockfile`, as a string or a list of strings. Leave it out when
+  there is none. The page holds a pull request that names one whatever its
+  scores, and names the kind in the overview and in its block.
 - `audience`: who sees the difference: `customer`, `caller`, `operator`, or
   another single noun. The panel reads "What is different for a <audience>".
 
@@ -230,7 +235,7 @@ say; the page then shows "Nothing to report."
 ## Closing rows
 
 ```json
-"inProgress": [{"repo": "acme/cli-kit", "number": 137, "url": "...", "title": "...", "note": "Draft, checks running."}],
+"inProgress": [{"repo": "acme/cli-kit", "number": 137, "url": "...", "title": "...", "note": "Owned by repo-captain, checks running."}],
 "merged": {
   "window": "Since your last Verdict, 2026-11-23 15:02 PST.",
   "without": [{"repo": "...", "number": 412, "url": "...", "title": "...", "reason": "Merged with no Verdict and no label."}],
@@ -239,6 +244,8 @@ say; the page then shows "Nothing to report."
 ```
 
 - `note`: who is working on it and what it waits on.
-- `window`: the window step 1 used, stated so the operator can see it.
+- `window`: the window step 1 used for each owner, stated so the operator can
+  see it, such as "acme: since 2026-11-18 10:00 PST; dana-acme: the last 72
+  hours."
 - `reason` and `summary`: one sentence each, from step 1's merged list. A pull
   request appears in only one of the two lists.

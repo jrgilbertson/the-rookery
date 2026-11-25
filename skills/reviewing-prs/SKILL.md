@@ -94,18 +94,21 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    Then read its review threads, which show whether each point was resolved:
    `gh api graphql -f query='query($owner: String!, $repo: String!, $number: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $number) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body } } } } } } }' -f owner=<owner> -f repo=<repo> -F number=<number>`.
 5. List what merged since the operator last reviewed, for the end of the
-   page. Labels add detail here but decide nothing.
-   1. Find the operator's most recent Verdict comment: a comment by their
-      login whose first line starts with `Verdict:`. Per owner, run
+   page. Labels add detail here but decide nothing. Work out the window
+   separately for each owner from step 1, so reviewing a busy organization
+   every day does not hide an older unreviewed merge under a quieter owner.
+   1. Find the operator's most recent Verdict comment under that owner: a
+      comment by their login whose first line starts with `Verdict:`. Run
       `gh search prs --owner <owner> --commenter <login> --sort updated --limit 100 --json repository,number,updatedAt`,
       then read each result's `comments` with `gh pr view`, newest first,
       until a pull request was last updated before the newest Verdict found.
-   2. Start the window 24 hours before that comment, so a pull request that
-      merged after the last page was built but before its Verdicts were
-      posted is not missed. With no Verdict, use the period the operator
-      names, or the last 72 hours. State the window on the page.
-   3. Per owner, run
-      `gh search prs --owner <owner> --merged --merged-at ">=<start>" --limit 1000 --json repository,number,title,url`.
+   2. Start that owner's window 24 hours before that comment, so a pull
+      request that merged after the last page was built but before its
+      Verdicts were posted is not missed. With no Verdict, use the period the
+      operator names, or the last 72 hours. State each owner's window on the
+      page.
+   3. For that owner, run
+      `gh search prs --owner <owner> --merged --merged-at ">=<start>" --archived=false --limit 1000 --json repository,number,title,url`.
       Run the item 3 check on any repository this returns that you did not
       already keep, and skip those the operator cannot merge in.
    4. For each, read
@@ -384,7 +387,7 @@ head so GitHub refuses it if the head moved:
 `--squash`, `--merge`, or `--rebase`. Use the method the repository allows.
 If it allows more than one, use the one its recent merged pull requests used,
 or ask. Before merging, check for a merge queue with
-`gh api graphql -f query='{ repository(owner: "<owner>", name: "<repo>") { mergeQueue(branch: "<base>") { id } } }'`.
+`gh api graphql -f query='query($owner: String!, $repo: String!, $branch: String!) { repository(owner: $owner, name: $repo) { mergeQueue(branch: $branch) { id } } }' -f owner=<owner> -f repo=<repo> -f branch=<base>`.
 When that returns a queue, enqueue instead with the GraphQL
 `enqueuePullRequest` mutation, with `pullRequestId` from
 `gh pr view --json id` and `expectedHeadOid` set to the reviewed head.

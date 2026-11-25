@@ -68,7 +68,7 @@ pre .ctx { color: var(--ink-soft); }
 /* Labels use the compact sans DESIGN.md allows for dense labels, never below 0.7rem. */
 .sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
 .read dt, .bots b, .part small, .bar-note, .bar-progress, .theme, .seg button, .notes, .copy,
-.over-head small, .rail, .keys, .xnote b { font-family: var(--sans); }
+.over-head small, .kind, .rail, .keys, .xnote b { font-family: var(--sans); }
 .meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
 .source { margin-top: 6px; }
 .empty { color: var(--ink-soft); font-style: italic; }
@@ -110,6 +110,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 .orow a.title:hover { text-decoration: underline; }
 .where { display: block; margin-top: 2px; font-size: 0.8rem; color: var(--ink-soft); }
 .state { display: inline-block; margin-top: 4px; font-size: 0.78rem; font-weight: 650; }
+.kind { display: flex; align-items: center; gap: 7px; margin-top: 4px; font: 650 0.78rem/1.4 var(--sans); color: var(--signal-ink); }
+.kind::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); }
 .state:empty { display: none; }
 .orow p { font-size: 0.95rem; }
 .scores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 4px; text-align: center; }
@@ -349,9 +351,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     // A missing or invalid score fails safe: the pull request sorts to the top of the held group.
     const product = verify && undo ? verify * undo : 9;
     const leverage = impact && confidence && verify && undo ? (impact * confidence) / (verify * undo) : null;
-    return { pr, index, impact, confidence, verify, undo, product, leverage, hold: product >= 3 };
+    // A sensitive kind holds a pull request whatever its score (the first hold test).
+    const sensitiveKinds = (typeof pr.sensitiveKind === "string" ? [pr.sensitiveKind] : list(pr.sensitiveKind)).map(str).filter(Boolean);
+    return { pr, index, impact, confidence, verify, undo, product, leverage, sensitiveKinds,
+      hold: product >= 3 || sensitiveKinds.length > 0 };
   });
-  const byProduct = (a, b) => b.product - a.product || a.index - b.index;
+  // Highest V x U first; equal products break on the higher leverage, then on the agent's order.
+  const byProduct = (a, b) => b.product - a.product || (b.leverage ?? -1) - (a.leverage ?? -1) || a.index - b.index;
   const over = prs.filter((item) => item.hold).sort(byProduct);
   const under = prs.filter((item) => !item.hold).sort(byProduct);
   const ordered = over.concat(under);
@@ -459,7 +465,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     const section = el("section", hold ? "over hold" : "over");
     const head = el("div", "over-head");
     add(head, el("span", hold && items.length ? "seal" : "ring"), el("h2", "", hold ? "Over the hold line" : "Under the hold line"),
-      el("small", "", hold ? "verification effort × undo cost is 3 or more" : "verification effort × undo cost is 2 or less"));
+      el("small", "", hold ? "verification effort × undo cost is 3 or more, or the change touches a sensitive kind"
+        : "verification effort × undo cost is 2 or less, and no sensitive kind"));
     section.append(head);
     if (!items.length) {
       section.append(el("p", "empty", hold ? "None over the hold line." : "None under the hold line."));
@@ -473,7 +480,9 @@ main { padding: 40px 0 80px; min-width: 0; }
       vu.setAttribute("aria-label", "Verification effort times undo cost: " + item.product);
       const name = el("div");
       item.overviewState = el("span", "state");
-      add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")), item.overviewState);
+      add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
+      if (item.sensitiveKinds.length) name.append(el("span", "kind", "Sensitive kind: " + item.sensitiveKinds.join(", ")));
+      name.append(item.overviewState);
       const scores = el("div", "scores");
       const spoken = [];
       for (const [key, word, tint] of SCORE_NAMES) {
@@ -813,7 +822,11 @@ main { padding: 40px 0 80px; min-width: 0; }
     meta.append(document.createTextNode(facts.join(" · ") + " · "));
     meta.append(link("Open on GitHub", pr.url));
     add(article, head, meta);
-    if (str(pr.driver)) article.append(el("p", "driver", (item.hold ? "Over the hold line, V × U " : "Under the hold line, V × U ") + item.product + ". " + str(pr.driver)));
+    const kinds = item.sensitiveKinds.join(", ");
+    const placement = !item.hold ? "Under the hold line, V × U " + item.product + "."
+      : item.product >= 3 ? "Over the hold line, V × U " + item.product + (kinds ? ", and it touches a sensitive kind: " + kinds + "." : ".")
+      : "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
+    article.append(el("p", "driver", [placement, str(pr.driver)].filter(Boolean).join(" ")));
     for (const note of notesFor(pr)) {
       const box = el("p", "xnote");
       add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
@@ -923,7 +936,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     } catch (error) {
       verdictBox.focus();
       verdictBox.select();
-      lastCopied = verdictBox.value;
       status.textContent = "Copy did not work here. The text is selected; copy it by hand.";
     }
   });

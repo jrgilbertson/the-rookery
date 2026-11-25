@@ -13,7 +13,7 @@
     },
     {
       "label": "Repeats",
-      "text": "Three of the five over the line change behavior their description does not mention."
+      "text": "Three of the six held change behavior their description does not mention."
     }
   ],
   "prs": [
@@ -94,7 +94,10 @@
         "notExamined": "Where a downgrade's credit is recorded."
       },
       "feedback": "Bots raised 3 points. 2 fixed. 1 declined: \"pin the rounding with a test\", answered as out of scope.",
-      "rest": "3 new tests, all matching the description."
+      "rest": "3 new tests, all matching the description.",
+      "sensitiveKind": [
+        "money"
+      ]
     },
     {
       "repo": "acme/ledger-app",
@@ -394,7 +397,7 @@
         "files": 3
       },
       "scores": {
-        "impact": 2,
+        "impact": 3,
         "confidence": 2,
         "verify": 3,
         "undo": 1
@@ -581,7 +584,7 @@
         "verify": 1,
         "undo": 1
       },
-      "driver": "Patch bump of a dev dependency. It touches the lockfile.",
+      "driver": "Patch bump of a dev dependency, so V × U is 1, but it changes the lockfile, a sensitive kind.",
       "text": {
         "none": "No user-visible change. Vite's release notes for 6.3.2 list one dev-server fix.",
         "source": "diff"
@@ -594,7 +597,8 @@
         "judgment": "Merge it.",
         "check": "",
         "notExamined": "The lockfile's transitive changes beyond vite."
-      }
+      },
+      "sensitiveKind": "dependency lockfile"
     }
   ],
   "inProgress": [

@@ -79,7 +79,8 @@ leverage factors: impact, confidence, verification effort, and undo cost, each
 tables. On an update, keep each stored score unless the request, or evidence
 new in this update, changes it, and fill any score that is absent. A caller
 that may not write scores, such as a coordinated batch, gets the missing score
-listed in the preview instead of filled. Score a
+listed in the preview instead of filled. A Captain writes only the score
+changes its standing instruction permits, below. Score a
 leaf that still needs discovery or planning on what is known now; planning
 revises the scores.
 
@@ -262,7 +263,20 @@ explicit instruction to apply that bookkeeping is sufficient when it binds the
 canonical target, issues, intended result, and relevant conditions. A recorded
 standing instruction for a coordinated batch is also sufficient, without
 naming each edit in advance, for edits to the Scope and Verification of issues
-in that batch's scope, with their stored scores kept. Name that instruction beside the complete preview and proceed without asking again only
+in that batch's scope, with their stored scores kept. A Captain's recorded
+standing instruction is sufficient, for issues in its approved scope, for
+exactly these edits:
+
+- readiness and workflow labels: `needs-planning` to `ready`, In Progress, and
+  Done
+- tightening Scope and Verification
+- raising verification effort or undo cost
+- changing confidence up or down from code evidence
+
+Each such edit records the old and new value with its reason, and priority and
+estimate are derived again after it. Lowering verification effort or undo cost,
+any change to impact, cancellation, and creating a follow-up issue still need
+fresh approval. Name the standing instruction beside the complete preview and proceed without asking again only
 when every effect fits it and governing policy permits it. Approval of the
 underlying work or decision alone does not authorize a tracker write.
 

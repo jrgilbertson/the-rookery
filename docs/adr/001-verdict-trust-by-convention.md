@@ -51,7 +51,10 @@ These guards make the convention hold in ordinary use:
 - A Verdict names the full head commit the operator reviewed. A later commit
   is judged on its own before anything merges.
 - A merge made under a Verdict, by whichever session makes it, is pinned to
-  that commit, so GitHub refuses it if the head moved.
+  the head commit last judged: the reviewed commit, or a later one whose
+  change since review the
+  [review contract](../../skills/reviewing-prs/references/review-contract.md#after-a-verdict)
+  judged routine. GitHub refuses the merge if the head moved after that.
 - A Verdict counts only when the operator's exact login wrote it as a
   top-level comment. An `Owner:` line counts only on a pull request the
   operator opened from a branch in the same repository. A fork or outside

@@ -181,6 +181,21 @@ quality and output of every worker. In a coordinated batch it is the session
 the operator talks to. Orca's guides call it the coordinator, and older
 records call it the Coordinator.
 
+### Captain
+
+The one persistent session per repository that plans with the operator,
+dispatches Executors directly or through Domain Leads, and is the only session
+that merges in that repository. It acts only on the operator's recorded words
+and on live facts it rereads at every wake, and it never blocks on the
+operator. Do not call it the Coordinator.
+
+### Domain Lead
+
+A session a Captain starts to run one group of related work, such as a Design
+Lead for UI work that shares a design system. It briefs its own Executors,
+never merges, and hands ready and held pull requests up to the Captain. It
+exists only while it has active work.
+
 ### Coordinated Batch
 
 One Team lead, its task workers, and its record, working the issues and epics
@@ -192,27 +207,23 @@ the operator ends it.
 
 ### Merge Approval
 
-What the operator approved a Team lead to merge without them: the merge bar
-and held changes shown in the setup proposal for one coordinated batch, applied
-to the batch's scope, with any held change the operator pre-authorized under a
-stated bar and any change the operator made in recorded words to the scope,
-merge bar, or held changes. Only the operator's recorded approval creates or
-changes it. It covers merging and nothing else.
+What the operator approved a Team lead or a Captain to merge without them. For
+a Team lead, it is the merge bar and held changes shown in the setup proposal
+for one coordinated batch, applied to the batch's scope. For a Captain, it is
+the approval recorded in its charter for its repository's approved scope. Either
+way it includes any held change the operator pre-authorized under a stated bar
+and any change the operator made in recorded words to the scope, merge bar, or
+held changes. Only the operator's recorded approval creates or changes it. It
+covers merging and nothing else.
 
 ### Held Changes
 
 The changes that wait for the operator, however clean the pull request, unless
-the operator pre-authorized them. Two tests decide. First, a list of sensitive
-kinds: by default access and authorization, money, data deletion, privacy,
-outbound email, release gates, CI workflows and composite actions, git-hook
-and secret-scanner configs, dependency lockfiles, and the project's agent
-instructions and merge and review policy. Second, the score line: verification
-effort multiplied by undo cost is 3 or more, taking the higher of the issue's
-stored scores and what the pull request's diff shows, or any diff the reviewer
-cannot read clearly. Repo policy is read from the default branch, so a pull
-request cannot loosen the tests it is judged by. A project's own guidance or
-the operator's edit to a proposal can change the list of sensitive kinds; only
-the operator's own edit moves the score line.
+the operator pre-authorized them. Two tests decide: a list of sensitive kinds,
+and a score line on verification effort and undo cost. Both are stated in the
+[hold tests](skills/reviewing-prs/references/review-contract.md#hold-tests) of
+the review contract. A project's own guidance or the operator's edit can change
+the list of sensitive kinds; only the operator's own edit moves the score line.
 
 ## Issue management
 
@@ -283,11 +294,10 @@ The operator's decision on one pull request in a [Review Round](#review-round),
 at the head commit reviewed: `merge`, `request changes`, `defer`, or
 `not applicable`, for a pull request that is not theirs to decide. A merge
 Verdict covers the change as it stood at that head. A later change to the pull
-request is judged on its own by the [Held Changes](#held-changes) tests,
-including a check that a rebase did not quietly revert work on the default
-branch: a routine delta merges under the same Verdict, and any other delta
-returns to the operator. A merge Verdict clears a hold on that pull request
-and never changes [Merge Approval](#merge-approval).
+request is judged by the review contract's
+[after-Verdict rule](skills/reviewing-prs/references/review-contract.md#after-a-verdict).
+A merge Verdict clears a hold on that pull request and never changes
+[Merge Approval](#merge-approval).
 
 ### PR Review Labels
 

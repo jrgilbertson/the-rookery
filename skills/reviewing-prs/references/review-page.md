@@ -95,9 +95,10 @@ is exactly `data.json` and holds no literal `<`. Pull request text can hold
   the top of the held group.
 - `driver`: one or two sentences saying what drives the score, written for
   the overview.
-- `sensitiveKind`: each sensitive kind from step 3's first hold test that the
-  pull request touches, such as `CI workflow`, `access and authorization`, or
-  `dependency lockfile`, as a string or a list of strings. Leave it out when
+- `sensitiveKind`: each sensitive kind from the first hold test in
+  [review-contract.md](review-contract.md) that the pull request touches,
+  such as `CI workflow`, `access and authorization`, or `dependency
+  lockfile`, as a string or a list of strings. Leave it out when
   there is none. The page holds a pull request that names one whatever its
   scores, and names the kind in the overview and in its block.
 - `audience`: who sees the difference: `customer`, `caller`, `operator`, or

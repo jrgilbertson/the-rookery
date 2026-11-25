@@ -237,15 +237,13 @@ say; the page then shows "Nothing to report."
 ```json
 "inProgress": [{"repo": "acme/cli-kit", "number": 137, "url": "...", "title": "...", "note": "Owned by repo-captain, checks running."}],
 "merged": {
-  "window": "Since your last Verdict, 2026-11-23 15:02 PST.",
+  "window": "The last 7 days, since 2026-11-17 22:40 PST.",
   "without": [{"repo": "...", "number": 412, "url": "...", "title": "...", "reason": "Merged with no Verdict and no label."}],
   "changedAfter": [{"repo": "...", "number": 129, "url": "...", "title": "...", "summary": "Two commits after your merge Verdict moved the token cache."}]
 }
 ```
 
 - `note`: who is working on it and what it waits on.
-- `window`: the window step 1 used for each owner, stated so the operator can
-  see it, such as "acme: since 2026-11-18 10:00 PST; dana-acme: the last 72
-  hours."
+- `window`: the window step 1 used, stated so the operator can see it.
 - `reason` and `summary`: one sentence each, from step 1's merged list. A pull
   request appears in only one of the two lists.

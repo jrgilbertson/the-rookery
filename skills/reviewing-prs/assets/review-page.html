@@ -429,7 +429,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   const shipped = [];
   if (mergedWithout.length) shipped.push(plural(mergedWithout.length, "pull request", "pull requests") + " merged without you");
   if (changedAfter.length) shipped.push(plural(changedAfter.length, "pull request", "pull requests") + " changed after your Verdict");
-  const shippedText = shipped.length ? " Since your last review, " + joinNames(shipped) + "." : "";
+  const shippedText = shipped.length ? " Recently, " + joinNames(shipped) + "." : "";
   add(lede, el("h1", "", headline), el("p", "", "Ranked by verification effort times undo cost, highest first. " + impactText + shippedText));
   const notices = el("ul", "notices");
   for (const notice of list(round.notices).map(str).filter(Boolean)) {
@@ -907,7 +907,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   add(progressBox, el("h2", "", "Still in progress"), closingList(inProgress, "note", "None in progress.", false));
   const mergedBox = el("section", "closing");
   mergedBox.id = "merged";
-  add(mergedBox, el("h2", "", "Merged since your last review"),
+  add(mergedBox, el("h2", "", "Merged recently"),
     el("p", "meta", str(merged.window) || "The window was not stated."),
     el("h3", "", "Changed after your Verdict"), closingList(changedAfter, "summary", "None changed after your Verdict.", true),
     el("h3", "", "Merged without you"), closingList(mergedWithout, "reason", "None merged without you.", true));
@@ -919,14 +919,15 @@ main { padding: 40px 0 80px; min-width: 0; }
   const copy = el("button", "copy", "Copy Verdicts");
   copy.type = "button";
   const status = el("span", "meta", storage
-    ? "Your choices stay in this browser for 30 days, tied to each reviewed head, and return on a later page while that head has not moved. Copy them into the conversation when you are done."
+    ? "Your choices stay in this browser, so a reload loses nothing. Copy them into the conversation when you are done."
     : "This browser keeps nothing, so copy your Verdicts before closing the page.");
   status.setAttribute("aria-live", "polite");
   copy.addEventListener("click", async () => {
     if (!verdictBox.value) { status.textContent = "No Verdicts chosen yet."; return; }
+    const text = verdictBox.value;
     try {
-      await navigator.clipboard.writeText(verdictBox.value);
-      lastCopied = verdictBox.value;
+      await navigator.clipboard.writeText(text);
+      lastCopied = text;
       status.textContent = "Copied. Paste them into the conversation.";
     } catch (error) {
       verdictBox.focus();
@@ -970,7 +971,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     return frag;
   };
   const railLinks = el("div", "r-links");
-  if (changedAfter.length || mergedWithout.length) railLinks.append(inPage("Merged since your last review", "merged"));
+  if (changedAfter.length || mergedWithout.length) railLinks.append(inPage("Merged recently", "merged"));
   railLinks.append(inPage("Your Verdicts", "verdicts"));
   add(rail, railGroup(over, true), railGroup(under, false), railLinks);
 

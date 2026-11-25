@@ -143,6 +143,25 @@ def check_conflict_and_digest(scratch: Path) -> None:
     expect(review["kind"] == "write" and review["body"] == "Verdict: merge", "a Verdict posted as a review must be visible in the trace")
 
 
+def check_search_fidelity(scratch: Path) -> None:
+    run = Run("conflicts-impact-digest-html", scratch / "fidelity")
+    phrase = run.json("search", "prs", "--repo", "acme/ledger-app", "--match", "comments", '"Verdict: merge"', "--json", "number")
+    expect(sorted(item["number"] for item in phrase) == [411, 419], f"a quoted phrase must match as one phrase: {phrase}")
+    in_comments = run.json("search", "prs", "--owner", "acme", "Verdict", "in:comments", "--json", "number")
+    expect({411, 419, 420} <= {item["number"] for item in in_comments}, f"in:comments must search comment text: {in_comments}")
+    expect(run.gh("search", "prs", "--owner", "acme", "in:nowhere").returncode == 3, "an unknown in: qualifier must be refused, not ignored")
+    public = run.json("repo", "list", "acme", "--visibility", "public", "--json", "nameWithOwner")
+    expect([repo["nameWithOwner"] for repo in public] == ["acme/cli-kit"], f"repo list --visibility: {public}")
+    body = scratch / "fidelity-review.txt"
+    body.write_text("Verdict: merge", encoding="utf-8")
+    expect(run.gh("pr", "review", "139", "-R", "acme/cli-kit", "--approve", "--body-file", str(body)).returncode == 0, "approve a fork pull request")
+    states = [review["state"] for review in run.json("pr", "view", "139", "-R", "acme/cli-kit", "--json", "reviews")["reviews"]]
+    expect(states == ["APPROVED"], f"review states must use GitHub's names: {states}")
+    risk = Run("risk-overview-and-situations", scratch / "fidelity")
+    rest = risk.json("api", "repos/acme/ledger-app/pulls/441/reviews")
+    expect([(review["user"]["login"], review["state"]) for review in rest] == [("acme-review-bot", "COMMENTED")], f"REST reviews: {rest}")
+
+
 def check_review_threads(scratch: Path) -> None:
     run = Run("risk-overview-and-situations", scratch / "threads")
     query = re.search(r"gh api graphql -f query='([^']*reviewThreads[^']*)'", SKILL.read_text(encoding="utf-8"))
@@ -157,6 +176,8 @@ def check_review_threads(scratch: Path) -> None:
 
 def check_shipped_commands(scratch: Path) -> None:
     run = Run("owner-routing-and-scrubbing", scratch / "shipped")
+    typed = re.findall(r"`[^`]*<(?:default-branch|base|branch|head-branch)>[^`]*`", SKILL.read_text(encoding="utf-8"))
+    expect(not typed, f"a branch name from GitHub must reach a command through a shell variable, not typed in: {typed}")
     targets = {"search prs": ["--owner", "acme"], "repo view": ["acme/cli-kit"], "pr view": ["134", "-R", "acme/cli-kit"], "label list": ["-R", "acme/cli-kit"]}
     found = re.findall(r"gh (search prs|repo view|pr view|label list)\b[^`]*?--json ([A-Za-z,]+)", SKILL.read_text(encoding="utf-8"))
     expect({command for command, _ in found} == set(targets), f"expected the skill to name --json fields for {sorted(targets)}: {found}")
@@ -221,12 +242,13 @@ def check_unsafe_configuration(scratch: Path) -> None:
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-reviewing-prs-") as temporary:
         scratch = Path(temporary).resolve()
-        for name in ("writes", "conflicts", "threads", "unsafe", "shipped", "parallel", "requests"):
+        for name in ("writes", "conflicts", "threads", "unsafe", "shipped", "parallel", "requests", "fidelity"):
             (scratch / name).mkdir()
         check_every_fixture(scratch)
         check_writes_and_refusals(scratch)
         check_conflict_and_digest(scratch)
         check_review_threads(scratch)
+        check_search_fidelity(scratch)
         check_shipped_commands(scratch)
         check_review_requests(scratch)
         check_parallel_calls(scratch)

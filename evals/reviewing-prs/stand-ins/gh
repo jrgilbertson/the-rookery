@@ -29,6 +29,7 @@ import hashlib
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -453,10 +454,13 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[tuple[str, str]
     """Filter every pull request by gh search flags and the same qualifiers typed inline."""
     filters = {key: list(value) if isinstance(value, list) else value for key, value in filters.items()}
     text_terms: list[str] = []
-    for term in " ".join(terms).split():
+    try:
+        tokens = shlex.split(" ".join(terms))
+    except ValueError:
+        refuse("unbalanced quotes in the search query")
+    for term in tokens:
         key, colon, value = term.partition(":")
-        value = value.strip('"')
-        if not colon or not re.fullmatch(r"[a-z-]+", key) or not value:
+        if not colon or " " in key or not re.fullmatch(r"[a-z-]+", key) or not value or value.startswith(" "):
             text_terms.append(term.lower())
         elif key in ("org", "user", "owner"):
             filters.setdefault("owner", []).append(value)
@@ -478,7 +482,9 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[tuple[str, str]
             filters[key] = value == "true"
         elif key == "merged":
             filters.setdefault("merged-at", []).append(value)
-        elif key in ("sort", "in"):
+        elif key == "in" and set(value.split(",")) <= {"title", "body", "comments"}:
+            filters.setdefault("match", []).append(value)
+        elif key == "sort":
             continue
         else:
             refuse(f"unsupported search qualifier {term!r}")
@@ -692,7 +698,8 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         review_body = read_body(options) or ""
         if kind != "comment" and pull["author"] == state["viewer"]["login"]:
             die(f"failed to create review: Can not {kind.replace('-', ' ')} on your own pull request", 1, op="pr review", repo=slug, number=number, review=kind)
-        pull.setdefault("reviews", []).append({"author": {"login": state["viewer"]["login"]}, "state": kind.upper().replace("-", "_"), "body": review_body})
+        review_state = {"approve": "APPROVED", "request-changes": "CHANGES_REQUESTED", "comment": "COMMENTED"}[kind]
+        pull.setdefault("reviews", []).append({"author": {"login": state["viewer"]["login"]}, "state": review_state, "body": review_body})
         save_state(state, state_path)
         trace("write", op="pr review", repo=slug, number=number, review=kind, body=review_body)
         return
@@ -736,7 +743,11 @@ def cmd_repo(state: dict, args: list[str]) -> None:
         emit(data, options, fields=list(data), text="\n".join(f"{key}:\t{value}" for key, value in data.items()))
     else:
         owner = positionals[0] if positionals else state["viewer"]["login"]
-        repos = [repo_object(state, slug) for slug in state["repos"] if slug.split("/")[0] == owner]
+        repos = [
+            repo for repo in (repo_object(state, slug) for slug in state["repos"] if slug.split("/")[0] == owner)
+            if (not options.get("visibility") or repo["visibility"].lower() == one(options, "visibility").lower())
+            and not (options.get("no-archived") and repo["isArchived"])
+        ][: int(one(options, "limit", "30"))]
         emit(repos, options, fields=list(repos[0]) if repos else ["nameWithOwner"], text="\n".join(repo["nameWithOwner"] for repo in repos))
     trace("read", op=f"repo {args[0]}")
 
@@ -874,6 +885,8 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
                 return [{"sha": commit["oid"], "commit": {"message": commit["messageHeadline"], "committer": {"date": commit["committedDate"]}}} for commit in pull_object(state, slug, number)["commits"]]
             if part == "labels":
                 return pull_object(state, slug, number)["labels"]
+            if part == "reviews":
+                return [{"user": {"login": review["author"]["login"]}, "state": review["state"], "body": review.get("body", "")} for review in pulls[number].get("reviews", [])]
             return []
         issue = repo.get("issues", {}).get(number)
         if kind == "issues" and issue is not None:

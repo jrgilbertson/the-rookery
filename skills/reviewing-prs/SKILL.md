@@ -194,6 +194,16 @@ For each pull request, establish:
   Without any, or when the newest was posted before the reviewed head, show
   **Missing visual evidence** on the card. For other changes, look for test
   output that maps to the Verification criteria.
+- **Design system.** For a change to what users see on a screen, read the
+  repository's design system, such as `DESIGN.md`, from the default branch,
+  the same way as the policy above. List each place the change departs from
+  it, with the rule and the file in the diff: a color, size, or spacing value
+  the system does not define, a new component where it already has one, or a
+  pattern it says to avoid. Consistent screens are the point, so a small
+  departure still gets listed. When the repository has no design system,
+  write "no design system" and do not judge against one of your own. When the
+  pull request edits the design system, judge the rest of it against the
+  default branch's copy and list the edit as a finding.
 - **What was read and what was not**: the full diff or which files were
   skipped and why, such as a generated lockfile, plus the issue and policy
   files read.
@@ -223,7 +233,7 @@ about to merge without `review:held` is a finding for the operator.
 For a deeper walkthrough of one pull request, offer the harness's
 explanation workflow, such as `ce-explain`, when one is installed.
 
-Reading is done when every held and unclassified pull request has all seven
+Reading is done when every held and unclassified pull request has all eight
 items above, taken from a diff that matches its reviewed head.
 
 ## 4. Present the round
@@ -293,9 +303,11 @@ banned calls.
 4. Stored or published names touched, or `None`.
 5. Evidence, side by side where there is a before and an after, or the
    **Missing visual evidence** gap.
-6. What was read and what was not.
-7. The offer of a deeper walkthrough.
-8. A Verdict control: `merge`, `request changes`, or `defer`, a notes field,
+6. Departures from the design system, `None`, or `No design system`. Leave
+   this out for a change with nothing on a screen.
+7. What was read and what was not.
+8. The offer of a deeper walkthrough.
+9. A Verdict control: `merge`, `request changes`, or `defer`, a notes field,
    and a button that copies every chosen Verdict as text, one line per pull
    request: `<owner>/<repo>#<number> @ <reviewed head> | <verdict> | <notes>`.
    Show the same text in a box so it can be copied by hand.

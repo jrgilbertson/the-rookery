@@ -17,8 +17,9 @@ looked" surface. GitHub Releases mirror its entries.
   every repository the operator can merge in. It reads each open pull request
   from its raw diff at a fixed head commit, scores verification effort and
   undo cost from what the diff shows, lists stored and published names,
-  flags claims the diff does not support and missing screenshots, and writes
-  the round to a private local page. It records each Verdict on the pull
+  flags claims the diff does not support and missing screenshots, checks
+  interface changes against the repository's design system when it has one,
+  and writes the round to a private local page. It records each Verdict on the pull
   request as a three-line comment naming the reviewed commit. It merges a
   pull request nobody owns only when its head is still that commit, and
   hands an owned one back to its owner. The page carries a strict Content

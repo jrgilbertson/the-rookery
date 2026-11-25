@@ -34,7 +34,7 @@ digest case's merged window comes from the last Verdict comment in its
 fixture, so no prompt names a date.
 
 The three-case set SHA-256 is
-`0fd98be95996a55202734d2fe900d476a608787d8fedb4affd207b6165634ce9`. From this
+`82e943a7de42820a0854cb8caf87e2953ade6a96ad63621624113e360760a1a9`. From this
 directory, reproduce it with:
 
 ```sh

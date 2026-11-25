@@ -7,8 +7,8 @@ compatibility: "Requires a POSIX shell and an authenticated GitHub CLI (gh) with
 
 # Reviewing PRs
 
-Run one Review Round: gather every open pull request the operator can merge,
-read each one from its raw diff at one head commit, show the round on one
+Run one Review Round: gather every open pull request the operator can merge
+or was asked to review, read each one from its raw diff at one head commit, show the round on one
 local page, and carry out the operator's Verdict on each. That commit is the
 pull request's **reviewed head**. The result is a decision recorded on GitHub
 at the reviewed head, with unowned pull requests merged and owned ones handed
@@ -85,18 +85,30 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    `gh search prs --owner <owner> --state open --draft=false --archived=false --limit 1000 --json repository,number,title,author,labels,updatedAt,url`.
    If a query returns 1,000 results, say at the top of the round that the
    list for that owner is cut off.
-3. Keep repositories where the operator can merge:
+3. List the repositories other owners share with the operator as a
+   collaborator:
+   `gh api --paginate 'user/repos?affiliation=collaborator&per_page=100' --jq '.[] | select(.permissions.push and (.archived | not)) | .full_name'`.
+   For each one whose owner item 2 did not search, run item 2's search with
+   `--repo <owner>/<repo>` in place of `--owner <owner>`.
+4. List the pull requests that ask for the operator's review, wherever they
+   are:
+   `gh search prs --review-requested @me --state open --draft=false --archived=false --limit 1000 --json repository,number,title,author,labels,updatedAt,url`.
+5. Keep repositories where the operator can merge:
    `gh repo view <owner>/<repo> --json viewerPermission,visibility,defaultBranchRef,squashMergeAllowed,mergeCommitAllowed,rebaseMergeAllowed`
    shows `WRITE`, `MAINTAIN`, or `ADMIN`. Keep the visibility, default
-   branch, and allowed merge methods for later steps.
-4. Read each pull request once and note its `headRefOid` as the reviewed head:
-   `gh pr view <number> -R <owner>/<repo> --json number,title,body,author,url,headRefOid,headRefName,baseRefName,isCrossRepository,headRepositoryOwner,labels,additions,deletions,changedFiles,files,mergeable,mergeStateStatus,statusCheckRollup,closingIssuesReferences,comments,reviews,updatedAt`.
+   branch, and allowed merge methods for later steps. Keep a pull request
+   from item 4 in a repository where the operator cannot merge too, as
+   review only.
+6. Read each pull request once and note its `headRefOid` as the reviewed head:
+   `gh pr view <number> -R <owner>/<repo> --json number,title,body,author,url,headRefOid,headRefName,baseRefName,isCrossRepository,headRepositoryOwner,labels,additions,deletions,changedFiles,files,mergeable,mergeStateStatus,statusCheckRollup,closingIssuesReferences,comments,reviews,reviewRequests,updatedAt`.
    Then read its review threads, which show whether each point was resolved:
    `gh api graphql -f query='query($owner: String!, $repo: String!, $number: Int!) { repository(owner: $owner, name: $repo) { pullRequest(number: $number) { reviewThreads(first: 100) { nodes { isResolved comments(first: 50) { nodes { author { login } body } } } } } } }' -f owner=<owner> -f repo=<repo> -F number=<number>`.
-5. List what merged since the operator last reviewed, for the end of the
+7. List what merged since the operator last reviewed, for the end of the
    page. Labels add detail here but decide nothing. Work out the window
-   separately for each owner from step 1, so reviewing a busy organization
-   every day does not hide an older unreviewed merge under a quieter owner.
+   separately for each owner from item 2, and for each repository from item
+   3 with `--repo <owner>/<repo>` in place of `--owner <owner>` below, so
+   reviewing a busy organization every day does not hide an older unreviewed
+   merge under a quieter owner. Review-only repositories have no window.
    1. Find the operator's most recent Verdict comment under that owner: a
       comment by their login whose first line starts with `Verdict:`. Run
       `gh search prs --owner <owner> --commenter <login> --sort updated --limit 100 --json repository,number,updatedAt`,
@@ -109,7 +121,7 @@ Find the pull requests with `gh` alone, so the round works on any machine.
       page.
    3. For that owner, run
       `gh search prs --owner <owner> --merged --merged-at ">=<start>" --archived=false --limit 1000 --json repository,number,title,url`.
-      Run the item 3 check on any repository this returns that you did not
+      Run the item 5 check on any repository this returns that you did not
       already keep, and skip those the operator cannot merge in.
    4. For each, read
       `gh pr view <number> -R <owner>/<repo> --json headRefOid,mergedAt,labels,comments`
@@ -127,8 +139,9 @@ Keep failing and conflicted pull requests in the list. A held pull
 request drifts into conflict while it waits, and that is when the operator
 most needs to see it.
 
-Discovery is done when the login and every organization have been searched
-and every open pull request in a kept repository has a reviewed head.
+Discovery is done when the login, every organization, every collaborator
+repository, and the review requests have been searched, and every kept open
+pull request has a reviewed head.
 
 ## 2. Classify
 
@@ -147,6 +160,9 @@ Decide ownership first. It controls who merges in step 5.
   match, and a line naming another operator.
 - **No owner.** A same-repository pull request by the operator with no
   `Owner:` line.
+- **Review only.** The operator cannot merge in the repository and is here
+  because their review was requested. Nobody in this round merges it. Mark it
+  `Review only`.
 
 Then put each open pull request in one bucket:
 
@@ -329,7 +345,8 @@ Write each comment body to a file in the round's temporary directory.
 Verdict you understood: repository and number, title, author, ownership, the
 base branch when it is not the default, the full reviewed head, the action,
 the exact three-line comment you will post, and what follows it (a pinned
-merge, a note to the owner, nothing). Read
+merge, a note to the owner, a review answering a request, removal from a
+review request, nothing). Read
 `gh label list -R <owner>/<repo> --search review: --json name` for each
 repository where step 5 would change a label, and name any of the three labels
 you would create there. Reject and show any line that does not match a pull
@@ -340,7 +357,8 @@ After they confirm, handle the pull requests one at a time, following the
 suggested order inside a conflict group:
 
 1. **Reread** `headRefOid`, `state`, `mergeStateStatus`,
-   `statusCheckRollup`, `body`, `labels`, and `isCrossRepository` with
+   `statusCheckRollup`, `body`, `labels`, `isCrossRepository`, and
+   `reviewRequests` with
    `gh pr view`. If it is no longer open, post nothing and report that. If
    its ownership from step 2 has changed, such as an `Owner:` line added
    since the page was built, stop on this pull request and tell the operator.
@@ -349,12 +367,22 @@ suggested order inside a conflict group:
    `gh api "repos/<owner>/<repo>/compare/<reviewed-head>...<new-head>"`. Their
    Verdict covered the reviewed head only.
 2. **`defer`**: write nothing and leave every label alone.
-3. **`merge` or `request changes`**: post the three-line Verdict as a
+3. **`not applicable`**: the pull request is not the operator's to decide.
+   Post nothing and leave every label alone. When `reviewRequests` names the
+   operator's login, remove them from it with
+   `gh pr edit <number> -R <owner>/<repo> --remove-reviewer <login>`, so the
+   author knows and it leaves later rounds. A request to a team stays; say
+   so. Report a removal GitHub refuses.
+4. **`merge` or `request changes`**: post the three-line Verdict as a
    top-level comment, passing the body from its file so it stays literal:
-   `gh pr comment <number> -R <owner>/<repo> --body-file <file>`. Never post it
-   as a review or an inline review comment. That opens a review thread, which
-   can block the merge it is approving.
-4. **Route** by ownership:
+   `gh pr comment <number> -R <owner>/<repo> --body-file <file>`. Other
+   sessions read Verdicts from top-level comments, so never post it only as
+   a review or as an inline review comment. When `reviewRequests` names the
+   operator's login, also answer the request with the same file:
+   `gh pr review <number> -R <owner>/<repo> --approve --body-file <file>` for
+   `merge`, or `--request-changes` in place of `--approve` for
+   `request changes`.
+5. **Route** by ownership:
    - **Trusted owner.** Do not merge, whatever bucket it was in. The
      owner merges, so one session writes to that pull request. If the Orca
      CLI is installed, use its own guide (`orca --help`, or the installed
@@ -371,7 +399,9 @@ suggested order inside a conflict group:
    - **No owner or external, `merge`.** Follow the direct merge rule.
    - **No owner or external, `request changes`.** Leave it open and
      remove `review:held` if present.
-5. **Label after GitHub confirms.** When a pull request that carried
+   - **Review only.** Do not merge. The comment and the review are the
+     record.
+6. **Label after GitHub confirms.** When a pull request that carried
    `review:held` shows `MERGED` in `gh pr view --json state`, add
    `review:human-merged` and remove `review:held`. A queued pull request is
    not merged: leave its labels and report it as queued. If the label is

@@ -86,8 +86,8 @@ is exactly `data.json` and holds no literal `<`. Pull request text can hold
 ```
 
 - `owner`: the ownership from step 2 as a short phrase: `owned by <role>`,
-  `No owner`, `External fork`, `External contributor`, `Ambiguous owner`, or
-  the bot's name.
+  `No owner`, `External fork`, `External contributor`, `Ambiguous owner`,
+  `Review only`, or the bot's name.
 - `status`: checks and conflict state, plus the base branch when it is not
   the default branch, and a never-carried-out Verdict on a held pull request.
 - `scores`: integers from 1 to 3, from step 3. Never compute the order or the

@@ -22,17 +22,18 @@ STAND_IN = ROOT / "evals/reviewing-prs/stand-ins/gh"
 FIXTURES = ROOT / "evals/reviewing-prs/fixtures"
 CASES = ROOT / "evals/reviewing-prs/cases"
 SKILL = ROOT / "skills/reviewing-prs/SKILL.md"
+REVIEW_REQUESTS = Path(__file__).resolve().parent / "review-requests-world.json"
 
 
 class Run:
     """One staged world with its own state directory."""
 
-    def __init__(self, fixture: str, scratch: Path) -> None:
+    def __init__(self, fixture: str, scratch: Path, world: Path | None = None) -> None:
         self.state = scratch / fixture
         self.state.mkdir()
         self.env = {
             "PATH": os.environ["PATH"],
-            "GH_STANDIN_WORLD": str(FIXTURES / fixture / "world.json"),
+            "GH_STANDIN_WORLD": str(world or FIXTURES / fixture / "world.json"),
             "GH_STANDIN_STATE": str(self.state),
         }
 
@@ -172,6 +173,29 @@ def check_shipped_commands(scratch: Path) -> None:
     expect(login.returncode == 0 and login.stdout.strip() == "dana-acme", f"--jq: {login.stderr}")
 
 
+def check_review_requests(scratch: Path) -> None:
+    run = Run("review-requests", scratch / "requests", world=REVIEW_REQUESTS)
+    skill = SKILL.read_text(encoding="utf-8")
+    shared = re.search(r"gh api --paginate '(user/repos\?affiliation=collaborator[^']*)' --jq '([^']*)'", skill)
+    expect(shared is not None, "the skill must name its collaborator-repository query")
+    listed = run.gh("api", "--paginate", shared.group(1), "--jq", shared.group(2))
+    expect(listed.returncode == 0 and listed.stdout.split() == ["lee-labs/shared-tool"], f"collaborator repositories with push access: {listed.stdout!r} {listed.stderr}")
+    asked = re.search(r"gh search prs --review-requested @me ([^`]*)`", skill)
+    expect(asked is not None, "the skill must name its review-request search")
+    requested = run.json("search", "prs", "--review-requested", "@me", *asked.group(1).split())
+    found = sorted((item["repository"]["nameWithOwner"], item["number"]) for item in requested)
+    expect(found == [("lee-labs/handbook", 3), ("lee-labs/shared-tool", 12), ("other-co/sdk", 88)], f"review requests: {found}")
+    expect(run.json("repo", "view", "other-co/sdk", "--json", "viewerPermission")["viewerPermission"] == "READ", "a review-only repository")
+    asks = run.json("pr", "view", "3", "-R", "lee-labs/handbook", "--json", "reviewRequests")["reviewRequests"]
+    expect(asks == [{"__typename": "User", "login": "dana-acme"}, {"__typename": "Team", "name": "docs-team", "slug": "docs-team"}], f"reviewRequests: {asks}")
+    dropped = run.gh("pr", "edit", "88", "-R", "other-co/sdk", "--remove-reviewer", "dana-acme")
+    expect(dropped.returncode == 0, f"removing the operator from a review request: {dropped.stderr}")
+    remaining = run.json("search", "prs", "--review-requested", "@me", "--state", "open", "--json", "number")
+    expect(sorted(item["number"] for item in remaining) == [3, 12], f"a declined request must leave the search: {remaining}")
+    edit = next(entry for entry in run.trace() if entry.get("op") == "pr edit")
+    expect(edit["kind"] == "write" and edit["remove_reviewers"] == ["dana-acme"] and edit["add"] == [] and edit["remove"] == [], f"the trace must record only the reviewer removal: {edit}")
+
+
 def check_parallel_calls(scratch: Path) -> None:
     run = Run("owner-routing-and-scrubbing", scratch / "parallel")
     command = [sys.executable, str(STAND_IN), "pr", "comment", "423", "-R", "acme/ledger-app", "--body"]
@@ -197,13 +221,14 @@ def check_unsafe_configuration(scratch: Path) -> None:
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-reviewing-prs-") as temporary:
         scratch = Path(temporary).resolve()
-        for name in ("writes", "conflicts", "threads", "unsafe", "shipped", "parallel"):
+        for name in ("writes", "conflicts", "threads", "unsafe", "shipped", "parallel", "requests"):
             (scratch / name).mkdir()
         check_every_fixture(scratch)
         check_writes_and_refusals(scratch)
         check_conflict_and_digest(scratch)
         check_review_threads(scratch)
         check_shipped_commands(scratch)
+        check_review_requests(scratch)
         check_parallel_calls(scratch)
         check_unsafe_configuration(scratch)
     print("reviewing-prs: stand-in and fixture checks passed")

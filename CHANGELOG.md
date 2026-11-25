@@ -14,7 +14,9 @@ looked" surface. GitHub Releases mirror its entries.
 ### Added
 
 - `reviewing-prs`, a skill that runs one Review Round across every
-  repository the operator can merge in. It reads each open pull request from
+  repository the operator can merge in, including repositories shared with
+  them as a collaborator, plus every pull request that asks for their
+  review. It reads each open pull request from
   its raw diff at a fixed head commit, scores verification effort and undo
   cost from what the diff shows, lists stored and published names, flags
   claims the diff does not support and missing screenshots, and checks
@@ -28,8 +30,9 @@ looked" surface. GitHub Releases mirror its entries.
   choices survive a reload in that browser. The page follows the system's
   light or dark setting, carries a strict Content Security Policy, and
   renders pull request text as text. It records each Verdict on
-  the pull request as a three-line comment naming the reviewed commit. It
-  merges a pull request nobody owns only when its head is still that commit,
+  the pull request as a three-line comment naming the reviewed commit, and
+  answers a review request with a review. A `not applicable` Verdict posts
+  nothing and removes the operator from a review request. It merges a pull request nobody owns only when its head is still that commit,
   and hands an owned one back to its owner. Synthetic Skill Eval cases are
   under `evals/reviewing-prs/`.
 - `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels

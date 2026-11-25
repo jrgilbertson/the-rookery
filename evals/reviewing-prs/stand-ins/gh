@@ -281,6 +281,10 @@ def pull_object(state: dict, slug: str, number: str) -> dict:
         "mergedBy": {"login": pull["mergedBy"]} if pull.get("mergedBy") else None,
         "mergeCommit": {"oid": pull["mergeCommit"]} if pull.get("mergeCommit") else None,
         "autoMergeRequest": pull.get("autoMergeRequest"),
+        "reviewRequests": [
+            {"__typename": "Team", "name": request.split("/")[1], "slug": request.split("/")[1]} if "/" in request else {"__typename": "User", "login": request}
+            for request in pull.get("reviewRequests", [])
+        ],
     }
 
 
@@ -290,6 +294,7 @@ PULL_FIELDS = [
     "additions", "deletions", "changedFiles", "files", "mergeable", "mergeStateStatus", "statusCheckRollup",
     "closingIssuesReferences", "comments", "commits", "reviews", "latestReviews", "reviewDecision", "createdAt",
     "updatedAt", "mergedAt", "closedAt", "mergedBy", "mergeCommit", "autoMergeRequest",
+    "reviewRequests",
 ]
 
 
@@ -455,7 +460,7 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[tuple[str, str]
             text_terms.append(term.lower())
         elif key in ("org", "user", "owner"):
             filters.setdefault("owner", []).append(value)
-        elif key in ("repo", "label", "author", "commenter"):
+        elif key in ("repo", "label", "author", "commenter", "review-requested"):
             filters.setdefault(key, []).append(value)
         elif key == "is" and value in ("pr", "issue", "open", "closed", "merged", "unmerged", "draft"):
             if value == "issue":
@@ -504,6 +509,9 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[tuple[str, str]
             commenters = {comment["author"] for comment in pull.get("comments", [])}
             if any(login not in commenters for login in many(filters, "commenter")):
                 continue
+            requested = pull.get("reviewRequests", [])
+            if any((state["viewer"]["login"] if login == "@me" else login) not in requested for login in many(filters, "review-requested")):
+                continue
             fields = many(filters, "match") or ["title", "body"]
             haystack = " ".join(
                 [pull["title"]] * ("title" in fields) + [pull.get("body", "")] * ("body" in fields)
@@ -522,7 +530,7 @@ SEARCH_VALUES = {
     **JSON_FLAGS,
     "--owner": "owner", "--state": "state", "--label": "label", "--author": "author",
     "--merged-at": "merged-at", "--visibility": "visibility", "--sort": "sort", "--order": "order",
-    "--commenter": "commenter", "--match": "match",
+    "--commenter": "commenter", "--match": "match", "--review-requested": "review-requested",
 }
 SEARCH_BOOLS = {"--draft": "draft", "--archived": "archived", "--merged": "merged"}
 
@@ -624,19 +632,22 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         print(comment_objects(slug, number, pull["comments"])[-1]["url"])
         return
     if sub == "edit":
-        options, positionals = parse(rest, {**REPO_FLAGS, "--add-label": "add", "--remove-label": "remove"}, {})
+        options, positionals = parse(rest, {**REPO_FLAGS, "--add-label": "add", "--remove-label": "remove", "--remove-reviewer": "unrequest"}, {})
         slug, number, pull = find_pull(state, options, positionals)
-        add, remove = many(options, "add"), many(options, "remove")
-        if not add and not remove:
-            refuse("`pr edit` serves only --add-label and --remove-label")
+        add, remove, unrequest = many(options, "add"), many(options, "remove"), many(options, "unrequest")
+        if not add and not remove and not unrequest:
+            refuse("`pr edit` serves only --add-label, --remove-label, and --remove-reviewer")
         known = {label["name"] for label in state["repos"][slug].get("labels", [])}
         for name in add:
             if name not in known:
                 die(f"could not add label: '{name}' not found", 1, op="pr edit", repo=slug, number=number)
         labels = [name for name in pull.get("labels", []) if name not in remove]
         pull["labels"] = labels + [name for name in add if name not in labels]
+        if unrequest:
+            pull["reviewRequests"] = [request for request in pull.get("reviewRequests", []) if request not in unrequest]
         save_state(state, state_path)
-        trace("write", op="pr edit", repo=slug, number=number, add=add, remove=remove, state=pull["state"])
+        reviewers = {"remove_reviewers": unrequest} if unrequest else {}
+        trace("write", op="pr edit", repo=slug, number=number, add=add, remove=remove, state=pull["state"], **reviewers)
         print(f"https://github.com/{slug}/pull/{number}")
         return
     if sub == "merge":
@@ -812,8 +823,16 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
         return {"total_count": len(found), "incomplete_results": False, "items": [rest_pull(state, slug, number) for slug, number in found]}
     owner_repos = re.fullmatch(r"(?:orgs|users)/([^/]+)/repos|user/repos", endpoint)
     if owner_repos:
-        owner = owner_repos.group(1) or login
-        return [rest_repo(state, slug) for slug in state["repos"] if endpoint == "user/repos" or slug.split("/")[0] == owner]
+        if endpoint == "user/repos":
+            wanted = query.get("affiliation", "owner,collaborator,organization_member").split(",")
+
+            def affiliation(slug: str) -> str:
+                owner = slug.split("/")[0]
+                default = "owner" if owner == login else "organization_member" if owner in state.get("orgs", []) else "collaborator"
+                return state["repos"][slug].get("affiliation", default)
+
+            return [rest_repo(state, slug) for slug in state["repos"] if affiliation(slug) in wanted]
+        return [rest_repo(state, slug) for slug in state["repos"] if slug.split("/")[0] == owner_repos.group(1)]
     match = re.fullmatch(r"repos/([^/]+/[^/]+)(?:/(.*))?", endpoint)
     if not match:
         refuse(f"endpoint {endpoint!r} is not served", op="api", endpoint=endpoint)

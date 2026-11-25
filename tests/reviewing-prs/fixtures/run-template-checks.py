@@ -72,7 +72,8 @@ class Node {
   replaceChildren(...nodes) { this._text = null; this.children = []; this.append(...nodes); }
   setAttribute(k, v) { this.attributes[k] = String(v); }
   getAttribute(k) { return k in this.attributes ? this.attributes[k] : null; }
-  addEventListener() {} focus() {} select() {} replaceWith() {}
+  addEventListener(type, handler) { (this.listeners ||= {})[type] = handler; }
+  focus() {} select() {} replaceWith() {}
   querySelector() { return null; } querySelectorAll() { return []; }
   getBoundingClientRect() { return { top: 0, bottom: 0 }; }
 }
@@ -106,7 +107,11 @@ const blocks = all.filter((n) => n.tagName === "article").map((a) => ({
   hold: has(a, "hold"),
   driver: walk(a).find((n) => has(n, "driver"))?.textContent ?? "",
 }));
-process.stdout.write(JSON.stringify({ groups, blocks }));
+const first = all.find((n) => n.tagName === "article");
+const buttons = first ? walk(first).filter((n) => n.tagName === "button" && n.dataset.verdict) : [];
+buttons.find((b) => b.dataset.verdict === "na")?.listeners?.click?.({});
+const verdict = { buttons: buttons.map((b) => b.textContent), line: all.find((n) => n.tagName === "textarea")?.value ?? null };
+process.stdout.write(JSON.stringify({ groups, blocks, verdict }));
 """
 
 
@@ -188,6 +193,11 @@ def check_rendered(page: str, scratch: Path, original: dict) -> None:
     check("Over the hold line, V × U 6, and it touches a sensitive kind: money." in blocks.get(421, {}).get("driver", ""),
           f"#421's block does not name its sensitive kind: {blocks.get(421, {}).get('driver')}")
     check(blocks.get(134, {}).get("driver", "").startswith("Under the hold line, V × U 1."), "#134's block is not under the hold line")
+    verdict = rendered.get("verdict", {})
+    check(verdict.get("buttons") == ["Merge", "Request changes", "Defer", "Not applicable"], f"Verdict buttons: {verdict.get('buttons')}")
+    first = next(pr for pr in original["prs"] if pr["number"] == held[0]) if held else {}
+    check(verdict.get("line") == f"{first.get('repo')}#{first.get('number')} @ {first.get('head')} | not applicable | ",
+          f"choosing Not applicable must build its Verdict line: {verdict.get('line')!r}")
 
 
 def main() -> int:

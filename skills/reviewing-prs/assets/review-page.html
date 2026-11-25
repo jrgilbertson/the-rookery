@@ -450,7 +450,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   page.replaceChildren(lede);
 
   const SCORE_NAMES = [["impact", true], ["confidence", false], ["verify", true], ["undo", true]];
-  const VERDICTS = { merge: "Merge", changes: "Request changes", defer: "Defer" };
+  const VERDICTS = { merge: "Merge", changes: "Request changes", defer: "Defer", na: "Not applicable" };
   const overviewGroup = (items, hold) => {
     const section = el("section", hold ? "over hold" : "over");
     const head = el("div", "over-head");
@@ -937,7 +937,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   verdictBox.readOnly = true;
   verdictBox.setAttribute("aria-label", "Chosen Verdicts, one line per pull request");
   const keys = el("p", "keys");
-  for (const [k, what] of [["j", "next"], ["k", "previous"], ["n", "next undecided"], ["m", "merge"], ["c", "request changes"], ["d", "defer"]]) {
+  for (const [k, what] of [["j", "next"], ["k", "previous"], ["n", "next undecided"], ["m", "merge"], ["c", "request changes"], ["d", "defer"], ["x", "not applicable"]]) {
     add(keys, el("kbd", "", k), document.createTextNode(" " + what + "   "));
   }
   add(boxHead, el("h2", "", "Your Verdicts"), copy, status);
@@ -1009,12 +1009,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     m: decide("merge"),
     c: decide("changes"),
     d: decide("defer"),
+    x: decide("na"),
   };
   document.addEventListener("keydown", (event) => {
     const action = KEY_ACTIONS[event.key];
     if (!action || event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
     if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
-    if (event.repeat && ["m", "c", "d"].includes(event.key)) return;
+    if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
     event.preventDefault();
     action(current());
   });

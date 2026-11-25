@@ -273,13 +273,15 @@ a correction receives a new release tag instead of moving an existing one.
 ### Review Round
 
 The pull requests gathered across repositories for the operator to review in
-one sitting, each fixed at the head commit it was read at. The operator
-answers a round with one set of [Verdicts](#verdict).
+one sitting: every one in a repository they can merge in, and every one that
+asks for their review. Each is fixed at the head commit it was read at. The
+operator answers a round with one set of [Verdicts](#verdict).
 
 ### Verdict
 
 The operator's decision on one pull request in a [Review Round](#review-round),
-at the head commit reviewed: `merge`, `request changes`, or `defer`. A merge
+at the head commit reviewed: `merge`, `request changes`, `defer`, or
+`not applicable`, for a pull request that is not theirs to decide. A merge
 Verdict covers the change as it stood at that head. A later change to the pull
 request is judged on its own by the [Held Changes](#held-changes) tests,
 including a check that a rebase did not quietly revert work on the default

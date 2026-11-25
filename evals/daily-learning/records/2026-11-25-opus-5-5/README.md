@@ -5,17 +5,21 @@
   `skills/daily-learning` tree is `16b79c4670fb58310f915620cfbff0df0697bede`.
 - **Cases** `daily-pass`, `digest-reply`, `failing-card`, and `quiet-day`. The
   case-set SHA-256 is
-  `2a0972b6e1c1451ee6002e5dda997c53f45b79155ce5ab9c8473710472875184`; the
+  `1fffb56096fb3117a3018ed1be9b8558c78660e06248758b0f2acac09701ccb7`; the
   [Skill Eval README](../../README.md) gives the command that reproduces it.
 - **Baseline** No skill: fresh Claude sessions with the same requests and the
   same workspaces, byte for byte.
 - **Model and effort** `claude-opus-5-5` at high effort for both arms. Each
   run's session metadata confirmed the model. No judge model was used.
-- **Runner** `claude -p` through a scratch script whose flags, prompts, and
-  workspaces match the committed [`run.sh`](../../run.sh). The two differ only
-  in how they stage the skill: the scratch script copied the working tree,
-  whose `SKILL.md` matched the revision above, while `run.sh` uses
-  `git archive`. Claude Code was 2.1.330 for the no-skill runs and 2.1.331
+- **Runner** `claude -p` through a scratch script with the same prompts,
+  workspaces, model, and flags as the committed [`run.sh`](../../run.sh),
+  with three differences. The scratch script copied the skill from the working
+  tree, whose `SKILL.md` matched the revision above, where `run.sh` uses
+  `git archive`. It allowed every `git` subcommand, where `run.sh`, after a
+  security review, allows only `log`, `show`, `diff`, and `status`. It also
+  recorded the vault's commit with `git rev-parse`, where `run.sh` hashes the
+  vault's Git config, refs, and hooks. The recorded runs used only read-only
+  `git` commands. Claude Code was 2.1.330 for the no-skill runs and 2.1.331
   for the skill runs.
 - **Dates** No-skill runs 2026-11-23 about 18:52 PST; skill runs 2026-11-25
   about 12:46 PST.

@@ -386,6 +386,11 @@ QUIET_REMOVED = (
 )
 
 
+# Ignore the operator's global and system Git config, so their hooks, signing,
+# or templates never shape the fixture.
+GIT_ENV = {"GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
+
+
 def stamp(path, day, hour="1200"):
     stamp_time = f"{day.replace('-', '')}{hour}"
     subprocess.run(["touch", "-t", stamp_time, str(path)], check=True)
@@ -410,7 +415,7 @@ def main():
 
     vault = out / "vault"
     git = ["git", "-C", str(vault), "-c", "user.name=Fixture Owner", "-c", "user.email=owner@example.com"]
-    subprocess.run(git + ["init", "-q", "-b", "main"], check=True)
+    subprocess.run(git + ["init", "-q", "-b", "main"], check=True, env=dict(os.environ, **GIT_ENV))
     by_day = {}
     for rel, text in files.items():
         if rel.startswith("vault/"):
@@ -419,8 +424,8 @@ def main():
     for day in sorted(by_day):
         for rel in by_day[day]:
             stamp(vault / rel, day)
-        subprocess.run(git + ["add", "--"] + by_day[day], check=True)
-        env = dict(os.environ, GIT_AUTHOR_DATE=f"{day}T12:00:00", GIT_COMMITTER_DATE=f"{day}T12:00:00")
+        subprocess.run(git + ["add", "--"] + by_day[day], check=True, env=dict(os.environ, **GIT_ENV))
+        env = dict(os.environ, GIT_AUTHOR_DATE=f"{day}T12:00:00", GIT_COMMITTER_DATE=f"{day}T12:00:00", **GIT_ENV)
         subprocess.run(git + ["commit", "-q", "-m", f"vault backup {day}"], check=True, env=env)
     for rel in files:
         if not rel.startswith("vault/"):

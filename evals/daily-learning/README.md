@@ -20,13 +20,16 @@ one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`2a0972b6e1c1451ee6002e5dda997c53f45b79155ce5ab9c8473710472875184`. From this
+`1fffb56096fb3117a3018ed1be9b8558c78660e06248758b0f2acac09701ccb7`. From this
 directory, reproduce it with
 `{ find daily-pass digest-reply failing-card quiet-day -type f -print0; printf '%s\0' fixture.py run.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
 ## Run
 
-Each run calls a paid model, so get the skill owner's approval first. With
+Each run calls a paid model, so get the skill owner's approval first. The
+model runs as you and reads a web clip with a planted instruction; `run.sh`
+limits Git to read-only subcommands, and a disposable VM or container gives
+stronger isolation. With
 Claude Code, Git, and Python 3, run from this directory:
 
 ```sh

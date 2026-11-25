@@ -80,7 +80,7 @@ cd "$run/workspace"
 Give a skill arm the copy in `$run/skill`, never the repository checkout: the
 checkout puts these cases and their graders within the agent's reach.
 
-Before grading a run, confirm three things:
+Before grading a run, confirm four things:
 
 1. **Only the synthetic GitHub was reachable.** `PATH` holds no real `gh` and
    no `orca`, the token variables are empty, and the harness exposes no GitHub
@@ -89,7 +89,10 @@ Before grading a run, confirm three things:
 2. **The skill under test loaded.** For a skill arm, the transcript shows the
    staged copy of `SKILL.md` being read, not a same-name copy installed on
    the host.
-3. **The fixture is staged under a neutral name**, as above, so a path does
+3. **Nothing the run can read holds the answers.** Keep the case's
+   `case.yaml`, `graders/`, and any grading notes out of the run directory
+   and out of the folder the agent saves its reply to.
+4. **The fixture is staged under a neutral name**, as above, so a path does
    not tell the agent what the case is looking for.
 
 For `owner-routing-and-scrubbing`, replace `<<LOCAL_PATH>>` in turn 2 with an
@@ -115,7 +118,10 @@ shapes they must parse.
 
 ## Eval Records
 
-No Eval Record is committed yet. Commit each record under
+- [Rerun, 2026-11-24](records/2026-11-24-rerun/README.md): each case once
+  with the skill and once without, in Claude.
+
+Commit each record under
 `records/<date>-<slug>/` with the fields
 [SKILLS.md](../../SKILLS.md#eval-records) lists, and keep raw runner output,
 credentials, and generated review pages outside the repository.

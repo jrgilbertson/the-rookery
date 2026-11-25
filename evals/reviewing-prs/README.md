@@ -115,9 +115,16 @@ shapes they must parse.
 
 ## Eval Records
 
-No Eval Record is committed yet. The Baseline-against-skill runs and the Codex
-run are paid model runs that wait for the operator's approval. When they run,
-commit each record under `records/<date>-<slug>/` with the fields
-[SKILLS.md](../../SKILLS.md#eval-records) lists, drop any case that passes on
-the Baseline without the skill, and keep raw runner output, credentials, and
-generated review pages outside the repository.
+- [First run, 2026-11-24](records/2026-11-24-first-run/README.md): every
+  case once with the skill and once without in Claude, and one case in Codex.
+
+That run used subagents, where a follow-up turn arrives as a message from
+another session. The skill refuses a Verdict or confirmation that the operator
+did not give directly, so the write phase of `owner-routing-and-scrubbing`
+stays unmeasured with the skill until a runner sends its later turns as real
+user turns. The description-tuning run and a repeat of each arm have not been
+done.
+
+Commit each record under `records/<date>-<slug>/` with the fields
+[SKILLS.md](../../SKILLS.md#eval-records) lists, and keep raw runner output,
+credentials, and generated review pages outside the repository.

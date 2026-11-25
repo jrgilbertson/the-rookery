@@ -99,8 +99,10 @@ def check_writes_and_refusals(scratch: Path) -> None:
 
     expect(run.gh("api", "-X", "PUT", f"repos/{slug}/pulls/421/merge").returncode == 3, "a REST write must be refused")
     expect(run.gh("pr", "close", "421", "-R", slug).returncode == 3, "a command outside the contract must be refused")
-    expect(run.gh("pr", "review", "421", "-R", slug, "--approve").returncode == 1, "approving your own pull request must fail")
-    expect(run.gh("api", "graphql", "-f", "query=mutation { enqueuePullRequest(input: {}) { clientMutationId } }").returncode == 1, "no fixture has a merge queue")
+    own = run.gh("pr", "review", "421", "-R", slug, "--approve")
+    expect(own.returncode == 1 and "Can not approve on your own pull request" in own.stderr, "approving your own pull request must fail")
+    enqueue = run.gh("api", "graphql", "-f", "query=mutation { enqueuePullRequest(input: {}) { clientMutationId } }")
+    expect(enqueue.returncode == 1 and "Merge queue is not enabled" in enqueue.stderr, "no fixture has a merge queue")
     expect(run.json("pr", "view", "421", "-R", slug, "--json", "state")["state"] == "OPEN", "refused writes must change nothing")
 
     kinds = [(entry["kind"], entry.get("op")) for entry in run.trace() if entry["kind"] != "read"]
@@ -117,12 +119,15 @@ def check_conflict_and_digest(scratch: Path) -> None:
     stamps = [item["updatedAt"] for item in commented]
     expect(stamps == sorted(stamps, reverse=True) and {419, 420} <= {item["number"] for item in commented}, f"commenter search, newest first: {commented}")
     expect(all(item["number"] not in (416, 418) for item in commented), "a pull request the operator never commented on must not match --commenter")
-    # The window starts 24 hours before the newest Verdict; #416 merged six hours earlier the same day.
-    merged = run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", ">=2026-11-18T18:00:00Z", "--json", "repository,number")
+    world = json.loads((FIXTURES / "conflicts-impact-digest-html" / "world.json").read_text(encoding="utf-8"))
+    merged_at = {(name, int(number)): pull["mergedAt"] for name, repo in world["repos"].items() for number, pull in repo["pulls"].items() if pull["state"] == "MERGED"}
+    cutoff = "2026-11-18T18:00:00Z"
+    expect(any(cutoff[:10] <= stamp < cutoff for stamp in merged_at.values()), "the fixture needs a merge earlier on the cutoff's day")
+    merged = run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", f">={cutoff}", "--json", "repository,number")
     found = sorted((item["repository"]["nameWithOwner"], item["number"]) for item in merged)
-    expected = [("acme/handbook", 7)] + [(slug, number) for number in (411, 417, 418, 419, 420)]
-    expect(found == expected, f"merged-window search must compare full timestamps: {found}")
-    expect(len(run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", ">=2026-11-18", "--json", "number")) == 7, "a bare date covers its whole day")
+    expect(found == sorted(key for key, stamp in merged_at.items() if stamp >= cutoff), f"merged-window search must compare full timestamps: {found}")
+    whole_day = run.json("search", "prs", "--owner", "acme", "--merged", "--merged-at", f">={cutoff[:10]}", "--json", "number")
+    expect(len(whole_day) == sum(stamp >= cutoff[:10] for stamp in merged_at.values()), "a bare date covers its whole day")
     comments = run.json("pr", "view", "419", "-R", slug, "--json", "comments")["comments"]
     expect(any(comment["body"].startswith("Fleet: verdict-delta") for comment in comments), "the verdict-delta receipt must be readable")
     head = run.json("pr", "view", "426", "-R", slug, "--json", "headRefOid")["headRefOid"]
@@ -138,7 +143,6 @@ def check_conflict_and_digest(scratch: Path) -> None:
 
 
 def check_review_threads(scratch: Path) -> None:
-    """The skill reads review threads through one GraphQL query; the stand-in must answer it."""
     run = Run("risk-overview-and-situations", scratch / "threads")
     query = re.search(r"gh api graphql -f query='([^']*reviewThreads[^']*)'", SKILL.read_text(encoding="utf-8"))
     expect(query is not None, "the skill must name its review-thread query")
@@ -151,7 +155,6 @@ def check_review_threads(scratch: Path) -> None:
 
 
 def check_shipped_commands(scratch: Path) -> None:
-    """Every --json field list the shipped skill names must be answered, so the two cannot drift."""
     run = Run("owner-routing-and-scrubbing", scratch / "shipped")
     targets = {"search prs": ["--owner", "acme"], "repo view": ["acme/cli-kit"], "pr view": ["134", "-R", "acme/cli-kit"], "label list": ["-R", "acme/cli-kit"]}
     found = re.findall(r"gh (search prs|repo view|pr view|label list)\b[^`]*?--json ([A-Za-z,]+)", SKILL.read_text(encoding="utf-8"))

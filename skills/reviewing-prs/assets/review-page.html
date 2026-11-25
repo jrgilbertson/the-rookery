@@ -8,9 +8,6 @@
 <link rel="icon" href="data:,">
 <title>Review Round</title>
 <style>
-/* The Rookery design system (DESIGN.md, including Working Pages): Chalk Paper
-   carries data, navy is the subject, cobalt is movement, graphite is structure,
-   Dispatch Paper carries notes, and orange marks only what needs the operator. */
 :root {
   color-scheme: light;
   --paper: #F6F7FA; --sheet: #FFFFFF; --mist: #E3E9F7; --stake: #E3E9F7; --dispatch: #F0EBE5;
@@ -24,7 +21,6 @@
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
-/* Night Paper: the same field manual on a drafting table after dark. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
@@ -65,17 +61,15 @@ pre .add { color: var(--add); background: var(--add-wash); }
 pre .del { color: var(--del); background: var(--del-wash); }
 pre .ctx { color: var(--ink-soft); }
 
-/* Labels use the compact sans DESIGN.md allows for dense labels, never below 0.7rem. */
 .sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
 .read dt, .bots b, .part small, .bar-note, .bar-progress, .theme, .seg button, .notes, .copy,
-.over-head small, .kind, .rail, .keys, .xnote b { font-family: var(--sans); }
+.over-head small, .rail, .keys, .xnote b { font-family: var(--sans); }
 .meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
 .source { margin-top: 6px; }
 .empty { color: var(--ink-soft); font-style: italic; }
 .sec-title { font-size: 0.72rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 6px; line-height: 1.4; overflow-wrap: anywhere; text-wrap: balance; }
 .sec-title.spaced { margin-top: 18px; }
 
-/* A seal is the one orange mark: something needs the operator. A ring is its quiet twin. */
 .seal, .ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .seal { background: var(--signal); }
 .ring { border: 1.5px solid var(--ink-soft); }
@@ -213,7 +207,6 @@ main { padding: 40px 0 80px; min-width: 0; }
 .keys { margin-top: 8px; color: var(--ink-soft); font-size: 0.78rem; }
 .keys kbd { font: 0.75rem/1 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 1px 5px; background: var(--paper); }
 
-/* Desktop: a rail keeps the map of the round in view beside the current block. */
 @media (min-width: 1180px) {
   .shell { max-width: 1600px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; }
   .rail { display: block; position: sticky; top: 58px; align-self: start; max-height: calc(100vh - 58px); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
@@ -271,7 +264,6 @@ main { padding: 40px 0 80px; min-width: 0; }
   const page = document.getElementById("page");
   const rail = document.getElementById("rail");
 
-  // Theme: follow the system until the toggle is used; the choice is not stored.
   const themeButton = document.getElementById("theme");
   const media = window.matchMedia("(prefers-color-scheme: dark)");
   const effectiveTheme = () => root.dataset.theme || (media.matches ? "dark" : "light");
@@ -300,6 +292,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   const hidden = (text) => el("span", "vh", text);
   const str = (value) => (typeof value === "string" ? value.trim() : "");
   const list = (value) => (Array.isArray(value) ? value : []);
+  const records = (value) => list(value).filter((row) => row && typeof row === "object");
   const plural = (count, one, many) => count + " " + (count === 1 ? one : many);
 
   let round;
@@ -343,9 +336,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     return url && IMAGE_HOSTS.has(url.hostname) ? url.href : null;
   };
 
-  // Scores and order are computed here so a wrong order cannot be typed.
   const score = (value) => (Number.isInteger(value) && value >= 1 && value <= 3 ? value : null);
-  const prs = list(round.prs).filter((pr) => pr && typeof pr === "object").map((pr, index) => {
+  const prs = records(round.prs).map((pr, index) => {
     const s = pr.scores || {};
     const impact = score(s.impact), confidence = score(s.confidence), verify = score(s.verify), undo = score(s.undo);
     // A missing or invalid score fails safe: the pull request sorts to the top of the held group.
@@ -356,7 +348,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     return { pr, index, impact, confidence, verify, undo, product, leverage, sensitiveKinds,
       hold: product >= 3 || sensitiveKinds.length > 0 };
   });
-  // Highest V x U first; equal products break on the higher leverage, then on the agent's order.
+  const groupName = (hold) => (hold ? "Over the hold line" : "Under the hold line");
   const byProduct = (a, b) => b.product - a.product || (b.leverage ?? -1) - (a.leverage ?? -1) || a.index - b.index;
   const over = prs.filter((item) => item.hold).sort(byProduct);
   const under = prs.filter((item) => !item.hold).sort(byProduct);
@@ -419,12 +411,11 @@ main { padding: 40px 0 80px; min-width: 0; }
   }
 
   const merged = round.merged && typeof round.merged === "object" ? round.merged : {};
-  const mergedWithout = list(merged.without).filter((row) => row && typeof row === "object");
-  const changedAfter = list(merged.changedAfter).filter((row) => row && typeof row === "object");
+  const mergedWithout = records(merged.without);
+  const changedAfter = records(merged.changedAfter);
   mergedWithout.forEach((row, i) => { row.id = "merged-" + (i + 1); });
   changedAfter.forEach((row, i) => { row.id = "changed-" + (i + 1); });
 
-  // Lede: the round's state in one sentence, then what already shipped without the operator.
   const lede = el("header", "lede");
   const total = ordered.length;
   let headline;
@@ -458,13 +449,12 @@ main { padding: 40px 0 80px; min-width: 0; }
   if (notices.children.length) lede.append(notices);
   page.replaceChildren(lede);
 
-  // Risk overview
-  const SCORE_NAMES = [["impact", "impact", true], ["confidence", "confidence", false], ["verify", "verify", true], ["undo", "undo", true]];
-  const stateWords = { merge: "Merge", changes: "Request changes", defer: "Defer" };
+  const SCORE_NAMES = [["impact", true], ["confidence", false], ["verify", true], ["undo", true]];
+  const VERDICTS = { merge: "Merge", changes: "Request changes", defer: "Defer" };
   const overviewGroup = (items, hold) => {
     const section = el("section", hold ? "over hold" : "over");
     const head = el("div", "over-head");
-    add(head, el("span", hold && items.length ? "seal" : "ring"), el("h2", "", hold ? "Over the hold line" : "Under the hold line"),
+    add(head, el("span", hold && items.length ? "seal" : "ring"), el("h2", "", groupName(hold)),
       el("small", "", hold ? "verification effort × undo cost is 3 or more, or the change touches a sensitive kind"
         : "verification effort × undo cost is 2 or less, and no sensitive kind"));
     section.append(head);
@@ -485,13 +475,13 @@ main { padding: 40px 0 80px; min-width: 0; }
       name.append(item.overviewState);
       const scores = el("div", "scores");
       const spoken = [];
-      for (const [key, word, tint] of SCORE_NAMES) {
+      for (const [key, tint] of SCORE_NAMES) {
         const value = item[key];
         const cell = el("span", tint && value === 3 ? "three" : "", value ?? "?");
-        cell.append(el("small", "", word));
+        cell.append(el("small", "", key));
         cell.setAttribute("aria-hidden", "true");
         scores.append(cell);
-        spoken.push(word + " " + (value ?? "unknown"));
+        spoken.push(key + " " + (value ?? "unknown"));
       }
       const lev = el("span", "lev", item.leverage === null ? "?" : item.leverage.toFixed(2));
       lev.append(el("small", "", "leverage"));
@@ -520,7 +510,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     page.append(box);
   }
 
-  // Pull request blocks
   const SOURCES = {
     tests: "Taken from the pull request's test or CI output.",
     screenshot: "Taken from a screenshot attached to the pull request.",
@@ -611,7 +600,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     return node;
   };
 
-  // Each side says what it shows: a screenshot, or a schematic redrawn from the diff.
   const screenSide = (side, caption, after, marks) => {
     const box = el("div", after ? "screen after" : "screen");
     const data = side && typeof side === "object" ? side : {};
@@ -641,7 +629,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     return box;
   };
-  // An empty side or empty wording is not a change, so its panel is left out.
   const sideShown = (side) => Boolean(side && typeof side === "object" && (str(side.image) || list(side.items).length));
   const hasScreens = (part) => Boolean(part && typeof part === "object" && (sideShown(part.before) || sideShown(part.after)));
   const hasText = (part) => Boolean(part && typeof part === "object" && (str(part.none) || str(part.before) || str(part.after)));
@@ -704,7 +691,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     return frag;
   };
 
-  // Mark the words that differ between before and after, found by comparing them.
   const differingWords = (before, after) => {
     const a = before.split(/(\s+)/), b = after.split(/(\s+)/);
     let start = 0;
@@ -737,11 +723,18 @@ main { padding: 40px 0 80px; min-width: 0; }
     return frag;
   };
 
+  const placementText = (item) => {
+    const kinds = item.sensitiveKinds.join(", ");
+    if (!item.hold) return "Under the hold line, V × U " + item.product + ".";
+    if (item.product < 3) return "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
+    if (kinds) return "Over the hold line, V × U " + item.product + ", and it touches a sensitive kind: " + kinds + ".";
+    return "Over the hold line, V × U " + item.product + ".";
+  };
+
   const notesFor = (pr) => across.filter((note) => list(note.refs).map(str).includes(fullRef(pr)));
 
   const choices = new Map();
   const verdictBox = el("textarea");
-  const verdictWords = { merge: "merge", changes: "request changes", defer: "defer" };
   const progress = document.getElementById("bar-progress");
   const railStates = new Map();
   let lastCopied = "";
@@ -749,24 +742,29 @@ main { padding: 40px 0 80px; min-width: 0; }
     const start = after ? ordered.indexOf(after) + 1 : 0;
     return ordered.slice(start).concat(ordered.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
   };
-  const refresh = () => {
+  const refreshVerdicts = () => {
     const lines = [];
+    for (const item of ordered) {
+      const choice = choices.get(item);
+      if (!choice.verdict) continue;
+      const notes = choice.notes.value.replace(/\s+/g, " ").trim();
+      lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + VERDICTS[choice.verdict].toLowerCase() + " | " + notes);
+    }
+    verdictBox.value = lines.join("\n");
+  };
+  const refreshProgress = () => {
     let decided = 0;
     for (const item of ordered) {
       const choice = choices.get(item);
-      const word = choice.verdict ? stateWords[choice.verdict] : "";
+      const word = choice.verdict ? VERDICTS[choice.verdict] : "";
+      if (word) decided += 1;
       item.overviewState.textContent = word ? "Your Verdict: " + word : "";
       const railState = railStates.get(item);
       if (railState) {
         railState.textContent = word || "Undecided";
         railState.classList.toggle("done", Boolean(word));
       }
-      if (!choice.verdict) continue;
-      decided += 1;
-      const notes = choice.notes.value.replace(/\s+/g, " ").trim();
-      lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + verdictWords[choice.verdict] + " | " + notes);
     }
-    verdictBox.value = lines.join("\n");
     const next = nextUndecided(null);
     progress.textContent = total ? decided + " of " + total + " decided" + (next ? " · Next undecided ↓" : " · Copy Verdicts ↓") : "";
     progress.href = "#" + (next ? next.id : "verdicts");
@@ -776,7 +774,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     choice.verdict = choice.verdict === key ? null : key;
     for (const button of choice.buttons) button.setAttribute("aria-pressed", String(button.dataset.verdict === choice.verdict));
     remember(item.pr, choice.verdict, choice.notes.value);
-    refresh();
+    refreshVerdicts();
+    refreshProgress();
   };
 
   const block = (item) => {
@@ -786,6 +785,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     const head = el("div", "block-head");
     const title = el("h2");
     title.tabIndex = -1;
+    item.node = article;
+    item.heading = title;
     add(title, el("span", "rank", item.rank), document.createTextNode(str(pr.title) || "Untitled"));
     const verdict = el("div", "verdict");
     const seg = el("div", "seg");
@@ -796,10 +797,10 @@ main { padding: 40px 0 80px; min-width: 0; }
     notes.placeholder = "Notes for the Verdict";
     notes.setAttribute("aria-label", "Notes for " + label(pr));
     const saved = recall(pr);
-    const choice = { verdict: saved && Object.hasOwn(verdictWords, saved.verdict) ? saved.verdict : null, notes, buttons: [] };
+    const choice = { verdict: saved && Object.hasOwn(VERDICTS, saved.verdict) ? saved.verdict : null, notes, buttons: [] };
     notes.value = saved && typeof saved.notes === "string" ? saved.notes : "";
     choices.set(item, choice);
-    for (const [key, text] of [["merge", "Merge"], ["changes", "Request changes"], ["defer", "Defer"]]) {
+    for (const [key, text] of Object.entries(VERDICTS)) {
       const button = el("button", "", text);
       button.type = "button";
       button.dataset.verdict = key;
@@ -810,7 +811,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     notes.addEventListener("input", () => {
       remember(pr, choice.verdict, notes.value);
-      refresh();
+      refreshVerdicts();
     });
     add(verdict, seg, notes);
     add(head, title, verdict);
@@ -822,11 +823,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     meta.append(document.createTextNode(facts.join(" · ") + " · "));
     meta.append(link("Open on GitHub", pr.url));
     add(article, head, meta);
-    const kinds = item.sensitiveKinds.join(", ");
-    const placement = !item.hold ? "Under the hold line, V × U " + item.product + "."
-      : item.product >= 3 ? "Over the hold line, V × U " + item.product + (kinds ? ", and it touches a sensitive kind: " + kinds + "." : ".")
-      : "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
-    article.append(el("p", "driver", [placement, str(pr.driver)].filter(Boolean).join(" ")));
+    article.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
     for (const note of notesFor(pr)) {
       const box = el("p", "xnote");
       add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
@@ -885,7 +882,6 @@ main { padding: 40px 0 80px; min-width: 0; }
   };
   for (const item of ordered) page.append(block(item));
 
-  // Closing rows
   const closingList = (rows, detail, none, sealed) => {
     const frag = document.createDocumentFragment();
     if (!rows.length) {
@@ -905,7 +901,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     frag.append(ul);
     return frag;
   };
-  const inProgress = list(round.inProgress).filter((row) => row && typeof row === "object");
+  const inProgress = records(round.inProgress);
   const progressBox = el("section", "closing");
   progressBox.id = "in-progress";
   add(progressBox, el("h2", "", "Still in progress"), closingList(inProgress, "note", "None in progress.", false));
@@ -917,7 +913,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     el("h3", "", "Merged without you"), closingList(mergedWithout, "reason", "None merged without you.", true));
   add(page, mergedBox, progressBox);
 
-  // Verdicts to copy
   const box = el("section", "verdicts");
   box.id = "verdicts";
   const boxHead = el("div", "verdicts-head");
@@ -955,12 +950,11 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
   });
 
-  // Rail: the map of the round, kept beside the blocks on wide screens.
   const railGroup = (items, hold) => {
     const frag = document.createDocumentFragment();
     if (!items.length) return frag;
     const h = el("h2");
-    add(h, el("span", hold ? "seal" : "ring"), document.createTextNode(hold ? "Over the hold line" : "Under the hold line"));
+    add(h, el("span", hold ? "seal" : "ring"), document.createTextNode(groupName(hold)));
     const ol = el("ol");
     for (const item of items) {
       const li = el("li");
@@ -980,55 +974,53 @@ main { padding: 40px 0 80px; min-width: 0; }
   railLinks.append(inPage("Your Verdicts", "verdicts"));
   add(rail, railGroup(over, true), railGroup(under, false), railLinks);
 
-  // The current block is the one under the upper third of the window.
   const current = () => {
     const line = window.innerHeight * 0.3;
     let found = null;
     for (const item of ordered) {
-      if (document.getElementById(item.id).getBoundingClientRect().top <= line) found = item;
+      if (item.node.getBoundingClientRect().top <= line) found = item;
     }
     return found;
   };
   // A Verdict key acts only on a block that still spans that line, so the
   // closing sections and the Verdicts box below the last block set nothing.
-  const spansLine = (item) => Boolean(item) && document.getElementById(item.id).getBoundingClientRect().bottom > window.innerHeight * 0.3;
+  const spansLine = (item) => Boolean(item) && item.node.getBoundingClientRect().bottom > window.innerHeight * 0.3;
   const go = (item) => {
     if (!item) return;
-    const heading = document.querySelector("#" + item.id + " h2");
-    document.getElementById(item.id).scrollIntoView({ block: "start" });
-    heading.focus({ preventScroll: true });
+    item.node.scrollIntoView({ block: "start" });
+    item.heading.focus({ preventScroll: true });
   };
   if ("IntersectionObserver" in window) {
+    let marked = null;
     const watcher = new IntersectionObserver(() => {
       const here = current();
-      for (const item of ordered) item.railLink.setAttribute("aria-current", String(item === here));
+      if (here === marked) return;
+      if (marked) marked.railLink.setAttribute("aria-current", "false");
+      if (here) here.railLink.setAttribute("aria-current", "true");
+      marked = here;
     }, { rootMargin: "0px 0px -70% 0px" });
-    for (const item of ordered) watcher.observe(document.getElementById(item.id));
+    for (const item of ordered) watcher.observe(item.node);
   }
+  const decide = (key) => (here) => spansLine(here) && choose(here, key);
+  const KEY_ACTIONS = {
+    j: (here) => go(ordered[Math.min(ordered.indexOf(here) + 1, ordered.length - 1)]),
+    k: (here) => go(ordered[Math.max(ordered.indexOf(here) - 1, 0)]),
+    n: (here) => go(nextUndecided(here)),
+    m: decide("merge"),
+    c: decide("changes"),
+    d: decide("defer"),
+  };
   document.addEventListener("keydown", (event) => {
-    if (event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
+    const action = KEY_ACTIONS[event.key];
+    if (!action || event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
     if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
-    // A held key repeats; one press is one decision.
     if (event.repeat && ["m", "c", "d"].includes(event.key)) return;
-    const here = current();
-    const at = ordered.indexOf(here);
-    const deciding = spansLine(here) ? here : null;
-    const actions = {
-      j: () => go(ordered[Math.min(at + 1, ordered.length - 1)]),
-      k: () => go(ordered[Math.max(at - 1, 0)]),
-      n: () => go(nextUndecided(here)),
-      m: () => deciding && choose(deciding, "merge"),
-      c: () => deciding && choose(deciding, "changes"),
-      d: () => deciding && choose(deciding, "defer"),
-    };
-    const action = actions[event.key];
-    if (action) {
-      event.preventDefault();
-      action();
-    }
+    event.preventDefault();
+    action(current());
   });
 
-  refresh();
+  refreshVerdicts();
+  refreshProgress();
 })();
 </script>
 </body>

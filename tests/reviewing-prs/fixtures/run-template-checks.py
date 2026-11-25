@@ -31,7 +31,6 @@ SAMPLE = Path(__file__).resolve().parent / "sample-round.json"
 
 
 def fill_commands() -> str:
-    """The shell block the skill ships under "Build the page", run as written."""
     text = REFERENCE.read_text()
     section = text.split("## Build the page", 1)[1]
     match = re.search(r"```sh\n(.*?)```", section, re.S)
@@ -44,7 +43,6 @@ DATA_BLOCK = re.compile(r'<script type="application/json" id="round-data">\n(.*?
 
 failures: list[str] = []
 
-# Runs the filled page's script with a minimal DOM and prints where each pull request landed.
 RENDER = r"""
 const fs = require("fs"), vm = require("vm");
 const html = fs.readFileSync(process.argv[2], "utf8");
@@ -120,7 +118,7 @@ def check(condition: bool, message: str) -> None:
 def check_template(text: str) -> None:
     head = text.split("<head>", 1)[1].lstrip() if "<head>" in text else ""
     check(head.startswith('<meta http-equiv="Content-Security-Policy"'), "the policy is not the first element in <head>")
-    check(len(re.findall(r"^\{\{ROUND_DATA\}\}$", text, re.M)) == 1 and text.count("{{ROUND_DATA}}") == 1,
+    check(text.count("{{ROUND_DATA}}") == 1 and re.search(r"^\{\{ROUND_DATA\}\}$", text, re.M) is not None,
           "{{ROUND_DATA}} must appear once, alone on its own line")
     check(text.count("{{NONCE}}") == 2, "{{NONCE}} must appear twice: in the policy and on the script")
     check(len(re.findall(r"<script\b", text)) == 2, "the template must hold exactly the data block and one script")
@@ -159,7 +157,6 @@ def check_filled(page: str, data: str, original: dict) -> None:
 
 
 def check_rendered(page: str, scratch: Path, original: dict) -> None:
-    """Run the page's script and check placement against the sample's scores and sensitive kinds."""
     node = shutil.which("node")
     if node is None:
         failures.append("node is required to run the page's script")
@@ -175,9 +172,8 @@ def check_rendered(page: str, scratch: Path, original: dict) -> None:
     groups = {("held" if g["hold"] else "under"): g for g in rendered["groups"]}
     held = [number.get(r["title"]) for r in groups.get("held", {}).get("rows", [])]
     under = [number.get(r["title"]) for r in groups.get("under", {}).get("rows", [])]
-    # Highest V x U first; equal products break on leverage (#436 at 2.00 before #432 at 1.33);
-    # #405 is held for its lockfile although V x U is 1.
-    check(held == [418, 421, 131, 436, 432, 405], f"held group order: {held}")
+    check(held == [418, 421, 131, 436, 432, 405],
+          f"held group order, highest V x U first, ties by leverage (#436 at 2.00 before #432 at 1.33), then #405 held for its lockfile at V x U 1: {held}")
     check(under == [134, 409], f"under-the-line group order: {under}")
     check("sensitive kind" in groups.get("held", {}).get("subtitle", ""), "the held group's subtitle does not mention sensitive kinds")
     kinds = {number.get(r["title"]): r["kind"] for g in rendered["groups"] for r in g["rows"]}

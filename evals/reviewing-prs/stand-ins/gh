@@ -110,7 +110,7 @@ def save_state(state: dict, state_path: Path) -> None:
     os.replace(temporary, state_path)
 
 
-def now(state: dict) -> str:
+def tick(state: dict) -> str:
     state["clock"] += 1
     base = datetime.strptime(state["now"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
     return (base + timedelta(minutes=state["clock"])).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -135,7 +135,7 @@ def parse(args: list[str], value_flags: dict[str, str], bool_flags: dict[str, st
             continue
         name, _, inline = arg.partition("=")
         if name in value_flags:
-            if inline or "=" in arg:
+            if "=" in arg:
                 value = inline
             elif index < len(args):
                 value = args[index]
@@ -150,7 +150,9 @@ def parse(args: list[str], value_flags: dict[str, str], bool_flags: dict[str, st
     return options, positionals
 
 
-JSON_FLAGS = {"--json": "json", "--jq": "jq", "-q": "jq", "-R": "repo", "--repo": "repo", "-L": "limit", "--limit": "limit"}
+REPO_FLAGS = {"-R": "repo", "--repo": "repo"}
+JSON_FLAGS = {**REPO_FLAGS, "--json": "json", "--jq": "jq", "-q": "jq", "-L": "limit", "--limit": "limit"}
+BODY_FLAGS = {"--body": "body", "-b": "body", "--body-file": "body-file", "-F": "body-file"}
 
 
 def one(options: dict, key: str, default: str | None = None) -> str | None:
@@ -173,7 +175,9 @@ def emit(data: object, options: dict, fields: list[str] | None = None, text: str
         unknown = [name for name in requested if name not in fields]
         if unknown:
             die(f"Unknown JSON field: {unknown[0]!r}\nAvailable fields:\n  " + "\n  ".join(sorted(fields)), 1)
-        pick = lambda item: {name: item.get(name) for name in requested}  # noqa: E731
+        def pick(item: dict) -> dict:
+            return {name: item.get(name) for name in requested}
+
         data = [pick(item) for item in data] if isinstance(data, list) else pick(data)
     if isinstance(data, str) and jq is None:
         sys.stdout.write(data)
@@ -380,19 +384,28 @@ def rest_pull(state: dict, slug: str, number: str) -> dict:
     }
 
 
-def find_pull(state: dict, options: dict, positionals: list[str]) -> tuple[str, str]:
-    if not positionals:
-        die("no pull request found: give a number and -R OWNER/REPO, or a URL", 1)
-    target = positionals[0]
-    match = re.match(r"https://github\.com/([^/]+/[^/]+)/pull/(\d+)", target)
-    slug, number = (match.group(1), match.group(2)) if match else (one(options, "repo"), target.lstrip("#"))
+def require_repo(state: dict, slug: str | None, missing: str = "no git remotes found; pass -R OWNER/REPO") -> dict:
     if not slug:
-        die("no git remotes found; pass -R OWNER/REPO", 1)
+        die(missing, 1)
     if slug not in state["repos"]:
         not_found(f"repository {slug}")
-    if number not in state["repos"][slug].get("pulls", {}):
+    return state["repos"][slug]
+
+
+def locate(target: str, kind: str, options: dict) -> tuple[str | None, str]:
+    """Read OWNER/REPO and a number from a github.com URL, or a number and -R."""
+    match = re.match(rf"https://github\.com/([^/]+/[^/]+)/{kind}/(\d+)", target)
+    return (match.group(1), match.group(2)) if match else (one(options, "repo"), target.lstrip("#"))
+
+
+def find_pull(state: dict, options: dict, positionals: list[str]) -> tuple[str, str, dict]:
+    if not positionals:
+        die("no pull request found: give a number and -R OWNER/REPO, or a URL", 1)
+    slug, number = locate(positionals[0], "pull", options)
+    pull = require_repo(state, slug).get("pulls", {}).get(number)
+    if pull is None:
         not_found(f"pull request {slug}#{number}")
-    return slug, number
+    return slug, number, pull
 
 
 # ---------------------------------------------------------------- search
@@ -431,7 +444,7 @@ def date_matches(value: str | None, expression: str) -> bool:
         return False
 
 
-def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
+def search(state: dict, filters: dict, terms: list[str]) -> list[tuple[str, str]]:
     """Filter every pull request by gh search flags and the same qualifiers typed inline."""
     filters = {key: list(value) if isinstance(value, list) else value for key, value in filters.items()}
     text_terms: list[str] = []
@@ -498,10 +511,10 @@ def search(state: dict, filters: dict, terms: list[str]) -> list[dict]:
             ).lower()
             if any(term not in haystack for term in text_terms):
                 continue
-            results.append(search_object(state, slug, number))
+            results.append((slug, number))
     if one(filters, "sort") in ("updated", "created"):
         key = "updatedAt" if one(filters, "sort") == "updated" else "createdAt"
-        results.sort(key=lambda item: item[key], reverse=one(filters, "order", "desc") != "asc")
+        results.sort(key=lambda match: state["repos"][match[0]]["pulls"][match[1]][key], reverse=one(filters, "order", "desc") != "asc")
     return results
 
 
@@ -518,20 +531,26 @@ def cmd_search(state: dict, args: list[str]) -> None:
     if not args or args[0] != "prs":
         refuse("only `search prs` is served")
     options, terms = parse(args[1:], SEARCH_VALUES, SEARCH_BOOLS)
-    results = search(state, options, terms)[: int(one(options, "limit", "30"))]
+    results = [search_object(state, slug, number) for slug, number in search(state, options, terms)[: int(one(options, "limit", "30"))]]
     text = "\n".join(f"{item['repository']['nameWithOwner']}\t#{item['number']}\t{item['title']}\t{item['state']}" for item in results)
-    emit(results, options, fields=list(search_object_fields()), text=text)
+    emit(results, options, fields=SEARCH_FIELDS, text=text)
     trace("read", op="search prs", count=len(results))
 
 
-def search_object_fields() -> tuple[str, ...]:
-    return (
-        "assignees", "author", "authorAssociation", "body", "closedAt", "commentsCount", "createdAt", "id",
-        "isDraft", "isLocked", "isPullRequest", "labels", "number", "repository", "state", "title", "updatedAt", "url",
-    )
+SEARCH_FIELDS = [
+    "assignees", "author", "authorAssociation", "body", "closedAt", "commentsCount", "createdAt", "id",
+    "isDraft", "isLocked", "isPullRequest", "labels", "number", "repository", "state", "title", "updatedAt", "url",
+]
 
 
 # ---------------------------------------------------------------- pr
+
+
+def read_body(options: dict) -> str | None:
+    body, source = one(options, "body"), one(options, "body-file")
+    if body is None and source:
+        return sys.stdin.read() if source == "-" else Path(source).read_text(encoding="utf-8")
+    return body
 
 
 def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
@@ -541,10 +560,7 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
     if sub == "list":
         options, _ = parse(rest, {**JSON_FLAGS, "--state": "state", "-s": "state", "--label": "label", "-l": "label", "--author": "author", "-A": "author", "--search": "search", "-S": "search", "--base": "base", "-B": "base"}, {"--draft": "draft", "-d": "draft"})
         slug = one(options, "repo")
-        if not slug:
-            die("no git remotes found; pass -R OWNER/REPO", 1)
-        if slug not in state["repos"]:
-            not_found(f"repository {slug}")
+        require_repo(state, slug)
         filters: dict = {"repo": [slug]}
         state_name = one(options, "state", "open")
         if state_name == "merged":
@@ -555,14 +571,14 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
             if key in options:
                 filters[key] = options[key]
         found = search(state, filters, options.get("search", []))[: int(one(options, "limit", "30"))]
-        pulls = [pull_object(state, slug, str(item["number"])) for item in found]
+        pulls = [pull_object(state, slug, number) for _, number in found]
         text = "\n".join(f"{pull['number']}\t{pull['title']}\t{pull['headRefName']}\t{pull['state']}" for pull in pulls)
         emit(pulls, options, fields=PULL_FIELDS, text=text)
         trace("read", op="pr list", repo=slug)
         return
     if sub == "view":
         options, positionals = parse(rest, JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
-        slug, number = find_pull(state, options, positionals)
+        slug, number, _ = find_pull(state, options, positionals)
         pull = pull_object(state, slug, number)
         lines = [
             f"title:\t{pull['title']}", f"state:\t{pull['state']}", f"author:\t{pull['author']['login']}",
@@ -576,47 +592,44 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         trace("read", op="pr view", repo=slug, number=number)
         return
     if sub == "diff":
-        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--color": "color"}, {"--name-only": "names", "--patch": "patch"})
-        slug, number = find_pull(state, options, positionals)
-        diff = state["repos"][slug]["pulls"][number].get("diff", "")
-        print("\n".join(item["path"] for item in diff_files(diff)) if options.get("names") else diff, end="" if not options.get("names") else "\n")
+        options, positionals = parse(rest, {**REPO_FLAGS, "--color": "color"}, {"--name-only": "names", "--patch": "patch"})
+        slug, number, pull = find_pull(state, options, positionals)
+        diff = pull.get("diff", "")
+        if options.get("names"):
+            print("\n".join(item["path"] for item in diff_files(diff)))
+        else:
+            print(diff, end="")
         trace("read", op="pr diff", repo=slug, number=number)
         return
     if sub == "checks":
         options, positionals = parse(rest, JSON_FLAGS, {"--required": "required"})
-        slug, number = find_pull(state, options, positionals)
+        slug, number, pull = find_pull(state, options, positionals)
         bucket = {"SUCCESS": "pass", "FAILURE": "fail", "": "pending"}
         checks = [
             {"name": check["name"], "state": check.get("conclusion") or check["status"], "bucket": bucket.get(check.get("conclusion", ""), "fail"), "link": "", "workflow": check["name"]}
-            for check in state["repos"][slug]["pulls"][number].get("checks", [])
+            for check in pull.get("checks", [])
         ]
         emit(checks, options, fields=["name", "state", "bucket", "link", "workflow"], text="\n".join(f"{c['name']}\t{c['bucket']}" for c in checks) or "no checks reported")
         trace("read", op="pr checks", repo=slug, number=number)
         return
     if sub == "comment":
-        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--body": "body", "-b": "body", "--body-file": "body-file", "-F": "body-file"}, {})
-        slug, number = find_pull(state, options, positionals)
-        body = one(options, "body")
-        if body is None and one(options, "body-file"):
-            source = one(options, "body-file")
-            body = sys.stdin.read() if source == "-" else Path(source).read_text(encoding="utf-8")
+        options, positionals = parse(rest, {**REPO_FLAGS, **BODY_FLAGS}, {})
+        slug, number, pull = find_pull(state, options, positionals)
+        body = read_body(options)
         if not body:
             die("a comment body is required: use --body or --body-file", 1)
-        pull = state["repos"][slug]["pulls"][number]
-        pull.setdefault("comments", []).append({"author": state["viewer"]["login"], "createdAt": now(state), "body": body.rstrip("\n")})
+        pull.setdefault("comments", []).append({"author": state["viewer"]["login"], "createdAt": tick(state), "body": body.rstrip("\n")})
         save_state(state, state_path)
         trace("write", op="pr comment", repo=slug, number=number, body=body.rstrip("\n"))
         print(comment_objects(slug, number, pull["comments"])[-1]["url"])
         return
     if sub == "edit":
-        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--add-label": "add", "--remove-label": "remove"}, {})
-        slug, number = find_pull(state, options, positionals)
-        repo = state["repos"][slug]
-        pull = repo["pulls"][number]
+        options, positionals = parse(rest, {**REPO_FLAGS, "--add-label": "add", "--remove-label": "remove"}, {})
+        slug, number, pull = find_pull(state, options, positionals)
         add, remove = many(options, "add"), many(options, "remove")
         if not add and not remove:
             refuse("`pr edit` serves only --add-label and --remove-label")
-        known = {label["name"] for label in repo.get("labels", [])}
+        known = {label["name"] for label in state["repos"][slug].get("labels", [])}
         for name in add:
             if name not in known:
                 die(f"could not add label: '{name}' not found", 1, op="pr edit", repo=slug, number=number)
@@ -629,11 +642,10 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
     if sub == "merge":
         options, positionals = parse(
             rest,
-            {"-R": "repo", "--repo": "repo", "--match-head-commit": "match", "--subject": "subject", "-t": "subject", "--body": "body", "-b": "body"},
+            {**REPO_FLAGS, "--match-head-commit": "match", "--subject": "subject", "-t": "subject", "--body": "body", "-b": "body"},
             {"--squash": "squash", "-s": "squash", "--merge": "merge", "-m": "merge", "--rebase": "rebase", "-r": "rebase", "--auto": "auto", "--admin": "admin", "--delete-branch": "delete", "-d": "delete"},
         )
-        slug, number = find_pull(state, options, positionals)
-        pull = state["repos"][slug]["pulls"][number]
+        slug, number, pull = find_pull(state, options, positionals)
         strategy = next((name for name in ("squash", "merge", "rebase") if options.get(name)), None)
         attempt = {"op": "pr merge", "repo": slug, "number": number, "strategy": strategy, "match_head_commit": one(options, "match"), "admin": bool(options.get("admin")), "auto": bool(options.get("auto")), "head": pull["headRefOid"]}
         if pull["state"] != "OPEN":
@@ -653,7 +665,7 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
             return
         if not clean and (not options.get("admin") or pull.get("mergeStateStatus") == "DIRTY"):
             die(f"Pull request {slug}#{number} is not mergeable: merge state is {pull['mergeStateStatus']}", 1, **attempt)
-        pull.update(state="MERGED", mergedAt=now(state), mergedBy=state["viewer"]["login"], mergeCommit=hashlib.sha1(f"{slug}#{number}".encode()).hexdigest())
+        pull.update(state="MERGED", mergedAt=tick(state), mergedBy=state["viewer"]["login"], mergeCommit=hashlib.sha1(f"{slug}#{number}".encode()).hexdigest())
         for other in pull.get("conflictsWith", []):
             blocked = state["repos"][slug]["pulls"].get(str(other))
             if blocked and blocked["state"] == "OPEN":
@@ -663,14 +675,10 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         print(f"Merged pull request {slug}#{number} ({pull['title']})")
         return
     if sub == "review":
-        options, positionals = parse(rest, {"-R": "repo", "--repo": "repo", "--body": "body", "-b": "body", "--body-file": "body-file", "-F": "body-file"}, {"--approve": "approve", "-a": "approve", "--request-changes": "request-changes", "-r": "request-changes", "--comment": "comment", "-c": "comment"})
-        slug, number = find_pull(state, options, positionals)
-        pull = state["repos"][slug]["pulls"][number]
+        options, positionals = parse(rest, {**REPO_FLAGS, **BODY_FLAGS}, {"--approve": "approve", "-a": "approve", "--request-changes": "request-changes", "-r": "request-changes", "--comment": "comment", "-c": "comment"})
+        slug, number, pull = find_pull(state, options, positionals)
         kind = next((name for name in ("approve", "request-changes", "comment") if options.get(name)), "comment")
-        review_body = one(options, "body", "")
-        if not review_body and one(options, "body-file"):
-            source = one(options, "body-file")
-            review_body = sys.stdin.read() if source == "-" else Path(source).read_text(encoding="utf-8")
+        review_body = read_body(options) or ""
         if kind != "comment" and pull["author"] == state["viewer"]["login"]:
             die(f"failed to create review: Can not {kind.replace('-', ' ')} on your own pull request", 1, op="pr review", repo=slug, number=number, review=kind)
         pull.setdefault("reviews", []).append({"author": {"login": state["viewer"]["login"]}, "state": kind.upper().replace("-", "_"), "body": review_body})
@@ -689,17 +697,15 @@ def cmd_issue(state: dict, args: list[str]) -> None:
     options, positionals = parse(args[1:], JSON_FLAGS, {"--comments": "comments", "-c": "comments"})
     if not positionals:
         die("issue number required", 1)
-    match = re.match(r"https://github\.com/([^/]+/[^/]+)/issues/(\d+)", positionals[0])
-    slug, number = (match.group(1), match.group(2)) if match else (one(options, "repo"), positionals[0].lstrip("#"))
-    if not slug or slug not in state["repos"]:
-        not_found(f"repository {slug}")
-    issue = state["repos"][slug].get("issues", {}).get(number)
+    slug, number = locate(positionals[0], "issues", options)
+    repo = require_repo(state, slug)
+    issue = repo.get("issues", {}).get(number)
     if issue is None:
         not_found(f"issue {slug}#{number}")
     data = {
         "number": int(number), "title": issue["title"], "body": issue.get("body", ""), "state": issue.get("state", "OPEN"),
         "closed": issue.get("state", "OPEN") != "OPEN", "author": {"login": issue.get("author", state["viewer"]["login"])},
-        "labels": label_objects(state["repos"][slug], issue.get("labels", [])), "assignees": [],
+        "labels": label_objects(repo, issue.get("labels", [])), "assignees": [],
         "comments": comment_objects(slug, number, issue.get("comments", [])), "url": f"https://github.com/{slug}/issues/{number}",
         "createdAt": issue.get("createdAt", state["now"]), "updatedAt": issue.get("updatedAt", state["now"]),
     }
@@ -714,10 +720,7 @@ def cmd_repo(state: dict, args: list[str]) -> None:
     options, positionals = parse(args[1:], {**JSON_FLAGS, "--visibility": "visibility"}, {"--no-archived": "no-archived", "--source": "source"})
     if args[0] == "view":
         slug = positionals[0] if positionals else one(options, "repo")
-        if not slug:
-            die("no git remotes found; name the repository as OWNER/REPO", 1)
-        if slug not in state["repos"]:
-            not_found(f"repository {slug}")
+        require_repo(state, slug, "no git remotes found; name the repository as OWNER/REPO")
         data = repo_object(state, slug)
         emit(data, options, fields=list(data), text="\n".join(f"{key}:\t{value}" for key, value in data.items()))
     else:
@@ -732,11 +735,7 @@ def cmd_label(state: dict, state_path: Path, args: list[str]) -> None:
         refuse("only `label list` and `label create` are served", op="label " + (args[0] if args else ""))
     options, positionals = parse(args[1:], {**JSON_FLAGS, "--color": "color", "-c": "color", "--description": "description", "-d": "description", "--search": "search", "-S": "search"}, {"--force": "force", "-f": "force"})
     slug = one(options, "repo")
-    if not slug:
-        die("no git remotes found; pass -R OWNER/REPO", 1)
-    if slug not in state["repos"]:
-        not_found(f"repository {slug}")
-    labels = state["repos"][slug].setdefault("labels", [])
+    labels = require_repo(state, slug).setdefault("labels", [])
     if args[0] == "list":
         emit(labels, options, fields=["name", "color", "description"], text="\n".join(f"{label['name']}\t{label['description']}\t#{label['color']}" for label in labels))
         trace("read", op="label list", repo=slug)
@@ -809,8 +808,8 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
     if endpoint == "user/orgs":
         return [{"login": org} for org in state.get("orgs", [])]
     if endpoint == "search/issues":
-        items = search(state, {}, [unquote_plus(query.get("q", ""))])
-        return {"total_count": len(items), "incomplete_results": False, "items": [rest_pull(state, item["repository"]["nameWithOwner"], str(item["number"])) for item in items]}
+        found = search(state, {}, [unquote_plus(query.get("q", ""))])
+        return {"total_count": len(found), "incomplete_results": False, "items": [rest_pull(state, slug, number) for slug, number in found]}
     owner_repos = re.fullmatch(r"(?:orgs|users)/([^/]+)/repos|user/repos", endpoint)
     if owner_repos:
         owner = owner_repos.group(1) or login
@@ -819,9 +818,7 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
     if not match:
         refuse(f"endpoint {endpoint!r} is not served", op="api", endpoint=endpoint)
     slug, tail = match.group(1), match.group(2) or ""
-    if slug not in state["repos"]:
-        not_found(f"repository {slug}")
-    repo = state["repos"][slug]
+    repo = require_repo(state, slug)
     pulls = repo.get("pulls", {})
     if tail == "":
         return rest_repo(state, slug)
@@ -848,17 +845,16 @@ def api_get(state: dict, endpoint: str, query: dict, headers: str) -> object:
     if match:
         kind, number, part = match.groups()
         if number in pulls:
-            pull = pull_object(state, slug, number)
             if part is None:
                 return pulls[number].get("diff", "") if "diff" in headers else rest_pull(state, slug, number)
             if part == "files":
                 return [{"filename": item["path"], "additions": item["additions"], "deletions": item["deletions"], "changes": item["additions"] + item["deletions"], "patch": "\n".join(item["patch"])} for item in diff_files(pulls[number].get("diff", ""))]
             if part == "comments" and kind == "issues":
-                return [{"user": {"login": comment["author"]["login"]}, "body": comment["body"], "created_at": comment["createdAt"], "html_url": comment["url"]} for comment in pull["comments"]]
+                return [{"user": {"login": comment["author"]["login"]}, "body": comment["body"], "created_at": comment["createdAt"], "html_url": comment["url"]} for comment in pull_object(state, slug, number)["comments"]]
             if part == "commits":
-                return [{"sha": commit["oid"], "commit": {"message": commit["messageHeadline"], "committer": {"date": commit["committedDate"]}}} for commit in pull["commits"]]
+                return [{"sha": commit["oid"], "commit": {"message": commit["messageHeadline"], "committer": {"date": commit["committedDate"]}}} for commit in pull_object(state, slug, number)["commits"]]
             if part == "labels":
-                return pull["labels"]
+                return pull_object(state, slug, number)["labels"]
             return []
         issue = repo.get("issues", {}).get(number)
         if kind == "issues" and issue is not None:

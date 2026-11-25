@@ -57,7 +57,8 @@ anything else with exit 3, so a run that strays fails loudly. It enforces what
 GitHub would: a merge with `--match-head-commit` fails when the SHA is not the
 head, a label must exist before it is added, and nobody approves their own
 pull request. No fixture has a merge queue. Calls may run in parallel. Its
-output never says it is a stand-in.
+answers look like GitHub's, but its refusals and its environment variable
+names say it is a stand-in, so a run can tell it is not GitHub.
 
 [`tests/reviewing-prs`](../../tests/reviewing-prs/README.md) checks the
 stand-in and every fixture in the repository gate, without a model.
@@ -120,8 +121,8 @@ shapes they must parse.
 
 ## Eval Records
 
-None yet for this case set. The 2026-11-24 rerun measured the earlier set and
-was removed with it.
+- [Review page, 2026-11-24](records/2026-11-24-review-page/README.md): each
+  case once with the skill and once without, in Claude.
 
 Commit each record under
 `records/<date>-<slug>/` with the fields

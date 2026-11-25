@@ -1,106 +1,4 @@
 suite,suite_version,model,effort,score,pass_rate,cost_usd,minutes,date_read,source_url
-AA Intelligence Index,v5.0.1,Agnes 2.5 Pro Theta,none,24.03,,0.5747,23.85,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Apodex 1.1,none,13.67,,0.7642,,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Beam 1.0,none,17.73,,0.2844,2.1,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Command A+,none,6.24,,,3.27,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,DeepSeek V4 Pro 0813,high,20.80,,0.8485,15.99,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,DeepSeek V4 Pro 0813,max,23.06,,1.7691,19.55,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,DeepSeek V4.1 Flash 1017,high,28.64,,0.4562,10.95,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,DeepSeek V4.1 Flash 1017,max,32.59,,0.6021,14,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Fable 5.2,low,53.92,,3.0972,5.48,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Fable 5.2,medium,56.41,,3.8026,6.5,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Fable 5.2,high,61.82,,9.0784,15.18,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Fable 5.2,xhigh,62.22,,14.8286,24.5,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Fable 5.2,max,64.56,,26.5386,41.67,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GLM-5.3,low,23.11,,1.5749,13.74,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GLM-5.3,max,31.65,,5.0093,24.96,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GLM-5.3-Flash,none,27.80,,0.5833,39.89,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6 Luna,low,9.67,,0.0051,0.63,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6 Luna,medium,18.45,,0.0422,3.54,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6 Luna,high,21.43,,0.0729,5.94,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6 Luna,xhigh,23.45,,0.1041,7.33,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6 Luna,max,27.86,,0.152,12.11,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.1 Terra,low,29.42,,0.0713,1.3,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.1 Terra,medium,38.17,,0.1688,3.02,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.1 Terra,high,42.43,,0.2593,4.47,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.1 Terra,xhigh,45.25,,0.4007,7.08,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.1 Terra,max,51.33,,0.9611,15.36,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Astra,low,45.65,,0.6617,1.9,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Astra,medium,57.00,,1.6177,4.69,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Astra,high,60.09,,2.0739,6.13,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Astra,xhigh,61.56,,2.5211,7.66,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Astra,max,62.14,,3.9979,14.06,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Sol,low,40.55,,0.1836,1.58,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Sol,medium,52.68,,0.4061,3.37,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Sol,high,54.89,,0.5636,4.85,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Sol,xhigh,55.74,,0.648,5.56,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,GPT-6.2 Sol,max,57.26,,1.0144,9.12,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 3.5 Flash-Lite,none,11.66,,0.6929,1.62,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Argon,medium,47.60,,4.3146,29.03,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Argon,high,50.41,,4.9733,29.19,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Carbon,low,54.22,,7.1866,29.79,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Carbon,medium,58.26,,6.5858,29.45,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Carbon,high,60.03,,7.7555,37.5,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Hydrogen,low,26.89,,0.2922,1.48,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Hydrogen,medium,41.23,,0.798,4.18,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Hydrogen,high,50.79,,1.8733,8.71,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Hydrogen,xhigh,53.92,,3.1602,15.33,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Neon,low,44.08,,0.7452,3.73,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Neon,medium,54.86,,1.9046,8.27,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Neon,high,59.62,,3.7427,14.82,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Gemini 4 Neon,xhigh,61.40,,6.4448,21.49,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Granite 4.2 8B,none,5.10,,0.0405,9.77,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Grok 4.7,low,31.13,,2.9222,10.77,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Grok 4.7,high,35.21,,6.1836,21.44,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Grok 4.7,xhigh,35.49,,7.7715,25.22,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Haiku 5.5,low,18.62,,0.0438,2.21,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Haiku 5.5,medium,24.60,,0.0918,4.02,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Haiku 5.5,high,29.87,,0.1586,6.48,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Haiku 5.5,xhigh,34.64,,0.2484,9.57,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Haiku 5.5,max,36.48,,0.411,14.84,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Inkling,high,11.03,,0.617,3.1,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Inkling,xhigh,12.48,,1.352,7.94,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Inkling 2 Small,none,30.63,,1.1784,21.34,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,K2 Horizon 375B A23B,none,17.82,,,4.48,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Kimi K3.1 Pro,none,46.45,,3.6812,38.74,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,LFM3-1.7B,none,5.99,,0.1732,11.6,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,LFM3-VL-2B,none,1.71,,0.1237,2.02,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Ling 3.1 Flash 1019,none,29.57,,3.1851,,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,MiMo-V2.6-Flash,none,26.73,,0.1285,54.33,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,MiMo-V2.6-Pro,none,29.89,,0.2572,36.12,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,MiniMax-M3,none,18.88,,1.2851,17.25,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,MiniMax-M3.1-Flash,none,29.06,,0.491,18.49,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Mistral Large 4,medium,23.13,,1.4121,14.99,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Mistral Large 4,high,26.12,,2.0617,22.87,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Mistral Medium 3.5,none,4.65,,1.0391,4.61,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Muse Ember,xhigh,34.11,,0.1162,2.76,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Muse Ember,max,36.02,,0.1359,3.01,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Muse Glimmer,high,6.34,,0.1782,4.87,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Muse Spark Open,xhigh,24.88,,2.0177,6.1,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Muse Wonder,high,40.53,,4.5605,9.01,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Muse Wonder,max,43.57,,6.952,13.84,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Nemotron 3.5 Lightning,none,5.53,,0.3145,3.85,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Nemotron 3.5 Super VL,none,13.62,,0.4818,4.47,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,North Mini Code,none,3.42,,,2.71,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Opus 5.5,low,34.75,,0.9755,3.09,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Opus 5.5,medium,48.21,,2.4511,6.96,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Opus 5.5,high,51.84,,3.4647,9.42,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Opus 5.5,xhigh,57.44,,6.0472,16.16,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Opus 5.5,max,59.11,,10.0364,25.2,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Qwen3.8 27B,low,15.69,,1.9059,26.3,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Qwen3.8 27B,medium,17.48,,2.16,29.6,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Qwen3.8 27B,xhigh,20.11,,3.5295,38.34,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Qwen3.8-Flash-Next,none,28.58,,0.5694,31.94,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Qwen4 Max,none,42.89,,3.2681,29.8,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Solar Pro 4,none,14.16,,0.9557,72.49,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Sonnet 5.5,low,25.65,,0.5113,2.6,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Sonnet 5.5,medium,30.82,,0.7807,3.8,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Sonnet 5.5,high,41.52,,1.6361,7.21,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Sonnet 5.5,xhigh,49.92,,4.092,14.49,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Sonnet 5.5,max,54.54,,10.0206,32.73,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Step 5 Preview,none,28.53,,2.3453,12.46,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,Tencent Hy4,none,34.56,,1.0311,13.73,2026-11-19,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.1,gpt-oss-120b,high,3.82,,0.3453,5.96,2026-11-19,https://artificialanalysis.ai/leaderboards/models
 CursorBench,4.1,Fable 5.2,low,53.40,,4.26,,2026-11-19,https://cursor.com/cursorbench
 CursorBench,4.1,Fable 5.2,medium,54.20,,5.01,,2026-11-19,https://cursor.com/cursorbench
 CursorBench,4.1,Fable 5.2,high,56.50,,10.51,,2026-11-19,https://cursor.com/cursorbench
@@ -1623,115 +1521,6 @@ Vals Terminal-Bench,4.0,Grok 4.7,xhigh,28.79,,18.0116,50.13,2026-11-24,https://w
 Vals Terminal-Bench,4.0,Haiku 5.5,max,36.36,,3.1175,51.94,2026-11-24,https://www.vals.ai/benchmarks/terminal-bench-4
 Vals Terminal-Bench,4.0,Opus 5.5,max,65.15,,12.0425,63.51,2026-11-24,https://www.vals.ai/benchmarks/terminal-bench-4
 Vals Terminal-Bench,4.0,Sonnet 5.5,max,64.14,,10.7528,82.15,2026-11-24,https://www.vals.ai/benchmarks/terminal-bench-4
-AA Intelligence Index,v5.0.2,Agnes 2.5 Pro Theta,none,24.08,,0.5747,30.75,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Apodex 1.1,none,13.72,,0.7642,,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Beam 1.0,none,17.66,,0.2844,1.85,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Command A+,none,6.24,,,2.88,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,DeepSeek V4 Pro 0813,high,20.80,,0.8485,13.8,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,DeepSeek V4 Pro 0813,max,23.06,,1.7691,19.25,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,DeepSeek V4 Pro 0813 (Non-reasoning),none,12.57,,0.977,14.77,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,DeepSeek V4.1 Flash 1017,high,28.74,,0.4562,10.46,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,DeepSeek V4.1 Flash 1017,max,32.40,,0.6021,14.06,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,DeepSeek V4.1 Flash 1017 (Non-reasoning),none,18.51,,0.4254,6.49,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Fable 5.2,low,53.89,,3.0972,5.47,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Fable 5.2,medium,56.32,,3.8026,6.56,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Fable 5.2,high,61.87,,9.0784,14.77,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Fable 5.2,xhigh,62.22,,14.8286,24.28,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Fable 5.2,max,64.77,,26.5386,41,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GLM-5.3,low,23.11,,1.5749,14.12,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GLM-5.3,max,31.55,,5.0093,27.97,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GLM-5.3-Flash,max,27.74,,0.5833,37.06,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6 Luna,low,9.67,,0.0051,0.57,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6 Luna,medium,18.45,,0.0422,3.25,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6 Luna,high,21.48,,0.0729,5.09,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6 Luna,xhigh,23.45,,0.1041,6.71,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6 Luna,max,27.86,,0.152,10.87,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6 Luna (Non-reasoning),none,9.44,,0.0714,1.68,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.1 Terra,low,29.42,,0.0713,1.16,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.1 Terra,medium,38.11,,0.1688,2.76,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.1 Terra,high,42.54,,0.2593,4.24,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.1 Terra,xhigh,45.25,,0.4007,6.44,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.1 Terra,max,51.39,,0.9611,14.18,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.1 Terra (Non-reasoning),none,30.47,,0.2259,2.43,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Astra,low,45.65,,0.6617,2.12,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Astra,medium,57.05,,1.6177,4.79,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Astra,high,60.29,,2.0739,6.46,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Astra,xhigh,61.76,,2.5211,8.07,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Astra,max,62.19,,3.9979,14.21,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Sol,low,40.55,,0.1836,1.66,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Sol,medium,52.43,,0.4061,3.65,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Sol,high,54.84,,0.5636,5.37,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Sol,xhigh,55.63,,0.648,6.46,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,GPT-6.2 Sol,max,57.26,,1.0144,10.26,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 3.5 Flash-Lite,none,11.66,,0.6929,1.67,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Argon,medium,47.71,,8.6292,24.12,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Argon,high,50.51,,9.9466,23.58,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Carbon,low,54.17,,7.1866,27.95,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Carbon,medium,58.36,,6.5858,25.3,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Carbon,high,60.13,,7.7555,35.33,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Hydrogen,low,26.89,,0.2922,1.49,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Hydrogen,medium,41.13,,0.798,3.85,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Hydrogen,high,50.99,,1.8733,8.44,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Hydrogen,xhigh,54.07,,3.1602,16.33,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Neon,low,44.08,,0.7452,3.89,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Neon,medium,54.91,,1.9046,8.88,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Neon,high,59.82,,3.7427,15.17,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Gemini 4 Neon,xhigh,61.55,,6.4448,26.57,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Grok 4.7,low,31.13,,2.9222,9.1,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Grok 4.7,high,35.18,,6.1836,18.6,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Grok 4.7,xhigh,35.37,,7.7715,22.91,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Haiku 5.5,low,18.62,,0.0438,2.16,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Haiku 5.5,medium,24.60,,0.0918,4.07,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Haiku 5.5,high,29.98,,0.1586,6.5,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Haiku 5.5,xhigh,34.59,,0.2484,9.6,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Haiku 5.5,max,36.54,,0.411,14.56,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Inkling,high,11.03,,0.617,3.88,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Inkling,xhigh,12.53,,1.352,9.52,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Inkling 2 Mini,none,20.13,,0.5865,12.66,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Inkling 2 Small,none,30.68,,1.1784,23.77,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,K2 Horizon 375B A23B,none,17.79,,,3.62,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Kimi K3.1 Pro,none,46.55,,3.6812,35.56,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,LFM3-1.7B,none,5.99,,0.1732,4.84,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,LFM3-VL-2B,none,1.71,,0.1237,1.99,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Ling 3.1 Flash 1019,none,29.65,,3.1851,,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,MiMo-V2.6-Flash,none,26.83,,0.1285,55.21,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,MiMo-V2.6-Pro,none,29.94,,0.2572,48.67,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,MiniMax-M3,none,19.05,,1.291,13.96,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,MiniMax-M3.1-Flash,none,29.06,,0.492,17.6,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Mistral Large 4,medium,23.08,,1.4121,11.81,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Mistral Large 4,high,26.12,,2.0617,17.41,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Mistral Medium 3.5,none,4.65,,1.0391,4.71,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Mistral Small 4 (Reasoning),none,4.30,,0.0399,1.65,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Muse Ember,xhigh,34.17,,0.1162,2.98,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Muse Ember,max,36.09,,0.1359,3.34,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Muse Glimmer,high,6.31,,0.1782,4.27,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Muse Spark Open,xhigh,24.88,,2.0177,6.41,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Muse Wonder,high,40.53,,4.5605,11.53,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Muse Wonder,max,43.73,,6.952,15.49,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Nemotron 3 Ultra 550B A55B (Reasoning),none,11.76,,2.1897,4.22,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Nemotron 3.5 Lightning,none,5.53,,0.3145,3.65,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Nemotron 3.5 Super VL,none,13.62,,0.4818,3.85,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,North Mini Code,none,3.37,,,1.98,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Opus 5.5,low,34.75,,0.9755,3.03,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Opus 5.5,medium,48.26,,2.4511,6.94,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Opus 5.5,high,51.79,,3.4647,9.29,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Opus 5.5,xhigh,57.52,,6.0472,15.78,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Opus 5.5,max,59.12,,10.0364,24.81,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Qwen3.8 27B,low,15.69,,1.9059,20.77,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Qwen3.8 27B,medium,17.50,,2.2709,23.49,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Qwen3.8 27B,xhigh,20.11,,3.5323,27.63,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Qwen3.8 27B (Non-reasoning),none,10.03,,3.7729,13.58,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Qwen3.8-Flash-Next,none,28.47,,0.5716,36.31,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Qwen4 Max,none,42.79,,3.2681,21.86,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Solar Pro 4,none,14.16,,0.9557,64.36,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Sonnet 5.5,low,25.60,,0.5113,2.65,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Sonnet 5.5,medium,30.87,,0.7807,3.7,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Sonnet 5.5,high,41.48,,1.6361,7.05,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Sonnet 5.5,xhigh,49.87,,4.092,13.79,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Sonnet 5.5,max,54.73,,10.0206,31.1,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Step 5 Preview,none,28.52,,2.3453,24.74,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,Tencent Hy4,none,34.57,,1.0311,13.82,2026-11-24,https://artificialanalysis.ai/leaderboards/models
-AA Intelligence Index,v5.0.2,gpt-oss-120b,high,3.82,,0.3453,6.48,2026-11-24,https://artificialanalysis.ai/leaderboards/models
 AA Coding Agent Index,v2.1,Beam 1.0,none,15.48,,0.3084,40.45,2026-11-24,https://artificialanalysis.ai/agents/coding
 AA Coding Agent Index,v2.1,DeepSeek V4.1 Flash 1017,max,36.83,,0.321,31.44,2026-11-24,https://artificialanalysis.ai/agents/coding
 AA Coding Agent Index,v2.1,Fable 5.1,max,52.49,,11.7046,36.35,2026-11-24,https://artificialanalysis.ai/agents/coding
@@ -2185,3 +1974,411 @@ Frontier Design,2026-11-22,Muse Wonder,none,1241.00,,,,2026-11-24,https://contra
 Frontier Design,2026-11-22,Opus 5.5,none,1684.00,,,,2026-11-24,https://contralabs.com/frontierdesign/leaderboard
 Frontier Design,2026-11-22,Qwen3.8 Max,none,1426.00,,,,2026-11-24,https://contralabs.com/frontierdesign/leaderboard
 Frontier Design,2026-11-22,Sonnet 5.5,none,1664.00,,,,2026-11-24,https://contralabs.com/frontierdesign/leaderboard
+FrontierCode,2.0,Beam 1.0,minimal,0.00,0.00,0.059,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Beam 1.0,low,0.00,0.00,0.142,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Beam 1.0,medium,0.83,1.01,0.315,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Beam 1.0,high,1.99,2.27,0.612,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Beam 1.0,xhigh,2.69,3.03,1.126,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Beam 1.0,max,3.41,3.79,1.299,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,DeepSeek V4.1 Flash 1017,low,17.32,19.70,0.206,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,DeepSeek V4.1 Flash 1017,high,19.78,22.39,0.274,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,DeepSeek V4.1 Flash 1017,max,20.19,22.98,0.384,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.1,low,21.21,23.64,3.007,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.1,medium,22.25,24.70,3.891,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.1,high,26.58,29.55,5.386,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.1,xhigh,34.03,37.58,8.68,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.1,max,32.98,36.36,11.457,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.2,low,35.26,38.64,2.623,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.2,medium,38.78,42.42,3.103,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.2,high,46.24,50.45,8.402,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.2,xhigh,50.18,54.70,17.734,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Fable 5.2,max,48.23,52.73,55.868,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GLM 5.3,low,14.36,16.16,3.189,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GLM 5.3,high,18.02,20.20,5.181,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GLM 5.3,max,20.15,22.73,7.516,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GLM 5.3 Flash,low,8.01,9.09,0.43,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GLM 5.3 Flash,high,12.86,14.65,0.584,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GLM 5.3 Flash,max,14.95,16.73,0.792,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.5,low,7.32,8.33,1.9753,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.5,medium,14.65,16.36,2.9515,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.5,high,19.67,22.12,3.8021,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.5,xhigh,23.62,26.36,5.2771,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.6 Sol,low,12.91,14.55,1.451,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.6 Sol,medium,20.02,22.58,2.36,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.6 Sol,high,24.85,27.88,3.166,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.6 Sol,xhigh,25.02,27.88,3.83,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-5.6 Sol,max,28.89,32.27,5.503,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Astra,low,31.11,34.24,2.437,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Astra,medium,37.29,40.76,3.493,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Astra,high,38.83,41.97,4.277,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Astra,xhigh,41.69,45.15,4.539,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Astra,max,44.02,47.58,6.676,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Luna,low,4.05,4.55,0.023,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Luna,medium,16.12,17.88,0.092,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Luna,high,16.50,18.48,0.115,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Luna,xhigh,18.44,20.45,0.132,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Luna,max,22.74,25.15,0.174,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Sol,low,10.49,11.67,0.4164,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Sol,medium,22.05,24.55,0.8225,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Sol,high,23.34,25.91,1.0714,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Sol,xhigh,30.45,33.64,1.4432,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6 Sol,max,34.91,38.33,2.3547,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.1 Sol,low,25.74,28.48,0.341,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.1 Sol,medium,30.27,33.03,0.492,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.1 Sol,high,35.09,38.33,0.647,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.1 Sol,xhigh,33.03,36.06,0.695,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.1 Sol,max,39.65,43.03,1.029,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Astra,low,38.07,42.17,1.415,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Astra,medium,42.20,46.47,2.469,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Astra,high,43.56,47.73,3.952,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Astra,xhigh,44.12,48.49,4.289,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Astra,max,44.19,48.23,5.966,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Sol,low,33.14,36.62,0.402,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Sol,medium,38.29,42.17,0.685,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Sol,high,39.72,43.94,0.876,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Sol,xhigh,39.78,43.94,0.98,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,GPT-6.2 Sol,max,43.76,48.23,1.287,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Argon,low,22.41,24.85,3.977,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Argon,medium,24.43,27.12,5.688,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Argon,high,27.63,30.61,6.514,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Carbon,low,31.53,34.60,7.723,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Carbon,medium,40.90,45.20,4.486,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Carbon,high,42.62,46.92,5.057,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Hydrogen,low,10.52,11.87,0.353,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Hydrogen,medium,28.21,31.57,0.901,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Hydrogen,high,38.23,42.17,2.404,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Hydrogen,xhigh,38.87,43.18,4.953,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Neon,low,27.41,30.56,0.959,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Neon,medium,38.16,42.17,2.174,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Neon,high,46.24,50.76,4.382,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Gemini 4 Neon,xhigh,44.83,49.24,7.666,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Grok 4.7,low,21.06,23.64,3.873,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Grok 4.7,medium,26.07,29.39,8.028,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Grok 4.7,high,26.54,29.70,11.094,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Grok 4.7,xhigh,28.90,32.27,14.36,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Haiku 5.5,low,10.59,11.82,0.065,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Haiku 5.5,medium,14.05,15.76,0.097,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Haiku 5.5,high,19.27,21.52,0.139,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Haiku 5.5,xhigh,22.92,25.45,0.226,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Haiku 5.5,max,28.93,31.86,0.366,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling 2 Small,none,17.43,19.44,0.439,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling 2 Small,low,15.57,17.68,0.286,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling 2 Small,medium,19.13,21.46,0.417,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling 2 Small,high,22.27,25.00,0.562,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling 2 Small,xhigh,20.68,23.23,0.615,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling 2 Small,max,22.57,25.51,0.584,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling Small,high,1.78,2.04,1.366,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Inkling Small,max,3.96,4.55,3.684,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Kimi K3,low,11.32,12.63,2.977,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Kimi K3,high,18.85,21.09,4.475,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Kimi K3,max,18.43,20.71,5.456,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Kimi K3.1 Pro,low,12.86,14.14,1.877,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Kimi K3.1 Pro,high,17.51,19.44,2.358,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Kimi K3.1 Pro,max,19.89,21.97,3.033,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Mistral Large 4,low,9.50,10.61,0.669,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Mistral Large 4,medium,8.78,9.85,1.031,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Mistral Large 4,high,19.65,21.97,1.549,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Spark Open,low,0.42,0.51,0.593,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Spark Open,medium,1.63,1.77,1.865,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Spark Open,high,4.15,4.55,6.78,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Spark Open,xhigh,6.46,7.32,9.157,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Wonder 1.0,low,21.60,24.55,1.843,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Wonder 1.0,medium,23.92,26.97,2.534,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Wonder 1.0,high,24.92,28.18,3.143,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Muse Wonder 1.0,xhigh,25.32,28.79,3.793,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 4.8,low,9.79,10.91,4.195,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 4.8,medium,11.26,12.58,5.588,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 4.8,high,11.10,12.42,6.316,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 4.8,xhigh,14.87,16.67,9.133,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 4.8,max,15.32,17.12,12.129,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5,low,19.32,21.67,3.276,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5,medium,24.56,27.58,5.217,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5,high,28.13,31.36,8.361,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5,xhigh,27.38,30.45,11.093,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5,max,27.20,30.45,12.997,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5.5,low,14.85,16.52,0.746,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5.5,medium,31.43,34.55,1.699,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5.5,high,36.27,39.85,2.423,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5.5,xhigh,44.72,48.79,5.184,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Opus 5.5,max,47.34,51.82,12.821,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-1.6,none,1.34,1.52,1.3592,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-1.7,none,15.51,17.56,3.5209,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2,medium,16.20,18.33,0.442,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2,high,24.07,27.12,0.958,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2,max,23.99,26.97,1.261,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2 Flash,low,23.17,25.76,0.203,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2 Flash,max,24.00,27.27,0.2024,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2.1,low,16.70,18.69,0.39,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2.1,medium,26.10,29.04,0.77,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2.1,high,30.50,33.84,1.18,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2.1,xhigh,37.40,41.16,2.38,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,SWE-2.1,max,41.30,45.45,4.44,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Sonnet 5.5,low,9.66,10.91,0.369,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Sonnet 5.5,medium,14.96,16.67,0.482,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Sonnet 5.5,high,22.95,25.45,1.066,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Sonnet 5.5,xhigh,36.50,40.00,3.315,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+FrontierCode,2.0,Sonnet 5.5,max,42.24,46.36,19.941,,2026-11-25,https://cognition.com/data/frontier-code-2.0/data.json
+Design Arena,2026-11-25,Beam 1.0,max,1088.00,,0.1513,6.42,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,DeepSeek-V4.1-Flash (1017),none,1295.00,,,9.01,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Fable 5,none,1280.00,,6.0124,12.25,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Fable 5.1,none,1344.00,,6.8911,22.21,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Fable 5.2,none,1377.00,,14.123,64.57,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 4.6,none,1061.00,,,111.83,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 4.7,none,1072.00,,,31.33,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 5,none,1120.00,,,229.15,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 5 Turbo,none,1153.00,,0.8181,26.43,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 5.1,none,1168.00,,0.8881,19.36,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 5.2,none,1199.00,,1.3149,45.88,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM 5V Turbo,none,1114.00,,,28.24,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM-5.3,none,1246.00,,1.5614,33.68,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM-5.3 (cortado),none,1249.00,,3.0885,37.51,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GLM-5.3-Flash,none,1230.00,,0.221,26.74,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT 5.1,none,1013.00,,,4.69,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT 5.2,none,1069.00,,,43.4,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5 Codex,none,1055.00,,,170.82,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.1 Codex,none,1039.00,,,12.9,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.2 Codex,none,1043.00,,,83.04,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.3 Codex,none,1016.00,,,232.35,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.4,none,1045.00,,,10.29,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.5,none,1119.00,,,14.48,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.6 Luna,none,1152.00,,,5.58,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.6 Sol,medium,1196.00,,,9.48,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.6 Sol,xhigh,1241.00,,2.1681,10.4,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-5.6 Terra,none,1094.00,,0.3136,6.19,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6 Astra,xhigh,1305.00,,6.506,25.27,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6 Astra,max,1406.00,,8.8541,35.75,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6 Luna,none,1155.00,,0.0257,6.97,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6 Sol,none,1218.00,,0.5647,8.08,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6.1 Sol,none,1261.00,,0.5273,13.56,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6.1 Sol,max,1371.00,,1.1998,21.36,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6.1 Terra,none,1187.00,,0.162,7.28,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6.2 Astra,max,1322.00,,8.5345,38.14,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,GPT-6.2 Sol,none,1292.00,,1.3666,17.1,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 2.5 Pro,none,918.00,,,13.77,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3 Flash Preview,none,1084.00,,,22.47,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3 Pro Preview,none,1083.00,,,18.12,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3.1 Pro Preview,none,1091.00,,0.8808,14.26,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3.5 Flash,none,1178.00,,1.4578,14.92,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3.6 Flash,none,1180.00,,0.9533,12.68,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3.7 Flash,none,1225.00,,0.7824,16.36,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 3.8 Flash,none,1228.00,,0.9926,19.2,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 4 Argon,none,1269.00,,1.495,28.18,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 4 Carbon,none,1316.00,,2.7235,42.74,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 4 Hydrogen,none,1274.00,,1.1903,14.63,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Gemini 4 Neon,none,1339.00,,3.6546,24.36,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok 4.1 Fast (Reasoning),none,945.00,,,7.36,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok 4.20 Reasoning,none,1096.00,,,75.03,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok 4.3,none,1048.00,,0.1465,9.13,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok 4.5,none,1226.00,,1.0026,14.75,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok 4.6,none,1244.00,,1.9695,20.48,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok 4.7,none,1277.00,,3.0223,35.46,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Grok Code Fast 1,none,1019.00,,,12,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Haiku 5.5,none,1198.00,,0.2495,11.95,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Hy3,none,1155.00,,0.0892,14.48,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Hy4,none,1299.00,,0.5274,27.96,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Inkling,none,1177.00,,,48.66,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Inkling 2 Small,none,1318.00,,0.3324,29.83,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Kimi K2.5 (Thinking),none,1125.00,,,92.11,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Kimi K2.6,none,1160.00,,,22.23,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Kimi K2.7 Code,none,1162.00,,,33.14,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Kimi K3,none,1265.00,,2.5377,29.61,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Kimi K3.1 Pro,none,1304.00,,1.668,38.33,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Ling-3.1-flash,none,1209.00,,,27.82,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,MiMo-V2.5-Pro,none,1260.00,,0.2756,37.76,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,MiMo-V2.6-Pro,none,1275.00,,,17.32,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,MiniMax M2.7,none,1081.00,,0.0635,7.93,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,MiniMax M3,none,1192.00,,0.8101,28.26,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,MiniMax M3.1 Flash,none,1252.00,,0.2227,23.45,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Mistral Large,none,918.00,,,36.64,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Mistral Medium 3.5,none,898.00,,,15.63,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Glimmer 30B,xhigh,1022.00,,0.0706,5.14,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Spark 1.1,none,1175.00,,0.6767,11.93,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Spark 1.2,none,1188.00,,0.9547,13.13,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Spark 1.3,xhigh,1267.00,,0.9323,9.61,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Spark 1.3 Max,none,1286.00,,1.1612,14.91,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Spark Open,xhigh,1181.00,,0.5084,6.47,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Muse Wonder,max,1186.00,,2.0311,9.09,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Nemotron 3 Ultra,none,1126.00,,0.7876,8.7,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Nemotron 3.5 Super VL,none,1075.00,,0.1337,6.27,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Opus 4.5,none,1161.00,,,46.13,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Opus 4.6,none,1200.00,,2.4645,17.09,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Opus 4.8,none,1229.00,,2.9633,11.3,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Opus 5,none,1275.00,,5.4891,22.78,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Opus 5.5,none,1336.00,,3.1979,30.82,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Opus 5.5,high,1454.00,,2.6325,14.31,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Qwen3.6 Plus,none,1111.00,,0.7239,18.68,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Qwen3.7 Max,none,1184.00,,0.5607,15.82,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Qwen3.7 Plus,none,1153.00,,0.5098,16.28,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Qwen3.8 Max,none,1267.00,,1.7819,40.04,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Qwen3.8 Max (qwen3.8-max-preview),none,1301.00,,2.1094,46.14,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Qwen4-Max,none,1365.00,,1.9425,62.19,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Solar Pro 4,none,1088.00,,,36.49,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Sonnet 4.5,none,1065.00,,,13.81,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Sonnet 4.6,none,1192.00,,,27.66,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Sonnet 5,none,1225.00,,1.8753,18.48,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Sonnet 5.5,none,1298.00,,1.6666,25.62,2026-11-25,https://www.designarena.ai/leaderboard
+Design Arena,2026-11-25,Step 3.7 Flash,none,1089.00,,0.1249,8.43,2026-11-25,https://www.designarena.ai/leaderboard
+AA Index without coding,v5.0.2,Agnes 2.5 Pro Theta,none,27.38,,0.524,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Apodex 1.1,none,16.84,,0.5473,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Beam 1.0,none,22.13,,0.2366,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,DeepSeek V4 Pro 0813,high,23.59,,0.6809,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,DeepSeek V4 Pro 0813,max,25.45,,1.4918,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,DeepSeek V4 Pro 0813 (Non-reasoning),none,14.49,,0.6947,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,DeepSeek V4.1 Flash 1017,high,30.98,,0.434,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,DeepSeek V4.1 Flash 1017,max,33.25,,0.5817,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,DeepSeek V4.1 Flash 1017 (Non-reasoning),none,22.25,,0.3285,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Fable 5.2,low,56.90,,3.1277,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Fable 5.2,medium,59.56,,3.8327,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Fable 5.2,high,64.66,,8.3817,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Fable 5.2,xhigh,65.22,,12.7137,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Fable 5.2,max,68.39,,22.498,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GLM-5.3,low,23.62,,0.9447,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GLM-5.3,max,32.30,,4.3842,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GLM-5.3-Flash,max,29.17,,0.5702,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6 Luna,low,12.45,,0.0046,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6 Luna,medium,21.72,,0.0362,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6 Luna,high,24.25,,0.0643,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6 Luna,xhigh,26.51,,0.0903,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6 Luna,max,30.42,,0.1359,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6 Luna (Non-reasoning),none,12.07,,0.0634,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.1 Terra,low,32.31,,0.0596,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.1 Terra,medium,39.67,,0.1368,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.1 Terra,high,43.50,,0.209,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.1 Terra,xhigh,46.77,,0.3326,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.1 Terra,max,52.56,,0.8249,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.1 Terra (Non-reasoning),none,30.45,,0.1656,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Astra,low,47.53,,0.6147,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Astra,medium,58.87,,1.5407,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Astra,high,62.68,,1.8163,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Astra,xhigh,63.74,,2.2278,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Astra,max,65.22,,3.5363,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Sol,low,42.75,,0.1534,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Sol,medium,54.48,,0.3595,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Sol,high,57.33,,0.5172,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Sol,xhigh,58.29,,0.5791,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,GPT-6.2 Sol,max,59.45,,0.9205,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 3.5 Flash-Lite,none,14.20,,0.286,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Argon,medium,51.13,,6.7137,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Argon,high,54.47,,7.7067,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Carbon,low,58.02,,5.8029,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Carbon,medium,61.71,,5.5904,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Carbon,high,63.24,,6.5967,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Hydrogen,low,33.13,,0.2262,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Hydrogen,medium,44.77,,0.6608,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Hydrogen,high,53.25,,1.6086,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Hydrogen,xhigh,56.96,,2.8329,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Neon,low,49.01,,0.6326,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Neon,medium,58.49,,1.6647,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Neon,high,62.62,,3.352,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Gemini 4 Neon,xhigh,64.50,,5.9706,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Grok 4.7,low,34.99,,2.3601,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Grok 4.7,high,38.09,,5.0164,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Grok 4.7,xhigh,38.15,,5.9383,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Haiku 5.5,low,21.53,,0.0348,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Haiku 5.5,medium,27.56,,0.0813,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Haiku 5.5,high,32.30,,0.1391,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Haiku 5.5,xhigh,36.29,,0.2185,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Haiku 5.5,max,37.28,,0.369,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Inkling,high,14.08,,0.3212,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Inkling,xhigh,15.72,,0.8039,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Inkling 2 Mini,none,23.08,,0.4613,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Inkling 2 Small,none,34.02,,0.9884,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Kimi K3.1 Pro,none,47.89,,3.7303,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,LFM3-1.7B,none,7.99,,0.0833,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,LFM3-VL-2B,none,2.28,,0.0888,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Ling 3.1 Flash 1019,none,31.65,,2.8969,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,MiMo-V2.6-Flash,none,28.28,,0.119,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,MiMo-V2.6-Pro,none,30.41,,0.2332,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,MiniMax-M3,none,20.52,,1.0506,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,MiniMax-M3.1-Flash,none,31.15,,0.4374,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Mistral Large 4,medium,25.08,,1.2937,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Mistral Large 4,high,28.54,,1.9182,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Mistral Medium 3.5,none,5.84,,0.7707,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Mistral Small 4 (Reasoning),none,5.73,,0.017,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Muse Ember,xhigh,36.38,,0.1101,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Muse Ember,max,37.14,,0.1266,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Muse Glimmer,high,8.09,,0.1089,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Muse Spark Open,xhigh,30.58,,1.4669,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Muse Wonder,high,43.59,,4.3934,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Muse Wonder,max,45.59,,6.6325,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Nemotron 3 Ultra 550B A55B (Reasoning),none,15.39,,1.7401,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Nemotron 3.5 Lightning,none,7.31,,0.1557,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Nemotron 3.5 Super VL,none,16.94,,0.3068,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Opus 5.5,low,38.99,,0.8983,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Opus 5.5,medium,50.66,,2.3872,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Opus 5.5,high,54.39,,3.4393,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Opus 5.5,xhigh,59.90,,5.5937,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Opus 5.5,max,61.57,,8.9429,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Qwen3.8 27B,low,18.10,,1.0397,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Qwen3.8 27B,medium,20.34,,1.2709,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Qwen3.8 27B,xhigh,23.09,,3.2017,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Qwen3.8 27B (Non-reasoning),none,12.63,,2.6743,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Qwen3.8-Flash-Next,none,29.31,,0.5453,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Qwen4 Max,none,45.43,,3.0529,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Solar Pro 4,none,18.06,,0.9766,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Sonnet 5.5,low,30.01,,0.4606,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Sonnet 5.5,medium,34.93,,0.7657,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Sonnet 5.5,high,44.35,,1.7379,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Sonnet 5.5,xhigh,51.83,,4.1026,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Sonnet 5.5,max,55.90,,9.3631,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Step 5 Preview,none,31.19,,2.0149,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,Tencent Hy4,none,34.80,,0.8794,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+AA Index without coding,v5.0.2,gpt-oss-120b,high,5.09,,0.2075,,2026-11-25,https://artificialanalysis.ai/leaderboards/models
+Vals Index,2.2,Beam 1.0,none,41.60,,,7.44,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,DeepSeek V4 Pro 0813,max,50.81,,2.4997,58.05,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,DeepSeek V4.1 Flash,low,54.60,,0.2906,13.6,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,DeepSeek V4.1 Flash,high,57.30,,0.3923,17.99,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,DeepSeek V4.1 Flash,max,61.30,,0.5851,28.39,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Fable 5.2,high,71.00,,20.195,34.91,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GLM 5.3 Flash,max,49.48,,2.0487,63.84,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GLM-5.3,low,49.00,,4.823,25.45,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GLM-5.3,high,59.70,,6.922,33.61,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GLM-5.3,max,60.80,,9.0417,56.85,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6 Astra,low,57.70,,3.9958,6.29,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6 Astra,high,62.40,,8.6347,14.61,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6 Astra,max,65.20,,22.1665,29.6,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6 Luna,max,50.33,,0.4501,32.39,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.1 Sol,max,62.26,,3.6141,44.4,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.1 Terra,max,59.50,,2.9394,39.72,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.2 Astra,low,60.90,,2.8132,6.96,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.2 Astra,medium,63.90,,4.3225,10.08,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.2 Astra,high,65.80,,5.8115,14.12,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.2 Astra,xhigh,67.30,,7.0032,17.07,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.2 Astra,max,67.70,,11.1401,48.92,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,GPT-6.2 Sol,max,65.07,,3.1793,41.78,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 3.8 Flash,high,53.54,,5.0256,35.97,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 4 Argon,low,67.30,,9.4812,27.32,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 4 Argon,medium,68.50,,8.7872,27.51,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 4 Argon,high,67.80,,11.3339,35.72,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 4 Carbon,high,68.83,,10.5081,47.75,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 4 Hydrogen,xhigh,67.07,,7.7528,32.08,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Gemini 4 Neon,xhigh,69.23,,7.4046,31.41,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Grok 4.7,low,50.30,,1.9843,9.93,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Grok 4.7,high,53.10,,8.6491,21.52,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Grok 4.7,xhigh,58.90,,12.2766,30.67,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Haiku 5.5,max,57.04,,3.1747,49.95,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Hy4,none,57.87,,1.7204,51.52,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Hy4 Flash,none,49.16,,0.0699,16.99,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Hy4 Preview,none,51.28,,1.5682,59.38,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Kimi K3,max,50.95,,7.1695,74.93,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Kimi K3.1 Pro,max,60.88,,6.4402,63.61,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Mercury 3,high,41.38,,0.4779,22.1,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,MiMo V2.6 Flash,none,52.09,,0.221,67.13,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,MiMo V2.6 Pro,none,55.32,,0.4296,72.6,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,MiniMax-M3.1-Flash,max,51.75,,0.6597,43.3,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Mistral Large 4,high,54.35,,3.7166,47.8,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Muse Ember,max,58.07,,0.153,15.04,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Muse Spark 1.3,minimal,43.30,,0.938,7.39,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Muse Spark 1.3,high,56.40,,2.5485,13.85,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Muse Spark 1.3,xhigh,55.90,,3.1929,27.37,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Muse Spark Open,xhigh,45.43,,4.7179,82.09,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Nemotron 3.5 Super VL,high,29.69,,0.6275,8.57,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Opus 5.5,low,55.90,,4.2576,12.45,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Opus 5.5,high,68.10,,10.7634,25.93,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Opus 5.5,max,69.60,,26.4926,75.37,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Qwen 3.8 Max 0902,none,57.47,,8.7295,105.76,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Qwen 4 Max,xhigh,61.66,,9.3304,64.66,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Sonnet 5.5,max,69.45,,16.1839,85.98,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Step 5 Preview,none,53.06,,3.5764,65.48,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Wonder,max,62.92,,10.6475,35.39,2026-11-25,https://www.vals.ai/benchmarks/vals_index
+Vals Index,2.2,Wonder Full,max,64.67,,6.8096,59.31,2026-11-25,https://www.vals.ai/benchmarks/vals_index

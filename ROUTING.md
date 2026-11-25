@@ -22,9 +22,9 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 ## Model recommendations
 
-**Last reviewed: 2026-11-24**
+**Last reviewed: 2026-11-25**
 
-![Recommendations reviewed 2026-11-24. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at high.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-25. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at high.](docs/assets/routing-table.svg)
 
 Each row names one model from each of three providers, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
@@ -38,11 +38,17 @@ Grok 4.7 comes fourth in every row, so it has no slot. In the base, GPT-6.2 Sol 
 
 ### What each model gains as you raise its effort
 
-![One chart of combined quality against relative cost per task for nine models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-24, Gemini 4 Neon at high scores about 56 at 1.2 times the cost of a typical charted setting, and Gemini 4 Carbon at high about 58 at 1.8 times. Fable 5.2 at high scores about 60 at 2.5 times. GPT-6.2 Astra's best value is high, about 54 at 0.8 times. GPT-6.2 Sol reaches about 50 at medium for a fifth of a typical setting's cost. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
+![One chart of combined quality against relative cost per task for eight models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-25, Gemini 4 Neon at high scores about 55 at 1.2 times the cost of a typical charted setting, and Gemini 4 Carbon at high about 58 at 1.9 times. Fable 5.2 at high scores about 60 at 2.6 times. GPT-6.2 Astra's best value is high, about 54 at 0.9 times. GPT-6.2 Sol reaches about 49 at medium for a fifth of a typical setting's cost. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
 
 The chart puts five benchmark suites on one scale, so every model shares the same axes. Colour names the provider, a dash tells one provider's models apart, and each marker's shape names the effort, as the key above the chart shows. The chart covers coding and general work, and it shows the current models from the four providers, whether or not I can run them today.
 
 A soft ring in the line's own colour marks each model's best-value effort, the last step up that costs at most 20% more per point of quality. [The rules](#the-rules) define it.
+
+### Where the frontier sits among the top models
+
+![One chart of combined quality against relative cost for the 15 highest-scoring current models that at least two of the five suites scored, on the same scale as the chart above. On data read 2026-11-25, the frontier runs from Haiku 5.5 at low, medium, and high, through GPT-6.2 Sol at every effort, GPT-6.2 Astra at high and xhigh, Fable 5.2 at medium, Gemini 4 Neon at high, GPT-6.2 Astra at max, and Gemini 4 Carbon at medium and high, to Fable 5.2 at high, xhigh, and max. Opus 5.5 and Sonnet 5.5 sit below it at every effort. Coloured lines are the models this page routes, grey dotted lines are the rest, an outlined marker sits on the frontier, and a bold name has at least one setting on it.](docs/assets/routing-frontier.svg)
+
+This chart widens the view beyond the four providers to every maker the suites score, so a cheaper or stronger model elsewhere shows up. A setting is on the frontier when it scores higher than every cheaper setting among the models shown. It shows the 15 highest-scoring models that at least two suites scored, and leaves out releases a newer one in the same family replaces. Near-free models far below these, such as GPT-6 Luna at low, would otherwise join the frontier at its cheap end.
 
 ### Why these models
 
@@ -50,30 +56,29 @@ A soft ring in the line's own colour marks each model's best-value effort, the l
 
 | Model | Best value | Combined quality | Relative cost | Suites |
 |---|---|---|---|---|
-| GPT-6.2 Sol | medium | 49.7 | 0.19 | 3 of 5 |
-| GPT-6.2 Astra | high | 54.1 | 0.84 | 4 of 5 |
-| Gemini 4 Carbon | high | 58.2 | 1.77 | 4 of 5 |
-| Gemini 4 Neon | high | 55.6 | 1.18 | 4 of 5 |
-| Fable 5.2 | medium | 55.0 | 1.11 | 4 of 5 |
-| Gemini 4 Hydrogen | high | 52.2 | 0.76 | 3 of 5 |
-| Opus 5.5 | high | 52.8 | 1.18 | 5 of 5 |
-| Gemini 4 Argon | high | 49.9 | 2.08 | 4 of 5 |
-| Grok 4.7 | medium | 46.5 | 1.58 | 3 of 5 |
+| GPT-6.2 Sol | medium | 49.0 | 0.20 | 3 of 5 |
+| GPT-6.2 Astra | high | 53.9 | 0.88 | 4 of 5 |
+| Gemini 4 Carbon | high | 58.1 | 1.85 | 4 of 5 |
+| Gemini 4 Neon | high | 55.2 | 1.23 | 4 of 5 |
+| Fable 5.2 | medium | 54.8 | 1.20 | 4 of 5 |
+| Gemini 4 Hydrogen | high | 51.5 | 0.79 | 3 of 5 |
+| Opus 5.5 | high | 52.6 | 1.26 | 5 of 5 |
+| Grok 4.7 | medium | 46.2 | 1.66 | 3 of 5 |
 
 #### Team lead
 
-The row starts from each vendor's flagship and goes by quality. Gemini 4 Neon at high gives Google's slot a better sibling: it beats Carbon at high on the suites that tested both, 60.4 to 58.4, for about two thirds of the cost. By quality the row reads Neon (55.6), Fable 5.2 at medium (55.0), then GPT-6.2 Astra at high (54.1). AA-Briefcase, the closest measure of leading work, puts Neon at high (1631) and Fable at medium (1623) within each other's intervals of about 10 points, and Astra at high lower (1570), so it agrees with the order.
+The row starts from each vendor's flagship and goes by quality. Gemini 4 Neon at high gives Google's slot a better sibling: it beats Carbon at high on the suites that tested both, 59.9 to 58.1, for about two thirds of the cost. By quality the row reads Neon (55.2), Fable 5.2 at medium (54.8), then GPT-6.2 Astra at high (53.9). AA-Briefcase, the closest measure of leading work, puts Neon at high (1631) and Fable at medium (1623) within each other's intervals of about 10 points, and Astra at high lower (1570), so it agrees with the order.
 
 Revisit when a suite measures plan quality and downstream success for these releases with the same Executor.
 
 #### Executor
 
-The row starts from each vendor's everyday model and follows the price order. Neon takes Google's slot: at medium it beats Hydrogen at high on the suites that tested both, 53.7 to 52.2, for about 85% of the cost, and it is listed at its best-value effort, high. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
+The row starts from each vendor's everyday model and follows the price order. Neon takes Google's slot: at medium it beats Hydrogen at high on the suites that tested both, 53.5 to 51.5, for about 85% of the cost, and it is listed at its best-value effort, high. Fable 5.2 scores higher than Opus for less, but Anthropic rations it, so Opus keeps Anthropic's slot.
 
 Two adjustments, both to the order:
 
 - **Opus 5.5 moves to first \*.** The method puts Sol first, then Neon, then Opus. Opus is the worker I rely on day to day, and the coding suites split: VulcanBench puts Opus at high above Sol at medium (91.1 against 88.9), and FrontierCode puts it below (36.3 against 38.3). This reverses if a suite tests Opus at high beside Sol and Neon at medium and Opus falls behind, or if my own sessions stop bearing it out.
-- **Gemini 4 Neon at high moves to second \*.** It scores 5.9 points more than Sol at medium (55.6 against 49.7) at about six times the API cost. On subscriptions that gap is smaller, and the quality is worth it. This reverses if the Coding Agent Index or Terminal-Bench by effort tests Neon at high beside Sol at medium and Sol matches or beats it, or if my own sessions stop bearing it out.
+- **Gemini 4 Neon at high moves to second \*.** It scores 6.2 points more than Sol at medium (55.2 against 49.0) at about six times the API cost. On subscriptions that gap is smaller, and the quality is worth it. This reverses if the Coding Agent Index or Terminal-Bench by effort tests Neon at high beside Sol at medium and Sol matches or beats it, or if my own sessions stop bearing it out.
 
 Revisit when the Coding Agent Index tests Opus 5.5 at high, or when Terminal-Bench by effort adds Sol or Neon.
 
@@ -83,14 +88,14 @@ Four sources score this row, weighted equally, and each provider's best-scoring 
 
 | Model | Arena WebDev | Design Arena | 21st.dev Design System Bench | Frontier Design | Score |
 |---|---|---|---|---|---|
-| Fable 5.2 | 1822 | 1378 | 85.2 | 1710 | 61.1 |
-| Opus 5.5 | 1820 | 1454 | 73.7 | 1684 | 58.6 |
-| GPT-6.2 Astra | 1761 | 1324 | not listed | 1755 | 55.0 |
-| Gemini 4 Neon | 1765 | 1392 | not listed | 1430 | 53.7 |
-| GPT-6.2 Sol | 1755 | 1289 | not listed | 1631 | 50.7 |
-| Gemini 4 Carbon | 1769 | 1318 | 82.9 | 1337 | 50.7 |
+| Fable 5.2 | 1822 | 1377 | 85.2 | 1710 | 60.6 |
+| Opus 5.5 | 1820 | 1454 | 73.7 | 1684 | 58.4 |
+| GPT-6.2 Astra | 1761 | 1322 | not listed | 1755 | 54.1 |
+| GPT-6.2 Sol | 1755 | 1292 | not listed | 1631 | 49.8 |
+| Gemini 4 Neon | 1765 | 1339 | not listed | 1430 | 49.7 |
+| Gemini 4 Carbon | 1769 | 1316 | 82.9 | 1337 | 49.7 |
 
-The margins are small: Astra leads Sol by 4 points, and Neon leads Carbon by 3. WebDev tested Fable at xhigh and Astra at max, so raise the effort when a design calls for more.
+The margins are small: Astra leads Sol by 4 points, and Neon and Carbon are tied to one decimal, with Neon ahead by 0.03. Neon's Design Arena score fell from 1392 to 1339 on 2026-11-25 as its comparisons grew from 212 to 340, so Google's slot could pass to Carbon on the next read. WebDev tested Fable at xhigh and Astra at max, so raise the effort when a design calls for more.
 
 Revisit when Design System Bench lists the GPT-6.2 models or Neon, or when Frontier Design's GPT-6.2 and Neon entries reach several hundred votes.
 
@@ -100,16 +105,15 @@ Two sources score this row, weighted equally. Arena counts once, through creativ
 
 | Model | Arena creative writing | Lechmazur score | Score |
 |---|---|---|---|
-| Fable 5.2 | 1525 | 3.56 | 59.0 |
-| Opus 5.5 | 1518 | 3.35 | 57.4 |
-| Gemini 4 Neon | 1504 | not listed | 54.0 |
-| GPT-6.2 Astra | 1471 | 4.30 | 53.9 |
-| Gemini 4 Carbon | 1518 | 1.62 | 52.0 |
-| Gemini 4 Argon | 1521 | 0.45 | 48.8 |
+| Fable 5.2 | 1525 | 3.56 | 58.5 |
+| Opus 5.5 | 1518 | 3.35 | 56.9 |
+| Gemini 4 Neon | 1504 | not listed | 55.0 |
+| GPT-6.2 Astra | 1471 | 4.30 | 53.6 |
+| Gemini 4 Carbon | 1518 | 1.62 | 51.3 |
 
-Neon and Astra are 0.1 apart, and Neon's score rests on Arena alone. No benchmark scores current models on non-fiction such as documentation or reports, so this row rests on creative writing.
+Neon leads Astra by 1.4, and Neon's score rests on Arena alone. No benchmark scores current models on non-fiction such as documentation or reports, so this row rests on creative writing.
 
-Revisit when Lechmazur lists Neon, or when Surge AI's Hemingway-bench lists current models.
+Revisit when Lechmazur lists Neon, when Surge AI's Hemingway-bench lists current models, or when EQ-Bench Creative Writing lists Fable 5.2, the GPT-6.2 models, and Neon.
 
 ## Choose effort and tools
 
@@ -146,7 +150,7 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 | [FrontierCode](https://cognition.com/frontiercode) | Cognition | The base | Measured | Coding tasks run in each model's own tool, scored on merge quality with a pass rate and cost. One of the five base suites. |
 | [VulcanBench](https://vulcanbench.com/leaderboard.html) | VulcanBench | The base | Measured | 23 coding tasks scored on tests passed and code quality, which models judge, with cost and time. One of the five base suites. |
 | [CursorBench](https://cursor.com/cursorbench) | Cursor | The base | Measured | Ambiguous multi-file coding tasks, with a score and cost per task. One of the five base suites; it tests no current OpenAI model. |
-| [AA Intelligence Index](https://artificialanalysis.ai/leaderboards/models) | Artificial Analysis | The base | Measured | A composite of nine evaluations, mostly general knowledge work, with cost and time per task. One of the five base suites. |
+| [AA Index without coding](https://artificialanalysis.ai/methodology/intelligence-benchmarking) | Artificial Analysis | The base | Measured | The AA Intelligence Index without its Coding category: seven evaluations of knowledge work, science, and general reasoning, with cost per task. It leaves out FrontierCode-AA 2.0, which runs FrontierCode's tasks, and Terminal-Bench 4.1, which the Vals Index also contains. One of the five base suites. |
 | [Vals Index](https://www.vals.ai/benchmarks/vals_index) | Vals AI | The base | Measured | A composite of eight evaluations, including legal, tax, and finance work, with cost per test. One of the five base suites, read from its per-effort results and, for models without them, its leaderboard. |
 | Each vendor's model guidance | Anthropic, OpenAI, Google, xAI | Executor and Team lead starting models | Vendor guidance | Which model each vendor recommends for everyday work and for its hardest work, and which it rations. Sets the model each of those rows starts from. |
 | [AA Coding Agent Index](https://artificialanalysis.ai/agents/coding) | Artificial Analysis | Executor check | Measured | Each model in its maker's coding tool, scored on three coding suites with cost and time. Read beside the base when judging the Executor row. |
@@ -163,11 +167,44 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 
 Measured means the suite reports quality and cost for the same model, effort, and tasks. Vendor guidance is the vendor's own recommendation, which I take as a statement of what it tuned each model for. Proxy means it measures related work. Preference means people chose between results. Report and Judgment are the last two steps of the method.
 
-A suite joins the base only when it publishes quality and cost at more than one effort per model, a different operator runs it, and it doesn't rerun a suite already there. Each operator counts once, so a second suite from the same operator becomes a role input. Cognition and Cursor sell coding products, and the other three operators are independent evaluators.
+A suite joins the base only when it publishes quality and cost at more than one effort per model, a different operator runs it, and it doesn't rerun a suite already there. When a composite contains a suite the base already counts, the base uses the composite without that part. Each operator counts once, so a second suite from the same operator becomes a role input. Cognition and Cursor sell coding products, and the other three operators are independent evaluators.
 
 Every score and cost from these sources is a row in [`results.csv`](docs/routing/results.csv), so you can check the figures on this page against one table. Counts such as comparisons, ranks, and fallback attempts, and everything a source says in words, are in [`role-inputs.csv`](docs/routing/role-inputs.csv).
 
 [Epoch's benchmark reviews](https://epoch.ai/data/benchmark-reviews-documentation/included-benchmarks) flag known problems with a suite. Check that a finding applies to the version tested before acting on it.
+
+### Names and effort labels
+
+Sources name some models and efforts differently. [`models.csv`](docs/routing/models.csv) maps every name a source uses to one model, with its maker and whether a newer release has replaced it. [`efforts.csv`](docs/routing/efforts.csv) maps each source's effort labels to the seven efforts the charts use. Two names become one model only when the sources show they are the same release; otherwise they stay apart, and the note column says why. FrontierCode's "Muse Wonder 1.0" stays separate for that reason. An effort label with no row stops the import, so a numeric scale such as Inkling's "0.99" is left out rather than guessed.
+
+| Model | Maker | Other names the sources use |
+|---|---|---|
+| Beam 1.0 | Reflection | Reflection Beam |
+| DeepSeek V4.1 Flash | DeepSeek | DeepSeek V4.1 Flash 1017 |
+| GLM-5.2 | Zhipu | GLM 5.2 |
+| GLM-5.3 | Zhipu | GLM 5.3 |
+| GLM-5.3-Flash | Zhipu | GLM 5.3 Flash |
+| Hy4 | Tencent | Tencent Hy4 |
+| Ling 3.1 Flash | Ant Group | Ling-3.1-flash |
+| MiMo-V2.6-Flash | Xiaomi | MiMo V2.6 Flash |
+| MiMo-V2.6-Pro | Xiaomi | MiMo V2.6 Pro |
+| MiniMax-M2.7 | MiniMax | MiniMax M2.7 |
+| MiniMax-M3 | MiniMax | MiniMax M3 |
+| MiniMax-M3.1-Flash | MiniMax | MiniMax M3.1 Flash |
+| Muse Wonder | Meta | Wonder |
+| Muse Wonder Full | Meta | Wonder Full |
+| Qwen3.8 Max (0902) | Alibaba | Qwen 3.8 Max 0902 |
+| Qwen4 Max | Alibaba | Qwen 4 Max, Qwen4-Max |
+
+| Effort | Labels the sources use |
+|---|---|
+| none | na (FrontierCode); none (FrontierCode, AA, Vals, Design Arena) |
+| minimal | minimal (FrontierCode) |
+| low | low (every base suite) |
+| medium | medium (every base suite) |
+| high | high (every base suite) |
+| xhigh | xhigh (FrontierCode, AA (Xhigh), Vals, Arena (xHigh)); extra-high (VulcanBench); extra high (CursorBench) |
+| max | max (every base suite) |
 
 ### How I compare
 
@@ -186,16 +223,20 @@ These rules prevent the easiest mistakes:
 
 ### Running a refresh
 
-Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite in use. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the sources each preference row weighs, the models the charts draw, and any model a suite names differently. It also records each vendor's everyday model, flagship, and rationed models. The script reads local files only.
+Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv` holds every read of every suite in use. `role-inputs.csv` holds what each role input says beyond its figures. `chart.json` names the base suites, the sources each preference row weighs, and the models the charts draw. It also records each vendor's everyday model, flagship, and rationed models, and the frontier chart's settings: how many models it draws and how many suites must score each one. `models.csv` and `efforts.csv` map the names and effort labels the sources use, as [Names and effort labels](#names-and-effort-labels) describes. The script reads local files only.
 
 `results.csv` is append-only while a source is in use. An import adds a read and leaves earlier reads alone, and the report and charts use each suite's latest read. Importing a suite twice on one date replaces that day's read. To retire a source, delete its rows, its `chart.json` entry, and its `role-inputs.csv` row, so it can't be counted by accident.
 
 1. **Import the base.** Download FrontierCode's `data.json` and VulcanBench's leaderboard CSV and import each. For the other three, copy the results from the page's data into a plain table of model, effort, score, pass rate, cost, and minutes, and import that.
+
+   For the Vals Index, take each model's per-effort results where the page's data has them. For every other leaderboard entry, take the effort its model page states as "Reasoning Effort" or "Compute Effort", so the read covers the whole leaderboard.
+
+   The AA Index without coding is derived from AA's own figures for every setting AA lists, so the frontier chart can place models beyond the routed ones. Its score is the published Intelligence Index minus 15 times the FrontierCode-AA 2.0 score and 10 times the Terminal-Bench 4.1 score (each a fraction from the leaderboard's page data), divided by 0.75. Its cost is the index cost per task minus those two evaluations' weighted cost per task, divided by 0.75. Each model's page lists every evaluation's weighted cost per task under `intelligenceIndexCostPerTask`, and they sum to the index cost. AA publishes no time per task for the subset, so leave minutes empty. If AA changes the index's weights or components, update the formula from its methodology page.
 2. **Import the role inputs** the same way, each as a suite outside the base. Update what `role-inputs.csv` says about each one, with the date read.
 
    Most sources can be fetched as plain pages or files. The two Arena boards (WebDev and creative writing) cannot: arena.ai refuses automated requests, so read them in a real browser, such as Orca's built-in browser, and say so in `role-inputs.csv`. A summarising reader is not a substitute. On the 2026-11-19 read one gave the wrong page date and dropped the efforts the page names.
 3. **Re-read each vendor's model guidance.** Update `chart.json` with each vendor's everyday model, flagship, and rationed models, and record the sources in `role-inputs.csv`. The script looks for a better sibling only among the models `chart.json` lists, so list any current model that could beat a vendor's everyday model or flagship.
-4. **Check names.** If a suite names a model differently, add an alias to `chart.json`. Confirm from the sources that two names are one model before merging them.
+4. **Check names and effort labels.** If a suite names a model differently, add a row to `models.csv` that points the new name at the model, once the sources confirm they are the same release. Give a new model its own row with its maker. When a new release replaces an older one in its family, set the older one's status to superseded. If an import stops on an effort label, add the label to `efforts.csv`, or leave those rows out when the label has no named equivalent. Then copy the report's `names` section into [Names and effort labels](#names-and-effort-labels).
 5. **Run `changes`** to see what moved since the previous read.
 6. **Run the report.** Its `candidates` section lists the charted models at their best-value efforts in order. Its `rows` section builds the Executor and Team lead rows, and its `preference` section scores the Design/taste and Writing rows.
 7. **Regenerate the charts** and look at each one. Run it again after the rows are final so the recommendations figure matches `recommendations.csv`.
@@ -208,6 +249,7 @@ Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv
 python3 scripts/routing/evidence.py import --format frontiercode --file data.json --version 2.0 --date YYYY-MM-DD --url https://cognition.com/data/frontier-code-2.0/data.json
 python3 scripts/routing/evidence.py import --format vulcanbench --file swe-v4-board.csv --version v4 --date YYYY-MM-DD --url https://vulcanbench.com/assets/data/swe-v4-board.csv
 python3 scripts/routing/evidence.py import --format table --suite "Vals Index" --file vals.csv --version 2.2 --date YYYY-MM-DD --url https://www.vals.ai/benchmarks/vals_index
+python3 scripts/routing/evidence.py import --format table --suite "AA Index without coding" --file aa.csv --version v5.0.2 --date YYYY-MM-DD --url https://artificialanalysis.ai/leaderboards/models
 python3 scripts/routing/evidence.py changes
 python3 scripts/routing/evidence.py report
 python3 scripts/routing/evidence.py charts

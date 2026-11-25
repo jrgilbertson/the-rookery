@@ -1,0 +1,8 @@
+name,model,maker,status,note
+Alpha,Alpha,Anthropic,current,
+Gamma,Gamma,OpenAI,current,
+Solo,Solo,OpenAI,current,
+Beta,Beta,OpenAI,superseded,
+Thrift,Thrift,Example,current,
+Thrift Mini,Thrift,,,Birch's name for Thrift.
+Twin,Twin,Example,superseded,Replaced by a newer release.

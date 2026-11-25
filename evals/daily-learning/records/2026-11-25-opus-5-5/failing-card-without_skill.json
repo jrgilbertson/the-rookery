@@ -1,0 +1,104 @@
+{
+ "case": "failing-card",
+ "arm": "without_skill",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.330 via claude -p",
+  "working_directory": "<workspace>"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "My Anki card on the CAP theorem keeps coming back wrong and it just got auto-suspended as a leech. The card export is ./anki/suspended-card.json and the note is vault/Atomic Notes/CAP Theorem.md. Help me fix it."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cat ./anki/suspended-card.json; echo ----; cat \"vault/Atomic Notes/CAP Theorem.md\"; echo ----; ls -R | head -50",
+    "description": "Show card export, note, and workspace files"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "{\n  \"exported_at\": \"2026-11-23T08:15:00-08:00\",\n  \"source\": \"AnkiConnect cardsInfo export\",\n  \"note_id\": 1756500000005,\n  \"model\": \"Cloze\",\n  \"deck\": \"Engineering\",\n  \"tags\": [\"leech\"],\n  \"suspended\": true,\n  \"suspended_by\": \"leech\",\n  \"lapses\": 9,\n  \"reviews\": 23,\n  \"text\": \"The CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\",\n  \"cards\": [\n    {\"ordinal\": 1, \"lapses\": 1},\n    {\"ordinal\": 2, \"lapses\": 3},\n    {\"ordinal\": 3, \"lapses\": 3},\n    {\"ordinal\": 4, \"lapses\": 2}\n  ]\n}\n----\n---\nupdated: 2026-08-30\n---\n\n# CAP Theorem\n\nThe CAP theorem says that when a network partition happens, a distributed data store must choose between staying consistent and staying available; it cannot do both.\n\nIt is like two clerks keeping one ledger while the phone line between them is down: they either stop taking orders or risk writing entries that disagree.\n\nA bank's balance service refuses withdrawals during a partition (consistent, not available). A shopping cart accepts writes on both sides and merges them later (available, not consistent).\n\nLinks: [[Distributed Systems]]\n\nSTART\nCloze\nThe CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\n<!--ID: 1756500000005-->\nEND\n----\nanki\nsessions\nvault\n\n./anki:\nstatus.json\nsuspended-card.json\n\n./sessions:\n2026-11-22-dependency-bumps.md\n2026-11-22-lint-ratchet.md\n2026-11-22-webhook-duplicates.md\n\n./vault:\nAtomic Notes\nJournal\nReference Notes\nStrategy\nStructure Notes\n\n./vault/Atomic Notes:\nCAP Theorem.md\nExponential Backoff.md\nHTTP 301 vs 302.md\nIdempotency Key.md\nInvariant.md\nRatchet (Engineering).md\nSpaced Repetition.md\n\n./vault/Journal:\n2026-11-22.md\n\n./vault/Reference Notes:\nClipped - Webhook Delivery Checklist.md\nData Systems in Practice.md\nHTTP Semantics RFC 9110.md\nLearning That Lasts.md\nSmall Interfaces.md\n\n./vault/Strategy:\nPersonal Strategy.md\n\n./vault/Structure Notes:\nDistributed Systems.md\nPersonal Learnings.md"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cat anki/status.json; echo ----; cat \"vault/Atomic Notes/Spaced Repetition.md\"; echo ----; cat \"vault/Atomic Notes/Idempotency Key.md\"; echo ----; cat \"vault/Reference Notes/Learning That Lasts.md\"; echo ----; grep -rn \"CAP\\|partition\" vault sessions | grep -v \"Atomic Notes/CAP\"",
+    "description": "Read Anki status and related notes for conventions"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "{\n  \"exported_at\": \"2026-11-23T05:00:00-08:00\",\n  \"source\": \"AnkiConnect export\",\n  \"due_today\": 62,\n  \"overdue\": 31,\n  \"last_review_date\": \"2026-11-18\",\n  \"recent_lapses_7d\": [\n    {\"note_id\": 1756500000005, \"front\": \"The CAP theorem states that a distributed system can provide only [...] of [...], [...] and [...].\", \"lapses\": 9},\n    {\"note_id\": 1752300000006, \"front\": \"What does spaced repetition do to the review gap after a successful recall?\", \"lapses\": 1}\n  ],\n  \"suspended\": [\n    {\"note_id\": 1756500000005, \"model\": \"Cloze\", \"tags\": [\"leech\"], \"suspended_by\": \"leech\", \"lapses\": 9, \"front\": \"The CAP theorem states that a distributed system can provide only [...] of [...], [...] and [...].\"},\n    {\"note_id\": 1758100000003, \"model\": \"Basic\", \"tags\": [], \"suspended_by\": \"manual\", \"lapses\": 0, \"front\": \"Which redirect is permanent, 301 or 302?\", \"back\": \"302 is permanent; 301 is temporary.\"}\n  ]\n}\n----\n---\nupdated: 2026-07-12\n---\n\n# Spaced Repetition\n\nSpaced repetition is a review schedule that shows an item again just before you would forget it, with the gap growing after each successful recall.\n\nIt is like watering a plant less often as its roots deepen.\n\nA card recalled correctly today returns in 3 days, then 8, then 20. A card missed returns tomorrow.\n\nLinks: [[Retrieval Practice]]\n\n<!--ID: 1752300000006-->\n----\n---\nupdated: 2026-10-06\n---\n\n# Idempotency Key\n\nAn idempotency key is a unique value a client attaches to a request so the server can recognise a repeat of that request and return the first result instead of performing the work again.\n\nIt works like a coat-check ticket: hand over the same ticket twice and you get the same coat, not a second one.\n\nA checkout page generates one key per purchase attempt. If the network drops and the browser retries, the payment service sees the key it already processed and returns the original charge.\n\nLinks: [[Exponential Backoff]], [[Distributed Systems]]\n\n<!--ID: 1759700000001-->\n----\n---\nupdated: 2026-11-20\n---\n\n# Learning That Lasts\n\nAuthor: Tobias Renner\n\n## Highlights\n\n### Added 2026-11-20\n\n- \"Trying to solve a problem before being taught the solution leads to better learning, even when errors are made in the attempt.\"\n- \"Rereading text and massed practice are by far the preferred study strategies of learners, but they are also among the least productive.\"\n- \"Interleaving the practice of two or more subjects feels slower than massed practice, yet produces better long-term retention and discrimination.\"\n----\nvault/Structure Notes/Distributed Systems.md:7:- [[CAP Theorem]]\nBinary file vault/.git/index matches"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cd vault && git log --oneline | head; grep -rn -B2 -A6 \"^START\" \"Atomic Notes\"; cat \"Atomic Notes/HTTP 301 vs 302.md\"",
+    "description": "Check vault git history and other card blocks"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "This command changes directory before running a version-control command, which can pick up untrusted hooks or repository configuration from the target directory. Approve only if you trust it."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Grep",
+   "input": {
+    "pattern": "^START",
+    "path": "vault",
+    "output_mode": "content",
+    "-A": 5
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "vault/Atomic Notes/CAP Theorem.md:15:START\nvault/Atomic Notes/CAP Theorem.md-16-Cloze\nvault/Atomic Notes/CAP Theorem.md-17-The CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\nvault/Atomic Notes/CAP Theorem.md-18-<!--ID: 1756500000005-->\nvault/Atomic Notes/CAP Theorem.md-19-END"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/CAP Theorem.md",
+    "old_string": "START\nCloze\nThe CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\n<!--ID: 1756500000005-->\nEND",
+    "new_string": "START\nBasic\nUnder the CAP theorem, when is a distributed data store forced to give up either consistency or availability?\nBack: Only when a network partition happens. It must then choose one; it cannot keep both.\nEND\n\nSTART\nBasic\nDuring a network partition, a bank's balance service refuses withdrawals. Which CAP property is it keeping, and which is it giving up?\nBack: It keeps consistency and gives up availability.\nEND\n\nSTART\nBasic\nDuring a network partition, a shopping cart accepts writes on both sides and merges them later. Which CAP property is it keeping, and which is it giving up?\nBack: It keeps availability and gives up consistency.\nEND"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/CAP Theorem.md has been updated successfully."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/CAP Theorem.md",
+    "old_string": "updated: 2026-08-30",
+    "new_string": "updated: 2026-11-23"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/CAP Theorem.md has been updated successfully."
+  },
+  {
+   "role": "assistant",
+   "content": "I replaced the CAP Theorem card with three new ones in the note. You still need to sync and delete the old card in Anki.\n\n## Why it kept failing\n\n**The card taught something your own note says is wrong.** It asked you to recall \"a distributed system can provide only *two* of consistency, availability and partition tolerance.\" That \"pick any two\" version is a common simplification. Your note's body (rewritten 2026-08-30) gives the accurate version: you can't skip partition tolerance, because partitions just happen. The real choice is consistency vs. availability, and only while a partition is going on. The card was never updated to match. So if you answered from what you now understand, you didn't produce the wording the card wanted.\n\n**The cloze layout made it worse.** One sentence held four hidden blanks. Three of them (c2–c4) just hid one item from a list of three. That tests whether you remember the acronym, not whether you understand anything. The lapses were spread across all four cards (1/3/3/2), and they added up to 9 on a single note, which is how it got flagged as a leech.\n\n## What I changed\n\nIn `vault/Atomic Notes/CAP Theorem.md` I replaced the cloze with three Basic cards. Each tests one fact, and all three come straight from the note's text:\n\n1. **When** is a store forced to choose between C and A? → Only during a network partition.\n2. Bank balance service refuses withdrawals during a partition → keeps **consistency**, gives up availability.\n3. Shopping cart accepts writes on both sides → keeps **availability**, gives up consistency.\n\nCards 2 and 3 are a matched pair, so you have to tell the two cases apart instead of reciting a list. I also set `updated:` to today.\n\nI removed the old `<!--ID: 1756500000005-->` line on purpose. Without it, your Obsidian-to-Anki sync will create new notes rather than overwrite the leech. If it overwrote it, the new cards would inherit nine lapses of history for a different fact, plus four leftover blank cloze cards.\n\n## What you need to do in Anki\n\n1. Run your Obsidian → Anki sync. It will create the three new cards and write new IDs back into the note.\n2. Delete the old suspended note (search `nid:1756500000005`).\n\n## Another card with a problem\n\nYour other suspended card, \"Which redirect is permanent, 301 or 302?\", has the answer backwards. Its back says \"302 is permanent; 301 is temporary.\" **301 is permanent and 302 is temporary.** Fix that before you unsuspend it, or it will teach you the wrong answer. I can fix it if you'd like."
+  }
+ ]
+}

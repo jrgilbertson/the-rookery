@@ -632,6 +632,10 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     return box;
   };
+  // An empty side or empty wording is not a change, so its panel is left out.
+  const sideShown = (side) => Boolean(side && typeof side === "object" && (str(side.image) || list(side.items).length));
+  const hasScreens = (part) => Boolean(part && typeof part === "object" && (sideShown(part.before) || sideShown(part.after)));
+  const hasText = (part) => Boolean(part && typeof part === "object" && (str(part.none) || str(part.before) || str(part.after)));
 
   const screens = (part) => {
     const frag = document.createDocumentFragment();
@@ -822,12 +826,12 @@ main { padding: 40px 0 80px; min-width: 0; }
     changes.append(el("h3", "sec-title", "What is different for " + (str(pr.audience) ? "a " + str(pr.audience) : "a user")));
     let shown = false;
     if (pr.situations && list(pr.situations.rows).length) { changes.append(situations(pr.situations)); shown = true; }
-    if (pr.screens && typeof pr.screens === "object") {
+    if (hasScreens(pr.screens)) {
       if (shown) changes.append(el("h3", "sec-title spaced", "On screen"));
       changes.append(screens(pr.screens));
       shown = true;
     }
-    if (pr.text && typeof pr.text === "object") { changes.append(textChange(pr.text)); shown = true; }
+    if (hasText(pr.text)) { changes.append(textChange(pr.text)); shown = true; }
     if (!shown) changes.append(el("p", "empty", "Nothing reported."));
     main.append(changes);
     const code = list(pr.code).filter((c) => c && list(c.lines).length);
@@ -907,7 +911,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   const copy = el("button", "copy", "Copy Verdicts");
   copy.type = "button";
   const status = el("span", "meta", storage
-    ? "Your choices are kept in this browser, tied to each reviewed head, until you copy them into the conversation."
+    ? "Your choices stay in this browser for 30 days, tied to each reviewed head, and return on a later page while that head has not moved. Copy them into the conversation when you are done."
     : "This browser keeps nothing, so copy your Verdicts before closing the page.");
   status.setAttribute("aria-live", "polite");
   copy.addEventListener("click", async () => {
@@ -973,6 +977,9 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     return found;
   };
+  // A Verdict key acts only on a block that still spans that line, so the
+  // closing sections and the Verdicts box below the last block set nothing.
+  const spansLine = (item) => Boolean(item) && document.getElementById(item.id).getBoundingClientRect().bottom > window.innerHeight * 0.3;
   const go = (item) => {
     if (!item) return;
     const heading = document.querySelector("#" + item.id + " h2");
@@ -983,21 +990,24 @@ main { padding: 40px 0 80px; min-width: 0; }
     const watcher = new IntersectionObserver(() => {
       const here = current();
       for (const item of ordered) item.railLink.setAttribute("aria-current", String(item === here));
-    }, { rootMargin: "-30% 0px -60% 0px" });
+    }, { rootMargin: "0px 0px -70% 0px" });
     for (const item of ordered) watcher.observe(document.getElementById(item.id));
   }
   document.addEventListener("keydown", (event) => {
     if (event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
     if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+    // A held key repeats; one press is one decision.
+    if (event.repeat && ["m", "c", "d"].includes(event.key)) return;
     const here = current();
     const at = ordered.indexOf(here);
+    const deciding = spansLine(here) ? here : null;
     const actions = {
       j: () => go(ordered[Math.min(at + 1, ordered.length - 1)]),
       k: () => go(ordered[Math.max(at - 1, 0)]),
       n: () => go(nextUndecided(here)),
-      m: () => here && choose(here, "merge"),
-      c: () => here && choose(here, "changes"),
-      d: () => here && choose(here, "defer"),
+      m: () => deciding && choose(deciding, "merge"),
+      c: () => deciding && choose(deciding, "changes"),
+      d: () => deciding && choose(deciding, "defer"),
     };
     const action = actions[event.key];
     if (action) {

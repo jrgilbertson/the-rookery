@@ -1,6 +1,7 @@
 # The review page's data
 
-Read this before building the page in step 4. The page is
+Read this at the start of step 3: its fields are what step 3 gathers, and
+its last section builds the page in step 4. The page is
 `assets/review-page.html`. It draws everything from one JSON object that you
 write, so this file describes that object and how to fill each part. The
 template orders the pull requests, computes products and leverage, draws
@@ -9,6 +10,31 @@ every panel, and builds the Verdict lines. You supply facts and short text.
 Write plain text everywhere. The page shows every value as text, so markup,
 Markdown, and HTML entities appear literally. Keep each text field to the
 length given; the page is read in one sitting across many pull requests.
+
+## Build the page
+
+The template holds the security policy and shows every value as text, so the
+data must reach it unchanged. Write the round as JSON to `round.json` in the
+round's private directory, then run these commands there, with `<skill-dir>`
+replaced by the skill's directory:
+
+```sh
+nonce=$(openssl rand -hex 16 2>/dev/null || od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
+sed -e 's/&/\\u0026/g' -e 's/</\\u003c/g' -e 's/>/\\u003e/g' round.json > data.json
+sed -e "s/{{NONCE}}/$nonce/g" -e '/^{{ROUND_DATA}}$/{' -e 'r data.json' -e 'd' -e '}' <skill-dir>/assets/review-page.html > review.html
+chmod 600 review.html
+```
+
+The first command escapes every `<`, `>`, and `&`, so no title or body can
+close the data block. The second puts the escaped file in place of the
+`{{ROUND_DATA}}` line byte for byte. Use these commands for the data every
+time: `sed s`, `awk -v`, and file-writing tools can strip or decode the
+escapes.
+
+Before handing the page over, check `review.html`: no `{{` is left outside
+the data block, the policy's nonce matches the script's, and the data block
+is exactly `data.json` and holds no literal `<`. Pull request text can hold
+`{{`, such as a workflow's `${{ secrets.TOKEN }}`.
 
 ## The round
 
@@ -50,7 +76,6 @@ length given; the page is read in one sitting across many pull requests.
   "scores": {"impact": 2, "confidence": 2, "verify": 2, "undo": 3},
   "driver": "Changes rounding in billing without saying so. A charge that is wrong stays made after a revert.",
   "audience": "customer",
-  "situations": {}, "screens": {}, "text": {},
   "ifWrong": "", "proof": "", "asked": "",
   "code": [],
   "read": {"judgment": "", "check": "", "notExamined": ""},
@@ -75,10 +100,11 @@ length given; the page is read in one sitting across many pull requests.
 
 ### What is different
 
-Fill one or more of `situations`, `screens`, and `text`. Use `situations` for
-a change in logic, `screens` for a change on a screen, both when a pull
-request changes both, and `text` for a change in wording or a change with no
-user-visible effect.
+Add one or more of `situations`, `screens`, and `text` to the pull request.
+Use `situations` for a change in logic, `screens` for a change on a screen,
+both when a pull request changes both, and `text` for a change in wording or
+a change with no user-visible effect. Leave out a part that does not apply
+rather than writing it empty.
 
 **Situations.** Each row is one case a user or caller can hit, with the result
 before and after. Include every case the diff changes, not only the ones the

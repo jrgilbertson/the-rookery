@@ -120,7 +120,7 @@ Find the pull requests with `gh` alone, so the round works on any machine.
       there is one, or else by naming both heads. With a merge Verdict at
       the final head, leave it out.
 
-Do not narrow the list to passing or "ready" pull requests. A held pull
+Keep failing and conflicted pull requests in the list. A held pull
 request drifts into conflict while it waits, and that is when the operator
 most needs to see it.
 
@@ -169,6 +169,9 @@ Classification is done when every open pull request has one ownership and one
 bucket.
 
 ## 3. Read each pull request from its raw diff
+
+Read [references/review-page.md](references/review-page.md) first. Its
+fields are what this step gathers for each pull request.
 
 Build every block from `gh pr diff <number> -R <owner>/<repo>`, or from a
 current local clone. Descriptions go wrong in both directions: some claim
@@ -266,9 +269,6 @@ A pull request meets the hold tests when either is true:
 Show which test a pull request meets. One that meets a test but merged or is
 about to merge without `review:held` is a finding for the operator.
 
-For a deeper walkthrough of one pull request, offer the harness's
-explanation workflow, such as `ce-explain`, when one is installed.
-
 Reading is done when every held, unclassified, and dependency-bot pull
 request has all ten items above, taken from a diff that matches its reviewed
 head.
@@ -277,10 +277,8 @@ head.
 
 Fill the page this skill ships, `assets/review-page.html`, with the round's
 data, then give the operator the page's full path and open it with the
-platform's opener when there is one. Read
-[references/review-page.md](references/review-page.md) before writing the
-data. It says what each field holds and how to fill each panel. The page
-ranks the round itself, gives every pull request the same block, and builds
+platform's opener when there is one. The reference says what each field
+holds and how to fill each panel. The page ranks the round itself, gives every pull request the same block, and builds
 the Verdict text the operator copies back. It keeps the operator's choices
 and notes in that browser's local storage, tied to each reviewed head, so a
 reload loses nothing; tell the operator so when a note may hold something
@@ -296,27 +294,14 @@ holds a `.git` entry, and set the directory to mode `0700` and the page to
 `0600`. Never write the page into a repository. Build it fresh each round,
 and keep the round's other temporary files beside it.
 
-**Build the page.** The template holds the security policy and shows every
-value as text, so the data must reach it unchanged. Write the round as JSON
-to `round.json` in that directory, then run these commands there, with
-`<skill-dir>` replaced by this skill's directory:
+**Build the page** with the commands under "Build the page" in the
+reference, then run its check on the finished file. Insert the round's data
+only through those commands; the page stays exactly as the template wrote it
+apart from the nonce and the data.
 
-```sh
-nonce=$(openssl rand -hex 16 2>/dev/null || od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
-sed -e 's/&/\\u0026/g' -e 's/</\\u003c/g' -e 's/>/\\u003e/g' round.json > data.json
-sed -e "s/{{NONCE}}/$nonce/g" -e '/^{{ROUND_DATA}}$/{' -e 'r data.json' -e 'd' -e '}' <skill-dir>/assets/review-page.html > review.html
-chmod 600 review.html
-```
-
-The first command escapes every `<`, `>`, and `&`, so no title or body can
-close the data block. The second puts the escaped file in place of the
-`{{ROUND_DATA}}` line byte for byte. Do not insert the data with `sed s`,
-`awk -v`, or a file-writing tool, because each one can strip or decode the
-escapes. Never add markup, scripts, or styles to the page.
-
-Before handing the page over, check `review.html`: no `{{` is left, the
-policy's nonce matches the script's, and the data block is exactly
-`data.json` and holds no literal `<`.
+Presentation is done when the page passes that check, every held,
+unclassified, dependency-bot, and in-progress pull request appears on it,
+and the operator has its full path.
 
 ## 5. Confirm and carry out Verdicts
 
@@ -409,3 +394,6 @@ link, then merged at which commit, queued, handed to which owner, not
 notified, blocked and by what, or skipped because the head moved or it
 closed. State plainly anything that was not done. Then delete the round's
 temporary directory unless the operator wants to keep the page.
+
+Carrying out is done when every confirmed Verdict has a reported outcome and
+the round's temporary directory is gone or kept at the operator's word.

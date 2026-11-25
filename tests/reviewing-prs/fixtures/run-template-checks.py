@@ -21,17 +21,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 SKILL_DIR = ROOT / "skills/reviewing-prs"
 TEMPLATE = SKILL_DIR / "assets/review-page.html"
-SKILL = SKILL_DIR / "SKILL.md"
+REFERENCE = SKILL_DIR / "references/review-page.md"
 SAMPLE = Path(__file__).resolve().parent / "sample-round.json"
 
 
 def fill_commands() -> str:
     """The shell block the skill ships under "Build the page", run as written."""
-    text = SKILL.read_text()
-    section = text.split("**Build the page.**", 1)[1]
+    text = REFERENCE.read_text()
+    section = text.split("## Build the page", 1)[1]
     match = re.search(r"```sh\n(.*?)```", section, re.S)
     if not match:
-        raise SystemExit("FAIL SKILL.md has no shell block under 'Build the page'")
+        raise SystemExit("FAIL references/review-page.md has no shell block under 'Build the page'")
     return "set -eu\n" + match.group(1).replace("<skill-dir>", '"$skill_dir"')
 
 BANNED = re.compile(r"innerHTML|outerHTML|insertAdjacentHTML|document\.write|\son[a-z]+\s*=|<form\b|<iframe\b|<object\b|<embed\b|eval\(|new Function")
@@ -67,11 +67,13 @@ def fill(round_data: str, scratch: Path) -> tuple[str, str]:
 
 
 def check_filled(page: str, data: str, original: dict) -> None:
-    check("{{" not in page, "a placeholder is left in the filled page")
+    match = DATA_BLOCK.search(page)
+    # Pull request text may hold `{{`, as a workflow's `${{ secrets.X }}` does, so only the page around the data counts.
+    outside = page[:match.start(1)] + page[match.end(1):] if match else page
+    check("{{" not in outside, "a placeholder is left in the filled page")
     policy = re.findall(r"'nonce-([0-9a-f]{32})'", page)
     script = re.findall(r'<script nonce="([0-9a-f]{32})">', page)
     check(len(policy) == 1 and policy == script, "the policy's nonce does not match the script's")
-    match = DATA_BLOCK.search(page)
     check(match is not None, "the data block is missing")
     if not match:
         return
@@ -90,6 +92,8 @@ def main() -> int:
     raw = SAMPLE.read_text()
     original = json.loads(raw)
     check(any("</script>" in pr.get("title", "") for pr in original["prs"]), "the sample lost its hostile title")
+    code_lines = [line for pr in original["prs"] for excerpt in pr.get("code", []) for line in excerpt.get("lines", [])]
+    check(any("${{" in line for line in code_lines), "the sample lost its workflow line with ${{ }}")
     with tempfile.TemporaryDirectory() as scratch:
         page, data = fill(raw, Path(scratch))
         check_filled(page, data, original)

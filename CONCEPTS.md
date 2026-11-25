@@ -274,8 +274,7 @@ a correction receives a new release tag instead of moving an existing one.
 
 The pull requests gathered across repositories for the operator to review in
 one sitting, each fixed at the head commit it was read at. The operator
-answers a round with one set of [Verdicts](#verdict). It is a round and never
-a batch.
+answers a round with one set of [Verdicts](#verdict).
 
 ### Verdict
 

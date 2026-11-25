@@ -53,7 +53,7 @@ instead of handing it files.
 commands a Review Round uses from one fixture's `world.json`. It never
 contacts GitHub. It applies the round's few writes (comment, label, merge) to
 a private state copy and appends every call to `trace.jsonl`. It refuses
-anything else with exit 3, so a run that strays fails loudly. It enforces what
+anything else with exit 3, so a call outside it gets exit 3 and a `refused` entry in the trace. It enforces what
 GitHub would: a merge with `--match-head-commit` fails when the SHA is not the
 head, a label must exist before it is added, and nobody approves their own
 pull request. No fixture has a merge queue. Calls may run in parallel. Its

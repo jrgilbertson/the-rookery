@@ -198,6 +198,15 @@
             "- if (status === 401) process.exit(1);",
             "+ if (status === 401) process.exit(EXIT_AUTH);"
           ]
+        },
+        {
+          "title": "The CI step that ran the deleted retry test",
+          "file": ".github/workflows/ci.yml",
+          "lines": [
+            "-      - run: npm test -- retry",
+            "-        env:",
+            "-          KIT_TOKEN: ${{ secrets.DEPLOY_TOKEN }}"
+          ]
         }
       ],
       "read": {

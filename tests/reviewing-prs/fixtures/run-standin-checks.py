@@ -180,11 +180,15 @@ def check_parallel_calls(scratch: Path) -> None:
 
 
 def check_unsafe_configuration(scratch: Path) -> None:
-    run = Run("hidden-stored-names", scratch / "unsafe")
-    inside = dict(run.env, GH_STANDIN_STATE=str(ROOT / "evals"))
-    expect(run.gh("api", "user", env=inside).returncode == 4, "a state directory inside a repository must be rejected")
-    unset = {"PATH": os.environ["PATH"]}
-    expect(run.gh("api", "user", env=unset).returncode == 4, "a missing configuration must be rejected")
+    # A real fixture, so only the guard can reject; a throwaway work tree, so a broken guard writes nothing here.
+    run = Run("risk-overview-and-situations", scratch / "unsafe")
+    repository = scratch / "unsafe" / "repository"
+    (repository / ".git").mkdir(parents=True)
+    inside = run.gh("api", "user", env=dict(run.env, GH_STANDIN_STATE=str(repository)))
+    expect(inside.returncode == 4 and "outside any git work tree" in inside.stderr, "a state directory inside a repository must be rejected")
+    expect(not (repository / "lock").exists(), "a rejected state directory must stay untouched")
+    unset = run.gh("api", "user", env={"PATH": os.environ["PATH"]})
+    expect(unset.returncode == 4 and "not configured" in unset.stderr, "a missing configuration must be rejected")
 
 
 def main() -> int:

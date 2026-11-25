@@ -67,7 +67,7 @@ Navy signals authority, cobalt shows the sequence, and blue-gray defines support
 
 ### Night Paper
 
-An interactive page that people read at night, such as the review page the `reviewing-prs` skill ships, may follow the reader's dark setting. Night Paper is the same field manual on a drafting table after dark, not a navy screen. Its ground is a near-neutral graphite (`#14161B`, with sheets at `#1B1E25`) and its main ink is Chalk (`#ECEEF3`). Drafting Graphite lifts to `#A7AFC0`, Route Cobalt to `#93AEEF`, Signal Orange to `#E08A5E`, and Dispatch Paper darkens to a warm `#29251F`. Each role keeps its meaning, and every text ink still reaches 4.5:1 on its paper. Low saturation keeps navy from becoming a blue glow and keeps orange scarce.
+An interactive page that people read at night, such as the review page the `reviewing-prs` skill ships, may follow the reader's dark setting. Night Paper keeps every role of the palette on a near-neutral graphite ground. Its ground is a near-neutral graphite (`#14161B`, with sheets at `#1B1E25`) and its main ink is Chalk (`#ECEEF3`). Drafting Graphite lifts to `#A7AFC0`, Route Cobalt to `#93AEEF`, Signal Orange to `#E08A5E`, and Dispatch Paper darkens to a warm `#29251F`. Each role keeps its meaning, and every text ink still reaches 4.5:1 on its paper. Saturation stays low, so the ground does not read as blue and orange stays scarce.
 
 ## Typography
 
@@ -129,9 +129,9 @@ Organic corvid silhouettes break against precise field geometry. Circular route 
 
 ## Working Pages
 
-A working page is an interactive page someone uses to decide something, such as the review page the `reviewing-prs` skill ships. It is interface work, not an illustrated plate. The plates' character applies to how it feels; the rules below cover its parts.
+A working page is an interactive page someone uses to decide something, such as the review page the `reviewing-prs` skill ships. It keeps the plates' palette, type families, and paper roles; the rules below cover the parts a plate does not have.
 
-- **Papers.** Chalk Paper is the ground, and each section sits on a white sheet held by a Drafting Graphite hairline. Dispatch Paper carries notes someone wrote, such as an agent's read, a note across items, or review feedback. Data that needs attention does not borrow Dispatch Paper.
+- **Papers.** Chalk Paper is the ground, and each section sits on a white sheet held by a Drafting Graphite hairline. Dispatch Paper carries notes someone wrote, such as an agent's read, a note across items, or review feedback. Data that needs attention does not use Dispatch Paper.
 - **Type.** Didot sets the page headline and numerals at 1rem or larger only, because its hairlines thin out at small sizes and on Night Paper. Baskerville sets body text and titles. A compact system sans sets labels, buttons, and metadata, never smaller than 0.7rem (11px). A working page loads no web fonts, so the Georgia fallback for both serifs is intended.
 - **Parts.** Containers and controls take a 2px radius, the corner of cut card stock; circles are kept for route nodes, ranks, and seals. A segmented control shows its chosen option as a Raven Navy fill with Chalk text, reversed at night. Focus is a 2px Route Cobalt ring. Controls are at least 36px tall, and 44px on narrow screens. Nothing casts a shadow.
 - **Orange.** A small Signal Orange seal marks what needs the operator: behavior a change did not describe, a change a revert cannot undo, a notice that leaves the work incomplete, anything that shipped without the operator's decision or changed after it, and a style outside the design system in a redrawn screen. Orange never fills an area and never marks an empty state; an empty group takes the graphite ring. Each orange mark also says what it means in words.

@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-{{NONCE}}'; connect-src 'none'; img-src 'self' data: https://github.com https://user-images.githubusercontent.com https://private-user-images.githubusercontent.com; form-action 'none'; base-uri 'none'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<title>Review Round</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #F6F7FA; --surface: #FFFFFF; --sunken: #F6F7FA; --mist: #E3E9F7; --rule: #CCD5E8;
+  --ink: #042458; --ink-soft: #47577A; --accent: #0050CC;
+  --attn: #DC6C36; --on-attn: #042458; --attn-ink: #963E12; --attn-wash: #FBE9DF; --attn-rule: #EBC7B3;
+  --add: #0B5D3B; --add-wash: #E3F3EA; --del: #8F2A1F; --del-wash: #FBE7E3;
+  --bar: #042458; --bar-ink: #F6F7FA; --bar-soft: #B9C6E4;
+  --chosen: #042458; --on-chosen: #F6F7FA;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #08122A; --surface: #0F1D3B; --sunken: #0B1733; --mist: #1A2B50; --rule: #2A3D66;
+    --ink: #E6ECF8; --ink-soft: #A7B4D2; --accent: #7EA8FF;
+    --attn: #E8834F; --on-attn: #1A0E06; --attn-ink: #FFB892; --attn-wash: #3A2216; --attn-rule: #6B3A22;
+    --add: #8FDDB2; --add-wash: #0F2E20; --del: #FFA396; --del-wash: #3A1813;
+    --bar: #030A1C; --bar-ink: #E6ECF8; --bar-soft: #95A3C4;
+    --chosen: #E6ECF8; --on-chosen: #08122A;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #08122A; --surface: #0F1D3B; --sunken: #0B1733; --mist: #1A2B50; --rule: #2A3D66;
+  --ink: #E6ECF8; --ink-soft: #A7B4D2; --accent: #7EA8FF;
+  --attn: #E8834F; --on-attn: #1A0E06; --attn-ink: #FFB892; --attn-wash: #3A2216; --attn-rule: #6B3A22;
+  --add: #8FDDB2; --add-wash: #0F2E20; --del: #FFA396; --del-wash: #3A1813;
+  --bar: #030A1C; --bar-ink: #E6ECF8; --bar-soft: #95A3C4;
+  --chosen: #E6ECF8; --on-chosen: #08122A;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body { margin: 0; background: var(--bg); font: 15px/1.5 var(--sans); color: var(--ink); }
+::selection { background: var(--attn); color: var(--on-attn); }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 2rem; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; text-wrap: balance; }
+h2 { font-size: 1.15rem; line-height: 1.3; font-weight: 700; }
+a { color: var(--accent); }
+button, input, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+pre { margin: 8px 0 0; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.82rem/1.55 var(--mono); }
+pre span { display: block; padding: 0 4px; }
+pre .add { color: var(--add); background: var(--add-wash); }
+pre .del { color: var(--del); background: var(--del-wash); }
+pre .ctx { color: var(--ink-soft); }
+
+.bar { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; padding: 10px 28px; background: var(--bar); color: var(--bar-ink); }
+.bar-note { color: var(--bar-soft); font-size: 0.85rem; }
+.bar-count { margin-left: auto; color: var(--bar-ink); font-size: 0.85rem; }
+.bar-count:empty { display: none; }
+.theme { border: 1px solid var(--bar-soft); background: none; color: var(--bar-ink); border-radius: 6px; padding: 4px 12px; font-size: 0.85rem; }
+.bar-count:empty + .theme { margin-left: auto; }
+.theme:hover { background: rgb(255 255 255 / 0.08); }
+main { max-width: 1320px; margin: 0 auto; padding: 36px 28px 80px; }
+.lede { max-width: 72ch; margin-bottom: 26px; }
+.lede p { margin-top: 10px; color: var(--ink-soft); font-size: 1.02rem; }
+.notices { margin: 12px 0 0; padding: 0; list-style: none; }
+.notices li { margin-top: 6px; padding: 7px 12px; border-left: 3px solid var(--attn); background: var(--attn-wash); border-radius: 0 6px 6px 0; font-size: 0.92rem; }
+.meta, .source { color: var(--ink-soft); font-size: 0.85rem; }
+.source { margin-top: 6px; }
+.empty { color: var(--ink-soft); }
+.sec-title { font-size: 0.74rem; font-weight: 700; color: var(--ink-soft); margin: 0 0 6px; }
+.sec-title.spaced { margin-top: 14px; }
+
+.over { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; margin-bottom: 14px; overflow: hidden; }
+.over-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; padding: 12px 18px; background: var(--sunken); border-bottom: 1px solid var(--rule); }
+.over.hold .over-head { background: var(--attn); color: var(--on-attn); }
+.over-head h2 { font-size: 1rem; }
+.over-head small { font-size: 0.85rem; color: var(--ink-soft); }
+.over.hold .over-head small { color: var(--on-attn); }
+.over > .empty { padding: 12px 18px; }
+.orow { display: grid; grid-template-columns: 64px minmax(0, 1.25fr) minmax(0, 1.6fr) 196px; gap: 16px; padding: 12px 18px; border-top: 1px solid var(--rule); align-items: center; }
+.over-head + .orow { border-top: 0; }
+.vu { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 9px; background: var(--mist); font-weight: 800; font-size: 1.35rem; font-variant-numeric: tabular-nums; line-height: 1.1; text-align: center; }
+.over.hold .vu { background: var(--attn-wash); color: var(--attn-ink); }
+.vu small { display: block; font-size: 0.6rem; font-weight: 600; color: var(--ink-soft); }
+.orow b { display: block; line-height: 1.3; }
+.where { font-size: 0.8rem; color: var(--ink-soft); }
+.orow p { font-size: 0.92rem; }
+.scores { display: grid; grid-template-columns: repeat(4, 1fr) 1.4fr; gap: 4px; text-align: center; font-variant-numeric: tabular-nums; }
+.scores span { background: var(--sunken); border-radius: 5px; padding: 3px 0 2px; font-weight: 700; font-size: 0.92rem; }
+.scores span small { display: block; font-size: 0.6rem; font-weight: 600; color: var(--ink-soft); }
+.scores span.three { background: var(--attn-wash); color: var(--attn-ink); }
+.scores span.lev { background: none; border: 1px solid var(--rule); }
+.across { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 26px; font-size: 0.9rem; }
+.across span { background: var(--mist); border-radius: 8px; padding: 7px 12px; }
+
+.block { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 22px 22px; margin-bottom: 18px; scroll-margin-top: 60px; }
+.block-head { display: flex; align-items: baseline; gap: 6px 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.block-head h2 { flex: 1 1 320px; }
+.block-head .meta { flex: 1 1 100%; order: 3; }
+.rank { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 7px; background: var(--mist); font-weight: 800; font-size: 0.9rem; margin-right: 6px; vertical-align: 1px; }
+.block.hold .rank { background: var(--attn); color: var(--on-attn); }
+.verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 7px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; background: none; padding: 6px 12px; font-size: 0.85rem; border-right: 1px solid var(--rule); }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { background: var(--mist); }
+.seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 700; }
+.notes { width: 260px; max-width: 100%; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 7px; background: var(--surface); font-size: 0.85rem; }
+.lenses, .under { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 22px; }
+.under { margin-top: 16px; }
+.lens-stack { display: grid; gap: 12px; align-content: start; }
+.lens { background: var(--sunken); border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; }
+.lens.risk { background: var(--attn-wash); }
+.frame-table { border: 1px solid var(--rule); border-radius: 8px; overflow-x: auto; }
+.sit { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.sit th { text-align: left; font-size: 0.72rem; font-weight: 600; color: var(--ink-soft); padding: 6px 10px; border-bottom: 1px solid var(--rule); }
+.sit td { padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.sit tr:last-child td { border-bottom: 0; }
+.sit td.now { background: var(--attn-wash); font-weight: 700; }
+.sit td.now.hot { background: var(--attn); color: var(--on-attn); }
+.sit td.no { font-weight: 700; color: var(--attn-ink); }
+.sit tr.quiet td { color: var(--ink-soft); }
+.screens, .beforeafter { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.screen, .ba { border: 1px solid var(--rule); border-radius: 8px; padding: 12px; background: var(--sunken); font-size: 0.9rem; min-width: 0; }
+.screen.after, .ba.after { background: var(--surface); border-color: var(--ink); }
+.cap { font-size: 0.72rem; font-weight: 700; color: var(--ink-soft); margin-bottom: 8px; }
+.screen img { display: block; max-width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--rule); }
+.screen .addr { display: block; margin-top: 6px; font-size: 0.75rem; overflow-wrap: anywhere; }
+.w-heading { font-weight: 700; margin: 4px 0; }
+.w-text { margin: 4px 0; }
+.w-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; background: var(--surface); margin-top: 6px; }
+.w-row > span { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.w-btn { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--accent); color: var(--accent); }
+.w-btn.primary { background: var(--accent); color: var(--surface); }
+.w-btn.new { border: 2px dashed var(--attn); color: var(--attn-ink); background: var(--attn-wash); }
+.w-badge { display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; background: var(--mist); }
+.w-input { display: block; border: 1px solid var(--rule); border-radius: 5px; padding: 4px 8px; color: var(--ink-soft); background: var(--surface); font-size: 0.82rem; margin: 4px 0; }
+.w-image { display: grid; place-items: center; height: 56px; border: 1px dashed var(--rule); border-radius: 6px; color: var(--ink-soft); font-size: 0.75rem; margin: 4px 0; }
+.changed { outline: 2px solid var(--attn); outline-offset: 2px; }
+.ba mark { background: var(--attn-wash); color: inherit; font-weight: 700; padding: 0 3px; }
+.walk { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px 0; margin-top: 2px; }
+.walk div { flex: 1 1 110px; border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; background: var(--sunken); font-size: 0.85rem; }
+.walk div.on { background: var(--attn-wash); border-color: var(--attn); font-weight: 600; }
+.walk i { align-self: center; padding: 0 6px; color: var(--ink-soft); font-style: normal; }
+.parts { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 0.88rem; }
+.part { border: 1px solid var(--rule); border-radius: 8px; padding: 8px 12px; background: var(--sunken); }
+.part.added, .part.changed-part { background: var(--attn-wash); border-color: var(--attn-rule); }
+.part small { display: block; font-size: 0.68rem; font-weight: 700; color: var(--ink-soft); }
+.swatches { display: flex; gap: 6px; margin-top: 4px; }
+.swatches span { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--rule); }
+.read { font-size: 0.92rem; }
+.read p { margin-bottom: 6px; }
+.read .label { display: inline-block; min-width: 108px; font-size: 0.74rem; font-weight: 700; color: var(--ink-soft); }
+.bots { margin-top: 12px; padding: 9px 14px; background: var(--sunken); border-radius: 8px; font-size: 0.9rem; }
+.bots b { font-size: 0.74rem; color: var(--ink-soft); margin-right: 8px; }
+.rest-line { margin-top: 12px; color: var(--ink-soft); font-size: 0.85rem; }
+
+.closing { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 20px; margin-bottom: 14px; }
+.closing h2 { font-size: 1rem; margin-bottom: 4px; }
+.closing h3 { font-size: 0.9rem; margin: 12px 0 2px; }
+.crow { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 4px 16px; padding: 8px 0; border-top: 1px solid var(--rule); font-size: 0.9rem; }
+.crow + .crow { border-top: 1px solid var(--rule); }
+.crow { border-top: 0; }
+.legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.78rem; }
+.verdicts { scroll-margin-top: 60px; background: var(--surface); border: 1px solid var(--ink); border-radius: 10px; padding: 14px 18px; margin-top: 22px; }
+.verdicts textarea { display: block; width: 100%; min-height: 4.5em; margin-top: 8px; padding: 8px 10px; border: 1px solid var(--rule); border-radius: 7px; background: var(--sunken); font: 0.82rem/1.5 var(--mono); resize: vertical; }
+.verdicts-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.copy { border: 1.5px solid var(--ink); background: var(--surface); border-radius: 7px; padding: 5px 14px; font-weight: 700; font-size: 0.88rem; }
+.copy:hover { background: var(--mist); }
+@media (max-width: 980px) {
+  .bar { position: static; padding: 10px 16px; }
+  main { padding: 24px 16px 60px; }
+  .block { padding: 16px 14px 18px; }
+  .orow { grid-template-columns: 56px minmax(0, 1fr); }
+  .orow > p, .orow > .scores { grid-column: 1 / -1; }
+  .lenses, .under, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
+  .verdict { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<header class="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-count" id="bar-count" href="#verdicts"></a><button type="button" class="theme" id="theme"></button></header>
+<main id="page"><noscript>This page needs JavaScript turned on to show the round.</noscript></main>
+<script type="application/json" id="round-data">
+{{ROUND_DATA}}
+</script>
+<script nonce="{{NONCE}}">
+"use strict";
+(() => {
+  const root = document.documentElement;
+  const page = document.getElementById("page");
+
+  // Theme: follow the system until the toggle is used; the choice is not stored.
+  const themeButton = document.getElementById("theme");
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const effectiveTheme = () => root.dataset.theme || (media.matches ? "dark" : "light");
+  const labelTheme = () => {
+    const next = effectiveTheme() === "dark" ? "light" : "dark";
+    themeButton.textContent = next === "dark" ? "Dark mode" : "Light mode";
+    themeButton.setAttribute("aria-label", "Switch to " + next + " mode");
+  };
+  themeButton.addEventListener("click", () => {
+    root.dataset.theme = effectiveTheme() === "dark" ? "light" : "dark";
+    labelTheme();
+  });
+  media.addEventListener("change", labelTheme);
+  labelTheme();
+
+  const el = (tag, cls, text) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  };
+  const add = (parent, ...kids) => {
+    for (const kid of kids) if (kid) parent.append(kid);
+    return parent;
+  };
+  const str = (value) => (typeof value === "string" ? value.trim() : "");
+  const list = (value) => (Array.isArray(value) ? value : []);
+
+  let round;
+  try {
+    round = JSON.parse(document.getElementById("round-data").textContent);
+    if (!round || typeof round !== "object" || Array.isArray(round)) throw new Error("not an object");
+  } catch (error) {
+    page.replaceChildren(el("p", "notices", "The round's data could not be read, so nothing is shown. Ask the agent to rebuild the page."));
+    return;
+  }
+
+  const IMAGE_HOSTS = new Set(["github.com", "user-images.githubusercontent.com", "private-user-images.githubusercontent.com"]);
+  const DATA_IMAGE = /^data:image\/(png|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+$/;
+  const HEX = /^#[0-9a-fA-F]{3,8}$/;
+  const httpsUrl = (value) => {
+    try {
+      const url = new URL(String(value));
+      return url.protocol === "https:" ? url : null;
+    } catch (error) {
+      return null;
+    }
+  };
+  const link = (text, address) => {
+    const url = httpsUrl(address);
+    if (!url) return el("span", "", text);
+    const anchor = el("a", "", text);
+    anchor.href = url.href;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    return anchor;
+  };
+  const imageSource = (address) => {
+    const value = str(address);
+    if (DATA_IMAGE.test(value)) return value;
+    const url = httpsUrl(value);
+    return url && IMAGE_HOSTS.has(url.hostname) ? url.href : null;
+  };
+
+  // Scores and order are computed here so a wrong order cannot be typed.
+  const score = (value) => (Number.isInteger(value) && value >= 1 && value <= 3 ? value : null);
+  const prs = list(round.prs).filter((pr) => pr && typeof pr === "object").map((pr, index) => {
+    const s = pr.scores || {};
+    const impact = score(s.impact), confidence = score(s.confidence), verify = score(s.verify), undo = score(s.undo);
+    // A missing or invalid score fails safe: the pull request sorts to the top of the held group.
+    const product = verify && undo ? verify * undo : 9;
+    const leverage = impact && confidence && verify && undo ? (impact * confidence) / (verify * undo) : null;
+    return { pr, index, impact, confidence, verify, undo, product, leverage, hold: product >= 3 };
+  });
+  const byProduct = (a, b) => b.product - a.product || a.index - b.index;
+  const over = prs.filter((item) => item.hold).sort(byProduct);
+  const under = prs.filter((item) => !item.hold).sort(byProduct);
+  const ordered = over.concat(under);
+  ordered.forEach((item, position) => { item.rank = position + 1; });
+
+  const shortRepo = (repo) => str(repo).split("/").pop() || str(repo);
+  const label = (pr) => shortRepo(pr.repo) + " #" + (pr.number ?? "?");
+  const joinNames = (names) => names.length < 2 ? names.join("") : names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+
+  document.getElementById("bar-note").textContent = [str(round.scope), str(round.generated)].filter(Boolean).join(" · ");
+
+  // Lede
+  const lede = el("header", "lede");
+  const total = ordered.length;
+  let headline;
+  if (total === 0) headline = "No open pull requests in this round.";
+  else if (over.length === 0) headline = total === 1 ? "The one pull request is under the hold line." : "None of the " + total + " is over the hold line.";
+  else if (over.length === total) headline = total === 1 ? "The one pull request is over the hold line." : "All " + total + " are over the hold line.";
+  else headline = over.length + " of " + total + (over.length === 1 ? " is" : " are") + " over the hold line.";
+  const impactNames = ordered.filter((item) => item.impact === 3).map((item) => label(item.pr));
+  const impactText = impactNames.length === 0 ? "None scores 3 on impact."
+    : joinNames(impactNames) + (impactNames.length === 1 ? " scores" : " score") + " 3 on impact.";
+  add(lede, el("h1", "", headline), el("p", "", "Ranked by verification effort times undo cost, highest first. " + impactText));
+  const notices = list(round.notices).map(str).filter(Boolean);
+  if (notices.length) {
+    const ul = el("ul", "notices");
+    for (const notice of notices) ul.append(el("li", "", notice));
+    lede.append(ul);
+  }
+  page.replaceChildren(lede);
+
+  // Risk overview
+  // A 3 is tinted where it raises the stakes: impact, verification effort, undo cost.
+  const scoreCell = (value, name, tint) => {
+    const cell = el("span", tint && value === 3 ? "three" : "", value ?? "?");
+    cell.append(el("small", "", name));
+    return cell;
+  };
+  const overviewGroup = (items, hold) => {
+    const section = el("section", hold ? "over hold" : "over");
+    const head = el("div", "over-head");
+    add(head, el("h2", "", hold ? "Over the hold line" : "Under the hold line"),
+      el("small", "", hold ? "verification effort × undo cost is 3 or more" : "verification effort × undo cost is 2 or less"));
+    section.append(head);
+    if (!items.length) {
+      section.append(el("p", "empty", hold ? "None over the hold line." : "None under the hold line."));
+      return section;
+    }
+    for (const item of items) {
+      const row = el("div", "orow");
+      const vu = el("div", "vu", item.product);
+      vu.append(el("small", "", "V × U"));
+      const name = el("div");
+      add(name, el("b", "", str(item.pr.title) || "Untitled"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
+      const scores = el("div", "scores");
+      const lev = el("span", "lev", item.leverage === null ? "?" : item.leverage.toFixed(2));
+      lev.append(el("small", "", "leverage"));
+      add(scores, scoreCell(item.impact, "impact", true), scoreCell(item.confidence, "conf.", false),
+        scoreCell(item.verify, "verify", true), scoreCell(item.undo, "undo", true), lev);
+      add(row, vu, name, el("p", "", str(item.pr.driver)), scores);
+      section.append(row);
+    }
+    return section;
+  };
+  add(page, overviewGroup(over, true), overviewGroup(under, false));
+
+  const across = list(round.across).filter((note) => note && str(note.text));
+  if (across.length) {
+    const box = el("div", "across");
+    for (const note of across) {
+      const span = el("span");
+      if (str(note.label)) span.append(el("b", "", str(note.label) + ": "));
+      span.append(document.createTextNode(str(note.text)));
+      box.append(span);
+    }
+    page.append(box);
+  }
+
+  // Pull request blocks
+  const SOURCES = {
+    tests: "Taken from the pull request's test or CI output.",
+    screenshot: "Taken from a screenshot attached to the pull request.",
+    diff: "Worked out by reading the diff, not by running it.",
+  };
+  const sourceLine = (part, diffText) => {
+    const key = Object.hasOwn(SOURCES, part.source) ? part.source : "diff";
+    const text = key === "diff" && diffText ? diffText : SOURCES[key];
+    return el("p", "source", [text, str(part.sourceNote)].filter(Boolean).join(" "));
+  };
+  const panel = (title, text, risk) => {
+    const box = el("div", risk ? "lens risk" : "lens");
+    const body = str(text);
+    add(box, el("p", "sec-title", title), el("p", body ? "" : "empty", body || "Nothing to report."));
+    return box;
+  };
+
+  const situations = (part) => {
+    const frag = document.createDocumentFragment();
+    const frame = el("div", "frame-table");
+    const table = el("table", "sit");
+    const head = el("tr");
+    for (const name of ["Situation", "Before", "After", "Described?"]) head.append(el("th", "", name));
+    table.append(head);
+    for (const row of list(part.rows)) {
+      const described = str(row.described).toLowerCase();
+      const tr = el("tr", described === "unchanged" ? "quiet" : "");
+      const changed = described !== "unchanged" && str(row.before) !== str(row.after);
+      add(tr, el("td", "", str(row.situation)), el("td", "", str(row.before)),
+        el("td", changed ? (described === "no" ? "now hot" : "now") : "", str(row.after)),
+        el("td", described === "no" ? "no" : "", described === "yes" ? "Yes" : described === "no" ? "No" : "unchanged"));
+      table.append(tr);
+    }
+    frame.append(table);
+    add(frag, frame, sourceLine(part));
+    return frag;
+  };
+
+  const widget = (item) => {
+    if (!item || typeof item !== "object") return null;
+    let node;
+    switch (item.kind) {
+      case "heading": node = el("p", "w-heading", str(item.text)); break;
+      case "text": node = el("p", "w-text", str(item.text)); break;
+      case "badge": node = el("span", "w-badge", str(item.text)); break;
+      case "input": node = el("span", "w-input", str(item.text) || "Input"); break;
+      case "image": node = el("div", "w-image", str(item.text) || "Image"); break;
+      case "button": {
+        const variant = ["primary", "new"].includes(item.variant) ? " " + item.variant : "";
+        node = el("span", "w-btn" + variant, str(item.text) || "Button");
+        if (item.variant === "new") node.title = "A style the design system does not have";
+        break;
+      }
+      case "row": {
+        node = el("div", "w-row");
+        const left = el("span"), right = el("span");
+        const kids = list(item.items).map(widget).filter(Boolean);
+        const split = Number.isInteger(item.split) ? item.split : Math.max(kids.length - 1, 1);
+        kids.forEach((kid, i) => (i < split ? left : right).append(kid));
+        add(node, left, right);
+        break;
+      }
+      default: return null;
+    }
+    if (item.changed === true) node.classList.add("changed");
+    return node;
+  };
+
+  // Each side says what it shows: a screenshot, or a schematic redrawn from the diff.
+  const screenSide = (side, caption, after) => {
+    const box = el("div", after ? "screen after" : "screen");
+    const data = side && typeof side === "object" ? side : {};
+    const shot = str(data.image);
+    const source = shot ? imageSource(shot) : null;
+    box.append(el("p", "cap", caption + (source ? " · screenshot" : " · redrawn")));
+    box.dataset.shown = source ? "screenshot" : "redrawn";
+    if (source) {
+      const img = el("img");
+      img.src = source;
+      img.alt = caption + " screenshot";
+      img.referrerPolicy = "no-referrer";
+      box.append(img);
+      if (!source.startsWith("data:")) {
+        const addr = link(source, source);
+        addr.classList.add("addr");
+        box.append(addr);
+      }
+    } else {
+      for (const item of list(data.items)) {
+        const node = widget(item);
+        if (node) box.append(node);
+      }
+      if (shot) box.append(el("span", "addr", "Screenshot address not shown as an image: " + shot));
+    }
+    return box;
+  };
+
+  const screens = (part) => {
+    const frag = document.createDocumentFragment();
+    const grid = el("div", "screens");
+    const before = screenSide(part.before, "Before", false), after = screenSide(part.after, "After", true);
+    add(grid, before, after);
+    frag.append(grid);
+    const shots = [before, after].filter((side) => side.dataset.shown === "screenshot").length;
+    const shownText = shots === 2 ? SOURCES.screenshot
+      : shots === 0 ? "Redrawn from the diff, not from a screenshot."
+      : "One side is a screenshot attached to the pull request; the other is redrawn from the diff.";
+    frag.append(el("p", "source", [shownText, str(part.sourceNote)].filter(Boolean).join(" ")));
+    if (grid.querySelector(".w-btn.new, .changed")) {
+      frag.append(el("p", "legend", "Orange ring: changed by this pull request. Dashed orange: a style the design system does not have."));
+    }
+    const steps = list(part.path).filter((step) => step && str(step.step));
+    if (steps.length) {
+      frag.append(el("p", "sec-title spaced", "Where it sits in the path"));
+      const walk = el("div", "walk");
+      steps.forEach((step, i) => {
+        if (i) walk.append(el("i", "", "→"));
+        walk.append(el("div", step.changed === true ? "on" : "", str(step.step)));
+      });
+      frag.append(walk);
+    }
+    const parts = list(part.components).filter((c) => c && str(c.name));
+    if (parts.length) {
+      frag.append(el("p", "sec-title spaced", "Components"));
+      const box = el("div", "parts");
+      const NAMES = { kept: "Kept", dropped: "No longer used here", added: "New", changed: "Changed" };
+      for (const c of parts) {
+        const status = Object.hasOwn(NAMES, c.status) ? c.status : "changed";
+        const chip = el("div", status === "added" ? "part added" : status === "changed" ? "part changed-part" : "part");
+        add(chip, el("small", "", str(c.note) || NAMES[status]), document.createTextNode(str(c.name)));
+        const colors = list(c.swatches).filter((color) => HEX.test(color));
+        if (colors.length) {
+          const sw = el("span", "swatches");
+          for (const color of colors) {
+            const dot = el("span");
+            dot.style.backgroundColor = color;
+            dot.title = color;
+            sw.append(dot);
+          }
+          chip.append(sw);
+        }
+        box.append(chip);
+      }
+      frag.append(box);
+    }
+    return frag;
+  };
+
+  const marked = (text, mark) => {
+    const p = el("p");
+    const value = str(text), target = str(mark);
+    const at = target ? value.indexOf(target) : -1;
+    if (at < 0) { p.textContent = value; return p; }
+    add(p, document.createTextNode(value.slice(0, at)), el("mark", "", target), document.createTextNode(value.slice(at + target.length)));
+    return p;
+  };
+  const textChange = (part) => {
+    const frag = document.createDocumentFragment();
+    if (str(part.none)) {
+      frag.append(el("p", "", str(part.none)));
+    } else {
+      const grid = el("div", "beforeafter");
+      const before = el("div", "ba"), after = el("div", "ba after");
+      add(before, el("p", "cap", "Before"), marked(part.before, part.markBefore));
+      add(after, el("p", "cap", "After"), marked(part.after, part.markAfter));
+      add(grid, before, after);
+      frag.append(grid);
+    }
+    frag.append(sourceLine(part));
+    return frag;
+  };
+
+  const choices = new Map();
+  const verdictBox = el("textarea");
+  const verdictWords = { merge: "merge", changes: "request changes", defer: "defer" };
+  const refreshVerdicts = () => {
+    const lines = [];
+    for (const item of ordered) {
+      const choice = choices.get(item);
+      if (!choice || !choice.verdict) continue;
+      const notes = choice.notes.value.replace(/\s+/g, " ").trim();
+      lines.push(str(item.pr.repo) + "#" + item.pr.number + " @ " + str(item.pr.head) + " | " + verdictWords[choice.verdict] + " | " + notes);
+    }
+    verdictBox.value = lines.join("\n");
+    document.getElementById("bar-count").textContent = lines.length
+      ? lines.length + (lines.length === 1 ? " Verdict chosen ↓" : " Verdicts chosen ↓") : "";
+  };
+
+  const block = (item) => {
+    const pr = item.pr;
+    const article = el("article", item.hold ? "block hold" : "block");
+    article.id = "pr-" + item.rank;
+    const head = el("div", "block-head");
+    const title = el("h2");
+    add(title, el("span", "rank", item.rank), document.createTextNode(str(pr.title) || "Untitled"));
+    const size = pr.size || {};
+    const meta = el("span", "meta");
+    const facts = [label(pr), str(pr.owner) || "No owner",
+      "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " · " + size.files + (size.files === 1 ? " file" : " files") : ""),
+      "V × U " + item.product, str(pr.status)].filter(Boolean);
+    meta.append(document.createTextNode(facts.join(" · ") + " · "));
+    meta.append(link("Open on GitHub", pr.url));
+    const verdict = el("div", "verdict");
+    const seg = el("div", "seg");
+    seg.setAttribute("role", "group");
+    seg.setAttribute("aria-label", "Verdict for " + label(pr));
+    const notes = el("input", "notes");
+    notes.type = "text";
+    notes.placeholder = "Notes for the Verdict";
+    notes.setAttribute("aria-label", "Notes for " + label(pr));
+    const choice = { verdict: null, notes };
+    choices.set(item, choice);
+    for (const [key, text] of [["merge", "Merge"], ["changes", "Changes"], ["defer", "Defer"]]) {
+      const button = el("button", "", text);
+      button.type = "button";
+      button.setAttribute("aria-pressed", "false");
+      button.addEventListener("click", () => {
+        choice.verdict = choice.verdict === key ? null : key;
+        for (const other of seg.querySelectorAll("button")) other.setAttribute("aria-pressed", String(other === button && choice.verdict === key));
+        refreshVerdicts();
+      });
+      seg.append(button);
+    }
+    notes.addEventListener("input", refreshVerdicts);
+    add(verdict, seg, notes);
+    add(head, title, meta, verdict);
+    article.append(head);
+
+    const lenses = el("div", "lenses");
+    const main = el("div");
+    main.append(el("p", "sec-title", "What is different for " + (str(pr.audience) ? "a " + str(pr.audience) : "a user")));
+    let shown = false;
+    if (pr.situations && list(pr.situations.rows).length) { main.append(situations(pr.situations)); shown = true; }
+    if (pr.screens && typeof pr.screens === "object") {
+      if (shown) main.append(el("p", "sec-title spaced", "On screen"));
+      main.append(screens(pr.screens));
+      shown = true;
+    }
+    if (pr.text && typeof pr.text === "object") { main.append(textChange(pr.text)); shown = true; }
+    if (!shown) main.append(el("p", "empty", "Nothing reported."));
+    const stack = el("div", "lens-stack");
+    add(stack, panel("If it is wrong", pr.ifWrong, item.undo === 3), panel("What proves it", pr.proof), panel("Asked for?", pr.asked));
+    add(lenses, main, stack);
+    article.append(lenses);
+
+    const under = el("div", "under");
+    const codeBox = el("div");
+    const code = list(pr.code).filter((c) => c && list(c.lines).length);
+    if (!code.length) {
+      add(codeBox, el("p", "sec-title", "The code behind it"), el("p", "empty", "Nothing singled out."));
+    }
+    for (const c of code) {
+      codeBox.append(el("p", "sec-title", [str(c.title) || "The code behind it", str(c.file)].filter(Boolean).join(" · ")));
+      const pre = el("pre");
+      for (const line of list(c.lines)) {
+        const text = String(line);
+        pre.append(el("span", text.startsWith("+") ? "add" : text.startsWith("-") ? "del" : "ctx", text));
+      }
+      codeBox.append(pre);
+    }
+    const read = el("div", "read");
+    const r = pr.read || {};
+    read.append(el("p", "sec-title", "The agent's read"));
+    for (const [key, name] of [["judgment", "Judgment"], ["check", "Check yourself"], ["notExamined", "Not examined"]]) {
+      const p = el("p");
+      const value = str(r[key]);
+      add(p, el("span", "label", name), el("span", value ? "" : "empty", value || "Nothing."));
+      read.append(p);
+    }
+    add(under, codeBox, read);
+    article.append(under);
+
+    if (str(pr.feedback)) {
+      const bots = el("p", "bots");
+      add(bots, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
+      article.append(bots);
+    }
+    if (str(pr.rest)) article.append(el("p", "rest-line", "Rest of the diff: " + str(pr.rest)));
+    return article;
+  };
+  for (const item of ordered) page.append(block(item));
+
+  // Closing rows
+  const closingRow = (row, detail) => {
+    const div = el("div", "crow");
+    const name = el("div");
+    add(name, link(str(row.title) || "Untitled", row.url), el("span", "where", " · " + label(row)));
+    add(div, name, el("div", str(row[detail]) ? "" : "empty", str(row[detail]) || "Nothing to add."));
+    return div;
+  };
+  const closingList = (rows, detail, none) => {
+    const frag = document.createDocumentFragment();
+    const items = list(rows).filter((row) => row && typeof row === "object");
+    if (!items.length) frag.append(el("p", "empty", none));
+    for (const row of items) frag.append(closingRow(row, detail));
+    return frag;
+  };
+  const progress = el("section", "closing");
+  add(progress, el("h2", "", "Still in progress"), closingList(round.inProgress, "note", "None in progress."));
+  const merged = round.merged && typeof round.merged === "object" ? round.merged : {};
+  const mergedBox = el("section", "closing");
+  add(mergedBox, el("h2", "", "Merged since your last review"),
+    el("p", "meta", str(merged.window) || "The window was not stated."),
+    el("h3", "", "Merged without you"), closingList(merged.without, "reason", "None merged without you."),
+    el("h3", "", "Changed after your Verdict"), closingList(merged.changedAfter, "summary", "None changed after your Verdict."));
+  add(page, progress, mergedBox);
+
+  // Verdicts to copy
+  const box = el("section", "verdicts");
+  box.id = "verdicts";
+  const boxHead = el("div", "verdicts-head");
+  const copy = el("button", "copy", "Copy Verdicts");
+  copy.type = "button";
+  const status = el("span", "meta", "Choose a Verdict on any pull request, then copy them into the conversation.");
+  status.setAttribute("aria-live", "polite");
+  copy.addEventListener("click", async () => {
+    if (!verdictBox.value) { status.textContent = "No Verdicts chosen yet."; return; }
+    try {
+      await navigator.clipboard.writeText(verdictBox.value);
+      status.textContent = "Copied. Paste them into the conversation.";
+    } catch (error) {
+      verdictBox.focus();
+      verdictBox.select();
+      status.textContent = "Copy did not work here. The text is selected; copy it by hand.";
+    }
+  });
+  verdictBox.readOnly = true;
+  verdictBox.setAttribute("aria-label", "Chosen Verdicts, one line per pull request");
+  add(boxHead, el("h2", "", "Your Verdicts"), copy, status);
+  add(box, boxHead, verdictBox);
+  page.append(box);
+})();
+</script>
+</body>
+</html>

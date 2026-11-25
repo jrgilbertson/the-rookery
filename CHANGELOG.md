@@ -13,6 +13,21 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `reviewing-prs`, a Markdown-only skill that runs one Review Round across
+  every repository the operator can merge in. It reads each open pull request
+  from its raw diff at a fixed head commit, scores verification effort and
+  undo cost from what the diff shows, lists stored and published names,
+  flags claims the diff does not support and missing screenshots, and writes
+  the round to a private local page. It records each Verdict on the pull
+  request as a three-line comment naming the reviewed commit. It merges a
+  pull request nobody owns only when its head is still that commit, and
+  hands an owned one back to its owner. Synthetic Skill Eval cases are under
+  `evals/reviewing-prs/`.
+- `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels
+  (`review:held`, `review:auto-merged`, `review:human-merged`).
+- `docs/adr/001-verdict-trust-by-convention.md` records why a Verdict comment
+  and a pull request's `Owner:` line are trusted by convention while every
+  agent shares the operator's GitHub login, and what would replace them.
 - `daily-learning`, a portable skill and paired daily Orca automation
   (`automations/daily-learning.md`) that runs read-only overnight across
   Obsidian vault activity, local and paired remote AI sessions, and Anki
@@ -64,6 +79,23 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Leverage scoring has two fixed anchors. A new user-facing view, flow, or
+  concept scores 3 on verification effort, and any stored or published name
+  (table, column, stored ID, event name, or public API) scores 3 on undo
+  cost. `PRIORITIZATION.md`'s factor table and the "Rank by leverage" rule in
+  `PRIORITIZATION.md`, `GLOBAL-AGENTS.md`, and `managing-issues` carry both.
+- Held Changes in `CONCEPTS.md` are now decided by two tests: a list of
+  sensitive kinds, which gains CI workflows and composite actions, git-hook
+  and secret-scanner configuration, and dependency lockfiles; and a score
+  line, verification effort times undo cost of 3 or more, or a diff the
+  reviewer cannot read clearly. The higher of the issue's stored scores and
+  what the diff shows counts, and repo policy is read from the default
+  branch.
+- `WORKFLOWS.md` Ship describes Review Rounds and Verdicts through
+  `reviewing-prs`, the two hold tests, and the three PR review labels.
+- `managing-issues` asks for a Verification criterion that requires
+  before-and-after screenshots, or a named preview walkthrough, on a change
+  users will see.
 - `ROUTING.md` weighs each preference row's sources equally instead of
   following one board. Design/taste averages Arena WebDev, Design Arena,
   21st.dev Design System Bench, and the new Frontier Design benchmark, where

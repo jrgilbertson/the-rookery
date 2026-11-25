@@ -302,7 +302,7 @@ to `round.json` in that directory, then run these commands there, with
 `<skill-dir>` replaced by this skill's directory:
 
 ```sh
-nonce=$(openssl rand -hex 16)
+nonce=$(openssl rand -hex 16 2>/dev/null || od -An -N16 -tx1 /dev/urandom | tr -d ' \n')
 sed -e 's/&/\\u0026/g' -e 's/</\\u003c/g' -e 's/>/\\u003e/g' round.json > data.json
 sed -e "s/{{NONCE}}/$nonce/g" -e '/^{{ROUND_DATA}}$/{' -e 'r data.json' -e 'd' -e '}' <skill-dir>/assets/review-page.html > review.html
 chmod 600 review.html

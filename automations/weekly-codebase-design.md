@@ -13,7 +13,7 @@ Before assessing, confirm `improve-codebase-architecture` and its `codebase-desi
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `weekly-codebase-design-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
-Use `improve-codebase-architecture` to survey this repository for modules worth deepening. Start with areas that change frequently. Present candidates in the final Markdown report using the approval rules below. End the scheduled run after saving the report and leave interactive design and grilling for a follow-up with the owner.
+Use `improve-codebase-architecture` to survey this repository for modules worth deepening. Start with areas that change frequently. Also inspect older, infrequently changed modules for design debt that still makes changes or testing harder. Present candidates in the final Markdown report using the approval rules below. End the scheduled run after saving the report and leave interactive design and grilling for a follow-up with the owner.
 
 Assessment only: issue creation, implementation, and PR publication require separate approval.
 

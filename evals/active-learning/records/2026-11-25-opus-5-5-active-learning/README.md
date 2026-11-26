@@ -41,7 +41,7 @@ nothing.
 | daily-pass | [with skill, 3684f0d2](daily-pass-with_skill.json) | P P P | 0 | 12 (209,321 / 16,605) | 4,034 | 47.5 | 0.256 |
 | digest-reply | [with skill, 3684f0d2](digest-reply-with_skill.json) | P P P | 0 | 14 (255,265 / 16,540) | 3,223 | 58.9 | 0.252 |
 | failing-card | [with skill, 3684f0d2](failing-card-with_skill.json) | P P P P | 0 | 8 (134,041 / 11,940) | 3,509 | 56.6 | 0.198 |
-| quiet-day | [with skill, 3684f0d2](quiet-day-with_skill.json) | P P | 0 | 18 (331,516 / 17,828) | 5,500 | 82.2 | 0.338 |
+| quiet-day | [with skill, 3684f0d2](quiet-day-with_skill.json) | P F | 0 | 18 (331,516 / 17,828) | 5,500 | 82.2 | 0.338 |
 | source-terms | [no skill](source-terms-without_skill.json) | F F F F F P F F | 10 | 22 (399,367 / 56,739) | 12,989 | 142.6 | 0.794 |
 | source-terms | [with skill, 3684f0d2](source-terms-with_skill-round1.json) | P P P P P F P P | 0 | 10 (178,393 / 13,901) | 2,617 | 30.8 | 0.200 |
 | source-terms | [with skill, ad48aca2](source-terms-with_skill.json) | P P P P P P P P | 0 | 12 (221,409 / 15,251) | 4,042 | 41.6 | 0.247 |
@@ -57,15 +57,16 @@ nothing.
 | free-time | [no skill](free-time-without_skill.json) | P F F F | 0 | 14 (231,681 / 42,777) | 2,988 | 43.8 | 0.449 |
 | free-time | [with skill, 3684f0d2](free-time-with_skill.json) | P P P P | 0 | 10 (171,180 / 10,688) | 1,669 | 20.5 | 0.153 |
 | single-note | [no skill](single-note-without_skill.json) | F F F F P | 2 | 12 (180,021 / 39,760) | 2,643 | 38.6 | 0.407 |
-| single-note | [with skill + atomic-note, 3684f0d2](single-note-with_skill-round1.json) | P F P P P | 0 | 28 (710,260 / 37,804) | 8,047 | 119.9 | 0.628 |
+| single-note | [with skill + atomic-note, 3684f0d2](single-note-with_skill-round1.json) | F F P P P | 0 | 28 (710,260 / 37,804) | 8,047 | 119.9 | 0.628 |
 | single-note | [with skill + atomic-note, ad48aca2](single-note-with_skill.json) | P P P P P | 0 | 10 (175,777 / 13,800) | 2,183 | 40.6 | 0.194 |
 | single-note | [with skill only, 3684f0d2](single-note-no-atomic-with_skill-round1.json) | P P P P F | 0 | 8 (136,514 / 11,664) | 1,169 | 18.9 | 0.144 |
 | single-note | [with skill only, ad48aca2](single-note-no-atomic-with_skill.json) | P P P P P | 0 | 12 (215,507 / 14,715) | 2,996 | 48.1 | 0.227 |
 | source-explain (dropped) | [no skill](source-explain-without_skill.json) | passed | 0 | 8 (111,527 / 40,328) | 2,263 | 31.4 | 0.390 |
 | topic-map (dropped) | [no skill](topic-map-without_skill.json) | passed | 0 | 8 (108,153 / 40,612) | 2,113 | 35.5 | 0.389 |
 
-Every kept case fails at least one check without the skill and passes every
-check with it in its last run. The 25 runs above and 24 one-turn trigger
+Every kept case fails at least one check without the skill. With the skill,
+every case passes every check in its last run except `quiet-day`, which fails
+its filler check (see Corrections). The 25 runs above and 24 one-turn trigger
 checks cost **$10.54** at list price, as Claude Code reported, within the
 owner's $15 cap for this work.
 
@@ -103,16 +104,18 @@ With the skill:
   questions that asked the user to define or predict the idea before
   anything was explained, such as "In your own words, what goes wrong without
   a fencing token?" `single-note` with `atomic-note` staged loaded
-  `atomic-note` instead and drafted a note with no conversation, though it
-  wrote nothing.
+  `atomic-note` instead, drafted a note with no conversation, and wrote it to
+  a temporary file outside its workspace. `run.sh` hashes only the workspace,
+  so that write showed as no file change; the run fails its first check.
 - **Round 2** passed every check in all four reruns. Each explained the idea
   from a source it read, then asked what was unclear and for an example from
   the user's webhook work. `single-note` loaded `active-learning` with
-  `atomic-note` staged, and without it said the draft would come as plain
-  text and nothing would be written.
-- **quiet-day** listed five items. Two come from older vault material rather
-  than the quiet day, each with concrete problems, so the label is pass, but
-  it is the closest call in the set.
+  `atomic-note` staged. Without it, the run said it would show the draft as
+  plain text and write nothing to the vault "unless you approve it", which
+  reads as writing the note itself after approval; the skill now says it
+  never does.
+- **quiet-day** fails its filler check: its fifth item pads the list with
+  the Spaced Repetition card that lapsed once, the filler its case describes.
 - **source-terms** left the thin API note for the user to add, as the skill
   says, so the confusables check was corrected from "interface, signature,
   and API" to confusable terms taken together.
@@ -148,3 +151,12 @@ as its terms, proposing to remove a worked To Explore line, naming the
 leftovers in one line when the user is done, and working a digest pick that
 is an article. Nor does any case reach the point where `atomic-note` drafts
 and the user approves, because each run is one turn.
+
+## Corrections
+
+On 2026-11-26 an independent review by Gemini 4 Neon at high effort found
+three labels and claims above wrong, and the owner accepted the corrections:
+`quiet-day` fails its filler check, the round-1 `single-note` run with
+`atomic-note` wrote a file outside its workspace, and the round-2 run without
+`atomic-note` implied it would write after approval. The suite was then cut to
+five cases and moved to Promptfoo, so these runs are not repeated.

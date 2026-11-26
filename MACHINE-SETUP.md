@@ -70,7 +70,6 @@ into Claude Code. These commands install the plugins in user scope.
 ```bash
 claude plugin marketplace add EveryInc/compound-engineering-plugin
 claude plugin install compound-engineering@compound-engineering-plugin
-claude plugin install linear@claude-plugins-official
 claude plugin install playwright@claude-plugins-official
 claude plugin install pyright-lsp@claude-plugins-official
 claude plugin install security-guidance@claude-plugins-official
@@ -120,15 +119,23 @@ agy plugin install https://github.com/EveryInc/compound-engineering-plugin
 Run these in addition to installing the plugins, which register their bundled
 servers. The stdio commands require `npx` and `uvx`.
 
+Linear and PostHog are left out on purpose. Claude Code gets both from the
+claude.ai account's connectors, which sign in once for every machine, so a
+Linear plugin or a user-scope PostHog server here would load the same tools a
+second time.
+
 ```bash
 claude mcp add --scope user --transport http ai-elements https://registry.ai-sdk.dev/api/mcp
 claude mcp add --scope user --transport http livekit-docs https://docs.livekit.io/mcp
-claude mcp add --scope user --transport http posthog https://mcp.posthog.com/mcp
 claude mcp add --scope user --transport stdio shadcn -- npx shadcn@latest mcp
 claude mcp add --scope user --transport stdio gemini-docs -- uvx --from git+https://github.com/philschmid/gemini-api-docs-mcp gemini-docs-mcp
 ```
 
 ## Codex MCP servers
+
+Linear, Supabase, and Vercel are left out on purpose. Codex gets them from the
+apps linked to the ChatGPT account, which follow the account to Codex desktop
+and the CLI.
 
 ```bash
 codex mcp add ai-elements --url https://registry.ai-sdk.dev/api/mcp
@@ -137,11 +144,8 @@ codex mcp add livekit-docs --url https://docs.livekit.io/mcp
 codex mcp add posthog --url https://mcp.posthog.com/mcp
 codex mcp add shadcn -- npx shadcn@latest mcp
 codex mcp add lennysdata --url https://mcp.lennysdata.com/mcp
-codex mcp add linear --url https://mcp.linear.app/mcp
 codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp
 codex mcp add playwright -- npx @playwright/mcp@latest
-codex mcp add supabase --url https://mcp.supabase.com/mcp
-codex mcp add vercel --url https://mcp.vercel.com
 ```
 
 ## Check a machine against this list

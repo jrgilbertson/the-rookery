@@ -284,7 +284,7 @@
               "body": "Verdict: merge\nHead: <<sha:c531>>\nNotes: \"\""
             }
           ],
-          "diff": "<<diff:c531>>\ndiff --git a/db/0042.test.ts b/db/0042.test.ts\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/db/0042.test.ts\n@@ -0,0 +1,5 @@\n+import { migrateUp, migrateDown, columns } from \"./harness\";\n+\n+test(\"adds invoices.memo\", async () => { await migrateUp(\"0042\"); expect(await columns(\"invoices\")).toContain(\"memo\"); });\n+test(\"drops invoices.memo\", async () => { await migrateDown(\"0042\"); expect(await columns(\"invoices\")).not.toContain(\"memo\"); });\n+test(\"memo is nullable\", async () => { await migrateUp(\"0042\"); expect(await columns(\"invoices\", { nullable: true })).toContain(\"memo\"); });\n",
+          "diff": "<<diff:c531>>",
           "closingIssues": [
             521
           ]
@@ -328,7 +328,7 @@
               "body": "Verdict: merge\nHead: <<sha:c532>>\nNotes: \"\""
             }
           ],
-          "diff": "<<diff:c532>>\ndiff --git a/db/0043.test.ts b/db/0043.test.ts\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/db/0043.test.ts\n@@ -0,0 +1,5 @@\n+import { migrateUp, migrateDown, columns } from \"./harness\";\n+\n+test(\"adds customers.tax_id\", async () => { await migrateUp(\"0043\"); expect(await columns(\"customers\")).toContain(\"tax_id\"); });\n+test(\"drops customers.tax_id\", async () => { await migrateDown(\"0043\"); expect(await columns(\"customers\")).not.toContain(\"tax_id\"); });\n+test(\"tax_id is nullable\", async () => { await migrateUp(\"0043\"); expect(await columns(\"customers\", { nullable: true })).toContain(\"tax_id\"); });\n",
+          "diff": "<<diff:c532>>",
           "closingIssues": [
             522
           ]

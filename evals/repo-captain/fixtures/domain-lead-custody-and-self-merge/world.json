@@ -208,7 +208,7 @@
             }
           ],
           "comments": [],
-          "diff": "<<diff:p570>>\ndiff --git a/tests/lib/invoice-sort.test.ts b/tests/lib/invoice-sort.test.ts\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/tests/lib/invoice-sort.test.ts\n@@ -0,0 +1,6 @@\n+import { byDueDate } from \"../../app/lib/invoice-sort\";\n+\n+test(\"orders invoices by due date\", () => {\n+  const invoices = [{ id: \"b\", dueDate: \"2026-12-02\" }, { id: \"a\", dueDate: \"2026-12-01\" }];\n+  expect([...invoices].sort(byDueDate as never).map((i) => i.id)).toEqual([\"a\", \"b\"]);\n+});\n",
+          "diff": "<<diff:p570>>",
           "closingIssues": [
             567
           ]

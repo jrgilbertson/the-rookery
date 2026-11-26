@@ -2,7 +2,7 @@
 name: repo-captain
 description: "Run one persistent Captain for a repository in Orca. Use to start, resume, or check a repo Captain or team lead: coordinate multi-epic fleets, order overlapping files or migrations, merge routine PRs, pull forward ready issues, carry out verdicts, or report what needs the operator. Not for one plan or PR (ce-work), cross-repo reviews (reviewing-prs), or issue edits alone (managing-issues)."
 license: MIT
-compatibility: "Requires Orca (github.com/stablyai/orca) with its version-matched CLI and orchestration guide, a timer the Captain's own session owns, git, and an authenticated GitHub CLI (gh). Also requires this repository's managing-issues and reviewing-prs skills, gh-stack, and the Compound Engineering plugin's lfg, ce-plan, ce-babysit-pr, and ce-resolve-pr-feedback (github.com/EveryInc/compound-engineering-plugin). UI work also requires impeccable (github.com/pbakaus/impeccable)."
+compatibility: "Requires Orca (github.com/stablyai/orca) with its version-matched CLI and orchestration guide, a session-owned wake timer (setsid on Claude Code, Codex), git, and an authenticated GitHub CLI (gh). Also requires this repository's managing-issues and reviewing-prs skills, gh-stack, and the Compound Engineering plugin's lfg, ce-plan, ce-babysit-pr, and ce-resolve-pr-feedback (github.com/EveryInc/compound-engineering-plugin). UI work also requires impeccable (github.com/pbakaus/impeccable)."
 ---
 
 # Repo Captain
@@ -123,14 +123,14 @@ Run these steps in order every time:
    tracker for every pull request you judged or merged, under Tracker.
 7. **Dispatch** within approved scope, or pull forward when scope is done.
 8. **Post new decisions and alerts.**
-9. **Arm the next wake** when any count in Wake timer is nonzero. Otherwise
-   stop the checks.
+9. **Keep the wake timer running** while any count in Wake timer is
+   nonzero, arming one only when none is running. Otherwise stop it.
 
 A wake that finds nothing new to act on replies in one line, saying so and
-naming the next wake it armed. Save the full picture for the catch-up. A wake
+that its wake timer is running. Save the full picture for the catch-up. A wake
 is done when step 1 stood the session down, or when live facts are reread,
 every eligible verdict, merge, tracker update, dispatch, and alert is handled
-and saved to state, and the next wake timer is armed or stopped.
+and saved to state, and the wake timer is running or stopped.
 
 ## Liveness
 
@@ -391,3 +391,36 @@ Check about every 30 minutes while any of these is nonzero:
 The timer belongs to the Captain's own session. A scheduler that starts a new
 session would be a second Captain. The wake prompt never names a pull request
 number or dispatch ID; each wake rediscovers them.
+
+Between wakes the Captain ends its turn, and Orca must show it `done`. While
+a session shows `working`, Orca holds the operator's messages, and the Steer
+that forces one through can cancel the timer. So keep exactly one recurring
+timer that the harness does not report to Orca as unfinished work:
+
+- **Antigravity:** `schedule` with `CronExpression: "*/30 * * * *"` and
+  `IsDaemon: true`. Record the task ID in `state.md`. Check it with
+  `manage_task` list and stop it with `manage_task` kill.
+- **Claude Code and Codex:** the wake loop below. Check it with
+  `kill -0 "$(cat "$state/wake.pid")"` and stop it with `kill`.
+
+Never use Antigravity's `DurationSeconds` or a cron without `IsDaemon`,
+Codex's `clock.sleep`, or Claude Code's `CronCreate`, `/loop`, `Monitor`, or
+background shells. Each keeps the session `working` while it runs.
+
+The wake loop runs outside the harness and types the wake prompt into the
+Captain's own terminal; the Orca guide allows `orca terminal send` into your
+own pane. Start it in a new session, because Codex ends a plain background
+job when the command that started it returns. `setsid` comes with Linux; on a
+system without it, start the loop in a new session another way. With `$state`
+set to the state folder:
+
+```sh
+setsid -f sh -c 'echo $$ > "$1/wake.pid"
+  while sleep 1800; do
+    orca terminal send --terminal "$2" --enter \
+      --text "Wake: run the repo-captain wake routine." \
+      >/dev/null 2>&1 || exit 0
+  done' wake "$state" "$ORCA_TERMINAL_HANDLE" </dev/null >/dev/null 2>&1
+```
+
+The loop exits on its own once the Captain's terminal closes.

@@ -690,6 +690,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `repo-captain`'s wake timer no longer leaves the Captain looking busy in
+  Orca between wakes. Orca keeps a session `working` while its harness
+  reports unfinished timer work, so operator messages waited for Steer, which
+  could cancel the timer. Antigravity now arms a daemon cron. Claude Code and
+  Codex, whose own timers all count as unfinished work, run a detached loop
+  that types the wake prompt into the Captain's own terminal. The timer is
+  recurring, so each wake checks it is still running instead of re-arming it.
 - Coordination guidance distinguishes an operator-approved proposal amendment
   from a worker-brief amendment, identifies the replacement-Coordinator
   confirmation by name, and puts non-consuming inbox reads in the periodic

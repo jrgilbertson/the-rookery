@@ -200,11 +200,9 @@ For each pull request, establish:
   `gh issue view`: its Verification criteria and any stored scores. Name the
   issue's author when it is not the operator. With no linked issue, write
   "no spec available" and do not guess one.
-- **Stored or published names added or changed**: database tables and
-  columns, stored IDs and enum values, event names, public API routes and
-  fields, CLI flags, configuration keys, and published package or skill
-  names. List each with its file. These outlive a revert, because data and
-  callers keep the name.
+- **Stored or published names added or changed**, of the kinds the
+  contract's U = 3 anchor lists. List each with its file. These outlive a
+  revert, because data and callers keep the name.
 - **Scores from the diff**, by the contract's scoring table and its two
   anchors, taking the higher of the diff's score and the linked issue's
   stored score for V and for U. Flag a mismatch in the block.
@@ -325,7 +323,9 @@ After they confirm, handle the pull requests one at a time:
    for example because its owner rebased it, still post the Verdict with the
    reviewed head in its `Head:` line, and tell the operator the head moved.
    The owner judges the change since the reviewed head by the contract's
-   after-Verdict rule.
+   after-Verdict rule. Leave any review request unanswered, because GitHub
+   attaches a new review to the current head, and tell the operator the
+   request stays open.
 2. **`defer`**: write nothing.
 3. **`not applicable`**: the pull request is not the operator's to decide.
    Post nothing. When `reviewRequests` names the operator's login, remove
@@ -337,8 +337,9 @@ After they confirm, handle the pull requests one at a time:
    top-level comment, passing the body from its file so it stays literal:
    `gh pr comment <number> -R <owner>/<repo> --body-file <file>`. Other
    sessions read Verdicts from top-level comments, so never post it only as
-   a review or as an inline review comment. When `reviewRequests` names the
-   operator's login, also answer the request with the same file:
+   a review or as an inline review comment. When the head has not moved and
+   `reviewRequests` names the operator's login, also answer the request with
+   the same file:
    `gh pr review <number> -R <owner>/<repo> --approve --body-file <file>` for
    `merge`, or `--request-changes` in place of `--approve` for
    `request changes`.

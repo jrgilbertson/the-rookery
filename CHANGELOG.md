@@ -112,7 +112,9 @@ looked" surface. GitHub Releases mirror its entries.
 - `reviewing-prs` reads its formats, trust rules, scores, and hold tests
   from the shared review contract. It now posts a Verdict even when the
   pull request's head moved after review, naming the reviewed commit and
-  telling the operator, and it holds an edit to the design system itself.
+  telling the operator. It leaves the review request on such a pull request
+  open, because GitHub would attach the review to the unreviewed head, and it
+  holds an edit to the design system itself.
 - `managing-issues` lets a Captain, under its standing instruction, update
   readiness and workflow labels, tighten Scope and Verification, raise
   verification effort or undo cost, and change confidence from code

@@ -118,10 +118,16 @@ A pull request that meets neither test is routine.
 
 ## After a Verdict
 
-A merge Verdict covers the change as it stood at the reviewed head. When the
-pull request has moved since, judge only the change between the reviewed head
-and the current head, by the hold tests above and without the issue's stored
-scores:
+A merge Verdict covers the change as it stood at the reviewed head, against
+the base branch it was reviewed on. When the pull request's timeline shows its
+base branch changed after the Verdict, the Verdict no longer counts and the
+pull request returns to the operator, unless the earlier base was a pull
+request that has since merged into the new base, as when a stacked parent
+lands.
+
+When the pull request has moved since, judge only the change between the
+reviewed head and the current head, by the hold tests above and without the
+issue's stored scores:
 
 - A clean rebase meets neither test.
 - When the change between the heads meets neither test and quietly reverts

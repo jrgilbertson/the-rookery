@@ -70,13 +70,21 @@ into Claude Code. These commands install the plugins in user scope.
 ```bash
 claude plugin marketplace add EveryInc/compound-engineering-plugin
 claude plugin install compound-engineering@compound-engineering-plugin
-claude plugin install linear@claude-plugins-official
 claude plugin install playwright@claude-plugins-official
 claude plugin install pyright-lsp@claude-plugins-official
 claude plugin install security-guidance@claude-plugins-official
 claude plugin install supabase@claude-plugins-official
 claude plugin install typescript-lsp@claude-plugins-official
 claude plugin install vercel@claude-plugins-official
+```
+
+The two language server plugins only connect Claude Code to a language server.
+They do nothing until the servers themselves are on the `PATH`, so install
+those too. The prefix puts them in a folder that is already on the `PATH` and
+does not change when the Node version does.
+
+```bash
+npm install -g --prefix ~/.local typescript-language-server typescript pyright
 ```
 
 ## Codex plugins
@@ -120,15 +128,23 @@ agy plugin install https://github.com/EveryInc/compound-engineering-plugin
 Run these in addition to installing the plugins, which register their bundled
 servers. The stdio commands require `npx` and `uvx`.
 
+Linear and PostHog are left out on purpose. Claude Code gets both from the
+claude.ai account's connectors, which sign in once for every machine, so a
+Linear plugin or a user-scope PostHog server here would load the same tools a
+second time.
+
 ```bash
 claude mcp add --scope user --transport http ai-elements https://registry.ai-sdk.dev/api/mcp
 claude mcp add --scope user --transport http livekit-docs https://docs.livekit.io/mcp
-claude mcp add --scope user --transport http posthog https://mcp.posthog.com/mcp
 claude mcp add --scope user --transport stdio shadcn -- npx shadcn@latest mcp
 claude mcp add --scope user --transport stdio gemini-docs -- uvx --from git+https://github.com/philschmid/gemini-api-docs-mcp gemini-docs-mcp
 ```
 
 ## Codex MCP servers
+
+Linear, Supabase, and Vercel are left out on purpose. Codex gets them from the
+apps linked to the ChatGPT account, which follow the account to Codex desktop
+and the CLI.
 
 ```bash
 codex mcp add ai-elements --url https://registry.ai-sdk.dev/api/mcp
@@ -137,11 +153,8 @@ codex mcp add livekit-docs --url https://docs.livekit.io/mcp
 codex mcp add posthog --url https://mcp.posthog.com/mcp
 codex mcp add shadcn -- npx shadcn@latest mcp
 codex mcp add lennysdata --url https://mcp.lennysdata.com/mcp
-codex mcp add linear --url https://mcp.linear.app/mcp
 codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp
 codex mcp add playwright -- npx @playwright/mcp@latest
-codex mcp add supabase --url https://mcp.supabase.com/mcp
-codex mcp add vercel --url https://mcp.vercel.com
 ```
 
 ## Check a machine against this list
@@ -149,8 +162,9 @@ codex mcp add vercel --url https://mcp.vercel.com
 Run this from the repository root with Python 3.9 or later and the harness CLIs
 (`claude`, `codex`, and `agy`). It prints nothing when all listed skills,
 plugins, and MCP servers are present, Antigravity's Compound Engineering plugin
-matches Claude Code's installed version, and there are no extra skills managed
-by the skills CLI or extra enabled Claude Code user plugins. Global agent
+matches Claude Code's installed version, the language servers are on the
+`PATH`, and there are no extra skills managed by the skills CLI or extra enabled
+Claude Code user plugins. Global agent
 instructions above are not checked by this script. Additional Codex plugins and
 MCP servers, and additional Antigravity plugins, can come from the harness or
 local configuration. The check compares names without starting MCP servers. It
@@ -162,6 +176,7 @@ python3 - <<'PYTHON'
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 home = Path.home()
@@ -218,6 +233,10 @@ report("Claude Code plugin", {args[0] for args in documented("claude plugin inst
 report("Codex plugin", {args[0] for args in documented("codex plugin add ")},
        {p["pluginId"] for p in codex_plugins if p["enabled"]})
 report("Antigravity plugin", {"compound-engineering"}, set(agy_enabled_plugins))
+
+for server in ("typescript-language-server", "pyright-langserver"):
+    if not shutil.which(server):
+        print(f"Missing language server: {server}")
 
 claude_ce = claude_user_plugins.get("compound-engineering@compound-engineering-plugin")
 agy_ce = agy_enabled_plugins.get("compound-engineering")

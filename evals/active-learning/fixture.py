@@ -481,17 +481,13 @@ CASES = {
     "quiet-day": (["digest.md", "anki/suspended-card.json"], True),
 }
 
-# The newer cases see only the vault plus the module-design notes, and the
-# source cases also see the article, whole or cut off at a paywall.
 NOT_VAULT = ["digest.md", "anki/status.json", "anki/suspended-card.json"] + [k for k in FILES if k.startswith("sessions/")]
-ARTICLE = {
-    "whole": ARTICLE_HEAD + ARTICLE_REST,
-    "cut": ARTICLE_HEAD + "\n---\n\n*You have reached your free article limit. Subscribe to keep reading.*\n",
-}
+WHOLE_ARTICLE = ARTICLE_HEAD + ARTICLE_REST
+PAYWALLED_ARTICLE = ARTICLE_HEAD + "\n---\n\n*You have reached your free article limit. Subscribe to keep reading.*\n"
 NEWER = {
-    "source-terms": "whole",
-    "source-stop": "whole",
-    "source-unreadable": "cut",
+    "source-terms": WHOLE_ARTICLE,
+    "source-stop": WHOLE_ARTICLE,
+    "source-unreadable": PAYWALLED_ARTICLE,
     "topic-frontier": None,
     "frontier-pick": None,
     "free-time": None,
@@ -525,7 +521,7 @@ def main():
         drop, quiet = NOT_VAULT, False
         files.update(DESIGN)
         if NEWER[case]:
-            files["article.md"] = ARTICLE[NEWER[case]]
+            files["article.md"] = NEWER[case]
     else:
         drop, quiet = CASES[case]
     if quiet:

@@ -44,7 +44,7 @@ one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`4132d955592c137571d55c6d4daf38caae4529f064b8fd5a26d5a36f31b55bdc`. From this
+`66d1a35057c3f9761a8a935f4daa1c0f1eb9559d642c91393f2dda5077752cad`. From this
 directory, reproduce it with
 `{ find daily-pass digest-reply failing-card free-time frontier-pick quiet-day single-note source-stop source-terms source-unreadable topic-frontier -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 

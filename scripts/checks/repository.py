@@ -310,11 +310,30 @@ def check_contract_copies(errors: list[str]) -> None:
             errors.append(f"{copy}: differs from {CONTRACT_COPIES[0]}")
 
 
+def check_contract_factor_lines(errors: list[str]) -> None:
+    source = ROOT / RULE_SOURCE
+    if source.is_symlink() or not source.is_file():
+        return
+    text = readable_text(source)
+    section = rule_section(text) if text is not None else None
+    if section is None:
+        return  # check_rule_copies reports a missing or repeated section
+    factors = [line for line in section.splitlines() if line.startswith("- ")]
+    for copy in CONTRACT_COPIES:
+        path = ROOT / copy
+        if path.is_symlink() or not path.is_file():
+            continue
+        contract = readable_text(path)
+        if contract is not None and any(line not in contract.splitlines() for line in factors):
+            errors.append(f"{copy}: its factor lines differ from the '{RULE_HEADING}' section of {RULE_SOURCE}")
+
+
 def main() -> int:
     errors: list[str] = []
     check_tracked_transient_paths(errors)
     check_rule_copies(errors)
     check_contract_copies(errors)
+    check_contract_factor_lines(errors)
     for path in candidate_files():
         if not safe_regular_file(path, errors):
             continue

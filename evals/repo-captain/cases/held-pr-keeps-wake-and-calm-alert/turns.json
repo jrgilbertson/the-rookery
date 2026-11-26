@@ -5,7 +5,7 @@
       "turn": 1,
       "role": "user",
       "content": "Wake check.",
-      "expected_phase_boundary": "Default-branch CI on #580's merge commit is still running and #581 waits for a Verdict. Reports nothing and keeps the wake check armed."
+      "expected_phase_boundary": "Default-branch CI on #580's merge commit is still running and #581 waits for a verdict. Reports nothing and keeps the wake check armed."
     },
     {
       "turn": 2,

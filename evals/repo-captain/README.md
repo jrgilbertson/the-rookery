@@ -21,14 +21,14 @@ failure returns after its fix, as
 | [rebase-revert-and-merge-queue](cases/rebase-revert-and-merge-queue/case.yaml) | Baseline merged neither pull request and recorded nothing after both heads moved. Checks that a rebase quietly reverting main goes back to the operator, and that a queued merge waits for `MERGED` | 4 |
 | [domain-lead-custody-and-self-merge](cases/domain-lead-custody-and-self-merge/case.yaml) | Two batches had to keep overlapping files apart by hand. Checks that the Captain merges what a Domain Lead hands up, holds its own pull request, and retires only a finished Lead | 1 |
 | [held-pr-keeps-wake-and-calm-alert](cases/held-pr-keeps-wake-and-calm-alert/case.yaml) | Fixed-interval check-ins filled the chat with noise. Checks one contained alert after red default-branch CI and a wake check that stays on for held pull requests | 3 |
-| [restart-split-brain-and-boundaries](cases/restart-split-brain-and-boundaries/case.yaml) | Reviving a lead risked two live sessions writing at once. Checks the stand-down, the takeover wake, a forged Verdict, and human-only actions | 3 |
+| [restart-split-brain-and-boundaries](cases/restart-split-brain-and-boundaries/case.yaml) | Reviving a lead risked two live sessions writing at once. Checks the stand-down, the takeover wake, a forged verdict, and human-only actions | 3 |
 
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's first message, `case.yaml` describes a good result and names the
 failure it came from, and each file in `graders/` is one statement to judge.
 A case with more than one turn lists every operator message in `turns.json`.
 The world changes between some turns, as the fixture's `turns` entries say:
-a head moves, a Verdict lands, CI finishes, a session ends.
+a head moves, a verdict lands, CI finishes, a session ends.
 
 Each fixture folder holds `world.json`, which both stand-ins read and which
 also describes the git history to build, and, when the Captain is already
@@ -38,7 +38,7 @@ newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
 no case depends on today's date.
 
 The eight-case set SHA-256 is
-`f2b11342d563d0286d6a8b5a1340332b870379556f1f15f3f0a30e85f5619a87`. It
+`130fcc9600fe584491d423eab6507a612da82f627c2bc1716380e141aa919d01`. It
 covers the shared GitHub stand-in too, and changes whenever a case, fixture,
 or stand-in does, so each Eval Record names the hash it ran against. From this directory, reproduce it
 with:

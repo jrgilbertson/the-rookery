@@ -3,9 +3,9 @@ status: accepted
 date: 2026-11-24
 ---
 
-# ADR 001: Verdicts are trusted by convention, not authenticated
+# ADR 001: verdicts are trusted by convention, not authenticated
 
-A [Verdict](../../CONCEPTS.md#verdict) is a comment on a pull request, and
+A [verdict](../../CONCEPTS.md#verdict) is a comment on a pull request, and
 the `Owner:` line that says which session merges it is text in the pull
 request body. Both come from the same GitHub login as every agent, so neither
 proves who wrote it. We accept them as guards against accidents and do not
@@ -42,20 +42,20 @@ administrator bypass would let any agent session through with it.
 
 ## Decision
 
-Treat a Verdict and an `Owner:` line as conventions that prevent accidents.
+Treat a verdict and an `Owner:` line as conventions that prevent accidents.
 They stop a stale merge, a merge by the wrong session, and a merge nobody
 decided on. They do not stop a session that sets out to forge one.
 
 These guards make the convention hold in ordinary use:
 
-- A Verdict names the full head commit the operator reviewed. A later commit
+- A verdict names the full head commit the operator reviewed. A later commit
   is judged on its own before anything merges.
-- A merge made under a Verdict, by whichever session makes it, is pinned to
+- A merge made under a verdict, by whichever session makes it, is pinned to
   the head commit last judged: the reviewed commit, or a later one whose
   change since review the
   [review contract](../../skills/reviewing-prs/references/review-contract.md#after-a-verdict)
   judged routine. GitHub refuses the merge if the head moved after that.
-- A Verdict counts only when the operator's exact login wrote it as a
+- A verdict counts only when the operator's exact login wrote it as a
   top-level comment. An `Owner:` line counts only on a pull request the
   operator opened from a branch in the same repository. A fork or outside
   contributor cannot claim an owner.

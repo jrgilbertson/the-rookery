@@ -286,17 +286,17 @@ a correction receives a new release tag instead of moving an existing one.
 The pull requests gathered across repositories for the operator to review in
 one sitting: every one in a repository they can merge in, and every one that
 asks for their review. Each is fixed at the head commit it was read at. The
-operator answers a round with one set of [Verdicts](#verdict).
+operator answers a round with one set of [verdicts](#verdict).
 
 ### Verdict
 
 The operator's decision on one pull request in a [Review Round](#review-round),
 at the head commit reviewed: `merge`, `request changes`, `defer`, or
 `not applicable`, for a pull request that is not theirs to decide. A merge
-Verdict covers the change as it stood at that head. A later change to the pull
+verdict covers the change as it stood at that head. A later change to the pull
 request is judged by the review contract's
-[after-Verdict rule](skills/reviewing-prs/references/review-contract.md#after-a-verdict).
-A merge Verdict clears a hold on that pull request and never changes
+[after-verdict rule](skills/reviewing-prs/references/review-contract.md#after-a-verdict).
+A merge verdict clears a hold on that pull request and never changes
 [Merge Approval](#merge-approval).
 
 ### PR Review Labels
@@ -306,7 +306,7 @@ Three GitHub labels that show where a pull request stands in review.
 [Review Round](#review-round). `review:auto-merged` marks a routine one merged
 under [Merge Approval](#merge-approval). `review:human-merged` replaces
 `review:held` once GitHub confirms that a held pull request merged after a
-merge [Verdict](#verdict). The labels are for visibility and reporting. A
+merge [verdict](#verdict). The labels are for visibility and reporting. A
 review reads every open pull request that is ready for review, and every one
 merged recently, so a missing or stale label never hides one, and no label
 permits a merge.

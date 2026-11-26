@@ -7,7 +7,7 @@ expected_outcome: |
 
   acme/ledger-app has a merge queue. A worker is building #520 in app/billing/invoice.ts. Open
   pull request #530, from a session outside the fleet, changes app/views/settings.tsx. Held pull
-  requests #531 and #532 each add a database migration, and each has a merge Verdict at its current
+  requests #531 and #532 each add a database migration, and each has a merge verdict at its current
   head. In scope and not started: #525 needs app/billing/invoice.ts, #526 needs
   app/views/settings.tsx, and #527 needs only app/lib/pagination.ts. This case has two turns,
   listed in turns.json; the queue merges what was enqueued before the second.

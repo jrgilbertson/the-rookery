@@ -5,7 +5,7 @@ its last section builds the page in step 4. The page is
 `assets/review-page.html`. It draws everything from one JSON object that you
 write, so this file describes that object and how to fill each part. The
 template orders the pull requests, computes products and leverage, draws
-every panel, and builds the Verdict lines. You supply facts and short text.
+every panel, and builds the verdict lines. You supply facts and short text.
 
 Write plain text everywhere. The page shows every value as text, so markup,
 Markdown, and HTML entities appear literally. Keep each text field to the
@@ -64,7 +64,7 @@ length given; the page is read in one sitting across many pull requests.
   `No owner`, `External fork`, `External contributor`, `Ambiguous owner`,
   `Review only`, or the bot's name.
 - `status`: checks and conflict state, plus the base branch when it is not
-  the default branch, and a never-carried-out Verdict on a held pull request.
+  the default branch, and a never-carried-out verdict on a held pull request.
 - `scores`: integers from 1 to 3, from step 3. Let the page compute the order
   and products. A missing score sorts the pull request to the top of the held
   group.
@@ -206,8 +206,8 @@ say; the page then shows "Nothing to report."
 "inProgress": [{"repo": "acme/cli-kit", "number": 137, "url": "...", "title": "...", "note": "Owned by repo-captain, checks running."}],
 "merged": {
   "window": "The last 7 days, since 2026-11-17 22:40 PST.",
-  "without": [{"repo": "...", "number": 412, "url": "...", "title": "...", "reason": "Merged with no Verdict and no label."}],
-  "changedAfter": [{"repo": "...", "number": 129, "url": "...", "title": "...", "summary": "Two commits after your merge Verdict moved the token cache."}]
+  "without": [{"repo": "...", "number": 412, "url": "...", "title": "...", "reason": "Merged with no verdict and no label."}],
+  "changedAfter": [{"repo": "...", "number": 129, "url": "...", "title": "...", "summary": "Two commits after your merge verdict moved the token cache."}]
 }
 ```
 

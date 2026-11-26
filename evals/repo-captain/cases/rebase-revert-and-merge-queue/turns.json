@@ -5,7 +5,7 @@
       "turn": 1,
       "role": "user",
       "content": "Wake check.",
-      "expected_phase_boundary": "Nothing new: both pull requests wait for a Verdict. Stays quiet, merges nothing, and keeps the wake check armed."
+      "expected_phase_boundary": "Nothing new: both pull requests wait for a verdict. Stays quiet, merges nothing, and keeps the wake check armed."
     },
     {
       "turn": 2,

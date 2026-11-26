@@ -19,7 +19,7 @@ looked" surface. GitHub Releases mirror its entries.
   migrations, and keeps tracker issues current through `managing-issues`.
   It is the only session that merges in its repository: it merges routine
   pull requests once their evidence is shown, holds the rest for the
-  operator's Review Round, and carries out each Verdict, judging any change
+  operator's Review Round, and carries out each verdict, judging any change
   since review on its own. Its behavior rests only on the operator's
   recorded words and on live facts it rereads at every wake, so a restart
   runs the same routine as any wake. It never blocks on the operator, never
@@ -46,15 +46,15 @@ looked" surface. GitHub Releases mirror its entries.
   screens, a progress count, and keyboard keys move through the round, and
   choices survive a reload in that browser. The page follows the system's
   light or dark setting, carries a strict Content Security Policy, and
-  renders pull request text as text. It records each Verdict on
+  renders pull request text as text. It records each verdict on
   the pull request as a three-line comment naming the reviewed commit, and
-  answers a review request with a review. A `not applicable` Verdict posts
+  answers a review request with a review. A `not applicable` verdict posts
   nothing and removes the operator from a review request. It never merges or
-  changes a label: the session that owns a pull request acts on its Verdict.
+  changes a label: the session that owns a pull request acts on its verdict.
   Synthetic Skill Eval cases are under `evals/reviewing-prs/`.
-- `CONCEPTS.md` defines Review Round, Verdict, and PR Review Labels
+- `CONCEPTS.md` defines Review Round, verdict, and PR Review Labels
   (`review:held`, `review:auto-merged`, `review:human-merged`).
-- `docs/adr/001-verdict-trust-by-convention.md` records why a Verdict comment
+- `docs/adr/001-verdict-trust-by-convention.md` records why a verdict comment
   and a pull request's `Owner:` line are trusted by convention while every
   agent shares the operator's GitHub login, and what would replace them.
 - `daily-learning`, a portable skill and paired daily Orca automation
@@ -110,7 +110,7 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - `reviewing-prs` reads its formats, trust rules, scores, and hold tests
-  from the shared review contract. It now posts a Verdict even when the
+  from the shared review contract. It now posts a verdict even when the
   pull request's head moved after review, naming the reviewed commit and
   telling the operator. It leaves the review request on such a pull request
   open, because GitHub would attach the review to the unreviewed head, and it
@@ -122,15 +122,17 @@ looked" surface. GitHub Releases mirror its entries.
   change adds count as new checks. Undo cost 2 means the change reaches shared
   code, shared settings, or many users, or takes more than one revert, and
   undo cost 3 names every stored or published name. The review contract's
-  score table uses the same definitions.
+  scoring rules are the rule's own four lines, and the repository checks fail
+  when they differ. Skill prose now writes "verdict" in lower case and keeps
+  `Verdict:` only in the comment format.
 - `managing-issues` lets a Captain, under its standing instruction, update
   readiness and workflow labels, tighten Scope and Verification, raise
   verification effort or undo cost, and change confidence from code
   evidence. Lowering either score, changing impact, cancelling, and
   creating follow-ups still need fresh approval.
 - `CONCEPTS.md` Merge Approval covers a Captain's charter, and Held Changes
-  and Verdict point to the review contract.
-- ADR 001 pins a merge under a Verdict to the head last judged, which may be
+  and verdict point to the review contract.
+- ADR 001 pins a merge under a verdict to the head last judged, which may be
   a later head whose change since review the contract judged routine.
 - Leverage scoring has two fixed anchors. A new user-facing view, flow, or
   concept scores 3 on verification effort, and any stored or published name
@@ -144,7 +146,7 @@ looked" surface. GitHub Releases mirror its entries.
   reviewer cannot read clearly. The higher of the issue's stored scores and
   what the diff shows counts, and repo policy is read from the default
   branch.
-- `WORKFLOWS.md` Ship describes Review Rounds and Verdicts through
+- `WORKFLOWS.md` Ship describes Review Rounds and verdicts through
   `reviewing-prs`, the two hold tests, and the three PR review labels.
   `coordinating-work` is unchanged: it still holds on its earlier list and
   writes no labels.

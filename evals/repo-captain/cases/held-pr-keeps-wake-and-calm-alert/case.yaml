@@ -5,7 +5,7 @@ expected_outcome: |
   chat with noise, and wake prompts that hardcoded pull request numbers went stale.
 
   The Captain merged #580 in acme/ledger-app as routine, and default-branch CI on its merge commit
-  is still running. #581 is held for a Verdict, and a worker is finishing #582. Before the second
+  is still running. #581 is held for a verdict, and a worker is finishing #582. Before the second
   turn, CI on #580's merge commit fails and #582 turns green. This case has three turns, listed in
   turns.json, and needs the staged git fixture so the revert can be built.
 

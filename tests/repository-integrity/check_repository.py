@@ -284,6 +284,37 @@ def check_contract_copies(repository: Path) -> None:
     require(run_checker(repository).returncode == 0, "repository without the contract failed")
 
 
+def check_contract_factor_lines(repository: Path) -> None:
+    factor = "- Impact, how much better it makes things: 1 to 3."
+    section = f"## Rank by leverage\n\nOrder work by leverage.\n\n{factor}\n"
+    source = repository / "PRIORITIZATION.md"
+    global_copy = repository / "GLOBAL-AGENTS.md"
+    skill_copy = repository / "skills/managing-issues/references/prioritization.md"
+    contracts = [repository / "skills/reviewing-prs/references/review-contract.md",
+                 repository / "skills/repo-captain/references/review-contract.md"]
+    for path in (skill_copy, *contracts):
+        path.parent.mkdir(parents=True)
+    for path in (source, global_copy, skill_copy):
+        path.write_text(f"# Rule\n\n{section}", encoding="utf-8")
+
+    def write(line: str) -> None:
+        for path in contracts:
+            path.write_text(f"# Review contract\n\n## Scores\n\n{line}\n", encoding="utf-8")
+
+    write(factor)
+    clean = run_checker(repository)
+    require(clean.returncode == 0, f"contract with the rule's factor lines failed: {clean.stderr}")
+    write(factor.replace("better", "worse"))
+    result = run_checker(repository)
+    diagnostic = ("skills/reviewing-prs/references/review-contract.md: its factor lines differ from the "
+                  "'## Rank by leverage' section of PRIORITIZATION.md")
+    require(result.returncode == 1 and diagnostic in result.stderr,
+            f"contract factor check did not report {diagnostic!r}: {result.stderr}")
+    shutil.rmtree(repository / "skills")
+    source.unlink()
+    global_copy.unlink()
+
+
 def check_yaml_arguments(repository: Path, temporary_root: Path) -> None:
     # Only workflow discovery is unrelated to this disposable YAML fixture.
     tools = temporary_root / "lint-tools"
@@ -457,6 +488,7 @@ def main() -> int:
         check_link_scanning(repository)
         check_rule_copies(repository)
         check_contract_copies(repository)
+        check_contract_factor_lines(repository)
 
         invalid_text = repository / "invalid-text.txt"
         for contents, diagnostic in (

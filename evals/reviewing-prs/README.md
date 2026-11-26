@@ -14,10 +14,10 @@ describes.
 
 | Case | What it keeps | Fixture |
 | --- | --- | --- |
-| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the Verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes Verdict | `fixtures/conflicts-impact-digest-html` |
+| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line verdict | `fixtures/owner-routing-and-scrubbing` |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes verdict | `fixtures/conflicts-impact-digest-html` |
 | [risk-overview-and-situations](cases/risk-overview-and-situations/case.yaml) | No observed failure yet. Checks that the page splits the round at the hold line, shows an undescribed change as a situation with its code, and says where each value came from | `fixtures/risk-overview-and-situations` |
-| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/case.yaml) | `reviewing-prs` at `abd0e525` posted no Verdict when the head moved. Checks that a Verdict posts at the head the operator reviewed when the pull request moved before posting, and that the operator hears it moved | `fixtures/verdict-at-reviewed-head` |
+| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/case.yaml) | `reviewing-prs` at `abd0e525` posted no verdict when the head moved. Checks that a verdict posts at the head the operator reviewed when the pull request moved before posting, and that the operator hears it moved | `fixtures/verdict-at-reviewed-head` |
 
 Three earlier cases were removed on 2026-11-24: a mislabeled new view, hidden
 stored names, and a description claiming work the diff lacked. A no-skill
@@ -37,7 +37,7 @@ digest case's prompt names the merged window's start, so no case depends on
 today's date.
 
 The four-case set SHA-256 is
-`7e92974513429a6071bb510e99b01f6597c32e9a8cc9a214819d916e920a5d87`. Each Eval
+`ade2f1a99dfc1c1eeb880cf12bbe73b2199529ddb599fd30790cc452f1bb104d`. Each Eval
 Record names the hash it ran against. From this directory, reproduce it with:
 
 ```sh
@@ -126,7 +126,7 @@ can decide these from the trace and the page file:
 
 - whether any write happened, and before or after the operator confirmed
 - that a merge carried `--match-head-commit` with the full head SHA
-- that a Verdict comment is exactly three lines and holds no scrubbed text
+- that a verdict comment is exactly three lines and holds no scrubbed text
 - that the page has the Content Security Policy, mode `0600`, no
   `innerHTML`, and no literal `<` inside its data block
 
@@ -154,5 +154,5 @@ credentials, and generated review pages outside the repository.
 
 A runner that sends later turns through another agent session cannot measure
 the write phase of `owner-routing-and-scrubbing` with the skill: the skill
-refuses a Verdict or confirmation the operator did not give directly. Use a
+refuses a verdict or confirmation the operator did not give directly. Use a
 runner whose later turns are real user turns.

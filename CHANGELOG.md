@@ -118,6 +118,17 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Sessions audit is one job on the primary host instead of a remote job
+  followed two hours later by a local consolidation job. When a second host
+  is paired, the job starts a read-only worker there right after reading
+  history, with the agent, model, and effort the job is saved with, and waits
+  up to 30 minutes for its summary. The primary host is the only writer of
+  `sessions-audit` history, tracks each host's review window separately, and
+  judges both hosts' merged findings once. An unreachable or late paired host
+  is reported as drift while the primary host's report is still saved, and
+  the next run widens only the paired host's window. A single-host setup
+  deletes the prompt's paired-host block. Replace both saved Sessions audit
+  jobs with one job from the definition.
 - Improve audit checks the repository's tracker read-only with
   `managing-issues` before saving its report and names each covering open issue
   beside its finding, reporting a coverage gap if the tracker is unreachable or

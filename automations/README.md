@@ -6,13 +6,11 @@ repository.
 
 Each definition starts with its purpose, cadence, timezone, and
 prerequisites, followed by any setup instructions and the copyable prompt.
-Longer operating notes follow the prompt. Sessions audit shares one prompt
-between two jobs, with host-specific consolidation instructions below it.
+Longer operating notes follow the prompt.
 
 | Automation | Purpose | Cadence | Timezone |
 |---|---|---|---|
-| [Sessions audit (local)](sessions-audit.md) | Review recent AI sessions on the local host | Daily at 03:00 | America/Los_Angeles |
-| [Sessions audit (remote)](sessions-audit.md) | Review recent AI sessions on the remote host | Daily at 01:00 | America/Los_Angeles |
+| [Sessions audit](sessions-audit.md) | Review recent AI sessions on the primary host and an optional paired host, and check both for operational drift | Daily at 03:00 | America/Los_Angeles |
 | [Daily learning](daily-learning.md) | Recommend what to learn from the last day's vault changes, local and paired remote AI sessions, and Anki status | Daily at 05:00 | America/Los_Angeles |
 | [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and recommend fixes | Monday at 04:00 | America/Los_Angeles |
 | [Improve audit](improve-audit.md) | Survey the whole codebase with `improve` and recommend improvements | Tuesday at 04:00 | America/Los_Angeles |
@@ -38,11 +36,12 @@ is missing or cannot load, the automation reports it and stops. Skill and plugin
 installation and updates are outside the automation. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
-Sessions audit invokes `ce-retro` on each host separately, with required skills
-available to the selected agent on each host. The remote job runs first and
-the local job merges both hosts' findings into one list; see
-[Consolidation](sessions-audit.md#consolidation). Each job also checks its
-host for operational drift.
+Sessions audit runs as one job on the primary host. When you pair a second
+host, the job starts a read-only worker there with the same agent, model, and
+effort, and each host invokes `ce-retro` on its own sessions and checks itself
+for operational drift. The primary host merges both hosts' findings into one
+list; see [Setup](sessions-audit.md#setup). For a single host, delete the
+prompt's paired-host block.
 
 Some prompts invoke an existing skill; others describe the review directly.
 Orca runs the prompt on a schedule; an invoked skill tells the agent how to do
@@ -66,9 +65,9 @@ excerpts and other private review evidence stay outside this public repository.
 ## Shared run state
 
 Orca starts each run in a fresh worktree, and the same kind of project work
-runs on more than one machine; Sessions audit, for example, runs on a laptop
-and on a dev server. Local files would leave each run blind to what earlier
-runs found and what the owner already decided. Every automation therefore
+runs on more than one machine; Sessions audit, for example, reads sessions on
+a primary host and a paired host. Local files would leave each run blind to
+what earlier runs found and what the owner already decided. Every automation therefore
 reads and writes one private Git repository, cloned to
 `~/.local/state/automation-runs` on each host.
 
@@ -87,8 +86,11 @@ Large caches, such as Optimize CI's GitHub API cache, stay on each host.
 
 Each automation contains its assessment instructions and authority limits in
 its own prompt and judges its own recommendations. Improve audit returns every
-finding and judges only the ones the owner picks from its report. In paired
-Sessions audits, the local job owns that judgment after combining both hosts.
+finding and judges only the ones the owner picks from its report. Sessions
+audit judges once, on its primary host, after merging both hosts' findings.
+Its primary host is the only writer of `sessions-audit` history; the
+paired-host worker returns a summary and writes nothing. That rule covers
+Sessions audit only: other automations run on whichever host fits them best.
 The history repository stores reports and owner decisions, not a shared
 assessment workflow.
 Its README documents storage and helper usage.

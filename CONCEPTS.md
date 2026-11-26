@@ -141,7 +141,7 @@ the same model beats are set aside first.
 
 ### Pareto Frontier
 
-The settings that no other setting beats on both quality and cost. A listed
+The settings that score higher than every cheaper setting. A listed
 setting that is not on the frontier has a cheaper alternative that scores at
 least as well. ROUTING.md calls it "the frontier".
 

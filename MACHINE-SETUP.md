@@ -52,6 +52,17 @@ queries agents write. These machines accept it. Its only switch,
 `DISABLE_TELEMETRY=1`, also turns off Claude Code's feature flags, which
 `/skill-doctor` needs.
 
+## Obsidian Headless
+
+The [Daily learning automation](automations/daily-learning.md) reads the vault
+on the paired dev machine from an Obsidian Headless copy, so the desktop app
+need not be open. Set Headless up on the dev machine only, because the desktop
+app's Sync and Headless Sync must not run on the same device. Follow the
+`obsidian-headless` skill to log in, connect a copy outside every repository,
+and keep it syncing with `ob sync --continuous` as a user service that starts
+at boot. Headless keeps each note's modification time, which is how the
+automation finds the day's changes. The automation only reads the copy.
+
 ## Impeccable
 
 [Impeccable](https://github.com/pbakaus/impeccable) has its own installer and

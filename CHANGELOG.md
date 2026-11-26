@@ -694,6 +694,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- The `reviewing-prs` review page no longer shows a V × U of 9 for a pull
+  request missing a score. It still holds that pull request at the top of the
+  held group, shows the real verification effort × undo cost or `?`, and says
+  the pull request is held because a score is missing.
+- The Verification effort row in `PRIORITIZATION.md`'s factor table again
+  lists a new user-facing view, flow, or concept as an example of a 3, matching
+  the `Rank by leverage` copies, instead of saying it always scores 3.
 - `reviewing-meetings` accepts a Granola-returned meeting URL when its scheme,
   host, and path match the canonical `https://notes.granola.ai/d/{native_id}`
   URL, ignoring any query string or fragment (such as `?utm_source=mcp`), while

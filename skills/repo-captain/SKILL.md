@@ -400,8 +400,13 @@ timer that the harness does not report to Orca as unfinished work:
 - **Antigravity:** `schedule` with `CronExpression: "*/30 * * * *"` and
   `IsDaemon: true`. Record the task ID in `state.md`. Check it with
   `manage_task` list and stop it with `manage_task` kill.
-- **Claude Code and Codex:** the wake loop below. Check it with
-  `kill -0 "$(cat "$state/wake.pid")"` and stop it with `kill`.
+- **Claude Code and Codex:** the wake loop below. Read its command line with
+  `ps -o args= -p "$(cat "$state/wake.pid")"`. It is this session's timer
+  only when that line shows the state folder and this session's
+  `$ORCA_TERMINAL_HANDLE`. A line with the state folder and another handle is
+  a loop left by an earlier Captain session: `kill` it before starting a new
+  one. Never `kill` a PID whose line lacks the state folder, because the PID
+  may now belong to another process.
 
 Never use Antigravity's `DurationSeconds` or a cron without `IsDaemon`,
 Codex's `clock.sleep`, or Claude Code's `CronCreate`, `/loop`, `Monitor`, or

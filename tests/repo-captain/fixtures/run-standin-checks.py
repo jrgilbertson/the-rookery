@@ -148,7 +148,7 @@ def check_every_fixture(scratch: Path) -> None:
             run.json("orca", *command, "--json")
         seed = EVALS / "fixtures" / case / "captain-state"
         if seed.is_dir():
-            staged = run.path / "xdg-state" / "ledger-app-captain"
+            staged = run.path / "xdg-state" / "acme-ledger-app-captain"
             expect(sorted(p.relative_to(seed) for p in seed.rglob("*.md")) == sorted(p.relative_to(staged) for p in staged.rglob("*.md")), f"{case}: captain state not staged")
             expect("<<" not in "".join(p.read_text(encoding="utf-8") for p in staged.rglob("*.md")), f"{case}: a token was left in the captain state")
         for tool in ("gh", "orca"):

@@ -163,7 +163,7 @@ def stage(case: str, run: Path) -> None:
     git("config", "user.email", "dana-acme@example.invalid", cwd=run / "workspace")
     seed = fixture / "captain-state"
     if seed.is_dir():
-        target = run / "xdg-state" / f"{name}-captain"
+        target = run / "xdg-state" / f"{slug.replace('/', '-')}-captain"
         for source in sorted(path for path in seed.rglob("*") if path.is_file()):
             copy = target / source.relative_to(seed)
             copy.parent.mkdir(parents=True, exist_ok=True)

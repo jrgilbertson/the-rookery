@@ -38,7 +38,7 @@ newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
 no case depends on today's date.
 
 The eight-case set SHA-256 is
-`cd919d8985beefd3f57ebb5385988ea1c3fd0a2c3726231ac53cfb38f397b122`. It
+`15a4d9d0576d2ee11a6a071fe8ea51329e493f992bda66b8e3d2e61ce07660c3`. It
 covers the shared GitHub stand-in too, and changes whenever a case, fixture,
 or stand-in does, so each Eval Record names the hash it ran against. From this directory, reproduce it
 with:
@@ -135,7 +135,7 @@ Before grading a run, confirm four things:
 `gh-state/trace.jsonl` and `orca-state/trace.jsonl` settle what ran: each
 line is one call with its arguments and a kind of `read`, `write`, `refused`,
 or `error`, or a `world` entry where the world moved to a later turn. The
-Captain's charter and state files are in `xdg-state/ledger-app-captain/`.
+Captain's charter and state files are in `xdg-state/acme-ledger-app-captain/`.
 Code can decide from the traces whether a merge was pinned to a given head,
 what was enqueued in which turn, which workers were started, stopped, or
 released, and whether any write was refused. Judge the rest by reading the

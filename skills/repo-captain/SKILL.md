@@ -69,8 +69,9 @@ work. A brief carries only what they cannot know.
 ## State
 
 The Captain keeps a small state folder on the machine it runs on, at
-`${XDG_STATE_HOME:-$HOME/.local/state}/<repo>-captain/`, where `<repo>` is
-the repository's name. GitHub, the tracker, and Orca are the truth about work;
+`${XDG_STATE_HOME:-$HOME/.local/state}/<owner>-<repo>-captain/`, from the
+repository's `<owner>/<repo>`, so two repositories with one name never share
+state. GitHub, the tracker, and Orca are the truth about work;
 these files hold only what those sources cannot show.
 
 - `charter.md` holds the operator's recorded words, quoted with the date:
@@ -140,6 +141,10 @@ On the machine that holds the state folder, the holder line decides:
 - If the holder no longer appears, or the operator recorded that it ended,
   write this session in as holder and continue.
 
+After writing the holder line, and again before each merge and each dispatch,
+reread it. If it names another session, stand down: a second replacement
+claimed the repository at the same time.
+
 On a machine with no state folder, list marked worktrees and agents on each
 paired server Orca can reach (`orca host list`, then each server). Stand down
 if a marked session for this repository appears anywhere, or if a server
@@ -152,9 +157,9 @@ Captain's own chat, so this check does not use them.
 
 ## Plan and dispatch
 
-**Scout live `main` first**, read-only, before planning or dispatching. Work
-already done on `main` needs no worker, and its issue needs closing evidence
-instead.
+**Scout the live default branch first**, read-only, before planning or
+dispatching. Work already done there needs no worker, and its issue needs
+closing evidence instead.
 
 **Coupled work** gets an ephemeral multi-PR plan from `ce-plan`, distilled
 into self-contained leaves, each with its own file list and Verification.
@@ -247,6 +252,9 @@ default branch.
   and add `review:auto-merged` once GitHub confirms the merge.
 - **Captain-authored.** A pull request whose `Author:` role is `repo-captain`
   is never routine. It is held and merges only on a Verdict.
+- **Changes requested.** A pull request whose latest Verdict is `request
+  changes` is never routine, whatever its diff scores. It stays held until a
+  later merge Verdict.
 - **Pre-authorized.** A held change that a charter pre-authorization covers
   merges like a routine one, with a receipt naming the pre-authorization.
 - **Held.** Everything else gets `review:held` and a `Fleet: hold` receipt.

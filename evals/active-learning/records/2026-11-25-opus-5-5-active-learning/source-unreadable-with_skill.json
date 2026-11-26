@@ -1,0 +1,73 @@
+{
+ "case": "source-unreadable",
+ "arm": "with_skill",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.331 via claude -p",
+  "working_directory": "<workspace>"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "I just read the essay in ./article.md and want to actually learn the terms in it, not just collect them. Make atomic notes for them in my vault at ./vault."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Skill",
+   "input": {
+    "skill": "al:active-learning",
+    "args": "Source: ./article.md — user read the essay and wants atomic notes for its terms in ./vault, aimed at learning not collecting."
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "Launching skill: al:active-learning"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "ls -la && wc -c article.md; find vault -type f | head -100",
+    "description": "List workspace, article size, and vault files"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "total 8\ndrwxr-xr-x@ 4 user  wheel  128 Nov 25 17:30 .\ndrwxr-xr-x@ 9 user  wheel  288 Nov 25 17:30 ..\n-rw-r--r--@ 1 user  wheel  819 Nov 22 18:00 article.md\ndrwxr-xr-x@ 8 user  wheel  256 Nov 25 17:30 vault\n     819 article.md\nvault/Journal/2026-11-22.md\nvault/Atomic Notes/Exponential Backoff.md\nvault/Atomic Notes/HTTP 301 vs 302.md\nvault/Atomic Notes/API.md\nvault/Atomic Notes/Idempotency Key.md\nvault/Atomic Notes/Ratchet (Engineering).md\nvault/Atomic Notes/Invariant.md\nvault/Atomic Notes/Spaced Repetition.md\nvault/Atomic Notes/CAP Theorem.md\nvault/Atomic Notes/Information Hiding.md\nvault/Atomic Notes/Interface.md\nvault/Structure Notes/Learning Science.md\nvault/Structure Notes/Personal Learnings.md\nvault/Structure Notes/Software Design.md\nvault/Structure Notes/Distributed Systems.md\nvault/.git/config\nvault/.git/objects/50/be1d51ae4670d289594dea20cbc0fd214430dc\nvault/.git/objects/57/3b1a7a738b8ae54ad92a09612884599b2fad36\nvault/.git/objects/6a/c3bd4b50443a9353532716e87e60bf746d781f\nvault/.git/objects/56/2080f2aca7f4515dddf79492b8d4c33ff61036\nvault/.git/objects/3d/89766d3fa04b0769554e26f57c591dd05a377b\nvault/.git/objects/93/43660c8a27e63df99c8e81e3982050410bf63a\nvault/.git/objects/93/6530bd39485b1c06d9eed7e428ff837b240acd\nvault/.git/objects/9c/e1f94a6735bd7e57905cbfdbfb673ff9c8b3e5\nvault/.git/objects/d9/dc628ef9eaad3503e079a8a59024816691c452\nvault/.git/objects/a2/bde4569be1763c606c09358b4873c98a16c726\nvault/.git/objects/a2/1533e5b31131a814294e072f2940bdc4aa413b\nvault/.git/objects/bd/2b84efbd1e4c1792360a4e3b16b9b22d7f9147\nvault/.git/objects/d8/56841f424668706b569aaa73be6a5dbd34539d\nvault/.git/objects/c0/015851a234a74cf6b289037cf4f44c7a277590\nvault/.git/objects/fc/3bd74f61c5d0a765ecc2ef2aa8a1d472a6cd21\nvault/.git/objects/f2/3e6c2f5d68021cae1100eb27dc06ecd3f79bb6\nvault/.git/objects/20/19caaa89da62e9166273b674b0f5883ee5d158\nvault/.git/objects/29/e2567bf9d49aafdb80a7ece79ac2c30f6c3b98\nvault/.git/objects/45/de2a042065116d45137eee49a7235e82937271\nvault/.git/objects/45/b1b272468c540c8dfead6c08457dda76af5a94\nvault/.git/objects/73/c56897d722349703ff6c69cd96375ac7f3a08e\nvault/.git/objects/19/832bb10849599843b29bcf3ebf529056b84b47\nvault/.git/objects/81/a52e114fa3c18acbed520064ec634c053ba69e\nvault/.git/objects/86/cfad77998fc4458ff12b3c377988469505f801\nvault/.git/objects/9f/62edb0679d3b915a282cbd4a25510e56938506\nvault/.git/objects/07/cdcb0e227255a72ffc87eb152f2d7aaff478b8\nvault/.git/objects/07/6cd821fe44ccf66e70ef4abd71e765b7bb839d\nvault/.git/objects/00/3b16d3a50a2352f8e12f1b63dc6f80965993f0\nvault/.git/objects/00/f8e7938e5ed62dd1990bbe31b969b0bc2cf3cb\nvault/.git/objects/65/b0baf658efedb3eafe00e10b1d9077068c3bbe\nvault/.git/objects/62/bc3b9d3a10ef85319f868b0eb3a0315beb5743\nvault/.git/objects/5b/c6e193a150cce0265619cc50a32931ea3c500b\nvault/.git/objects/6c/ae709ae343cce57b7c30d339f60eaf2afd1730\nvault/.git/objects/6c/b72a201b3fe585620031e3c056f1048dc5f6d1\nvault/.git/objects/99/775a2c27359730396dc4d466938629f36d1204\nvault/.git/objects/52/9c1f9a72737841e7f0abb82babfea68242c628\nvault/.git/objects/97/f5c1cfd83ab123fde156f445289ddcd45a7b84\nvault/.git/objects/bf/f3f8fe8d5d86069f9da5589585118ab09b0f23\nvault/.git/objects/d3/c3718d9ef0cf08488bc8b1a8d6202708e3840c\nvault/.git/objects/dd/c1099c36afb152a780e73851db02ec9fffcafd\nvault/.git/objects/b6/b74f783ef1357c421fb0c02760937554396f15\nvault/.git/objects/a9/65d928cec8c21c402aeef6353c76f189a36857\nvault/.git/objects/a6/b9df5bef14f51f3451e412bcea560ecd6394e9\nvault/.git/objects/a1/a82a13a62f1fd30589346007d1ebe920f2a3f7\nvault/.git/objects/a1/05549b64d54f59783162f6b39bb28054bf80aa\nvault/.git/objects/e6/574c1bebbdd60b701efdbd7f0369a03432f5fc\nvault/.git/objects/e8/7c81e4ddd8ac9bf69c5a3c6f6dbda06159ecdb\nvault/.git/objects/ff/6f733cb1ab0f70fcd53a6167f467cd39de6542\nvault/.git/objects/c2/46742d4ac4458e6e5d30a28d5bebc274ae0fed\nvault/.git/objects/f6/0964e36a89e5be478279b4e81933ad53307198\nvault/.git/objects/e0/ab71df5e137f3961a59b435d53bb4b69def6c5\nvault/.git/objects/2c/10ec57ae19d4b3388b79c96575dae048be46ed\nvault/.git/objects/83/647f9b83c184ccad257be3c81f3de897324b5e\nvault/.git/objects/48/fec117632ca080dfe94ab12238e5ef56df8de6\nvault/.git/objects/48/ae41ba396b0a1402fd70d09e2d0ad3367808bf\nvault/.git/objects/4a/85150d75add48fc4bf8e56d30c69e4d6c9dce6\nvault/.git/objects/4f/c54460d42bcdce7298f4bd341a95bdf854f405\nvault/.git/objects/8d/d18e899f2c5207b2851822a343c151aa5bd069\nvault/.git/objects/12/d87658ad563b3450140c1513e8904b83f50bd7\nvault/.git/objects/85/2db4cb7f17dec0f4cedd0d86db032dab4b61bf\nvault/.git/objects/1d/110e4bef378c256f9b7c971464990d9dfddbe2\nvault/.git/objects/71/c9a6a5410a1bdf41ccb14e756be654a103529f\nvault/.git/objects/2b/66f1523139adef279d44dcfb9ff801cfe91237\nvault/.git/objects/78/87760d1dfae4c1a126728fae80527fe5f5a261\nvault/.git/objects/8b/1a116199a84f4700edb29c423c92ac263fe5e4\nvault/.git/objects/7a/2989d86c14f4d7b948c33f11a28243498395f6\nvault/.git/objects/8e/55899f4ac445c8bb1cc44f15b367fd40a55275\nvault/.git/HEAD\nvault/.git/info/exclude\nvault/.git/logs/HEAD\nvault/.git/logs/refs/heads/main\nvault/.git/description\nvault/.git/hooks/commit-msg.sample\nvault/.git/hooks/pre-rebase.sample\nvault/.git/hooks/sendemail-validate.sample\nvault/.git/hooks/pre-commit.sample\nvault/.git/hooks/applypatch-msg.sample\nvault/.git/hooks/fsmonitor-watchman.sample\nvault/.git/hooks/pre-receive.sample\nvault/.git/hooks/prepare-commit-msg.sample\nvault/.git/hooks/post-update.sample\nvault/.git/hooks/pre-merge-commit.sample\nvault/.git/hooks/pre-applypatch.sample\nvault/.git/hooks/pre-push.sample"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/article.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t# Depth Over Breadth: Designing Modules for the Next Reader\n2\n3\tBy Priya Okafor · https://example.com/essays/depth-over-breadth\n4\n5\tMost advice about modules is about size. This essay argues that size is the wrong axis. What matters is how much a module asks of the people who call it, compared with how much it does for them.\n6\n7\t## Deep modules\n8\n9\tA deep module does a lot of work behind a small interface. The caller learns a handful of things and gets a great deal of behaviour in return. A file system is the classic example: open, read, write, close, and behind those four calls sit caching, scheduling, permissions, and recovery from crashes. Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.\n10\n11\t---\n12\n13\t*You have reached your free article limit. Subscribe to keep reading.*\n14"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Grep",
+   "input": {
+    "pattern": "Okafor|depth-over-breadth|Deep Module",
+    "path": "<workspace>/vault",
+    "-i": true,
+    "glob": "!.git"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "No files found"
+  },
+  {
+   "role": "assistant",
+   "content": "I can't make notes from this yet, because `./article.md` holds only the start of the essay. It cuts off at a paywall after the first section (\"*You have reached your free article limit. Subscribe to keep reading.*\"). The vault has no other copy of it.\n\nWhat I could read:\n- **Intro:** module size is the wrong thing to measure. What matters is how much a module asks of its callers compared with how much it does for them.\n- **\"Deep modules\":** a deep module does a lot of work behind a small interface. Depth is a ratio, so you can only call a module deep or shallow once you know its interface. The example is a file system: four calls (open, read, write, close) hiding caching, scheduling, permissions and crash recovery.\n\nThat's probably under a quarter of the essay. If I listed its terms or checked them against your notes now, I'd miss whatever the rest introduces, like shallow modules, how depth relates to information hiding, or the \"next reader\" idea in the title. I'd also be guessing how the author uses those terms. I haven't written anything to the vault.\n\n**Can you paste the full text?** You could save it over `./article.md` or paste it here. Once I have it, I'll map how the terms relate and check each one against your notes (`Interface`, `Information Hiding` and `API` look relevant). Then we can work through the missing ones together, one at a time."
+  }
+ ]
+}

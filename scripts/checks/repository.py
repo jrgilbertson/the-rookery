@@ -60,6 +60,8 @@ HOME_PATH_EXAMPLES = {
     "automations/README.md": {"~" + "/.local/state/automation-runs"},
     "automations/agent-entropy-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/daily-learning.md": {"~" + "/.local/state/automation-runs"},
+    # A recorded transcript quotes atomic-note's documented Obsidian CLI socket.
+    "evals/active-learning/records/2026-11-25-opus-5-5-active-learning/single-note-with_skill-round1.json": {"~" + "/.obsidian-cli.sock"},
     "automations/analytics-gap-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/design-system-audit.md": {"~" + "/.local/state/automation-runs"},
     "automations/improve-audit.md": {"~" + "/.local/state/automation-runs"},

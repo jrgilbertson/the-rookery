@@ -44,7 +44,7 @@ one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`35b17cc24138ac029f8ce81326550edb0c6b903f1f0762ddd2b5cdd5aa1effd3`. From this
+`4132d955592c137571d55c6d4daf38caae4529f064b8fd5a26d5a36f31b55bdc`. From this
 directory, reproduce it with
 `{ find daily-pass digest-reply failing-card free-time frontier-pick quiet-day single-note source-stop source-terms source-unreadable topic-frontier -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
@@ -81,4 +81,5 @@ approved, so a run with the skill should change no file. Then read `response.md`
 against the case's graders. Judge by reading; none of the graders is a text
 match.
 
-- [Eval Record, 2026-11-25](records/2026-11-25-opus-5-5/README.md)
+- [Eval Record, 2026-11-25, daily-learning](records/2026-11-25-opus-5-5/README.md)
+- [Eval Record, 2026-11-25, active-learning](records/2026-11-25-opus-5-5-active-learning/README.md)

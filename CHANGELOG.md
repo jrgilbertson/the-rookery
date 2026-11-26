@@ -109,6 +109,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-personal-crm` drops the Grok X sandbox-retry recovery path from
+  `references/grok-x-source.md`, so a sandbox network or session-state denial
+  marks X unavailable and dependent conclusions `Partial` rather than
+  instructing a host-approved retry (which Snyk Agent Scan flagged as `E004`
+  Critical Risk on `skills.sh`).
 - `reviewing-prs` reads its formats, trust rules, scores, and hold tests
   from the shared review contract. It now posts a verdict even when the
   pull request's head moved after review, naming the reviewed commit and

@@ -132,6 +132,14 @@ claude.ai account's connectors, which sign in once for every machine, so a
 Linear plugin or a user-scope PostHog server here would load the same tools a
 second time.
 
+A machine set up from an earlier version of this list still has both. Remove
+them once.
+
+```bash
+claude plugin uninstall linear@claude-plugins-official
+claude mcp remove posthog --scope user
+```
+
 ```bash
 claude mcp add --scope user --transport http ai-elements https://registry.ai-sdk.dev/api/mcp
 claude mcp add --scope user --transport http livekit-docs https://docs.livekit.io/mcp
@@ -144,6 +152,15 @@ claude mcp add --scope user --transport stdio gemini-docs -- uvx --from git+http
 Linear, Supabase, and Vercel are left out on purpose. Codex gets them from the
 apps linked to the ChatGPT account, which follow the account to Codex desktop
 and the CLI.
+
+A machine set up from an earlier version of this list still has all three.
+Remove them once, after the linked apps' tools show up in a Codex session.
+
+```bash
+codex mcp remove linear
+codex mcp remove supabase
+codex mcp remove vercel
+```
 
 ```bash
 codex mcp add ai-elements --url https://registry.ai-sdk.dev/api/mcp

@@ -3,12 +3,16 @@
 - **Host and runner** macOS workstation, Node 24.22.1, Promptfoo 0.126.0 with
   `anthropic:claude-agent-sdk` 0.3.329, as [`prepare.sh`](../../prepare.sh)
   and [`run.sh`](../../run.sh) set it up. The sessions reported Claude Code
-  2.1.331. Claude used subscription authentication.
+  2.1.329. Claude used subscription authentication.
 - **Skill revision** The skill from commit
   `ae8405aef84b13d0c0a1b03a4fa80cbcb836a602`, tree
-  `7ffe10c62dd35c9ad56ff1e9d15ec18644d64468`. A later commit only added
+  `7ffe10c62dd35c9ad56ff1e9d15ec18644d64468`. Two later commits changed the
+  skill, so these labels predate the shipped wording: `b3a2c77c` added
   "Networked Thinking atomic note in DAE format" to the description, which
-  the trigger checks below cover.
+  the trigger checks below cover, and `bcfdee01` changed the opening
+  paragraph from "never quiz them. Adapt to any learning constraint they have
+  told you about." to "don't quiz them unless they ask." No case asks to be
+  quizzed. These runs were not repeated on the shipped revision.
 - **Cases** The five in the [Skill Eval README](../../README.md). The
   case-set SHA-256 is
   `3fc6e9cee98a02856a4e72d1a2dcada722758b029f33ac66ea1fabfb56cf7e05`.

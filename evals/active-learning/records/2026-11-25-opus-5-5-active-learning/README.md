@@ -11,10 +11,16 @@
   `jrgilbertson/networked-thinking-skills` at
   `ae25bc8176ef9ffcdc550f26a23ab57d963e4272`. Each with-skill run's
   `staged.txt` and transcript confirm which skills it loaded.
-- **Cases** All eleven in the [Skill Eval README](../../README.md), which
-  gives the case-set hash and the command that reproduces it. The hash
-  changed during the work as graders were corrected; this record's labels use
-  the graders in the final case set. Two more cases, `source-explain` and
+- **Cases** Eleven: `daily-pass`, `digest-reply`, `failing-card`,
+  `quiet-day`, `source-terms`, `source-stop`, `source-unreadable`,
+  `topic-frontier`, `frontier-pick`, `free-time`, and `single-note`. Their
+  case-set SHA-256, with the graders this record's labels follow, is
+  `66d1a35057c3f9761a8a935f4daa1c0f1eb9559d642c91393f2dda5077752cad`. The
+  case folders and their `graders/` were removed when the suite moved to
+  Promptfoo; they can be read at commit `01f619c3` under
+  `evals/active-learning/`, where
+  `{ find daily-pass digest-reply failing-card free-time frontier-pick quiet-day single-note source-stop source-terms source-unreadable topic-frontier -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`
+  reproduces the hash. Two more cases, `source-explain` and
   `topic-map`, were run without the skill and then dropped because they
   passed.
 - **Baseline** No skill: fresh Claude sessions with the same requests and

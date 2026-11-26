@@ -5,8 +5,11 @@
   `skills/daily-learning` tree is `16b79c4670fb58310f915620cfbff0df0697bede`.
 - **Cases** `daily-pass`, `digest-reply`, `failing-card`, and `quiet-day`. The
   case-set SHA-256 is
-  `646316a7c9090ef8dd472918832474955b25573bf2ab2c5b919fb78ba9bf7077`; the
-  [Skill Eval README](../../README.md) gives the command that reproduces it.
+  `646316a7c9090ef8dd472918832474955b25573bf2ab2c5b919fb78ba9bf7077`. The
+  cases and their `graders/` were later removed or rewritten; they can be read
+  at commit `addac397` under `evals/daily-learning/`, where
+  `{ find daily-pass digest-reply failing-card quiet-day -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`
+  reproduces the hash.
   These runs predate the skill's rename to `active-learning`, so they load it
   as `daily-learning`, and the hash covers the case set before the rename
   changed each prompt's tag.

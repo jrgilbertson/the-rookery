@@ -69,8 +69,9 @@ Two code checks run on every result:
   Promptfoo's built-in `skill-used` assertion. It fails on every no-skill run,
   as it should.
 
-Run `node evals/active-learning/check-fixtures.mjs` to exercise both checks
-offline. Judge everything else by reading the response and transcript against
+Run `node evals/active-learning/check-fixtures.mjs` to exercise the Changes
+nothing check offline; the built-in skill check is not exercised offline.
+Judge everything else by reading the response and transcript against
 the case's `README.md`; none of those judgments is a text match. Keep raw
 results and session logs outside the repository.
 

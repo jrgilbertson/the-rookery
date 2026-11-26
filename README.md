@@ -66,7 +66,7 @@ verify and what it takes to undo.
 
 ## The skills
 
-- [active-learning](skills/active-learning/SKILL.md). Coach a learning habit from recent notes, reading highlights, AI sessions, and flashcards: recommend at most five things without changing anything, then help write the ones you pick, recall first and with your approval.
+- [active-learning](skills/active-learning/SKILL.md). A learning coach that talks each idea through with you, checks it against the source, and has `atomic-note` write the notes and cards you approve. Point it at your recent activity, an article you just read, a topic, one concept, or a flashcard that keeps failing.
 - [checking-skill-portability](skills/checking-skill-portability/SKILL.md). Check that a skill package works the same in any harness and with any agent that supports the [Agent Skills](https://agentskills.io) specification. Use it before sharing a skill written with Claude Code's or Codex's own `skill-creator`, or when moving a skill between agents.
 - [coordinating-work](skills/coordinating-work/SKILL.md). Set up, run, or revive one Team lead in Orca. It works the issues and epics you hand it and is accountable for the quality and output of its task workers. One approved proposal is its merge approval: it merges routine PRs once their issue is proven done, leaves held changes such as billing, access, or work only you can judge open, and keeps one list of what needs you.
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run one active-learning Eval Case once, with or without the skill, in a fresh workspace.
 #
-# Usage: run.sh <case> <with_skill|without_skill> <out-dir> [git-revision]
+# Usage: run.sh <case> <with_skill|without_skill> <out-dir> [git-revision] [atomic-note-repo]
 #
 # This calls a paid model. Get the skill owner's approval before running it.
 # The workspace includes a web clip with a planted instruction, so the model reads
@@ -12,11 +12,12 @@
 # The run loads no user settings, installed skills, plugins, MCP servers or global
 # instructions (--setting-sources project, --strict-mcp-config). The with_skill arm
 # loads only skills/active-learning at <git-revision> (default HEAD), staged as a
-# throwaway plugin. Writes events.jsonl, file_changes.txt, response.md and
+# throwaway plugin, plus skills/atomic-note at the HEAD of <atomic-note-repo> when
+# given. staged.txt records each staged skill's revision. Writes events.jsonl, file_changes.txt, response.md and
 # transcript.json into <out-dir>.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
-case=$1 arm=$2 out=$3 rev=${4:-HEAD}
+case=$1 arm=$2 out=$3 rev=${4:-HEAD} atomic=${5:-}
 [ -f "$here/$case/prompt.md" ] || { echo "unknown case: $case" >&2; exit 2; }
 mkdir -p "$out"
 out=$(cd "$out" && pwd)
@@ -42,7 +43,13 @@ if [ "$arm" = with_skill ]; then
   plugin="$out/plugin"
   mkdir -p "$plugin/.claude-plugin" "$plugin/skills"
   printf '{"name":"al","version":"0.0.0","description":"active-learning under test"}\n' > "$plugin/.claude-plugin/plugin.json"
-  git -C "$(git -C "$here" rev-parse --show-toplevel)" archive "$rev" -- skills/active-learning | tar -x -C "$plugin"
+  repo=$(git -C "$here" rev-parse --show-toplevel)
+  git -C "$repo" archive "$rev" -- skills/active-learning | tar -x -C "$plugin"
+  echo "active-learning $(git -C "$repo" rev-parse "$rev")" > "$out/staged.txt"
+  if [ -n "$atomic" ]; then
+    git -C "$atomic" archive HEAD -- skills/atomic-note | tar -x -C "$plugin"
+    echo "atomic-note $(git -C "$atomic" rev-parse HEAD)" >> "$out/staged.txt"
+  fi
   extra=(--plugin-dir "$plugin")
 elif [ "$arm" != without_skill ]; then
   echo "arm must be with_skill or without_skill" >&2; exit 2

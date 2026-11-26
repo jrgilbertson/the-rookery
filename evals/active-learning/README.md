@@ -44,7 +44,7 @@ one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`c37869820af14c321e1746832fd7531195ec74fc2b39c6b0cea89c0fedcfb0c0`. From this
+`6a7bd1477eb39a0737c03a206e8a7b5f0e1bdd218be3e31ec369ff062afe1096`. From this
 directory, reproduce it with
 `{ find daily-pass digest-reply failing-card free-time frontier-pick quiet-day single-note source-stop source-terms source-unreadable topic-frontier -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
@@ -68,7 +68,7 @@ Claude Code, Git, and Python 3, run from this directory:
 [`run.sh`](run.sh) builds a fresh workspace, runs Claude Opus 5.5 at high effort
 with no user settings, installed skills, plugins, MCP servers, or global
 instructions, and adds only `skills/active-learning` at the given revision for
-the `with_skill` arm. It writes the event stream, a list of changed files, the
+the `with_skill` arm. Pass a clone of the repository that holds `atomic-note` as a fifth argument to stage it too, for the cases that hand a note to it. It writes the event stream, a list of changed files, the
 final response, and a JSON transcript of every turn, with local paths and the
 user name replaced.
 

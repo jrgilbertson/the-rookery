@@ -311,8 +311,7 @@ When approved scope runs dry, and the charter does not say to stop, take
 
 - only leaves whose blockers are satisfied and whose stored scores predict a
   routine merge (no sensitive kind and V × U below 3)
-- on GitHub, only issues the operator's login opened, because anyone can
-  open an issue on a public repository and edit it later; any other issue
+- only issues assigned to the operator, whoever opened them; any other issue
   joins scope only through the operator's recorded words
 - highest Leverage first
 - skip `needs-planning` issues without planning them

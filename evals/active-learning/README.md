@@ -29,7 +29,7 @@ the no-skill run did and what to judge by reading. Cases that pick up a
 conversation partway carry the earlier turns in their prompt.
 
 The case-set SHA-256 is
-`3fc6e9cee98a02856a4e72d1a2dcada722758b029f33ac66ea1fabfb56cf7e05`. From this
+`91634b51591d5b3b055d5db08374151d0acd108bcba4c05b770a895b2b3d48f9`. From this
 directory, reproduce it with
 `{ find cases -type f -print0; printf '%s\0' fixture.py promptfooconfig.cjs checks.mjs; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
@@ -61,10 +61,13 @@ and fails the case.
 
 ## Read the results
 
-Two code checks run on every result, from [`checks.mjs`](checks.mjs):
+Two code checks run on every result:
 
-- **Changes nothing:** the agent called only the allowed tools.
-- **Loaded the skill:** the with-skill arm called `active-learning`.
+- **Changes nothing:** the agent called only the allowed tools, checked by
+  [`checks.mjs`](checks.mjs).
+- **Loaded the skill:** the agent called `active-learning`, checked by
+  Promptfoo's built-in `skill-used` assertion. It fails on every no-skill run,
+  as it should.
 
 Run `node evals/active-learning/check-fixtures.mjs` to exercise both checks
 offline. Judge everything else by reading the response and transcript against

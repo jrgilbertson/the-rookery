@@ -51,7 +51,7 @@ module.exports = {
       },
       assert: [
         { type: 'javascript', value: 'file://./checks.mjs', metric: 'Changes nothing' },
-        { type: 'javascript', value: 'file://./checks.mjs', metric: 'Loaded the skill', config: { check: 'skill' } },
+        { type: 'skill-used', value: 'active-learning', metric: 'Loaded the skill' },
       ],
     },
   ],

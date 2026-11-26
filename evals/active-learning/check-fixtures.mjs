@@ -1,23 +1,17 @@
-// Offline checks for checks.mjs; no model is called.
 import assert from 'node:assert/strict';
-import check, { loadedSkill, onlyReadTools } from './checks.mjs';
+import onlyAllowedTools from './checks.mjs';
 
-assert.equal(onlyReadTools([{ name: 'Read' }, { name: 'Grep' }, { name: 'WebFetch' }]), true);
-assert.equal(onlyReadTools([]), true);
-assert.equal(onlyReadTools([{ name: 'Read' }, { name: 'Write', input: { file_path: '/tmp/x' } }]), false);
-assert.equal(onlyReadTools([{ name: 'Edit' }]), false);
-assert.equal(onlyReadTools([{ name: 'Bash', input: { command: 'ls' } }]), false);
-assert.equal(onlyReadTools(undefined), false);
-assert.equal(loadedSkill([{ name: 'Skill', input: { skill: 'active-learning' } }]), true);
-assert.equal(loadedSkill([{ name: 'Skill', input: { skill: 'plugin:active-learning' } }]), true);
-assert.equal(loadedSkill([{ name: 'Skill', input: { skill: 'atomic-note' } }]), false);
-assert.equal(loadedSkill([{ name: 'Read' }]), false);
+const allowed = ['Read', 'Glob', 'Grep', 'Skill', 'WebSearch', 'WebFetch'];
+const run = (calls, custom_allowed_tools = allowed) => ({
+  provider: { config: { custom_allowed_tools } },
+  providerResponse: { metadata: { toolCalls: calls } },
+});
 
-const response = (calls) => ({ providerResponse: { metadata: { toolCalls: calls } } });
-assert.equal(check('', response([{ name: 'Read' }])), true);
-assert.equal(check('', response([{ name: 'Write' }])), false);
-const arm = (dir, calls) => ({ ...response(calls), config: { check: 'skill' }, provider: { config: { working_dir: dir } } });
-assert.equal(check('', arm('./workspaces/x/claude-skill', [{ name: 'Read' }])), false);
-assert.equal(check('', arm('./workspaces/x/claude-skill', [{ name: 'Skill', input: { skill: 'active-learning' } }])), true);
-assert.equal(check('', arm('./workspaces/x/claude-baseline', [{ name: 'Read' }])), true);
+assert.equal(onlyAllowedTools('', run([{ name: 'Read' }, { name: 'Grep' }, { name: 'WebFetch' }])), true);
+assert.equal(onlyAllowedTools('', run([])), true);
+assert.equal(onlyAllowedTools('', run([{ name: 'Read' }, { name: 'Write', input: { file_path: '/tmp/x' } }])), false);
+assert.equal(onlyAllowedTools('', run([{ name: 'Edit' }])), false);
+assert.equal(onlyAllowedTools('', run([{ name: 'Bash', input: { command: 'ls' } }])), false);
+assert.equal(onlyAllowedTools('', run(undefined)), false);
+assert.equal(onlyAllowedTools('', run([{ name: 'Read' }], null)), false);
 console.log('active-learning eval checks: all passed');

@@ -11,8 +11,6 @@ import sys
 from pathlib import Path
 
 FILES = {}
-# Files only the newer cases see, so the original four cases keep building the
-# workspaces their 2026-11-25 Eval Record ran on.
 DESIGN = {}
 
 
@@ -432,7 +430,7 @@ note("vault/Structure Notes/Learning Science.md", "2026-09-01", """
 - The generation effect
 """, into=DESIGN)
 
-ARTICLE_HEAD = """# Depth Over Breadth: Designing Modules for the Next Reader
+ARTICLE = """# Depth Over Breadth: Designing Modules for the Next Reader
 
 By Priya Okafor · https://example.com/essays/depth-over-breadth
 
@@ -441,9 +439,7 @@ Most advice about modules is about size. This essay argues that size is the wron
 ## Deep modules
 
 A deep module does a lot of work behind a small interface. The caller learns a handful of things and gets a great deal of behaviour in return. A file system is the classic example: open, read, write, close, and behind those four calls sit caching, scheduling, permissions, and recovery from crashes. Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.
-"""
 
-ARTICLE_REST = """
 ## Shallow modules
 
 A shallow module is the opposite: its interface is nearly as complicated as what it does. A class that wraps one database call behind a constructor, three setters, and an `execute` method makes every caller learn five things to save one line. Splitting code into many shallow modules adds interfaces without adding depth, and the total that readers must learn goes up.
@@ -470,8 +466,6 @@ An abstraction leaks when callers must know about a hidden detail to use the mod
 """
 
 
-# Each case and the files it must not see. The two source cases see only the
-# vault, the module-design notes, and the article.
 NOT_VAULT = ["digest.md", "anki/status.json", "anki/suspended-card.json"] + [k for k in FILES if k.startswith("sessions/")]
 CASES = {
     "daily-pass": ["digest.md", "anki/suspended-card.json"],
@@ -488,7 +482,7 @@ def main():
     files = dict(FILES)
     if case in SOURCE_CASES:
         files.update(DESIGN)
-        files["article.md"] = ARTICLE_HEAD + ARTICLE_REST
+        files["article.md"] = ARTICLE
     for rel in CASES[case]:
         files.pop(rel, None)
     for rel, text in files.items():

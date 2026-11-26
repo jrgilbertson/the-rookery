@@ -87,3 +87,7 @@ loaded `atomic-note-audit`.
   tools do not cover. `run.sh` now sets `CLAUDE_CODE_DISABLE_AUTO_MEMORY=1`,
   the files were removed, and the repeated run is the one recorded: it tried
   to edit a vault note and was denied.
+- After this run, "Loaded the skill" moved to Promptfoo's built-in
+  `skill-used` assertion and the tool check reads the allowed list from the
+  run's own settings. Replaying both on these ten results gives the same
+  labels, with "Loaded the skill" failing on every no-skill run.

@@ -9,7 +9,7 @@ ran with the previous revision as its Baseline.
 
 - **Host and date** macOS (arm64), 2026-11-25 PST. Claude Code subscription
   sign-in.
-- **Skill revision** `skills/reviewing-prs` at commit `c7917a88`, staged as a
+- **Skill revision** `skills/reviewing-prs` at commit `b6d3f62f`, staged as a
   copy in each run directory.
 - **Cases** all four in [the case set](../../README.md#cases). The case-set
   SHA-256 was

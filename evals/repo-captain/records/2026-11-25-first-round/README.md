@@ -5,7 +5,7 @@ Each of the eight Eval Cases, once with `repo-captain` and once with the
 
 - **Host and date** macOS (arm64), 2026-11-25 PST. Claude Code and Codex CLI
   on subscription sign-ins.
-- **Skill revision** `skills/repo-captain` at commit `c7917a88`, staged as a
+- **Skill revision** `skills/repo-captain` at commit `b6d3f62f`, staged as a
   copy in each run directory, with a copy of `skills/managing-issues` beside
   it because safe mode loads no installed skills.
 - **Cases** all eight in [the case set](../../README.md#cases). The case-set

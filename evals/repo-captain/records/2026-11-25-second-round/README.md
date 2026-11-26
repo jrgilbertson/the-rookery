@@ -10,11 +10,11 @@ their diffs lacked, and the fixtures now include those tests.
 - **Host, date, model, effort, runner, and labels** as in the first round:
   `claude-opus-5-5` at high effort, one `claude -p --safe-mode` process per
   turn, and a `claude-sonnet-5-5` grader subagent.
-- **Skill revision** `skills/repo-captain` at commit `9bda8d9e`.
+- **Skill revision** `skills/repo-captain` at commit `b4e6b671`.
 - **Cases** coupled-plan-versus-uniform-backlog and
-  held-pr-keeps-wake-and-calm-alert at commit `9bda8d9e`, and
+  held-pr-keeps-wake-and-calm-alert at commit `b4e6b671`, and
   domain-lead-custody-and-self-merge and overlap-and-one-migration at commit
-  `ee428b3e`. The case-set SHA-256 at `ee428b3e` was
+  `480f33e7`. The case-set SHA-256 at `480f33e7` was
   `2c22126b92dbf2d44941dd5124fa8813e4da6933c4aed841e9e69bd83ad6b9c8`.
 - **Baseline** `skills/coordinating-work`, rerun only on the two cases whose
   fixtures changed. The two cases whose fixtures did not change keep their
@@ -25,7 +25,7 @@ A first attempt at the two fixture cases is not recorded. That fixture edit
 added each claimed test file twice, once through the staged commit and once
 in the diff text, so each diff listed the file twice with different blobs.
 The Captain held those pull requests as unreadable, which was correct for
-the world it saw. Commit `ee428b3e` removed the duplicate, and the runs below
+the world it saw. Commit `480f33e7` removed the duplicate, and the runs below
 use it.
 
 ## Results

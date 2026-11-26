@@ -144,7 +144,7 @@ shapes they must parse.
 - [Post only, 2026-11-25](records/2026-11-25-post-only/README.md): each case
   once with the skill at `4f0a8a92`, after it stopped merging, in Claude.
 - [Shared contract, 2026-11-25](records/2026-11-25-shared-contract/README.md):
-  each case once with the skill at `c7917a88`, after it moved its shared
+  each case once with the skill at `b6d3f62f`, after it moved its shared
   rules into the review contract, in Claude.
 
 Commit each record under

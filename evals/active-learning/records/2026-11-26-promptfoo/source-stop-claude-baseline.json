@@ -1,0 +1,108 @@
+{
+ "case": "source-stop",
+ "arm": "claude-baseline",
+ "context": {
+  "model": "claude-opus-5-5",
+  "runtime": "Claude Code 2.1.329 via Claude Agent SDK",
+  "effort": "high",
+  "working_directory": "<run>/workspaces/source-stop/claude-baseline"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "We've been working through the terms in the essay at ./article.md. My vault is ./vault. We talked through interface, signature, and API, and I've got those. Here is where we are now.\n\n**You said:**\n\nNext is deep module, which builds directly on interface: the essay calls depth a ratio between what a module does for its callers and how much its interface asks them to learn. Before I say more, what is a module you use at work that feels like it does a lot for very little effort on your part?\n\n**My reply:**\n\nI'm stopping here, there's more and I'm out of time. Keep deep module and leaky abstraction for later. Skip shallow module, I get it from deep module."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Glob",
+   "input": {
+    "pattern": "**/*",
+    "path": "vault"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "vault/Atomic Notes/Idempotency Key.md\nvault/Atomic Notes/Exponential Backoff.md\nvault/Atomic Notes/HTTP 301 vs 302.md\nvault/Atomic Notes/Invariant.md\nvault/Atomic Notes/Ratchet (Engineering).md\nvault/Atomic Notes/CAP Theorem.md\nvault/Atomic Notes/Spaced Repetition.md\nvault/Reference Notes/HTTP Semantics RFC 9110.md\nvault/Reference Notes/Data Systems in Practice.md\nvault/Reference Notes/Learning That Lasts.md\nvault/Reference Notes/Small Interfaces.md\nvault/Reference Notes/Clipped - Webhook Delivery Checklist.md\nvault/Structure Notes/Distributed Systems.md\nvault/Structure Notes/Personal Learnings.md\nvault/Strategy/Personal Strategy.md\nvault/Journal/2026-11-22.md\nvault/Atomic Notes/Interface.md\nvault/Atomic Notes/API.md\nvault/Atomic Notes/Information Hiding.md\nvault/Structure Notes/Software Design.md\nvault/Structure Notes/Learning Science.md"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Reference Notes/Small Interfaces.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-03\n3\t---\n4\n5\t# Small Interfaces\n6\n7\tAuthor: Ines Varga\n8\n9\t## Highlights\n10\n11\t- \"The best modules are those whose interfaces are much simpler than their implementations.\"\n12\t- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n13"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Atomic Notes/Interface.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-05-14\n3\t---\n4\n5\t# Interface\n6\n7\tAn interface is a language keyword, as in Java or TypeScript, that declares a set of method signatures a class promises to implement.\n8\n9\tIt is like a job description: it lists the duties, and any candidate who can do them all can take the job.\n10\n11\t`interface Shape { area(): number }` lets any class with an `area` method be passed where a `Shape` is expected.\n12\n13\tLinks: [[Software Design]]\n14\n15\t<!--ID: 1747200000007-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Structure Notes/Software Design.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-02\n3\t---\n4\n5\t# Software Design\n6\n7\t- [[Information Hiding]]\n8\t- [[Interface]]\n9\t- [[API]]\n10\n11\t## Open Questions\n12\n13\t- Why do some small modules feel harder to use than one big one?\n14"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Journal/2026-11-22.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-22\n3\t---\n4\n5\t# 2026-11-22\n6\n7\tLong day on the webhook bug. Skipped Anki again. Read some of Data Systems in Practice on the train.\n8"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Atomic Notes/API.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-05-14\n3\t---\n4\n5\t# API\n6\n7\tAn API is how programs talk to each other.\n8"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "vault/Reference Notes/Small Interfaces.md",
+    "old_string": "- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n",
+    "new_string": "- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n\n## Terms in progress\n\n- Done: interface, signature, API\n- Up next: deep module (pick up at: a module at work that does a lot for very little effort on your part), then leaky abstraction\n- Skipped: shallow module (covered by deep module)\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Edit has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "content": "Okay, we'll stop here. Shallow module is off the list.\n\nI tried to add a short \"where we left off\" section to `vault/Reference Notes/Small Interfaces.md`, but the edit was blocked by the current permission mode, so **your vault hasn't changed**. Here's where we are so you can pick it up later:\n\n- **Done:** interface, signature, API\n- **Next:** deep module. We'll restart with my question: what's a module you use at work that does a lot for you with very little effort? After that comes leaky abstraction.\n- **Skipped:** shallow module, since deep module covers it\n\nNext time, you might also want to update your existing notes. `Interface.md` still describes an interface as a language keyword. `API.md` only says \"how programs talk to each other.\" And there's no note for signature yet."
+  }
+ ]
+}

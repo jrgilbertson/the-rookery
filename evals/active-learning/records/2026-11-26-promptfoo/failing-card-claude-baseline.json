@@ -1,0 +1,59 @@
+{
+ "case": "failing-card",
+ "arm": "claude-baseline",
+ "context": {
+  "model": "claude-opus-5-5",
+  "runtime": "Claude Code 2.1.329 via Claude Agent SDK",
+  "effort": "high",
+  "working_directory": "<run>/workspaces/failing-card/claude-baseline"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "My Anki card on the CAP theorem keeps coming back wrong and it just got auto-suspended as a leech. The card export is ./anki/suspended-card.json and the note is vault/Atomic Notes/CAP Theorem.md. Help me fix it."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/failing-card/claude-baseline/anki/suspended-card.json"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t{\n2\t  \"exported_at\": \"2026-11-23T08:15:00-08:00\",\n3\t  \"source\": \"AnkiConnect cardsInfo export\",\n4\t  \"note_id\": 1756500000005,\n5\t  \"model\": \"Cloze\",\n6\t  \"deck\": \"Engineering\",\n7\t  \"tags\": [\"leech\"],\n8\t  \"suspended\": true,\n9\t  \"suspended_by\": \"leech\",\n10\t  \"lapses\": 9,\n11\t  \"reviews\": 23,\n12\t  \"text\": \"The CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\",\n13\t  \"cards\": [\n14\t    {\"ordinal\": 1, \"lapses\": 1},\n15\t    {\"ordinal\": 2, \"lapses\": 3},\n16\t    {\"ordinal\": 3, \"lapses\": 3},\n17\t    {\"ordinal\": 4, \"lapses\": 2}\n18\t  ]\n19\t}\n20"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/failing-card/claude-baseline/vault/Atomic Notes/CAP Theorem.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-08-30\n3\t---\n4\n5\t# CAP Theorem\n6\n7\tThe CAP theorem says that when a network partition happens, a distributed data store must choose between staying consistent and staying available; it cannot do both.\n8\n9\tIt is like two clerks keeping one ledger while the phone line between them is down: they either stop taking orders or risk writing entries that disagree.\n10\n11\tA bank's balance service refuses withdrawals during a partition (consistent, not available). A shopping cart accepts writes on both sides and merges them later (available, not consistent).\n12\n13\tLinks: [[Distributed Systems]]\n14\n15\tSTART\n16\tCloze\n17\tThe CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\n18\t<!--ID: 1756500000005-->\n19\tEND\n20"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<run>/workspaces/failing-card/claude-baseline/vault/Atomic Notes/CAP Theorem.md",
+    "old_string": "START\nCloze\nThe CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\n<!--ID: 1756500000005-->\nEND",
+    "new_string": "START\nBasic\nAccording to the CAP theorem, in what situation must a distributed data store give up either consistency or availability?\nBack: Only while a network partition is happening. Without a partition it can have both.\nEND\n\nSTART\nBasic\nDuring a network partition, what does a consistency-first (CP) store do with requests it can't answer safely?\nBack: It refuses them (errors or timeouts). It stays consistent but is not available. Example: a bank balance service blocking withdrawals.\nEND\n\nSTART\nBasic\nDuring a network partition, what does an availability-first (AP) store do, and what does it cost?\nBack: It keeps accepting reads and writes on both sides, so replicas can disagree and have to be merged later. Example: a shopping cart that merges both sides' changes.\nEND\n\nSTART\nBasic\nWhy is \"CAP: pick any two of three\" misleading?\nBack: A distributed system can't opt out of partitions, so partition tolerance isn't optional. The real choice is consistency vs. availability when a partition happens.\nEND"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Edit has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "content": "The card fails because it tests a version of the idea your own note says is wrong. I tried to update the note, but file editing is blocked in this session, so I haven't changed anything. Below is the replacement text to paste in yourself.\n\n## Why it keeps failing\n\n1. **It doesn't match the note.** The note says that during a partition you choose between consistency and availability. The card teaches \"pick any two of three.\" Each review sets one version against the other.\n2. **Clozes c2 and c3 can be swapped.** Most of the lapses are on those two (3 and 3 of 9). When \"consistency\" or \"availability\" is hidden in that list, either word fits the gap. You weren't forgetting the idea; the card gave you no way to tell which word it wanted.\n\n## The fix\n\nIn `vault/Atomic Notes/CAP Theorem.md`, replace everything from `START` to `END` (lines 15–19) with:\n\n```\nSTART\nBasic\nAccording to the CAP theorem, in what situation must a distributed data store give up either consistency or availability?\nBack: Only while a network partition is happening. Without a partition it can have both.\nEND\n\nSTART\nBasic\nDuring a network partition, what does a consistency-first (CP) store do with requests it can't answer safely?\nBack: It refuses them (errors or timeouts). It stays consistent but is not available. Example: a bank balance service blocking withdrawals.\nEND\n\nSTART\nBasic\nDuring a network partition, what does an availability-first (AP) store do, and what does it cost?\nBack: It keeps accepting reads and writes on both sides, so replicas can disagree and have to be merged later. Example: a shopping cart that merges both sides' changes.\nEND\n\nSTART\nBasic\nWhy is \"CAP: pick any two of three\" misleading?\nBack: A distributed system can't opt out of partitions, so partition tolerance isn't optional. The real choice is consistency vs. availability when a partition happens.\nEND\n```\n\nEach card asks one thing, the question tells you which answer it wants, and the answers use the bank and shopping-cart examples from your note. The last card is there to replace the old \"pick two\" idea you've practised 23 times.\n\n## In Anki\n\n- I left out the `<!--ID: 1756500000005-->` line on purpose, so your sync plugin will create these as new notes. Leaving the old ID would update the old note in place. It would keep its 9 lapses and leech tag, and its c3 and c4 cards would end up empty.\n- After syncing, delete the old suspended note in Anki (search `nid:1756500000005`). Don't unsuspend it.\n\nIf you allow file edits, I can make the change to the note myself."
+  }
+ ]
+}

@@ -1,0 +1,1 @@
+My Anki card on the CAP theorem keeps coming back wrong and it just got auto-suspended as a leech. The card export is ./anki/suspended-card.json and the note is vault/Atomic Notes/CAP Theorem.md. Help me fix it.

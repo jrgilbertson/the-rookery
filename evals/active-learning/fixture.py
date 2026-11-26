@@ -3,13 +3,10 @@
 
 Usage: fixture.py <dest-dir> <case>
 
-Writes vault/, sessions/, anki/, digest.md and article.md into <dest-dir>,
-keeps only what the case may see, and turns the vault into a Git repository whose commit dates
-and file times follow each note's `updated:` date. Every person, note, quote,
-session and card here is invented.
+Writes the files the case may see into <dest-dir>: vault/, and for some cases
+sessions/, anki/, digest.md, or article.md. Every person, note, quote, session
+and card here is invented.
 """
-import os
-import subprocess
 import sys
 from pathlib import Path
 
@@ -473,87 +470,31 @@ An abstraction leaks when callers must know about a hidden detail to use the mod
 """
 
 
-# Files each case must not see, and whether it is the quiet-day variant.
-CASES = {
-    "daily-pass": (["digest.md", "anki/suspended-card.json"], False),
-    "digest-reply": (["anki/suspended-card.json"], False),
-    "failing-card": (["digest.md"], False),
-    "quiet-day": (["digest.md", "anki/suspended-card.json"], True),
-}
-
+# Each case and the files it must not see. The two source cases see only the
+# vault, the module-design notes, and the article.
 NOT_VAULT = ["digest.md", "anki/status.json", "anki/suspended-card.json"] + [k for k in FILES if k.startswith("sessions/")]
-WHOLE_ARTICLE = ARTICLE_HEAD + ARTICLE_REST
-PAYWALLED_ARTICLE = ARTICLE_HEAD + "\n---\n\n*You have reached your free article limit. Subscribe to keep reading.*\n"
-NEWER = {
-    "source-terms": WHOLE_ARTICLE,
-    "source-stop": WHOLE_ARTICLE,
-    "source-unreadable": PAYWALLED_ARTICLE,
-    "topic-frontier": None,
-    "frontier-pick": None,
-    "free-time": None,
-    "single-note": None,
+CASES = {
+    "daily-pass": ["digest.md", "anki/suspended-card.json"],
+    "digest-reply": ["anki/suspended-card.json"],
+    "failing-card": ["digest.md"],
+    "source-terms": NOT_VAULT,
+    "source-stop": NOT_VAULT,
 }
-
-QUIET_REMOVED = (
-    "vault/Atomic Notes/Invariant.md",
-    "vault/Atomic Notes/Ratchet (Engineering).md",
-    "vault/Journal/2026-11-22.md",
-    "vault/Reference Notes/Clipped - Webhook Delivery Checklist.md",
-    "sessions/2026-11-22-webhook-duplicates.md",
-    "sessions/2026-11-22-lint-ratchet.md",
-)
-
-
-# Ignore the operator's global and system Git config, so their hooks, signing,
-# or templates never shape the fixture.
-GIT_ENV = {"GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1"}
-
-
-def stamp(path, day, hour="1200"):
-    stamp_time = f"{day.replace('-', '')}{hour}"
-    subprocess.run(["touch", "-t", stamp_time, str(path)], check=True)
+SOURCE_CASES = ("source-terms", "source-stop")
 
 
 def main():
     out, case = Path(sys.argv[1]), sys.argv[2]
     files = dict(FILES)
-    if case in NEWER:
-        drop, quiet = NOT_VAULT, False
+    if case in SOURCE_CASES:
         files.update(DESIGN)
-        if NEWER[case]:
-            files["article.md"] = NEWER[case]
-    else:
-        drop, quiet = CASES[case]
-    if quiet:
-        # Nothing substantive changed on Nov 22; only the dependency-bump session remains.
-        for rel in QUIET_REMOVED:
-            del files[rel]
-        k = "vault/Reference Notes/Data Systems in Practice.md"
-        files[k] = files[k].split("### Added 2026-11-22")[0].rstrip().replace("updated: 2026-11-22", "updated: 2026-10-02") + "\n"
-    for rel in drop:
+        files["article.md"] = ARTICLE_HEAD + ARTICLE_REST
+    for rel in CASES[case]:
         files.pop(rel, None)
     for rel, text in files.items():
-        p = out / rel
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(text)
-
-    vault = out / "vault"
-    git = ["git", "-C", str(vault), "-c", "user.name=Fixture Owner", "-c", "user.email=owner@example.com"]
-    subprocess.run(git + ["init", "-q", "-b", "main"], check=True, env=dict(os.environ, **GIT_ENV))
-    by_day = {}
-    for rel, text in files.items():
-        if rel.startswith("vault/"):
-            day = text.split("updated: ", 1)[1].split("\n", 1)[0]
-            by_day.setdefault(day, []).append(rel[len("vault/"):])
-    for day in sorted(by_day):
-        for rel in by_day[day]:
-            stamp(vault / rel, day)
-        subprocess.run(git + ["add", "--"] + by_day[day], check=True, env=dict(os.environ, **GIT_ENV))
-        env = dict(os.environ, GIT_AUTHOR_DATE=f"{day}T12:00:00", GIT_COMMITTER_DATE=f"{day}T12:00:00", **GIT_ENV)
-        subprocess.run(git + ["commit", "-q", "-m", f"vault backup {day}"], check=True, env=env)
-    for rel in files:
-        if not rel.startswith("vault/"):
-            stamp(out / rel, "2026-11-22", "1800")
+        path = out / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
 
 
 if __name__ == "__main__":

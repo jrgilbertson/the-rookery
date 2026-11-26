@@ -15,12 +15,13 @@
 - **Model and effort** `claude-opus-5-5` at high effort for both arms. Each
   run's session metadata confirmed the model. No judge model was used.
 - **Runner** `claude -p` through a scratch script with the same prompts,
-  workspaces, model, and flags as the committed [`run.sh`](../../run.sh),
+  workspaces, model, and flags as the `run.sh` harness of that time, since
+  replaced by Promptfoo,
   with three differences. The scratch script copied the skill from the working
   tree, whose `SKILL.md` matched the revision above, where `run.sh` uses
   `git archive`. It allowed every `git` subcommand, where `run.sh`, after a
   security review, allows only `log`, `show`, `diff`, and `status` through
-  [`safe-git.sh`](../../safe-git.sh), limits Edit and Write to the workspace,
+  `safe-git.sh`, limits Edit and Write to the workspace,
   and makes the vault's `.git` folder read-only. It also
   recorded the vault's commit with `git rev-parse`, where `run.sh` hashes the
   vault's Git config, refs, and hooks. The recorded runs used only read-only

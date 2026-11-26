@@ -67,6 +67,9 @@ looked" surface. GitHub Releases mirror its entries.
   Obsidian Headless copy on a paired remote host, local and remote AI
   sessions, and Anki status, uses the shared run history to see patterns
   across days, and takes replies in the run's own chat.
+  Its Skill Eval, in `evals/active-learning/`, runs five synthetic cases
+  through Promptfoo on macOS. The model is offered write tools but allowed
+  only to read, so any attempt to change a file fails the case.
 - A chart in `ROUTING.md` of combined quality against cost at each effort
   setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
   computes the figures and draws the chart from the committed data, and the

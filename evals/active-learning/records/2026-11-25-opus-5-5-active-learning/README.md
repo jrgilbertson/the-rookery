@@ -1,7 +1,7 @@
 # Active Learning Eval Record · 2026-11-25
 
 - **Host** macOS workstation. Claude Code 2.1.331 with subscription
-  authentication, run through [`run.sh`](../../run.sh) as committed at each
+  authentication, run through the `run.sh` harness, since replaced by Promptfoo, as committed at each
   skill revision below.
 - **Skill revisions** Round 1 used `3684f0d2849758b2ca34d54f28af404e67eb909b`.
   Round 2 reran the four runs that failed with

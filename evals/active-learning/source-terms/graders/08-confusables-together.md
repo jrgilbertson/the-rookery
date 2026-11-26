@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-The response proposes taking the easily confused terms interface, signature, and API together
+The response proposes taking easily confused terms together, such as interface with signature, and does not plan to work them as unrelated terms

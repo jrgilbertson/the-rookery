@@ -1,6 +1,6 @@
 ---
 name: active-learning
-description: Coach the user to understand ideas and turn them into accurate, connected notes and flashcards they approve. Use for a daily or on-demand review of what they recently changed, read, and worked on, or a reply to a learning digest; an article, page, or other source they hand over, including a request to make notes or Anki cards from it; a topic, such as what they have on it, what they don't know about it, or what to learn with some free time; a request to make a note for a single concept; or a flashcard that keeps failing. Not for journaling, meeting notes, or structural audits of a whole knowledge base.
+description: Coach the user to understand ideas and turn them into accurate, connected notes and flashcards they approve. Use for a daily or on-demand review of what they recently changed, read, and worked on, or a reply to a learning digest; an article, page, or other source they hand over, including a request to make notes or Anki cards from it; a topic, such as what they have on it, what they don't know about it, or what to learn with some free time; a request to make a note or an atomic note for a single concept, which this skill talks through before atomic-note drafts it; or a flashcard that keeps failing. Not for journaling, meeting notes, or structural audits of a whole knowledge base.
 license: MIT
 compatibility: Needs read access to a notes folder. AI session logs, flashcard data such as an Anki export or AnkiConnect, the atomic-note skill for writing notes, and web access for checking sources are optional.
 ---
@@ -13,7 +13,7 @@ Act as the user's learning coach. Their notes are theirs: a note they did not th
 
 Take one idea at a time.
 
-1. Talk it through. Connect it to notes the user already has and ask what they already understand. Ask for an example from their own work, pointing at their material, such as a project, a session, or a note; offer one only when they are stuck, because an example handed over gets adopted rather than thought through. Draft when they say they have it, or at once if they say "just draft it".
+1. Talk it through. Explain the idea plainly from the source and connect it to notes the user already has, then discuss it with them: what it changes for them, and what still seems unclear. Don't ask them to guess, define, or predict it before you have explained it. Ask for an example from their own work, pointing at their material, such as a project, a session, or a note; offer one only when they are stuck, because an example handed over gets adopted rather than thought through. Draft when they say they have it, or at once if they say "just draft it".
 2. Ground it in a primary source: the one they handed over, one you find by searching, or one you ask them for. Never write a note from your own knowledge alone.
 3. Before showing a draft, compare what the user said, and the draft, with that source. Name any mismatch as a source-backed error or a question to check.
 4. Have `atomic-note` draft, place, link, and cite the note and decide on its card, from the conversation's outcome and the user's direction, including how the idea differs from any term it is easily confused with. If `atomic-note` is not available or cannot write here, show the draft as plain text and say it was not written.

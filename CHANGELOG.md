@@ -115,6 +115,11 @@ looked" surface. GitHub Releases mirror its entries.
   telling the operator. It leaves the review request on such a pull request
   open, because GitHub would attach the review to the unreviewed head, and it
   holds an edit to the design system itself.
+- The leverage rule's undo cost of 3 now names every stored or published
+  name: enum values, public API routes and fields, CLI flags, configuration
+  keys, and published package or skill names join tables, columns, stored
+  IDs, and event names. The review contract's score table now uses the rule's
+  own definitions.
 - `managing-issues` lets a Captain, under its standing instruction, update
   readiness and workflow labels, tighten Scope and Verification, raise
   verification effort or undo cost, and change confidence from code

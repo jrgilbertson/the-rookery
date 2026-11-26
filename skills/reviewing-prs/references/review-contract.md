@@ -79,10 +79,13 @@ Score a pull request from its raw diff, each factor 1 to 3:
 
 | Factor | 1 | 2 | 3 |
 | --- | --- | --- | --- |
-| Impact (I): how much better for users | Barely noticed | Clear improvement to something done often | Changes whether users can do a core task or trust the product |
-| Confidence (C): how sure it delivers | A guess | Good reasons, nothing confirmed | Confirmed |
-| Verification effort (V): how hard to confirm | Existing checks prove it | New tests or one manual check | Only human judgment can |
-| Undo cost (U): what undoing takes | Contained, can be put back | Wide, can be put back | Cannot be put back, or already reached someone |
+| Impact (I): how much better it makes things for users | Barely noticed | A clear improvement to something users do often | Changes whether most users can do a core task or trust the product with their work |
+| Confidence (C): how sure we are that we can do it and it will deliver | A guess | Good reasons but nothing confirmed | Confirmed |
+| Verification effort (V): how hard the result is to confirm | Existing checks prove it | Needs new tests or one manual check | Only human judgment can |
+| Undo cost (U): what it takes to undo | Contained and can be put back as it was | Wide but can be put back as it was | Can't, because the earlier state is lost or the effect has already reached someone |
+
+Work users don't see takes the impact of the problem it prevents or the
+feature it unblocks.
 
 Two anchors override how the pull request describes itself. A new view,
 flow, or concept that users will see is V = 3, however small the body says it

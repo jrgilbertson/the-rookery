@@ -92,6 +92,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-personal-crm` drops the Grok X sandbox-retry recovery path from
+  `references/grok-x-source.md`, so a sandbox network or session-state denial
+  marks X unavailable and dependent conclusions `Partial` rather than
+  instructing a host-approved retry (which Snyk Agent Scan flagged as `E004`
+  Critical Risk on `skills.sh`).
 - Leverage scoring has two fixed anchors. A new user-facing view, flow, or
   concept scores 3 on verification effort, and any stored or published name
   (table, column, stored ID, event name, or public API) scores 3 on undo

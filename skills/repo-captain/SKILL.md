@@ -157,7 +157,10 @@ if a marked session for this repository appears anywhere, or if a server
 could not be checked.
 
 A session that stands down says so once in its own reply, names the live
-Captain it found, writes nothing, and arms no further checks. Orca's
+Captain it found, and writes nothing. It stops its own wake timer, if one is
+running, so it is not woken again. Under Wake timer, a wake loop is its own
+only when the loop's command line shows this session's handle; it never
+stops the live Captain's timer. Orca's
 `exited` and `unverifiable` values describe dispatched workers, not the
 Captain's own chat, so this check does not use them.
 

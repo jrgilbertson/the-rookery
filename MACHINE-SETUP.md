@@ -59,13 +59,20 @@ on the paired dev machine from an Obsidian Headless copy, so the desktop app
 need not be open. Set Headless up on the dev machine only, because the desktop
 app's Sync and Headless Sync must not run on the same device. Follow the
 `obsidian-headless` skill to log in, connect a copy outside every repository,
-and keep it syncing with `ob sync --continuous` as a user service that starts
-at boot. Set the copy to `mirror-remote` mode (`ob sync-config --mode
-mirror-remote`), which downloads every change and reverts any change made on
-the dev machine, so the copy stays an exact read-only mirror. Notes are
-written on the workstation through the Obsidian CLI, because only the desktop
-app updates links when a note is renamed. Headless keeps each note's
-modification time, which is how the automation finds the day's changes.
+and sync it. Before starting continuous sync, set the copy to `mirror-remote` mode with
+`ob sync-config --path <copy> --mode mirror-remote`. That mode downloads every
+change and reverts any change made on the dev machine, so the copy stays an
+exact mirror of the vault. Then keep it syncing with `ob sync --continuous` as
+a user service, and run `loginctl enable-linger` so the service starts at boot
+and keeps running when you are logged out. Notes are written on the
+workstation through the Obsidian CLI, because only the desktop app updates
+links when a note is renamed.
+
+The mode is a guard against mistakes, not a security boundary. The
+automation's worker runs as the same user as the sync service, so an agent
+steered by a planted instruction could change the mode back. The worker
+reports the mode it finds, and Obsidian Sync's version history can restore
+changed or deleted notes.
 
 ## Impeccable
 

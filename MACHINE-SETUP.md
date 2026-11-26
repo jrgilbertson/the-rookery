@@ -32,7 +32,7 @@ npx skills add GoogleChrome/modern-web-guidance -g -y --skill modern-web-guidanc
 npx skills add harshaneel/humanize -g -y --skill ai-check
 npx skills add https://docs.stripe.com -g -y --skill connect-recommend connect-required-verification-information metronome stripe-apps stripe-best-practices stripe-directory stripe-docs stripe-implementation-planner stripe-pay stripe-projects
 npx skills add jrgilbertson/networked-thinking-skills -g -y --skill atomic-note atomic-note-audit managing-obsidian-tasks
-npx skills add jrgilbertson/the-rookery -g -y --skill checking-skill-portability coordinating-work daily-learning managing-issues managing-personal-crm personal-chief-of-staff repo-captain reviewing-meetings reviewing-prs storm-research
+npx skills add jrgilbertson/the-rookery -g -y --skill active-learning checking-skill-portability coordinating-work managing-issues managing-personal-crm personal-chief-of-staff repo-captain reviewing-meetings reviewing-prs storm-research
 npx skills add livekit/agent-skills -g -y --skill building-livekit-agents debugging-livekit-agents operating-livekit-agents reading-livekit-docs running-livekit-simulations testing-livekit-agents writing-livekit-scenarios
 npx skills add mattpocock/skills -g -y --skill codebase-design domain-modeling grill-me grill-with-docs grilling improve-codebase-architecture setup-matt-pocock-skills writing-for-agents
 npx skills add millionco/react-doctor -g -y --skill react-doctor
@@ -51,6 +51,28 @@ Modern Web Guidance sends anonymous usage telemetry, including the search
 queries agents write. These machines accept it. Its only switch,
 `DISABLE_TELEMETRY=1`, also turns off Claude Code's feature flags, which
 `/skill-doctor` needs.
+
+## Obsidian Headless
+
+The [Daily learning automation](automations/daily-learning.md) reads the vault
+on the paired dev machine from an Obsidian Headless copy, so the desktop app
+need not be open. Set Headless up on the dev machine only, because the desktop
+app's Sync and Headless Sync must not run on the same device. Follow the
+`obsidian-headless` skill to log in, connect a copy outside every repository,
+and sync it. Before starting continuous sync, set the copy to `mirror-remote` mode with
+`ob sync-config --path <copy> --mode mirror-remote`. That mode downloads every
+change and reverts any change made on the dev machine, so the copy stays an
+exact mirror of the vault. Then keep it syncing with `ob sync --continuous` as
+a user service, and run `loginctl enable-linger` so the service starts at boot
+and keeps running when you are logged out. Notes are written on the
+workstation through the Obsidian CLI, because only the desktop app updates
+links when a note is renamed.
+
+The mode is a guard against mistakes, not a security boundary. The
+automation's worker runs as the same user as the sync service, so an agent
+steered by a planted instruction could change the mode back. The worker
+reports the mode it finds, and Obsidian Sync's version history can restore
+changed or deleted notes.
 
 ## Impeccable
 

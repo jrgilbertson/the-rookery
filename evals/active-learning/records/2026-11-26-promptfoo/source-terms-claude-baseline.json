@@ -1,0 +1,334 @@
+{
+ "case": "source-terms",
+ "arm": "claude-baseline",
+ "context": {
+  "model": "claude-opus-5-5",
+  "runtime": "Claude Code 2.1.329 via Claude Agent SDK",
+  "effort": "high",
+  "working_directory": "<run>/workspaces/source-terms/claude-baseline"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "I just read the essay in ./article.md and want to actually learn the terms in it, not just collect them. Make atomic notes for them in my vault at ./vault."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/article.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t# Depth Over Breadth: Designing Modules for the Next Reader\n2\n3\tBy Priya Okafor · https://example.com/essays/depth-over-breadth\n4\n5\tMost advice about modules is about size. This essay argues that size is the wrong axis. What matters is how much a module asks of the people who call it, compared with how much it does for them.\n6\n7\t## Deep modules\n8\n9\tA deep module does a lot of work behind a small interface. The caller learns a handful of things and gets a great deal of behaviour in return. A file system is the classic example: open, read, write, close, and behind those four calls sit caching, scheduling, permissions, and recovery from crashes. Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.\n10\n11\t## Shallow modules\n12\n13\tA shallow module is the opposite: its interface is nearly as complicated as what it does. A class that wraps one database call behind a constructor, three setters, and an `execute` method makes every caller learn five things to save one line. Splitting code into many shallow modules adds interfaces without adding depth, and the total that readers must learn goes up.\n14\n15\t## Interface\n16\n17\tBy interface I do not mean a language keyword. A module's interface is everything a caller must know to use it correctly: the names and types of its operations, and also what each operation assumes, what it guarantees, what errors it raises, what order calls must come in, and how fast it is. Much of the interface is never written in code, which is why it is easy to underestimate.\n18\n19\t## Signature\n20\n21\tA signature is the part of the interface a compiler can check: an operation's name, its parameter types, and its return type. Two functions can share a signature and have very different interfaces, because the signature says nothing about side effects, ordering, or what happens on failure. Treating the signature as the whole interface is the most common way designers fool themselves into thinking a module is simple.\n22\n23\t## API\n24\n25\tAn API is an interface offered across a boundary to code you do not control, such as another team, another service, or the public. Every API is an interface, but not every interface is an API: the interface between two classes in the same package is not one. The distinction matters because an API is expensive to change. Once outside code depends on it, every part of its interface, including the unwritten parts, becomes a promise.\n26\n27\t## Information hiding\n28\n29\tDeep modules are built by information hiding: deciding which design decisions live inside the module and keeping them out of the interface. Every decision that leaks into the interface becomes something callers depend on and something you can no longer change freely.\n30\n31\t## Leaky abstractions\n32\n33\tAn abstraction leaks when callers must know about a hidden detail to use the module correctly, such as a remote call that is slow or fails in ways a local call never would. A leak quietly widens the interface: the detail was supposed to be hidden, but now every caller has to know it. Most leaks are not bugs in the code. They are parts of the interface the designer never admitted were there.\n34"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Glob",
+   "input": {
+    "pattern": "vault/**/*"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "vault/Atomic Notes/Idempotency Key.md\nvault/Atomic Notes/Exponential Backoff.md\nvault/Atomic Notes/HTTP 301 vs 302.md\nvault/Atomic Notes/Invariant.md\nvault/Atomic Notes/Ratchet (Engineering).md\nvault/Atomic Notes/CAP Theorem.md\nvault/Atomic Notes/Spaced Repetition.md\nvault/Reference Notes/HTTP Semantics RFC 9110.md\nvault/Reference Notes/Data Systems in Practice.md\nvault/Reference Notes/Learning That Lasts.md\nvault/Reference Notes/Small Interfaces.md\nvault/Reference Notes/Clipped - Webhook Delivery Checklist.md\nvault/Structure Notes/Distributed Systems.md\nvault/Structure Notes/Personal Learnings.md\nvault/Strategy/Personal Strategy.md\nvault/Journal/2026-11-22.md\nvault/Atomic Notes/Interface.md\nvault/Atomic Notes/API.md\nvault/Atomic Notes/Information Hiding.md\nvault/Structure Notes/Software Design.md\nvault/Structure Notes/Learning Science.md"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Interface.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-05-14\n3\t---\n4\n5\t# Interface\n6\n7\tAn interface is a language keyword, as in Java or TypeScript, that declares a set of method signatures a class promises to implement.\n8\n9\tIt is like a job description: it lists the duties, and any candidate who can do them all can take the job.\n10\n11\t`interface Shape { area(): number }` lets any class with an `area` method be passed where a `Shape` is expected.\n12\n13\tLinks: [[Software Design]]\n14\n15\t<!--ID: 1747200000007-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/API.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-05-14\n3\t---\n4\n5\t# API\n6\n7\tAn API is how programs talk to each other.\n8"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Information Hiding.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-02\n3\t---\n4\n5\t# Information Hiding\n6\n7\tInformation hiding is the practice of keeping a module's design decisions, such as its data layout or algorithm, inside the module, so callers cannot come to depend on them and the decisions can change without breaking anyone.\n8\n9\tIt is like a restaurant kitchen behind a pass: diners order from the menu and never see, or rely on, how the cooks organise the line.\n10\n11\tA date library stores timestamps as nanoseconds internally but exposes only `before`, `after`, and `format`, so switching to microseconds later breaks no caller.\n12\n13\tLinks: [[Software Design]], [[Small Interfaces]]\n14\n15\t<!--ID: 1748800000008-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Structure Notes/Software Design.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-02\n3\t---\n4\n5\t# Software Design\n6\n7\t- [[Information Hiding]]\n8\t- [[Interface]]\n9\t- [[API]]\n10\n11\t## Open Questions\n12\n13\t- Why do some small modules feel harder to use than one big one?\n14"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Reference Notes/Small Interfaces.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-03\n3\t---\n4\n5\t# Small Interfaces\n6\n7\tAuthor: Ines Varga\n8\n9\t## Highlights\n10\n11\t- \"The best modules are those whose interfaces are much simpler than their implementations.\"\n12\t- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n13"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Invariant.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-22\n3\t---\n4\n5\t# Invariant\n6\n7\tAn invariant is a condition that stays true for the whole lifetime of a system or data structure, no matter which operations run.\n8"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Reference Notes/Learning That Lasts.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-20\n3\t---\n4\n5\t# Learning That Lasts\n6\n7\tAuthor: Tobias Renner\n8\n9\t## Highlights\n10\n11\t### Added 2026-11-20\n12\n13\t- \"Trying to solve a problem before being taught the solution leads to better learning, even when errors are made in the attempt.\"\n14\t- \"Rereading text and massed practice are by far the preferred study strategies of learners, but they are also among the least productive.\"\n15\t- \"Interleaving the practice of two or more subjects feels slower than massed practice, yet produces better long-term retention and discrimination.\"\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Strategy/Personal Strategy.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-01\n3\t---\n4\n5\t# Personal Strategy\n6\n7\t## Priorities this quarter\n8\n9\t1. Finish the draft chapters of my book on learning systems. Evidence about how people learn matters most here.\n10\t2. Get properly fluent in distributed systems design, enough to review a design doc with confidence.\n11\t3. Rebuild a daily Anki habit: small blocks, every day.\n12\n13\t## Not now\n14\n15\t- Polishing developer tooling and build configuration beyond what a task needs.\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Spaced Repetition.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-07-12\n3\t---\n4\n5\t# Spaced Repetition\n6\n7\tSpaced repetition is a review schedule that shows an item again just before you would forget it, with the gap growing after each successful recall.\n8\n9\tIt is like watering a plant less often as its roots deepen.\n10\n11\tA card recalled correctly today returns in 3 days, then 8, then 20. A card missed returns tomorrow.\n12\n13\tLinks: [[Retrieval Practice]]\n14\n15\t<!--ID: 1752300000006-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Idempotency Key.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-10-06\n3\t---\n4\n5\t# Idempotency Key\n6\n7\tAn idempotency key is a unique value a client attaches to a request so the server can recognise a repeat of that request and return the first result instead of performing the work again.\n8\n9\tIt works like a coat-check ticket: hand over the same ticket twice and you get the same coat, not a second one.\n10\n11\tA checkout page generates one key per purchase attempt. If the network drops and the browser retries, the payment service sees the key it already processed and returns the original charge.\n12\n13\tLinks: [[Exponential Backoff]], [[Distributed Systems]]\n14\n15\t<!--ID: 1759700000001-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Structure Notes/Personal Learnings.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-10\n3\t---\n4\n5\t# Personal Learnings\n6\n7\t- I keep what I have explained in my own words. Highlights I only skim are gone in a week.\n8\t- When I skip Anki for three days the backlog feels too big to start, and I stop altogether.\n9\t- I collect far more reading highlights than I ever turn into notes.\n10"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Journal/2026-11-22.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-22\n3\t---\n4\n5\t# 2026-11-22\n6\n7\tLong day on the webhook bug. Skipped Anki again. Read some of Data Systems in Practice on the train.\n8"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Reference Notes/Data Systems in Practice.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-22\n3\t---\n4\n5\t# Data Systems in Practice\n6\n7\tAuthor: Mara Ellison\n8\n9\t## Highlights\n10\n11\t### Added 2026-10-02\n12\n13\t- \"A fault is usually defined as one component of the system deviating from its spec, whereas a failure is when the system as a whole stops providing the required service to the user.\"\n14\n15\t### Added 2026-11-22\n16\n17\t- \"If you want to be sure a message is processed, you have to retry, and retries mean the consumer may see the same message twice. At-least-once delivery plus idempotent processing gives the effect of exactly-once.\"\n18\t- \"Even if every individual message is processed exactly once in the stream processor, a side effect such as sending an email cannot be rolled back, so the outside world may still see it twice.\"\n19\t- \"A fencing token is a number that increases every time a lock is granted; the storage service rejects any write carrying an older token.\"\n20"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Deep Module.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Deep Module\n\nA deep module does a lot of work behind a small interface, so callers learn a few things and get a great deal of behaviour in return. Depth is a ratio of what the module does to what its interface asks of callers, so you can only call a module deep once you know its whole interface, not just its signatures.\n\nIt is like a light switch: one control, and behind it sit the wiring, the breakers, and the power grid, none of which you have to think about.\n\nUnix file I/O is the classic case. Callers learn `open`, `read`, `write`, and `close`. Behind those four calls sit caching, disk scheduling, permissions, and crash recovery.\n\nLinks: [[Shallow Module]], [[Interface]], [[Information Hiding]], [[Software Design]], [[Small Interfaces]], [[Depth Over Breadth]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Shallow Module.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Shallow Module\n\nA shallow module has an interface nearly as complicated as the work it does, so callers spend almost as much effort learning it as they save by using it. Splitting code into many shallow modules adds interfaces without adding depth, so the total amount readers must learn goes up.\n\nIt is like hiring an assistant who needs as many instructions as it would take to do the job yourself.\n\nA class wraps one database query behind a constructor, three setters, and an `execute` method. Every caller has to learn five things to save one line of code.\n\nLinks: [[Deep Module]], [[Interface]], [[Software Design]], [[Depth Over Breadth]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Signature.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Signature\n\nA signature is the part of an interface a compiler can check: an operation's name, its parameter types, and its return type. It says nothing about side effects, call order, or what happens on failure, so two functions with the same signature can have very different interfaces.\n\nIt is like the label on a jar: it gives the name and the weight, but not whether the contents have gone off or need to be refrigerated once opened.\n\n`save(user: User): void` could write to an in-memory map, or it could call a remote database that can time out and only works after `connect()`. The signature is the same, but the interfaces are very different.\n\nLinks: [[Interface]], [[Software Design]], [[Depth Over Breadth]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Leaky Abstraction.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Leaky Abstraction\n\nAn abstraction leaks when callers have to know about a detail it was meant to hide in order to use it correctly. A leak quietly widens the interface, because now every caller has to learn that detail. Most leaks are not bugs. They are parts of the interface the designer never admitted were there.\n\nIt is like a rental car that pulls to the left: you were told you only need to steer, but now every driver has to know about the wheel alignment.\n\nAn ORM makes `user.orders` look like a field read, but each access runs a database query. Loop over 1,000 users and you make 1,000 queries, so callers need to know about the database after all.\n\nLinks: [[Information Hiding]], [[Interface]], [[Deep Module]], [[Software Design]], [[Depth Over Breadth]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Interface.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Interface\n\nA module's interface is everything a caller must know to use it correctly. That includes the names and types of its operations, and also what each one assumes, what it guarantees, which errors it raises, what order calls must come in, and how fast it is. Much of an interface is never written in code, which makes it easy to underestimate. This is broader than the `interface` keyword in Java or TypeScript, which only declares [[Signature|signatures]].\n\nIt is like a full job description, not just the list of duties: it also covers the hours, who you report to, and what gets you fired. A candidate who reads only the duties will get surprised.\n\n`withdraw(amount)` takes a number and returns nothing. Its interface also says the amount must be positive, that it throws `InsufficientFunds`, that `open()` must be called first, and that it makes a network call that can take seconds.\n\nLinks: [[Signature]], [[API]], [[Information Hiding]], [[Leaky Abstraction]], [[Deep Module]], [[Software Design]], [[Depth Over Breadth]]\n\n<!--ID: 1747200000007-->\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/API.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# API\n\nAn API is an interface offered across a boundary to code you don't control, such as another team, another service, or the public. Every API is an interface, but an interface between two classes in the same package is not an API. APIs are expensive to change: once outside code depends on one, every part of its interface becomes a promise, including the parts that were never written down.\n\nIt is like a published train timetable compared with the crew's internal rota. The crew can reshuffle the rota freely, but once passengers plan around the timetable, any change breaks their plans.\n\nA payments service happens to return transactions sorted by date, though its docs never say so. Partner code starts relying on that order, so changing the sort becomes a breaking change.\n\nLinks: [[Interface]], [[Information Hiding]], [[Software Design]], [[Depth Over Breadth]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Information Hiding.md",
+    "old_string": "Links: [[Software Design]], [[Small Interfaces]]",
+    "new_string": "Links: [[Deep Module]], [[Leaky Abstraction]], [[Interface]], [[Software Design]], [[Small Interfaces]], [[Depth Over Breadth]]"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Edit has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Atomic Notes/Information Hiding.md",
+    "old_string": "updated: 2026-06-02",
+    "new_string": "updated: 2026-11-26"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Edit has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Structure Notes/Software Design.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Software Design\n\n- [[Information Hiding]]\n- [[Interface]]\n- [[Signature]]\n- [[API]]\n- [[Deep Module]]\n- [[Shallow Module]]\n- [[Leaky Abstraction]]\n\n## Open Questions\n\n- Why do some small modules feel harder to use than one big one?\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<run>/workspaces/source-terms/claude-baseline/vault/Reference Notes/Depth Over Breadth.md",
+    "content": "---\nupdated: 2026-11-26\n---\n\n# Depth Over Breadth\n\nAuthor: Priya Okafor\nSource: https://example.com/essays/depth-over-breadth\n\n## Highlights\n\n### Added 2026-11-26\n\n- \"Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.\"\n- \"Splitting code into many shallow modules adds interfaces without adding depth, and the total that readers must learn goes up.\"\n- \"Treating the signature as the whole interface is the most common way designers fool themselves into thinking a module is simple.\"\n- \"Most leaks are not bugs in the code. They are parts of the interface the designer never admitted were there.\"\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Permission to use Write has been denied because Claude Code is running in don't ask mode. IMPORTANT: You *may* attempt to accomplish this action using other tools that might naturally be used to accomplish this goal, e.g. using head instead of cat. But you *should not* attempt to work around this denial in malicious ways, e.g. do not use your ability to run tests to execute non-test actions. You should only try to work around this restriction in reasonable ways that do not attempt to bypass the intent behind this denial. If you believe this capability is essential to complete the user's request, STOP and explain to the user what you were trying to do and why you need this permission. Let the user decide how to proceed."
+  },
+  {
+   "role": "assistant",
+   "content": "I couldn't write anything to your vault. Claude Code is in \"don't ask\" mode, and it blocked every file write and edit, so no files have changed. The notes are drafted and ready to save.\n\n**What I'd save**, following the layout of your existing notes (a definition, then a comparison, then a concrete example, then `Links:`):\n\nNew notes in `Atomic Notes/`:\n- **Deep Module**: lots of work behind a small interface. \"Deep\" compares what a module does with what callers have to learn. Example: Unix file I/O (open, read, write, close).\n- **Shallow Module**: the interface is nearly as complicated as what the module does. Example from the essay: a class wrapping one database call that makes callers learn five things to save one line.\n- **Signature**: the part of an interface the compiler can check (name, parameter types, return type). It says nothing about side effects, call order or failures.\n- **Leaky Abstraction**: callers have to know a detail that was supposed to be hidden. Example: a database library where `user.orders` looks like a field but runs a query each time.\n\nChanges to existing notes:\n- **Interface**: your current note defines it as the Java/TypeScript keyword, and the essay explicitly says that's not what it means. I'd rewrite it to the broader meaning: everything a caller must know, including assumptions, errors, call order and speed. I'd keep your job-description comparison and stretch it to fit. I'd also keep the `<!--ID: 1747200000007-->` line, so your existing Anki card gets updated rather than duplicated.\n- **API**: your note is currently one line. I'd expand it to \"an interface offered across a boundary to code you don't control,\" plus why that makes it expensive to change.\n- **Information Hiding**: no change to the definition. I'd only add links to Deep Module and Leaky Abstraction.\n- **Software Design** (in `Structure Notes/`): add the four new terms.\n- **Depth Over Breadth** (new file in `Reference Notes/`): author, URL, and four key quotes, in the same format as Small Interfaces.\n\nThe new notes don't have Anki IDs. I assumed your sync plugin adds them, so I didn't make any up.\n\nTo let me save these, allow Write and Edit for the `vault/` folder (or switch out of \"don't ask\" mode), and I'll write them as drafted.\n\nOne suggestion: your Software Design note has the open question \"Why do some small modules feel harder to use than one big one?\" The essay answers it, so it might be worth writing the answer yourself before reading the Shallow Module note. Your Personal Learnings note says what you explain in your own words is what sticks."
+  }
+ ]
+}

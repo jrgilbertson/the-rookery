@@ -1,0 +1,169 @@
+{
+ "case": "free-time",
+ "arm": "with_skill",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.331 via claude -p",
+  "working_directory": "<workspace>"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "I've got about half an hour free. What should I learn? My vault is ./vault."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Skill",
+   "input": {
+    "skill": "al:active-learning",
+    "args": "I've got about half an hour free. What should I learn? My vault is ./vault."
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "Launching skill: al:active-learning"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Grep",
+   "input": {
+    "pattern": "^#+\\s*(Open Questions|To Explore)",
+    "path": "vault",
+    "-i": true,
+    "output_mode": "content"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "vault/Structure Notes/Distributed Systems.md:11:## Open Questions\nvault/Structure Notes/Learning Science.md:9:## Open Questions\nvault/Structure Notes/Learning Science.md:13:## To Explore\nvault/Structure Notes/Software Design.md:11:## Open Questions"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Glob",
+   "input": {
+    "pattern": "**/*.md",
+    "path": "vault"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "vault/Atomic Notes/API.md\nvault/Atomic Notes/Interface.md\nvault/Atomic Notes/Information Hiding.md\nvault/Structure Notes/Software Design.md\nvault/Reference Notes/Small Interfaces.md\nvault/Atomic Notes/Spaced Repetition.md\nvault/Atomic Notes/CAP Theorem.md\nvault/Structure Notes/Learning Science.md\nvault/Reference Notes/HTTP Semantics RFC 9110.md\nvault/Atomic Notes/HTTP 301 vs 302.md\nvault/Atomic Notes/Idempotency Key.md\nvault/Atomic Notes/Exponential Backoff.md\nvault/Structure Notes/Distributed Systems.md\nvault/Strategy/Personal Strategy.md\nvault/Structure Notes/Personal Learnings.md\nvault/Reference Notes/Learning That Lasts.md\nvault/Journal/2026-11-22.md\nvault/Atomic Notes/Ratchet (Engineering).md\nvault/Atomic Notes/Invariant.md\nvault/Reference Notes/Clipped - Webhook Delivery Checklist.md\nvault/Reference Notes/Data Systems in Practice.md"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Structure Notes/Distributed Systems.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-10-09\n3\t---\n4\n5\t# Distributed Systems\n6\n7\t- [[CAP Theorem]]\n8\t- [[Idempotency Key]]\n9\t- [[Exponential Backoff]]\n10\n11\t## Open Questions\n12\n13\t- When is exactly-once delivery actually achievable, and when is it only \"effectively once\"?\n14\t- How does a lease differ from a lock once clocks drift?\n15"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Structure Notes/Learning Science.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-09-01\n3\t---\n4\n5\t# Learning Science\n6\n7\t- [[Spaced Repetition]]\n8\n9\t## Open Questions\n10\n11\t- Does writing a note by hand teach more than editing a draft someone else wrote?\n12\n13\t## To Explore\n14\n15\t- Interleaving: why mixing topics in practice feels slower but sticks better\n16\t- Desirable difficulties\n17\t- The generation effect\n18"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Structure Notes/Software Design.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-02\n3\t---\n4\n5\t# Software Design\n6\n7\t- [[Information Hiding]]\n8\t- [[Interface]]\n9\t- [[API]]\n10\n11\t## Open Questions\n12\n13\t- Why do some small modules feel harder to use than one big one?\n14"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Structure Notes/Personal Learnings.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-10\n3\t---\n4\n5\t# Personal Learnings\n6\n7\t- I keep what I have explained in my own words. Highlights I only skim are gone in a week.\n8\t- When I skip Anki for three days the backlog feels too big to start, and I stop altogether.\n9\t- I collect far more reading highlights than I ever turn into notes.\n10"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Strategy/Personal Strategy.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-01\n3\t---\n4\n5\t# Personal Strategy\n6\n7\t## Priorities this quarter\n8\n9\t1. Finish the draft chapters of my book on learning systems. Evidence about how people learn matters most here.\n10\t2. Get properly fluent in distributed systems design, enough to review a design doc with confidence.\n11\t3. Rebuild a daily Anki habit: small blocks, every day.\n12\n13\t## Not now\n14\n15\t- Polishing developer tooling and build configuration beyond what a task needs.\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Journal/2026-11-22.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-22\n3\t---\n4\n5\t# 2026-11-22\n6\n7\tLong day on the webhook bug. Skipped Anki again. Read some of Data Systems in Practice on the train.\n8"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Reference Notes/Learning That Lasts.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-20\n3\t---\n4\n5\t# Learning That Lasts\n6\n7\tAuthor: Tobias Renner\n8\n9\t## Highlights\n10\n11\t### Added 2026-11-20\n12\n13\t- \"Trying to solve a problem before being taught the solution leads to better learning, even when errors are made in the attempt.\"\n14\t- \"Rereading text and massed practice are by far the preferred study strategies of learners, but they are also among the least productive.\"\n15\t- \"Interleaving the practice of two or more subjects feels slower than massed practice, yet produces better long-term retention and discrimination.\"\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Reference Notes/Data Systems in Practice.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-22\n3\t---\n4\n5\t# Data Systems in Practice\n6\n7\tAuthor: Mara Ellison\n8\n9\t## Highlights\n10\n11\t### Added 2026-10-02\n12\n13\t- \"A fault is usually defined as one component of the system deviating from its spec, whereas a failure is when the system as a whole stops providing the required service to the user.\"\n14\n15\t### Added 2026-11-22\n16\n17\t- \"If you want to be sure a message is processed, you have to retry, and retries mean the consumer may see the same message twice. At-least-once delivery plus idempotent processing gives the effect of exactly-once.\"\n18\t- \"Even if every individual message is processed exactly once in the stream processor, a side effect such as sending an email cannot be rolled back, so the outside world may still see it twice.\"\n19\t- \"A fencing token is a number that increases every time a lock is granted; the storage service rejects any write carrying an older token.\"\n20"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "vault/Reference Notes/Small Interfaces.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-03\n3\t---\n4\n5\t# Small Interfaces\n6\n7\tAuthor: Ines Varga\n8\n9\t## Highlights\n10\n11\t- \"The best modules are those whose interfaces are much simpler than their implementations.\"\n12\t- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n13"
+  },
+  {
+   "role": "assistant",
+   "content": "Here's what your vault has queued up. Pick one and we'll work through it together.\n\n**From your Open Questions and To Explore lists:**\n\n1. **When is exactly-once delivery actually achievable, and when is it only \"effectively once\"?** *(Distributed Systems, open question)*\n2. **How does a lease differ from a lock once clocks drift?** *(Distributed Systems, open question)*\n3. **Why do some small modules feel harder to use than one big one?** *(Software Design, open question)*\n4. **Interleaving: why mixing topics feels slower but sticks better** *(Learning Science, To Explore)*\n5. **The generation effect** *(Learning Science, To Explore)*\n\n(Also on those lists: whether writing a note by hand teaches more than editing someone else's draft, and desirable difficulties.)\n\n**I'd start with #1, exactly-once delivery.** Getting fluent in distributed systems is your second priority this quarter. You saved three highlights on it from *Data Systems in Practice* on the 22nd, the same day you spent on the webhook bug, so you have a fresh source and a real example from your own work. It also builds on your existing [[Idempotency Key]] note, and it fits in 30 minutes. Your fencing-token highlight from that day leads into #2 if you have time left.\n\nIf you'd rather work on the book, #4 and #5 both have highlights waiting in *Learning That Lasts*.\n\nWhich one do you want?"
+  }
+ ]
+}

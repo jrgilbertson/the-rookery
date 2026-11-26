@@ -1,0 +1,100 @@
+{
+ "case": "single-note",
+ "arm": "without_skill",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.331 via claude -p",
+  "working_directory": "<workspace>"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "Make an atomic note for backpressure. My vault is ./vault."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cd vault && find . -type f -not -path './.obsidian/*' | head -50 && echo --- && find . -iname '*backpressure*' -o -iname '*back-pressure*'; ls -a",
+    "description": "List vault files and check for existing backpressure notes"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "./Journal/2026-11-22.md\n./Atomic Notes/Exponential Backoff.md\n./Atomic Notes/HTTP 301 vs 302.md\n./Atomic Notes/API.md\n./Atomic Notes/Idempotency Key.md\n./Atomic Notes/Ratchet (Engineering).md\n./Atomic Notes/Invariant.md\n./Atomic Notes/Spaced Repetition.md\n./Atomic Notes/CAP Theorem.md\n./Atomic Notes/Information Hiding.md\n./Atomic Notes/Interface.md\n./Structure Notes/Learning Science.md\n./Structure Notes/Personal Learnings.md\n./Structure Notes/Software Design.md\n./Structure Notes/Distributed Systems.md\n./.git/config\n./.git/objects/50/be1d51ae4670d289594dea20cbc0fd214430dc\n./.git/objects/57/3b1a7a738b8ae54ad92a09612884599b2fad36\n./.git/objects/6a/c3bd4b50443a9353532716e87e60bf746d781f\n./.git/objects/56/2080f2aca7f4515dddf79492b8d4c33ff61036\n./.git/objects/3d/89766d3fa04b0769554e26f57c591dd05a377b\n./.git/objects/93/43660c8a27e63df99c8e81e3982050410bf63a\n./.git/objects/93/6530bd39485b1c06d9eed7e428ff837b240acd\n./.git/objects/9c/e1f94a6735bd7e57905cbfdbfb673ff9c8b3e5\n./.git/objects/d9/dc628ef9eaad3503e079a8a59024816691c452\n./.git/objects/a2/bde4569be1763c606c09358b4873c98a16c726\n./.git/objects/a2/1533e5b31131a814294e072f2940bdc4aa413b\n./.git/objects/bd/2b84efbd1e4c1792360a4e3b16b9b22d7f9147\n./.git/objects/d8/56841f424668706b569aaa73be6a5dbd34539d\n./.git/objects/c0/015851a234a74cf6b289037cf4f44c7a277590\n./.git/objects/fc/3bd74f61c5d0a765ecc2ef2aa8a1d472a6cd21\n./.git/objects/f2/3e6c2f5d68021cae1100eb27dc06ecd3f79bb6\n./.git/objects/20/19caaa89da62e9166273b674b0f5883ee5d158\n./.git/objects/29/e2567bf9d49aafdb80a7ece79ac2c30f6c3b98\n./.git/objects/45/de2a042065116d45137eee49a7235e82937271\n./.git/objects/45/b1b272468c540c8dfead6c08457dda76af5a94\n./.git/objects/73/c56897d722349703ff6c69cd96375ac7f3a08e\n./.git/objects/19/832bb10849599843b29bcf3ebf529056b84b47\n./.git/objects/81/a52e114fa3c18acbed520064ec634c053ba69e\n./.git/objects/86/cfad77998fc4458ff12b3c377988469505f801\n./.git/objects/9f/62edb0679d3b915a282cbd4a25510e56938506\n./.git/objects/07/cdcb0e227255a72ffc87eb152f2d7aaff478b8\n./.git/objects/07/6cd821fe44ccf66e70ef4abd71e765b7bb839d\n./.git/objects/00/3b16d3a50a2352f8e12f1b63dc6f80965993f0\n./.git/objects/00/f8e7938e5ed62dd1990bbe31b969b0bc2cf3cb\n./.git/objects/65/b0baf658efedb3eafe00e10b1d9077068c3bbe\n./.git/objects/62/bc3b9d3a10ef85319f868b0eb3a0315beb5743\n./.git/objects/5b/c6e193a150cce0265619cc50a32931ea3c500b\n./.git/objects/6c/ae709ae343cce57b7c30d339f60eaf2afd1730\n./.git/objects/6c/b72a201b3fe585620031e3c056f1048dc5f6d1\n---\n.\n..\n.git\nAtomic Notes\nJournal\nReference Notes\nStrategy\nStructure Notes"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "ls -R Strategy \"Reference Notes\"; for f in \"Atomic Notes/Exponential Backoff.md\" \"Atomic Notes/Idempotency Key.md\" \"Structure Notes/Distributed Systems.md\" \"Journal/2026-11-22.md\"; do echo \"=== $f\"; cat \"$f\"; done; git log --oneline | head",
+    "description": "Read sample notes and vault conventions"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "A variable in this command can't be checked before it runs"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "ls -R Strategy \"Reference Notes\"; cat \"Atomic Notes/Exponential Backoff.md\"; echo ===; cat \"Atomic Notes/Idempotency Key.md\"; echo ===; cat \"Structure Notes/Distributed Systems.md\"; echo ===; cat \"Journal/2026-11-22.md\"; echo ===; git log --oneline | head",
+    "description": "Read sample notes and vault conventions"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "Reference Notes:\nClipped - Webhook Delivery Checklist.md\nData Systems in Practice.md\nHTTP Semantics RFC 9110.md\nLearning That Lasts.md\nSmall Interfaces.md\n\nStrategy:\nPersonal Strategy.md\n---\nupdated: 2026-10-09\n---\n\n# Exponential Backoff\n\nExponential backoff is a retry policy in which a client waits longer after each failed attempt, usually doubling the delay, so a struggling service gets room to recover.\n\nIt is like knocking on a door, then waiting twice as long before each further knock.\n\nA client that fails at 1s waits 2s, then 4s, then 8s, up to a cap. Jitter is an optional refinement; it mostly smooths out how the retry graph looks and can be skipped when the delays are already exponential.\n\nLinks: [[Idempotency Key]], [[Distributed Systems]]\n\n<!--ID: 1759900000002-->\n===\n---\nupdated: 2026-10-06\n---\n\n# Idempotency Key\n\nAn idempotency key is a unique value a client attaches to a request so the server can recognise a repeat of that request and return the first result instead of performing the work again.\n\nIt works like a coat-check ticket: hand over the same ticket twice and you get the same coat, not a second one.\n\nA checkout page generates one key per purchase attempt. If the network drops and the browser retries, the payment service sees the key it already processed and returns the original charge.\n\nLinks: [[Exponential Backoff]], [[Distributed Systems]]\n\n<!--ID: 1759700000001-->\n===\n---\nupdated: 2026-10-09\n---\n\n# Distributed Systems\n\n- [[CAP Theorem]]\n- [[Idempotency Key]]\n- [[Exponential Backoff]]\n\n## Open Questions\n\n- When is exactly-once delivery actually achievable, and when is it only \"effectively once\"?\n- How does a lease differ from a lock once clocks drift?\n===\n---\nupdated: 2026-11-22\n---\n\n# 2026-11-22\n\nLong day on the webhook bug. Skipped Anki again. Read some of Data Systems in Practice on the train.\n===\n12d8765 vault backup 2026-11-22\n7a2989d vault backup 2026-11-20\nff6f733 vault backup 2026-11-10\n65b0baf vault backup 2026-11-01\n936530b vault backup 2026-10-09\nd9dc628 vault backup 2026-10-06\n81a52e1 vault backup 2026-09-18\n8dd18e8 vault backup 2026-09-17\nb6b74f7 vault backup 2026-09-01\n83647f9 vault backup 2026-08-30"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "grep -rni -e 'back.\\?pressure' -e 'ID:' --include='*.md' . ; echo ===; cat \"Reference Notes/Data Systems in Practice.md\"; echo ===; cat \"Strategy/Personal Strategy.md\"; echo ===; cat \"Atomic Notes/Ratchet (Engineering).md\"",
+    "description": "Search for backpressure mentions and note IDs"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "./Atomic Notes/Exponential Backoff.md:15:<!--ID: 1759900000002-->\n./Atomic Notes/HTTP 301 vs 302.md:15:<!--ID: 1758100000003-->\n./Atomic Notes/Idempotency Key.md:15:<!--ID: 1759700000001-->\n./Atomic Notes/Ratchet (Engineering).md:15:<!--ID: 1763800000004-->\n./Atomic Notes/Spaced Repetition.md:15:<!--ID: 1752300000006-->\n./Atomic Notes/CAP Theorem.md:18:<!--ID: 1756500000005-->\n./Atomic Notes/Information Hiding.md:15:<!--ID: 1748800000008-->\n./Atomic Notes/Interface.md:15:<!--ID: 1747200000007-->\n===\n---\nupdated: 2026-11-22\n---\n\n# Data Systems in Practice\n\nAuthor: Mara Ellison\n\n## Highlights\n\n### Added 2026-10-02\n\n- \"A fault is usually defined as one component of the system deviating from its spec, whereas a failure is when the system as a whole stops providing the required service to the user.\"\n\n### Added 2026-11-22\n\n- \"If you want to be sure a message is processed, you have to retry, and retries mean the consumer may see the same message twice. At-least-once delivery plus idempotent processing gives the effect of exactly-once.\"\n- \"Even if every individual message is processed exactly once in the stream processor, a side effect such as sending an email cannot be rolled back, so the outside world may still see it twice.\"\n- \"A fencing token is a number that increases every time a lock is granted; the storage service rejects any write carrying an older token.\"\n===\n---\nupdated: 2026-11-01\n---\n\n# Personal Strategy\n\n## Priorities this quarter\n\n1. Finish the draft chapters of my book on learning systems. Evidence about how people learn matters most here.\n2. Get properly fluent in distributed systems design, enough to review a design doc with confidence.\n3. Rebuild a daily Anki habit: small blocks, every day.\n\n## Not now\n\n- Polishing developer tooling and build configuration beyond what a task needs.\n===\n---\nupdated: 2026-11-22\n---\n\n# Ratchet (Engineering)\n\nA ratchet is a mechanism that lets a measured quality move in only one direction: it records the best value reached so far and rejects any change that would make it worse.\n\nIt is like a socket wrench, which turns freely one way and locks the other.\n\nA build stores the current count of lint warnings in a file. A pull request that raises the count fails, and one that lowers it updates the stored number, so the codebase can only get cleaner.\n\nLinks: [[Continuous Integration]]\n\n<!--ID: 1763800000004-->"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/Backpressure.md",
+    "content": "---\nupdated: 2026-11-25\n---\n\n# Backpressure\n\nBackpressure is a signal that flows from a slow consumer back to its producer, telling the producer to slow down so work does not pile up faster than it can be handled.\n\nIt is like a kitchen pass with room for only six plates: when it is full, the cooks stop plating until a server carries some away, instead of stacking dishes on the floor.\n\nA log shipper writes events into a bounded queue that holds 10,000 entries. When the indexer falls behind and the queue fills, the shipper's writes block, so it reads from its source more slowly. Without that limit the queue would grow until the process ran out of memory and lost everything in it.\n\nLinks: [[Exponential Backoff]], [[Distributed Systems]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "File created successfully at: <workspace>/vault/Atomic Notes/Backpressure.md (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Structure Notes/Distributed Systems.md",
+    "old_string": "updated: 2026-10-09\n---\n\n# Distributed Systems\n\n- [[CAP Theorem]]\n- [[Idempotency Key]]\n- [[Exponential Backoff]]",
+    "new_string": "updated: 2026-11-25\n---\n\n# Distributed Systems\n\n- [[CAP Theorem]]\n- [[Idempotency Key]]\n- [[Exponential Backoff]]\n- [[Backpressure]]"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Structure Notes/Distributed Systems.md has been updated successfully."
+  },
+  {
+   "role": "assistant",
+   "content": "I added `Atomic Notes/Backpressure.md`, laid out like your other atomic notes: frontmatter with the date, a one-sentence definition, an analogy, a concrete example and a links line.\n\n- **Definition:** a signal that flows from a slow consumer back to its producer, telling it to slow down so work doesn't pile up faster than it can be handled.\n- **Analogy:** a kitchen pass with room for only six plates. When it's full, the cooks stop plating instead of stacking dishes on the floor.\n- **Example:** a log shipper writes into a queue capped at 10,000 entries. When the indexer falls behind, the shipper's writes block until there's room. Without the cap, the queue would grow until the process ran out of memory and lost everything in it.\n- **Links:** `[[Exponential Backoff]]` and `[[Distributed Systems]]`. I also added `[[Backpressure]]` to the Distributed Systems structure note and updated its date.\n\nI didn't add an `<!--ID: ...-->` line. Those look like Anki-sync IDs, which your sync plugin should add the next time you run it.\n\nYour **Exponential Backoff** note says jitter \"mostly smooths out how the retry graph looks and can be skipped.\" That's wrong. Without jitter, clients that failed at the same moment all retry at the same moment, and they keep hitting the struggling service in waves. I didn't change that note, but you may want to fix it before it becomes a flashcard."
+  }
+ ]
+}

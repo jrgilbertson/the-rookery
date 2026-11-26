@@ -1,0 +1,9 @@
+{
+  "name": "rookery-active-learning-eval",
+  "private": true,
+  "engines": { "node": ">=22.22.0" },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "0.3.329",
+    "promptfoo": "0.126.0"
+  }
+}

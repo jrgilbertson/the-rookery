@@ -52,19 +52,28 @@ looked" surface. GitHub Releases mirror its entries.
   nothing and removes the operator from a review request. It never merges or
   changes a label: the session that owns a pull request acts on its verdict.
   Synthetic Skill Eval cases are under `evals/reviewing-prs/`.
+- `CONCEPTS.md` is rewritten in plainer words, with every entry readable on
+  its own and no meaning changed. It adds Knowledge Frontier, the ideas just
+  beyond what a learner's notes cover, and renames the model-routing Frontier
+  to Pareto Frontier.
 - `CONCEPTS.md` defines Review Round, verdict, and PR Review Labels
   (`review:held`, `review:auto-merged`, `review:human-merged`).
 - `docs/adr/001-verdict-trust-by-convention.md` records why a verdict comment
   and a pull request's `Owner:` line are trusted by convention while every
   agent shares the operator's GitHub login, and what would replace them.
-- `daily-learning`, a portable skill and paired daily Orca automation
-  (`automations/daily-learning.md`). The skill coaches a learning habit from
-  recent notes, reading highlights, AI sessions, and flashcards: a review that
-  changes nothing and recommends at most five items, then recall-first help
-  writing the ones the user picks, with each change approved first. The
-  automation reads the last day's vault mirror, local and paired remote AI
-  sessions, and Anki status, uses the shared run history to see patterns across
-  days, and takes replies in the run's own chat.
+- `active-learning`, a portable learning-coach skill and paired daily Orca
+  automation (`automations/daily-learning.md`). The skill talks each idea
+  through with the user, checks it against a primary source, and has
+  `atomic-note` write the notes and cards they approve. It takes recent
+  activity, a source the user hands over, a topic (a frontier of what they
+  don't know yet, or picks for free time), a single concept, or a failing
+  flashcard. The automation reads the last day's vault changes from an
+  Obsidian Headless copy on a paired remote host, local and remote AI
+  sessions, and Anki status, uses the shared run history to see patterns
+  across days, and takes replies in the run's own chat.
+  Its Skill Eval, in `evals/active-learning/`, runs five synthetic cases
+  through Promptfoo on macOS. The model is offered write tools but allowed
+  only to read, so any attempt to change a file fails the case.
 - A chart in `ROUTING.md` of combined quality against cost at each effort
   setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
   computes the figures and draws the chart from the committed data, and the

@@ -1,0 +1,143 @@
+{
+ "case": "source-unreadable",
+ "arm": "without_skill",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.331 via claude -p",
+  "working_directory": "<workspace>"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "I just read the essay in ./article.md and want to actually learn the terms in it, not just collect them. Make atomic notes for them in my vault at ./vault."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "ls -la; ls -laR vault | head -50; wc -c article.md",
+    "description": "List workspace and vault contents"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "total 8\ndrwxr-xr-x@ 4 user  wheel  128 Nov 25 17:22 .\ndrwxr-xr-x@ 7 user  wheel  224 Nov 25 17:22 ..\n-rw-r--r--@ 1 user  wheel  819 Nov 22 18:00 article.md\ndrwxr-xr-x@ 8 user  wheel  256 Nov 25 17:22 vault\ntotal 0\ndrwxr-xr-x@  8 user  wheel  256 Nov 25 17:22 .\ndrwxr-xr-x@  4 user  wheel  128 Nov 25 17:22 ..\ndr-xr-xr-x@ 12 user  wheel  384 Nov 25 17:22 .git\ndrwxr-xr-x@ 12 user  wheel  384 Nov 25 17:22 Atomic Notes\ndrwxr-xr-x@  3 user  wheel   96 Nov 25 17:22 Journal\ndrwxr-xr-x@  7 user  wheel  224 Nov 25 17:22 Reference Notes\ndrwxr-xr-x@  3 user  wheel   96 Nov 25 17:22 Strategy\ndrwxr-xr-x@  6 user  wheel  192 Nov 25 17:22 Structure Notes\n\nvault/.git:\ntotal 40\ndr-xr-xr-x@ 12 user  wheel   384 Nov 25 17:22 .\ndrwxr-xr-x@  8 user  wheel   256 Nov 25 17:22 ..\n-r--r--r--@  1 user  wheel    24 Nov 25 17:22 COMMIT_EDITMSG\n-r--r--r--@  1 user  wheel    21 Nov 25 17:22 HEAD\n-r--r--r--@  1 user  wheel   137 Nov 25 17:22 config\n-r--r--r--@  1 user  wheel    73 Nov 25 17:22 description\ndr-xr-xr-x@ 16 user  wheel   512 Nov 25 17:22 hooks\n-r--r--r--@  1 user  wheel  2361 Nov 25 17:22 index\ndr-xr-xr-x@  3 user  wheel    96 Nov 25 17:22 info\ndr-xr-xr-x@  4 user  wheel   128 Nov 25 17:22 logs\ndr-xr-xr-x@ 63 user  wheel  2016 Nov 25 17:22 objects\ndr-xr-xr-x@  4 user  wheel   128 Nov 25 17:22 refs\n\nvault/.git/hooks:\ntotal 128\ndr-xr-xr-x@ 16 user  wheel   512 Nov 25 17:22 .\ndr-xr-xr-x@ 12 user  wheel   384 Nov 25 17:22 ..\n-r-xr-xr-x@  1 user  wheel   478 Nov 25 17:22 applypatch-msg.sample\n-r-xr-xr-x@  1 user  wheel  1972 Nov 25 17:22 commit-msg.sample\n-r-xr-xr-x@  1 user  wheel  4611 Nov 25 17:22 fsmonitor-watchman.sample\n-r-xr-xr-x@  1 user  wheel   189 Nov 25 17:22 post-update.sample\n-r-xr-xr-x@  1 user  wheel   424 Nov 25 17:22 pre-applypatch.sample\n-r-xr-xr-x@  1 user  wheel  1649 Nov 25 17:22 pre-commit.sample\n-r-xr-xr-x@  1 user  wheel   416 Nov 25 17:22 pre-merge-commit.sample\n-r-xr-xr-x@  1 user  wheel  1374 Nov 25 17:22 pre-push.sample\n-r-xr-xr-x@  1 user  wheel  4898 Nov 25 17:22 pre-rebase.sample\n-r-xr-xr-x@  1 user  wheel   544 Nov 25 17:22 pre-receive.sample\n-r-xr-xr-x@  1 user  wheel  1492 Nov 25 17:22 prepare-commit-msg.sample\n-r-xr-xr-x@  1 user  wheel  2783 Nov 25 17:22 push-to-checkout.sample\n-r-xr-xr-x@  1 user  wheel  2308 Nov 25 17:22 sendemail-validate.sample\n-r-xr-xr-x@  1 user  wheel  3650 Nov 25 17:22 update.sample\n\nvault/.git/info:\ntotal 8\ndr-xr-xr-x@  3 user  wheel   96 Nov 25 17:22 .\ndr-xr-xr-x@ 12 user  wheel  384 Nov 25 17:22 ..\n-r--r--r--@  1 user  wheel  240 Nov 25 17:22 exclude\n\n     819 article.md"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cat article.md; echo ----; find vault -path vault/.git -prune -o -type f -print; echo ----; cd vault && git log --oneline | head; git status",
+    "description": "Read article and list vault files"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "This command changes directory before running a version-control command, which can pick up untrusted hooks or repository configuration from the target directory. Approve only if you trust it."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cat article.md; echo ----; find vault -path vault/.git -prune -o -type f -print",
+    "description": "Read article and list vault files"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "# Depth Over Breadth: Designing Modules for the Next Reader\n\nBy Priya Okafor · https://example.com/essays/depth-over-breadth\n\nMost advice about modules is about size. This essay argues that size is the wrong axis. What matters is how much a module asks of the people who call it, compared with how much it does for them.\n\n## Deep modules\n\nA deep module does a lot of work behind a small interface. The caller learns a handful of things and gets a great deal of behaviour in return. A file system is the classic example: open, read, write, close, and behind those four calls sit caching, scheduling, permissions, and recovery from crashes. Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.\n\n---\n\n*You have reached your free article limit. Subscribe to keep reading.*\n----\nvault/Journal/2026-11-22.md\nvault/Atomic Notes/Exponential Backoff.md\nvault/Atomic Notes/HTTP 301 vs 302.md\nvault/Atomic Notes/API.md\nvault/Atomic Notes/Idempotency Key.md\nvault/Atomic Notes/Ratchet (Engineering).md\nvault/Atomic Notes/Invariant.md\nvault/Atomic Notes/Spaced Repetition.md\nvault/Atomic Notes/CAP Theorem.md\nvault/Atomic Notes/Information Hiding.md\nvault/Atomic Notes/Interface.md\nvault/Structure Notes/Learning Science.md\nvault/Structure Notes/Personal Learnings.md\nvault/Structure Notes/Software Design.md\nvault/Structure Notes/Distributed Systems.md\nvault/Strategy/Personal Strategy.md\nvault/Reference Notes/Clipped - Webhook Delivery Checklist.md\nvault/Reference Notes/Data Systems in Practice.md\nvault/Reference Notes/Learning That Lasts.md\nvault/Reference Notes/HTTP Semantics RFC 9110.md\nvault/Reference Notes/Small Interfaces.md"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cd vault; for f in \"Atomic Notes/Interface.md\" \"Atomic Notes/Information Hiding.md\" \"Atomic Notes/API.md\" \"Atomic Notes/Invariant.md\" \"Atomic Notes/Spaced Repetition.md\" \"Structure Notes/Software Design.md\" \"Structure Notes/Learning Science.md\" \"Reference Notes/Small Interfaces.md\" \"Reference Notes/Learning That Lasts.md\" \"Journal/2026-11-22.md\" \"Strategy/Personal Strategy.md\" \"Structure Notes/Personal Learnings.md\"; do echo \"=== $f\"; cat \"$f\"; echo; done",
+    "description": "Read existing vault notes for conventions"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "A variable in this command can't be checked before it runs"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cd vault && tail -n +1 \"Atomic Notes/Interface.md\" \"Atomic Notes/Information Hiding.md\" \"Atomic Notes/API.md\" \"Atomic Notes/Invariant.md\" \"Atomic Notes/Spaced Repetition.md\" \"Structure Notes/Software Design.md\" \"Structure Notes/Learning Science.md\" \"Reference Notes/Small Interfaces.md\" \"Reference Notes/Learning That Lasts.md\" \"Journal/2026-11-22.md\" \"Strategy/Personal Strategy.md\" \"Structure Notes/Personal Learnings.md\"",
+    "description": "Read existing vault notes for conventions"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "==> Atomic Notes/Interface.md <==\n---\nupdated: 2026-05-14\n---\n\n# Interface\n\nAn interface is a language keyword, as in Java or TypeScript, that declares a set of method signatures a class promises to implement.\n\nIt is like a job description: it lists the duties, and any candidate who can do them all can take the job.\n\n`interface Shape { area(): number }` lets any class with an `area` method be passed where a `Shape` is expected.\n\nLinks: [[Software Design]]\n\n<!--ID: 1747200000007-->\n\n==> Atomic Notes/Information Hiding.md <==\n---\nupdated: 2026-06-02\n---\n\n# Information Hiding\n\nInformation hiding is the practice of keeping a module's design decisions, such as its data layout or algorithm, inside the module, so callers cannot come to depend on them and the decisions can change without breaking anyone.\n\nIt is like a restaurant kitchen behind a pass: diners order from the menu and never see, or rely on, how the cooks organise the line.\n\nA date library stores timestamps as nanoseconds internally but exposes only `before`, `after`, and `format`, so switching to microseconds later breaks no caller.\n\nLinks: [[Software Design]], [[Small Interfaces]]\n\n<!--ID: 1748800000008-->\n\n==> Atomic Notes/API.md <==\n---\nupdated: 2026-05-14\n---\n\n# API\n\nAn API is how programs talk to each other.\n\n==> Atomic Notes/Invariant.md <==\n---\nupdated: 2026-11-22\n---\n\n# Invariant\n\nAn invariant is a condition that stays true for the whole lifetime of a system or data structure, no matter which operations run.\n\n==> Atomic Notes/Spaced Repetition.md <==\n---\nupdated: 2026-07-12\n---\n\n# Spaced Repetition\n\nSpaced repetition is a review schedule that shows an item again just before you would forget it, with the gap growing after each successful recall.\n\nIt is like watering a plant less often as its roots deepen.\n\nA card recalled correctly today returns in 3 days, then 8, then 20. A card missed returns tomorrow.\n\nLinks: [[Retrieval Practice]]\n\n<!--ID: 1752300000006-->\n\n==> Structure Notes/Software Design.md <==\n---\nupdated: 2026-06-02\n---\n\n# Software Design\n\n- [[Information Hiding]]\n- [[Interface]]\n- [[API]]\n\n## Open Questions\n\n- Why do some small modules feel harder to use than one big one?\n\n==> Structure Notes/Learning Science.md <==\n---\nupdated: 2026-09-01\n---\n\n# Learning Science\n\n- [[Spaced Repetition]]\n\n## Open Questions\n\n- Does writing a note by hand teach more than editing a draft someone else wrote?\n\n## To Explore\n\n- Interleaving: why mixing topics in practice feels slower but sticks better\n- Desirable difficulties\n- The generation effect\n\n==> Reference Notes/Small Interfaces.md <==\n---\nupdated: 2026-06-03\n---\n\n# Small Interfaces\n\nAuthor: Ines Varga\n\n## Highlights\n\n- \"The best modules are those whose interfaces are much simpler than their implementations.\"\n- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n\n==> Reference Notes/Learning That Lasts.md <==\n---\nupdated: 2026-11-20\n---\n\n# Learning That Lasts\n\nAuthor: Tobias Renner\n\n## Highlights\n\n### Added 2026-11-20\n\n- \"Trying to solve a problem before being taught the solution leads to better learning, even when errors are made in the attempt.\"\n- \"Rereading text and massed practice are by far the preferred study strategies of learners, but they are also among the least productive.\"\n- \"Interleaving the practice of two or more subjects feels slower than massed practice, yet produces better long-term retention and discrimination.\"\n\n==> Journal/2026-11-22.md <==\n---\nupdated: 2026-11-22\n---\n\n# 2026-11-22\n\nLong day on the webhook bug. Skipped Anki again. Read some of Data Systems in Practice on the train.\n\n==> Strategy/Personal Strategy.md <==\n---\nupdated: 2026-11-01\n---\n\n# Personal Strategy\n\n## Priorities this quarter\n\n1. Finish the draft chapters of my book on learning systems. Evidence about how people learn matters most here.\n2. Get properly fluent in distributed systems design, enough to review a design doc with confidence.\n3. Rebuild a daily Anki habit: small blocks, every day.\n\n## Not now\n\n- Polishing developer tooling and build configuration beyond what a task needs.\n\n==> Structure Notes/Personal Learnings.md <==\n---\nupdated: 2026-11-10\n---\n\n# Personal Learnings\n\n- I keep what I have explained in my own words. Highlights I only skim are gone in a week.\n- When I skip Anki for three days the backlog feels too big to start, and I stop altogether.\n- I collect far more reading highlights than I ever turn into notes."
+  },
+  {
+   "role": "assistant",
+   "content": "Reading the article and your vault's note conventions; now writing the notes."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/Deep Module.md",
+    "content": "---\nupdated: 2026-11-25\n---\n\n# Deep Module\n\nA deep module does a lot of work behind a small interface. Its depth is a ratio: what it does for callers compared with what it asks them to learn. Here the interface means everything a caller must know to use it correctly, not just its method signatures. So you can only call a module deep or shallow once you know what its interface is.\n\nIt is like a car's pedals and steering wheel. You learn three controls, and behind them sit the engine, the gearbox, the brakes and the fuel injection, none of which you need to understand to drive.\n\nA file system has four calls: `open`, `read`, `write` and `close`. Behind them sit caching, disk scheduling, permissions and crash recovery, and the caller sees none of it.\n\nLinks: [[Shallow Module]], [[Information Hiding]], [[Software Design]], [[Depth Over Breadth]], [[Small Interfaces]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "File created successfully at: <workspace>/vault/Atomic Notes/Deep Module.md (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/Shallow Module.md",
+    "content": "---\nupdated: 2026-11-25\n---\n\n# Shallow Module\n\nA shallow module asks callers to learn nearly as much as it does for them. Its interface costs about as much to understand as the work it saves, so using it gains you little over doing the work yourself. Being small does not make a module shallow, and being large does not make it deep.\n\nIt is like a receptionist who only forwards your call. You still have to know which department you need and what to say to them, and the receptionist has added one more step.\n\nA `FileWrapper` class whose `openFile(path, mode)` just calls `open(path, mode)` is shallow. The caller still has to learn every mode and every error from the underlying call, and now has to learn the wrapper's name too.\n\nLinks: [[Deep Module]], [[Software Design]], [[Depth Over Breadth]]\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "File created successfully at: <workspace>/vault/Atomic Notes/Shallow Module.md (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Write",
+   "input": {
+    "file_path": "<workspace>/vault/Reference Notes/Depth Over Breadth.md",
+    "content": "---\nupdated: 2026-11-25\n---\n\n# Depth Over Breadth\n\nAuthor: Priya Okafor\n\nSource: https://example.com/essays/depth-over-breadth\n\nRead so far: only the intro and \"Deep modules\". The rest is behind a paywall.\n\n## Highlights\n\n### Added 2026-11-25\n\n- \"What matters is how much a module asks of the people who call it, compared with how much it does for them.\"\n- \"A deep module does a lot of work behind a small interface.\"\n- \"Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.\"\n"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "File created successfully at: <workspace>/vault/Reference Notes/Depth Over Breadth.md (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Structure Notes/Software Design.md",
+    "old_string": "---\nupdated: 2026-06-02\n---\n\n# Software Design\n\n- [[Information Hiding]]\n- [[Interface]]\n- [[API]]\n\n## Open Questions\n\n- Why do some small modules feel harder to use than one big one?",
+    "new_string": "---\nupdated: 2026-11-25\n---\n\n# Software Design\n\n- [[Information Hiding]]\n- [[Interface]]\n- [[API]]\n- [[Deep Module]]\n- [[Shallow Module]]\n\n## Open Questions\n\n- Why do some small modules feel harder to use than one big one?\n    - Lead: small modules are often [[Shallow Module|shallow]]. Each one asks you to learn an interface but hides little behind it, so many of them cost more to learn than one [[Deep Module|deep]] module."
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Structure Notes/Software Design.md has been updated successfully."
+  },
+  {
+   "role": "assistant",
+   "content": "I wrote two atomic notes and one reference note, but they only cover part of the essay. Your copy of `article.md` cuts off after the first section with \"You have reached your free article limit.\" So these come from the intro and \"Deep modules\" only.\n\n**New notes** (same layout as your others: definition, analogy, example, links):\n- `Atomic Notes/Deep Module.md`: a module that does a lot of work behind a small interface. Depth is a ratio, and the essay's file-system example is in the note.\n- `Atomic Notes/Shallow Module.md`: the essay names this but never defines it, so I wrote the definition as the opposite of a deep module. The wrapper-class example is mine, not hers.\n- `Reference Notes/Depth Over Breadth.md`: three quotes in the same format as `Small Interfaces`, plus a line saying you've only read the first section.\n\n**Changed:** `Structure Notes/Software Design.md` now lists both new notes. I also added a sub-bullet under your open question \"Why do some small modules feel harder to use than one big one?\", because the essay answers it directly: small modules are often shallow.\n\n**Things to check:**\n- **Your `Interface` note conflicts with this essay.** It defines an interface as the Java/TypeScript keyword. The essay means everything a caller has to know to use a module, and depth only makes sense with that meaning. A file system's interface isn't a Java `interface`. I didn't rewrite your note because it's in your own words. Instead, `Deep Module` explains which meaning it uses. You may want to update `Interface` yourself.\n- **No Anki IDs:** I didn't add any `<!--ID: -->` lines, so your sync plugin should create new cards the next time you run it.\n- **I didn't commit:** the vault's `.git` folder is read-only.\n\nYour Personal Learnings note says you keep what you've explained in your own words. So before you open these notes, try writing down from memory what makes a module deep. Then rewrite my analogies as your own. When you get past the paywall, send me the rest of the essay and I'll add notes for its other terms."
+  }
+ ]
+}

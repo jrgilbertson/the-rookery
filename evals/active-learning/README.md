@@ -68,8 +68,10 @@ Claude Code, Git, and Python 3, run from this directory:
 [`run.sh`](run.sh) builds a fresh workspace, runs Claude Opus 5.5 at high effort
 with no user settings, installed skills, plugins, MCP servers, or global
 instructions, and adds only `skills/active-learning` at the given revision for
-the `with_skill` arm. Pass a clone of the repository that holds `atomic-note` as a fifth argument to stage it too, for the cases that hand a note to it. It writes the event stream, a list of changed files, the
-final response, and a JSON transcript of every turn, with local paths and the
+the `with_skill` arm. Pass a clone of the repository that holds
+`atomic-note` as a fifth argument to stage it too, for the cases that hand a
+note to it. It writes the event stream, a list of changed files, the final
+response, and a JSON transcript of every turn, with local paths and the
 user name replaced.
 
 ## Read the results

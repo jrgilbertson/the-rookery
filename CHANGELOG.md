@@ -690,6 +690,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `reviewing-meetings` accepts a Granola-returned meeting URL when its scheme,
+  host, and path match the canonical `https://notes.granola.ai/d/{native_id}`
+  URL, ignoring any query string or fragment (such as `?utm_source=mcp`), while
+  still rejecting a different scheme, host, or path as contradictory and keeping
+  the canonical URL without query string or fragment as the stored source URL.
 - Coordination guidance distinguishes an operator-approved proposal amendment
   from a worker-brief amendment, identifies the replacement-Coordinator
   confirmation by name, and puts non-consuming inbox reads in the periodic

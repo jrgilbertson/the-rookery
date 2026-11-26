@@ -54,11 +54,10 @@ commit cannot be taken back, so the scrub happens before the write.
 runs past its quota can be billed. Every brief forbids tagging, mentioning,
 or re-requesting a review bot. When a stock skill would re-request a review
 and the brief cannot stop it, report that step to the operator as a limitation
-rather than working around it. Gate merges only on required checks, never on
-optional bots.
+rather than working around it. Never gate a merge on an optional review bot.
 
-**Never block.** Make reversible choices yourself (changes that can be undone
-cleanly without affecting users or stored names). For an irreversible choice,
+**Never block.** Make reversible choices yourself (undo cost below 3 on the
+contract's scale). For an irreversible choice,
 record a default, hold only the work that depends on the answer, and post the
 decision. Keep everything else moving.
 
@@ -169,16 +168,15 @@ closing evidence instead.
 **Coupled work** gets an ephemeral multi-PR plan from `ce-plan`, distilled
 into self-contained leaves, each with its own file list and Verification.
 Plan every coupled leaf before dispatching the first one, so later leaves are
-not left as one-line notes. Do not commit the plan. A uniform backlog of independent leaves goes straight to
-`lfg`, one leaf per Executor.
+not left as one-line notes. Do not commit the plan. A uniform backlog of
+independent leaves goes straight to `lfg`, one leaf per Executor.
 
 **Check overlap before every dispatch.** Compare the leaf's expected files
 with the files of every active brief and the diff of every open pull request
 from a branch in this repository, whoever opened it. A fork's pull request
 reserves nothing, since the Captain never acts on forks. Serialize any leaf
-that overlaps. A file
-that only accumulates entries, such as `CHANGELOG.md`, never reserves, since
-those merge cleanly. A leaf stacked on a held pull request does not conflict
+that overlaps. A file that only accumulates entries, such as `CHANGELOG.md`,
+never reserves, since those merge cleanly. A leaf stacked on a held pull request does not conflict
 with that pull request's own files.
 
 **One migration at a time.** At most one pull request that adds a database
@@ -289,14 +287,16 @@ never acts on it twice.
 
 - **Merge.** Compare the reviewed head with the current head using
   `git merge-base` and `git range-diff`, then apply the contract's
-  after-Verdict rule. When the change since review is routine, merge pinned to
-  the current head, and when that head differs from the reviewed one, post a
-  `Fleet: verdict-delta` receipt naming the reviewed head and what changed.
-  On a merge-queue repository, enqueue it, re-enqueue an ejected pull request
-  at an unchanged head, and judge a new head again. Swap `review:held` for
-  `review:human-merged` once GitHub confirms the merge. Otherwise post a new
-  `Fleet: hold` receipt at the current head and a decision that says what
-  changed.
+  after-Verdict rule:
+  - When the change since review is routine, merge pinned to the current head.
+    If that head differs from the reviewed one, post a `Fleet: verdict-delta`
+    receipt naming the reviewed head and what changed.
+  - On a merge-queue repository, enqueue it instead. Re-enqueue an ejected pull
+    request at an unchanged head, and judge a new head again.
+  - Swap `review:held` for `review:human-merged` once GitHub confirms the
+    merge.
+  - When the change since review is not routine, post a new `Fleet: hold`
+    receipt at the current head and a decision that says what changed.
 - **Request changes.** Record the rework in `state.md`, then dispatch it with
   the Verdict's notes as the brief amendment, in the pull request's kept
   worktree. When the rework lands, post a new `Fleet: hold` receipt at the new
@@ -331,7 +331,7 @@ that clause:
   its pull request merges
 - move a `needs-planning` issue to `ready` once a plan settles it
 - raise stored verification effort or undo cost to match a higher diff score
-- change confidence up or down only from code evidence
+- change confidence up or down from evidence the confidence scale names
 - tighten vague Scope or Verification
 
 Record the old value, new value, and reason for each edit. Leave lowering

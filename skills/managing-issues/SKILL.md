@@ -214,7 +214,7 @@ Every non-empty batch needs operator authorization:
     and Done
   - tightening Scope and Verification
   - raising verification effort or undo cost
-  - changing confidence up or down from code evidence
+  - changing confidence up or down from evidence the confidence scale names
 
   Record the old value, new value, and reason for each edit, then re-derive
   priority and estimate. Lowering verification effort or undo cost, any change

@@ -1,0 +1,20 @@
+[
+  {"query": "be the captain for ledger-app. I've got three epics going and want one place to plan them, and merge the routine stuff yourself while I'm asleep", "should_trigger": true},
+  {"query": "Captain this repo.", "should_trigger": true},
+  {"query": "I've got about 15 agents across the billing and export epics in one repo and I keep losing track. can you run the fleet and just tell me what needs me", "should_trigger": true},
+  {"query": "set up a team lead to work through the billing epic and let it merge the routine PRs while I'm out", "should_trigger": true},
+  {"query": "my verdicts are in on the held PRs, go carry them out", "should_trigger": true},
+  {"query": "what needs me? I've been away since lunch", "should_trigger": true},
+  {"query": "two of the workers are both about to touch the invoice model and there are two migrations waiting. sort out the order and keep the rest moving", "should_trigger": true},
+  {"query": "the captain session dropped when my laptop slept. pick it back up for acme/ledger-app", "should_trigger": true},
+  {"query": "pull forward whatever's ready in the tracker once the export epic is done, highest leverage first", "should_trigger": true},
+  {"query": "run a review round across my repos and show me what's held", "should_trigger": false},
+  {"query": "go through every open PR in the acme org and tell me which ones I should merge", "should_trigger": false},
+  {"query": "execute docs/plans/2026-11-20-export-plan.md end to end", "should_trigger": false},
+  {"query": "implement issue 412 and open a PR", "should_trigger": false},
+  {"query": "update issue 545: raise the undo cost to 3 and tighten the verification section", "should_trigger": false},
+  {"query": "create an issue for the flaky invoice export test and make it a sub-issue of the billing epic", "should_trigger": false},
+  {"query": "CI is red on #88. fix it and keep an eye on it until it goes green", "should_trigger": false},
+  {"query": "spawn a codex worker in a new worktree to try the parquet approach and report back", "should_trigger": false},
+  {"query": "address the review comments on PR 212 and resolve the threads when you're done", "should_trigger": false}
+]

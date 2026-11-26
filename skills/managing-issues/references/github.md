@@ -21,14 +21,13 @@ gh auth status --active --hostname github.com --json hosts
 gh repo view github.com/OWNER/REPO --json id,nameWithOwner,url,hasIssuesEnabled,isArchived,viewerPermission
 ```
 
-Require one successful active account for `github.com`; its presence supplies
+Require one successful active account for `github.com` and use it as the
 provider identity. Require the exact repository, enabled issues, and a
 non-archived state for reads and discovery. Before an executable mutation
-preview or write, additionally require `ADMIN`, `MAINTAIN`, or `WRITE`
-permission.
+preview or write, also require `ADMIN`, `MAINTAIN`, or `WRITE` permission.
 
-Read the supported issue surface before an update, immediately before its write,
-and immediately after an accepted write:
+Read the supported issue fields before an update, immediately before its
+write, and immediately after an accepted write:
 
 ```text
 gh issue view NUMBER_OR_URL -R github.com/OWNER/REPO --json id,number,title,body,state,stateReason,updatedAt,url,labels,assignees,projectItems,issueType,parent,subIssues,blockedBy,blocking
@@ -67,7 +66,7 @@ coverage, but is never a create, edit, relationship, or lifecycle target and
 never supplies a numeric write target. A failed or ambiguous boundary read
 makes coverage partial.
 
-Discover labels with the complete installed surface:
+Discover labels with the full list command:
 
 ```text
 gh label list -R github.com/OWNER/REPO --limit 1000 --json id,name
@@ -112,11 +111,11 @@ its score `unresolved — non-writable`.
 During first-use setup, offer exact existing labels beside the starter
 recommendations; neither source chooses for the operator. Prefixed flats are
 the recommended readiness shape because repository labels are a flat namespace
-with no grouping surface. For each chosen label
-that is absent, require the installed `gh label create --help` surface and show
-its exact name, description, and six-character color in the provider-metadata
-preview. After approval, create it once without `--force`, then repeat complete
-label discovery and require one exact name before any config preview:
+with no label groups. For each chosen label that is absent, check the
+installed `gh label create --help` flags and show its exact name, description,
+and six-character color in the provider-metadata preview. After approval,
+create it once without `--force`, then repeat complete label discovery and
+require one exact name before any config preview:
 
 ```text
 gh label create NAME -R github.com/OWNER/REPO --description DESCRIPTION --color COLOR
@@ -169,9 +168,11 @@ gh issue edit NUMBER -R github.com/OWNER/REPO --title TITLE --body-file -
 For create, add only approved metadata flags supported by the installed CLI,
 such as `--assignee LOGIN` and `--project TITLE`. A create is a node-only
 effect. The CLI has no issue field flag, so a new issue's scores are a second
-effect after the create, and the preview counts both. Accept its output as identity only when it is one exact canonical issue
-URL, then read that URL back and repeat URL/number matchback. An authoritative no-persistence rejection is `failed`; a request
-that may have persisted without exact identity or readback is `indeterminate`.
+effect after the create, and the preview counts both. Accept its output as
+identity only when it is one exact canonical issue URL, then read that URL
+back and verify URL and number match. A clear rejection showing nothing was
+saved is `failed`; a request that may have persisted without exact identity or
+readback is `indeterminate`.
 
 For update, include only approved surgical flags for title, body, labels,
 assignees, project, issue type, or native relationships. Change a project with
@@ -198,8 +199,8 @@ match the preview.
 ## Reversible lifecycle
 
 Use the installed close and reopen forms against the validated numeric target.
-Cancellation uses the provider's “not planned” reason. Completion uses its
-“completed” reason only after `graph-and-completion.md` establishes completion.
+Cancellation uses the provider's "not planned" reason. Completion uses its
+"completed" reason only after `graph-and-completion.md` establishes completion.
 
 Read the issue immediately before the lifecycle write and immediately after it.
 The readback must confirm the intended state and state reason.

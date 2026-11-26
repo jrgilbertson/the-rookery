@@ -1,19 +1,13 @@
 # Prioritization
 
-Note for maintainers of this skill, not an instruction for using it: the
-`Rank by leverage` section below is a copy of the section with the same
-heading in PRIORITIZATION.md at the root of this skill's source repository,
-kept here so the skill stands alone. Change that file first, then copy its
-section here unchanged, so the two stay identical byte for byte.
-
 ## Rank by leverage
 
 When you rank findings, ideas, or tasks for me to choose from, order them by leverage, highest first: (impact × confidence) ÷ (verification effort × undo cost). Score each factor 1 to 3.
 
-- Impact, how much better it makes things for users: 1 is barely noticed, 2 is a clear improvement to something users do often, 3 changes whether most users can do a core task or trust the product with their work. Work users don't see takes the impact of the problem it prevents or the feature it unblocks.
-- Confidence, how sure we are that we can do it and it will deliver: 1 is a guess, 2 is good reasons but nothing confirmed, 3 is confirmed.
-- Verification effort, how hard the result is to confirm: 1 means existing checks prove it, 2 means it needs new tests or one manual check, 3 means only human judgment can, such as a new user-facing view, flow, or concept.
-- Undo cost, what it takes to undo: 1 is contained and can be put back as it was, 2 is wide but can be put back as it was, 3 means it can't, because the earlier state is lost or the effect has already reached someone, including any stored or published name (table, column, stored ID, event name, or public API).
+- Impact, how much better it makes things for users: 1 is no user task you can name gets better, 2 is a named user task gets faster, easier, or more reliable, 3 decides whether users can do a core task (one most users rely on) or keep their work safe. Work users don't see takes the impact of the problem it prevents or the feature it unblocks.
+- Confidence, how sure we are that it will deliver the impact scored: 1 is a hypothesis with nothing behind it yet, 2 is a hypothesis with indirect evidence, such as a user report, a similar case, or reading the code, 3 is confirmed by direct evidence for this item, such as a reproduction, a measurement, a plan that calls for it, or the same fix working here before.
+- Verification effort, how hard the result is to confirm: 1 means checks that existed before the change, such as tests, types, CI, or a reproduction on record, prove it, 2 means it needs new tests, including the change's own, or a manual check with a known right answer, 3 means only human judgment can, such as a new user-facing view, flow, or concept.
+- Undo cost, what it takes to undo: 1 is one revert within one module, 2 can be undone but reaches shared code, shared settings, or many users, or takes more than one revert, 3 can't be undone, because data is lost, a message is sent, money moves, access is exposed, or a stored or published name is added or changed (table, column, stored ID or enum value, event name, public API route or field, CLI flag, configuration key, or published package or skill name).
 
 Return the whole list with each item's scores. Keep items you would skip, with a one-line reason. Name every item that scores 3 on impact above the list. When an item has a deadline, give the date beside it and score it as if it had none.
 
@@ -25,22 +19,58 @@ For impact, users are whoever uses what the repository ships. The owner
 counts as a user when the repository ships the owner's own tools. Maintainers
 count only through what their work unblocks.
 
-## Unclear scores
+## Scoring rules
 
-When the request and evidence do not settle one of the four leverage scores,
-propose the value the evidence best supports and mark it `best guess` in the
-preview and the result, without asking. A score the evidence settles carries
-no mark.
+Score every issue you draft, create, or update, parents included, on the four
+leverage factors (each 1 to 3).
+
+- On an update, keep each stored score unless the request or evidence new in
+  this update changes it, and fill any absent score.
+- Callers with restricted score authority follow Step 3 of `SKILL.md`: a
+  coordinated batch lists missing scores in the preview instead of filling
+  them, and a Captain writes only the score edits its standing instruction
+  permits.
+- Score a leaf that still needs discovery or planning on what is known now;
+  planning revises the scores later.
+- Store the four scores in the canonical tracker's mapped score fields and
+  nowhere else. Store no leverage value, and put no score or score rationale
+  in an issue body.
+- When the request and evidence do not settle a score, propose the value the
+  evidence best supports and mark it `best guess` in the preview and result,
+  without asking. A score the evidence settles carries no mark.
 
 ## Derived priority and estimate
 
-`SKILL.md` says when to derive priority and estimate. These tables give the
-result, so look it up instead of calculating it.
+Priority and estimate follow from the scores; never choose either directly.
+Look both up in the tables below instead of calculating them: priority from
+all four scores, and an implementation leaf's estimate from verification
+effort and undo cost alone.
 
-Priority comes from all four scores. Multiply impact by confidence to find the
-row, and verification effort by undo cost to find the column. Each cell is the
-band that leverage falls in: 3 or higher is `high`, at least 1 and below 3 is
-`medium`, and below 1 is `low`. The table never returns `urgent`.
+- Derive priority and estimate on every create and every content or score
+  update, in the same previewed batch, whether or not a score changed.
+- Derive them only when all four scores are present (each read from the
+  tracker or written in this batch). Otherwise leave priority and estimate
+  unchanged.
+- Derivation never sets, overwrites, or clears urgent (the value mapped under
+  `mappings.priority.urgent`). When the request asks for urgent, write urgent.
+  When the tracker's current priority is already urgent, leave it. In both
+  cases derive only the estimate. Decide this from those two facts alone, not
+  from whether the work seems time-sensitive. An urgent issue still gets all
+  four scores with the same care. If a request sets urgent and also names an
+  estimate, apply the named-estimate rule below.
+- When the request removes urgent, derive priority as for any other issue and
+  show urgent as the old value.
+- An issue with no priority set gets the derived priority. When the current
+  priority cannot be read, or the issue carries more than one priority value,
+  derive no priority and name the problem in the preview.
+- When the request names any other priority, or an estimate, do not write it
+  and do not bend a score to reach it. Show the derived value beside the
+  requested one and ask which scores should change.
+
+Multiply impact by confidence to find the priority row, and verification
+effort by undo cost to find the column. Each cell is the band that leverage
+falls in: 3 or higher is `high`, at least 1 and below 3 is `medium`, and
+below 1 is `low`. The table never returns `urgent`.
 
 | impact × confidence | 1 | 2 | 3 | 4 | 6 | 9 |
 |---|---|---|---|---|---|---|
@@ -51,8 +81,7 @@ band that leverage falls in: 3 or higher is `high`, at least 1 and below 3 is
 | 6 | high | high | medium | medium | medium | low |
 | 9 | high | high | high | medium | medium | medium |
 
-A leaf's estimate comes from verification effort and undo cost alone. Multiply
-them to find the row.
+Multiply verification effort by undo cost to find a leaf's estimate row.
 
 | verification effort × undo cost | estimate |
 |---|---|
@@ -62,3 +91,17 @@ them to find the row.
 | 4 | 5 |
 | 6 | 5 |
 | 9 | 8 |
+
+## Assignee order
+
+On a create, select the assignee in this fixed order:
+
+1. The person the request names.
+2. Otherwise the config's `assignee.default`.
+3. Otherwise the human who made the request (not the account the run
+   authenticates as).
+
+When the request names no one, a scheduled or headless run with no human
+requester and no `assignee.default` leaves the assignee empty and says so. If
+the selected person cannot be assigned on the target, do not skip to the next
+option: leave the assignee empty and name who could not be assigned and why.

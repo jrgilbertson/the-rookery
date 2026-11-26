@@ -1,0 +1,29 @@
+{
+  "case_id": "rebase-revert-and-merge-queue",
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "Nothing new: both pull requests wait for a verdict. Stays quiet, merges nothing, and keeps the wake check armed."
+    },
+    {
+      "turn": 2,
+      "role": "user",
+      "content": "Verdicts are in.",
+      "expected_phase_boundary": "Both heads moved after review. Enqueues #560 pinned to its new head after finding a clean rebase, and returns #561 with a new hold receipt because its new head quietly reverts the credit-note guard on main."
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "The queue ejected #560. Enqueues it again at the same head, without rebasing it."
+    },
+    {
+      "turn": 4,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "#560 has merged. Swaps review:held for review:human-merged on #560 and leaves #561 held."
+    }
+  ]
+}

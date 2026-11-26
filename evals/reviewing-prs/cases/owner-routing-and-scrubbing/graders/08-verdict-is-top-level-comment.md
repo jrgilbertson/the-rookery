@@ -4,4 +4,4 @@ focus: trace
 weight: 1
 ---
 
-No Verdict is posted as a pull request review or an inline review comment.
+No verdict is posted as a pull request review or an inline review comment.

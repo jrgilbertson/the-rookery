@@ -23,7 +23,20 @@ For Orca, pass every command through a structured process API, with each value
 as one argument. Never interpolate tracker text into a shell command. Send
 multiline body content through stdin when the installed command supports it.
 
-## Resolve the Orca command surface
+For every Linear proposal or explanation of why one is unavailable, render:
+
+```text
+Linear gate: transport=...; authentication=...; matchback=...; capabilities=...; command-authority=...
+```
+
+Fill each value with the confirmed state or `unresolved`. `matchback` names
+the exact workspace, team, and issue. `capabilities` is `complete` only when
+the selected path exposes every operation needed by the whole proposed batch.
+`command-authority` names the runtime tool schemas for MCP or the installed
+version-matched `orca-linear` guide. Missing required MCP tools, or a missing
+or incompatible Orca guide, stops before building commands.
+
+## Resolve the Orca commands
 
 Resolve the Orca executable once per session using the installed `orca-linear`
 discovery stub: honor `ORCA_CLI_COMMAND`; otherwise use `orca-dev` in an
@@ -42,35 +55,35 @@ ORCA skills get orca-linear
 variable. The returned guide is the only authority for current Linear read and
 write syntax. Do not reconstruct commands from this reference or memory.
 
-If and only if the binary explicitly reports `skills get` as unknown, it is a
-confirmed pre-guide binary. Its bounded bootstrap permits reads only: provider
-status, Linear help, and a full read of the current issue, exactly as listed by
-the installed discovery stub. It cannot produce an executable write preview. An
-absent guide, incompatible guide, failed selected executable, failed
-authentication, or write surface that cannot express the approved effect stops
-the selected Orca path before an executable preview.
+If and only if the binary reports `skills get` as unknown, it is a confirmed
+pre-guide binary. Its bounded bootstrap permits reads only: provider status,
+Linear help, and a full read of the current issue, exactly as listed by the
+installed discovery stub. It cannot produce an executable write preview. An
+absent or incompatible guide, a failed executable, failed authentication, or
+write tools that cannot express the approved effect stop the selected Orca
+path before an executable preview.
 
 ## Authenticate, resolve, and discover
 
-Use the selected transport to confirm authentication. For MCP, a successful
-authenticated tool read supplies provider identity. For Orca, follow the loaded
-guide to confirm provider status. Authentication supplies identity only.
+Confirm authentication through the selected transport and use the active
+account as provider identity only. For MCP, a successful authenticated tool
+read confirms it. For Orca, follow the loaded guide to confirm provider status.
 
 Discover the exact workspace, team, workflow states, labels, members, and
 projects needed for the requested effect through the selected transport.
-Require one workspace and one team matching the normalized target. Prefer stable IDs; accept a name
-only when it matches exactly and uniquely within its provider scope. Linear
-config maps each priority name `urgent`, `high`, `medium`, and `low` to itself,
-not to a transport-specific argument, and the validator rejects any other
-value. At the MCP boundary, translate the chosen name with the runtime
-schema's documented mapping. For the current Linear MCP schema that is
-`urgent` to `1`, `high` to `2`, `medium` to `3`, and `low` to `4`, and `0`
-means no priority is set; pass the resulting number, never the config
-string, when the schema requires a number. If the runtime schema differs or
-does not document an exact conversion, stop before preview rather than guess.
-For Orca, use the version-matched guide's documented representation. Estimates
-apply only to implementation leaves; readiness uses an exact discovered label
-identity, never workflow status.
+Require one workspace and one team matching the normalized target. Prefer
+stable IDs; accept a name only when it matches exactly and uniquely within
+its provider scope. Linear config maps each priority name `urgent`, `high`,
+`medium`, and `low` to itself, not to a transport-specific argument, and the
+validator rejects any other value. At the MCP boundary, translate the chosen
+name using the runtime schema's documented mapping. In the current Linear MCP
+schema, `urgent` is `1`, `high` is `2`, `medium` is `3`, `low` is `4`, and
+`0` means no priority is set. Pass the number, never the config string, when
+the schema requires a number. If the runtime schema differs or omits an exact
+conversion, stop before preview rather than guess. For Orca, use the
+version-matched guide's documented representation. Estimates apply only to
+implementation leaves; readiness uses an exact discovered label identity,
+never workflow status.
 
 During first-use setup, present the native estimate choices and exact existing
 labels beside the Linear starter recommendations, and show the four priority
@@ -99,7 +112,7 @@ block creating a general label such as `bug`.
 
 Offer any of those creates only if the selected transport exposes an exact
 label-create and label-readback path. For connected MCP this is normally the
-runtime `save_issue_label` and `list_issue_labels` surface; for Orca it must
+runtime `save_issue_label` and `list_issue_labels` tools; for Orca it must
 come from the loaded guide. The current MCP schema creates a workspace group
 with `isGroup` true, `groupType` `singleSelect`, and no `teamId`, and children
 with `parent` set to the group name and no `teamId`. The current Orca guide
@@ -156,30 +169,31 @@ in one update that removes the old child and adds the new one, and show both
 in the preview. Set the scores on a create with the create's own labels.
 
 A create may set approved node metadata atomically when the selected transport
-supports it. Managing Issues attaches no graph edges at create, but the provider
-may add relationships on its own. Supply a unique write identity when the
-transport supports one. Accept the response only when it returns an exact issue
-identity tied to that attempt; read it back and require exact workspace, team,
-identifier, and URL matchback. In that readback, explicitly request the created
-issue's parent, direct children, and other relationships; a default issue read
-may omit them. For MCP, `includeRelations` covers blocking, related, and
-duplicate links; it does not establish parent or child coverage. Require an
-explicit parent value (including an explicit empty value when absent) and an
-exhaustive direct-child collection, using a separate provider-native read and
-all pages when needed. Use only the selected transport's authoritative schema
-or guide for these reads; do not assume one relation flag covers hierarchy.
-Missing or partial parent, direct-child, or other relationship readback is
-unknown, as for any missing requested section: the create stays `applied` and
-later effects are `unapplied`; stop before the next effect and report the exact
-unconfirmed surface. Linear turns an issue mention in created content into a
-related link; a related link to an issue the approved content mentions is
-predictable automation, so report it and continue. An unapproved parent,
-child, or other relationship follows the provider-automation rule in
-`SKILL.md`. Managing Issues applies every effect
-once:
-even if an Orca guide or MCP client offers a retry for an unconfirmed write, an
-unconfirmed Managing Issues create is `indeterminate` and is never retried or
-similarity-matched.
+supports it. Managing Issues attaches no graph edges at create, though Linear
+may add predictable automation such as automatic cycle assignment or a related
+link from an issue mention in approved content. Name every issue the approved
+content mentions in the preview so the operator sees those links beforehand.
+Supply a unique write identity when the transport supports one. Accept the
+response only when it returns an exact issue identity tied to that attempt,
+then read it back and verify exact workspace, team, identifier, and URL match.
+
+In that readback, request the created issue's parent, direct children, and
+other relationships because a default issue read may omit them. For MCP,
+`includeRelations` covers blocking, related, and duplicate links; it does not
+cover parents or children. Require a parent value (including an empty value
+when absent) and an exhaustive direct-child collection, using a separate
+provider-native read and all pages when needed. Follow only the selected
+transport's authoritative schema or guide for these reads, and never assume
+one relation flag covers hierarchy. Missing or partial parent, direct-child,
+or other relationship readback is unknown, as for any missing requested
+section. Leave the create `applied`, mark later effects `unapplied`, stop
+before the next effect, and report the exact unconfirmed fields.
+
+A related link to an issue the approved content mentions is predictable
+automation, so report it and continue. Any unapproved parent, child, or other
+relationship follows the provider-automation rule in `SKILL.md`. Even if an
+Orca guide or MCP client offers a retry for an unconfirmed write, treat an
+unconfirmed create as `indeterminate` under `SKILL.md` and never retry it.
 
 For a graph batch, require the selected transport to expose every needed parent,
 child, blocker, and inverse or removal effect before previewing any node. Use

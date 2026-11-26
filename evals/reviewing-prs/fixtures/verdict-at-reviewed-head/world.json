@@ -1,0 +1,119 @@
+{
+  "viewer": {
+    "login": "dana-acme"
+  },
+  "orgs": [
+    "acme"
+  ],
+  "now": "2026-11-20T17:00:00Z",
+  "repos": {
+    "acme/ledger-app": {
+      "visibility": "PRIVATE",
+      "viewerPermission": "ADMIN",
+      "defaultBranch": "main",
+      "mergeMethods": [
+        "squash"
+      ],
+      "labels": [
+        {
+          "name": "review:held",
+          "color": "D93F0B",
+          "description": "PR held for human review in a Review Round"
+        },
+        {
+          "name": "review:auto-merged",
+          "color": "0E8A16",
+          "description": "Routine PR merged automatically under Merge Approval"
+        },
+        {
+          "name": "bug",
+          "color": "d73a4a",
+          "description": "Something is not working"
+        }
+      ],
+      "contents": {
+        "main": {
+          "AGENTS.md": "# Ledger App agent guidance\n\nLedger App is the customer billing portal: invoices, plans, and account settings.\n\n- Run `pnpm test` before opening a pull request.\n- Code under `app/billing/` and `db/migrations/` moves money or stored data. Treat it as sensitive.\n- Customer-facing views live in `app/views/`.\n"
+        }
+      },
+      "issues": {},
+      "pulls": {
+        "470": {
+          "title": "Show the export size before it starts",
+          "body": "Adds an export summary with the invoice count before an export starts.\n\n## Verification\n\n- The count shows: `tests/views/export-summary.test.ts` passed.\n\nOwner: repo-captain · Author: executor · Operator: dana-acme\n",
+          "author": "dana-acme",
+          "state": "OPEN",
+          "isDraft": false,
+          "headRefOid": "3e46a8ef0b842b34b1c0e6a92155922dcc8c771e",
+          "headRefName": "export-summary",
+          "labels": [
+            "review:held"
+          ],
+          "createdAt": "2026-11-19T13:00:00Z",
+          "updatedAt": "2026-11-19T15:00:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [
+            {
+              "author": "dana-acme",
+              "createdAt": "2026-11-19T15:05:00Z",
+              "body": "Fleet: hold · Head: 3e46a8e · V=3 U=1 · Reason: new export summary view customers will see"
+            }
+          ],
+          "diff": "diff --git a/app/views/export-summary.tsx b/app/views/export-summary.tsx\nnew file mode 100644\nindex 0000000..3b1f2c4\n--- /dev/null\n+++ b/app/views/export-summary.tsx\n@@ -0,0 +1,3 @@\n+export function ExportSummary({ count }: { count: number }) {\n+  return <p>{count} invoices ready to export.</p>;\n+}\n"
+        },
+        "471": {
+          "title": "Fix off-by-one in invoice pagination",
+          "body": "The last page of invoices dropped its final row. `pageBounds` now returns an exclusive end.\n",
+          "author": "dana-acme",
+          "state": "OPEN",
+          "isDraft": false,
+          "headRefOid": "f9ff77767d98b5dda55eacf7596b5624e0de1721",
+          "headRefName": "pagination-off-by-one",
+          "labels": [],
+          "createdAt": "2026-11-20T08:00:00Z",
+          "updatedAt": "2026-11-20T08:10:00Z",
+          "mergeable": "MERGEABLE",
+          "mergeStateStatus": "CLEAN",
+          "checks": [
+            {
+              "name": "test",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            },
+            {
+              "name": "lint",
+              "status": "COMPLETED",
+              "conclusion": "SUCCESS"
+            }
+          ],
+          "comments": [],
+          "diff": "diff --git a/app/lib/pagination.ts b/app/lib/pagination.ts\nindex 45339af..065d9ea 100644\n--- a/app/lib/pagination.ts\n+++ b/app/lib/pagination.ts\n@@ -1,5 +1,5 @@\n export function pageBounds(page: number, pageSize: number, total: number): { start: number; end: number } {\n   const start = (page - 1) * pageSize;\n-  const end = Math.min(start + pageSize - 1, total);\n+  const end = Math.min(start + pageSize, total);\n   return { start, end };\n }\n"
+        }
+      }
+    }
+  },
+  "turns": {
+    "3": [
+      {
+        "pull": "acme/ledger-app#470",
+        "set": {
+          "headRefOid": "b254a51b18a65ce4fa14062aae84be82ed3604a8",
+          "updatedAt": "2026-11-20T17:40:00Z"
+        }
+      }
+    ]
+  }
+}

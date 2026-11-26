@@ -14,10 +14,8 @@ lefthook run pre-push --force
 The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
-exercise the shipped issue configuration helper, the shipped daily-learning
-configuration sample against
-[config-and-sources.md](../skills/daily-learning/references/config-and-sources.md),
-and the shipped personal-chief-of-staff source-map sample
+exercise the shipped issue configuration helper and the shipped
+personal-chief-of-staff source-map sample
 against the version 3 shape in
 [source-bindings.md](../skills/personal-chief-of-staff/references/source-bindings.md).
 The [Reviewing PRs checks](reviewing-prs/README.md) exercise the synthetic

@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: digest-reply
+expected_outcome: |
+  The user picks two items from yesterday's digest. Without the skill, Claude
+  Opus 5.5 wrote a new note and rewrote another in one turn, with no question
+  and no approval. Expected: one item at a time, a recall question before any
+  draft, a source check before the jitter note changes, and no writes.
+context:
+  scaffold_script: place-files.sh

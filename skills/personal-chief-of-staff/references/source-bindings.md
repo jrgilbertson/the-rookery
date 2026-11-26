@@ -54,8 +54,8 @@ only selects which map to read.
 
 ### Schema
 
-Maintainers: the `reviewing-meetings` and `daily-learning` skills mirror these
-map field and version rules for standalone use. Keep the copies aligned when
+Maintainers: the `reviewing-meetings` skill mirrors these
+map field and version rules for standalone use. Keep the copy aligned when
 the schema changes.
 
 The top-level object contains exactly `version` and `roles`. `version` is the

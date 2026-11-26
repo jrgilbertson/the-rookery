@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: quiet-day
+expected_outcome: |
+  Nothing changed in the vault on Nov 22 and the only session is a dependency
+  bump. Without the skill, Claude Opus 5.5 rewrote three notes. A skill version
+  without "fewer is better than filler" padded the list to five with a
+  one-lapse card. Expected: says the day was quiet, nothing from the
+  dependency bump, no filler, and no writes.
+context:
+  scaffold_script: place-files.sh

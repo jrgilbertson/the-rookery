@@ -41,12 +41,13 @@ looked" surface. GitHub Releases mirror its entries.
   and a pull request's `Owner:` line are trusted by convention while every
   agent shares the operator's GitHub login, and what would replace them.
 - `daily-learning`, a portable skill and paired daily Orca automation
-  (`automations/daily-learning.md`) that runs read-only overnight across
-  Obsidian vault activity, local and paired remote AI sessions, and Anki
-  status, then shifts into approval-gated interactive authoring on reply and
-  supports on-demand learning passes. Includes offline configuration sample
-  checks under `tests/daily-learning/` and synthetic Skill Eval cases under
-  `evals/daily-learning/`.
+  (`automations/daily-learning.md`). The skill coaches a learning habit from
+  recent notes, reading highlights, AI sessions, and flashcards: a review that
+  changes nothing and recommends at most five items, then recall-first help
+  writing the ones the user picks, with each change approved first. The
+  automation reads the last day's vault mirror, local and paired remote AI
+  sessions, and Anki status, uses the shared run history to see patterns across
+  days, and takes replies in the run's own chat.
 - A chart in `ROUTING.md` of combined quality against cost at each effort
   setting, with each model's best-value effort marked. `scripts/routing/evidence.py`
   computes the figures and draws the chart from the committed data, and the
@@ -142,13 +143,7 @@ looked" surface. GitHub Releases mirror its entries.
   and merge-queue ejections as a follow-up to the worker's dispatch, starts a
   new worker in the same worktree when Orca refuses that follow-up, and keeps
   the worktree until the pull request reads merged.
-- `daily-learning` now carries explicitly `deferred` items from the most recent
-  daily run forward once (labeled `carried from <date>`, competing inside the
-  5-item cap before decaying), replaces per-ID remote `unread_sessions`
-  carry-forward with explicit `read_count`/`eligible_count` sampling disclosure,
-  and limits the full Anki backlog deferral warning to runs newly crossing the
-  threshold (reporting counts concisely on consecutive elevated runs).
-  `MACHINE-SETUP.md` now also verifies Antigravity's `.gemini/config/skills`
+- `MACHINE-SETUP.md` now also verifies Antigravity's `.gemini/config/skills`
   directory alongside Codex and Claude Code.
 - `coordinating-work` aligns setup, operation, and revive with Orca v1.4.272
   behavior: recognizing runtime-fixed chat surfaces under persistent agent

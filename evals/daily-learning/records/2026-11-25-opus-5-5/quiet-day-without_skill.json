@@ -1,0 +1,345 @@
+{
+ "case": "quiet-day",
+ "arm": "without_skill",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.330 via claude -p",
+  "working_directory": "<workspace>"
+ },
+ "turns": [
+  {
+   "role": "user",
+   "content": "Do my daily learning pass for yesterday, Nov 22. My notes are in ./vault (it's a git repo), yesterday's AI session logs are in ./sessions, and this morning's Anki export is ./anki/status.json. My priorities are in vault/Strategy/Personal Strategy.md."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "cd \"$PWD\" && find . -path ./vault/.git -prune -o -type f -print | head -100 && echo --- && cd vault && git log --oneline -15 && git status --short",
+    "description": "List workspace files and vault git history"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Quoted text in this command can't be checked before it runs"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "find . -path ./vault/.git -prune -o -type f -print | head -100; echo ---; git -C vault log --oneline -15; git -C vault status --short",
+    "description": "List workspace files and vault git history"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "./anki/status.json\n./sessions/2026-11-22-dependency-bumps.md\n./vault/Atomic Notes/Exponential Backoff.md\n./vault/Atomic Notes/HTTP 301 vs 302.md\n./vault/Atomic Notes/Idempotency Key.md\n./vault/Atomic Notes/Spaced Repetition.md\n./vault/Atomic Notes/CAP Theorem.md\n./vault/Structure Notes/Personal Learnings.md\n./vault/Structure Notes/Distributed Systems.md\n./vault/Strategy/Personal Strategy.md\n./vault/Reference Notes/Data Systems in Practice.md\n./vault/Reference Notes/Learning That Lasts.md\n./vault/Reference Notes/HTTP Semantics RFC 9110.md\n./vault/Reference Notes/Small Interfaces.md\n---\n71e1298 vault backup 2026-11-20\nc6505ed vault backup 2026-11-10\n4e48d45 vault backup 2026-11-01\n6eef0ac vault backup 2026-10-09\ne2e2965 vault backup 2026-10-06\n5487672 vault backup 2026-10-02\nfc01cbc vault backup 2026-09-18\n5800826 vault backup 2026-09-17\n0cd140f vault backup 2026-08-30\n9aee519 vault backup 2026-07-12\n9e8569d vault backup 2026-06-03"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "for f in \"vault/Strategy/Personal Strategy.md\" sessions/*.md anki/status.json \"vault/Structure Notes/\"*.md; do echo \"=== $f\"; cat \"$f\"; done; echo; git -C vault log --stat --since=2026-11-15 --date=iso --format='%h %ad %s'",
+    "description": "Read strategy, session log, Anki status, structure notes"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "A variable in this command can't be checked before it runs"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "for f in vault/Atomic\\ Notes/*.md vault/Reference\\ Notes/*.md; do echo \"=== $f\"; cat \"$f\"; done",
+    "description": "Read atomic and reference notes"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": true,
+   "content": "Contains backslash-escaped whitespace"
+  },
+  {
+   "role": "assistant",
+   "content": "I'll read the files directly."
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Strategy/Personal Strategy.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-01\n3\t---\n4\n5\t# Personal Strategy\n6\n7\t## Priorities this quarter\n8\n9\t1. Finish the draft chapters of my book on learning systems. Evidence about how people learn matters most here.\n10\t2. Get properly fluent in distributed systems design, enough to review a design doc with confidence.\n11\t3. Rebuild a daily Anki habit: small blocks, every day.\n12\n13\t## Not now\n14\n15\t- Polishing developer tooling and build configuration beyond what a task needs.\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/sessions/2026-11-22-dependency-bumps.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t# Session: dependency bumps (2026-11-22, 13:05-13:30)\n2\n3\t**User:** Bump everything Dependabot flagged and get CI green.\n4\n5\t**Assistant:** Updated `eslint` 9.14 to 9.15, `vitest` 2.1.4 to 2.1.5, and `@types/node` 22.8 to 22.9. The lockfile is regenerated.\n6\n7\t**User:** Lint is failing.\n8\n9\t**Assistant:** One new rule fired on an unused import in `mailer.ts`. Removed the import.\n10\n11\t**User:** Still red.\n12\n13\t**Assistant:** The Node version in `.nvmrc` was 22.9 and CI pins 22.11. Aligned `.nvmrc`. CI is green.\n14\n15\t**User:** Ship it.\n16\n17\t**Assistant:** Opened the pull request and enabled auto-merge.\n18"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/anki/status.json"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t{\n2\t  \"exported_at\": \"2026-11-23T05:00:00-08:00\",\n3\t  \"source\": \"AnkiConnect export\",\n4\t  \"due_today\": 62,\n5\t  \"overdue\": 31,\n6\t  \"last_review_date\": \"2026-11-18\",\n7\t  \"recent_lapses_7d\": [\n8\t    {\"note_id\": 1756500000005, \"front\": \"The CAP theorem states that a distributed system can provide only [...] of [...], [...] and [...].\", \"lapses\": 9},\n9\t    {\"note_id\": 1752300000006, \"front\": \"What does spaced repetition do to the review gap after a successful recall?\", \"lapses\": 1}\n10\t  ],\n11\t  \"suspended\": [\n12\t    {\"note_id\": 1756500000005, \"model\": \"Cloze\", \"tags\": [\"leech\"], \"suspended_by\": \"leech\", \"lapses\": 9, \"front\": \"The CAP theorem states that a distributed system can provide only [...] of [...], [...] and [...].\"},\n13\t    {\"note_id\": 1758100000003, \"model\": \"Basic\", \"tags\": [], \"suspended_by\": \"manual\", \"lapses\": 0, \"front\": \"Which redirect is permanent, 301 or 302?\", \"back\": \"302 is permanent; 301 is temporary.\"}\n14\t  ]\n15\t}\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Structure Notes/Personal Learnings.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-10\n3\t---\n4\n5\t# Personal Learnings\n6\n7\t- I keep what I have explained in my own words. Highlights I only skim are gone in a week.\n8\t- When I skip Anki for three days the backlog feels too big to start, and I stop altogether.\n9\t- I collect far more reading highlights than I ever turn into notes.\n10"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Structure Notes/Distributed Systems.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-10-09\n3\t---\n4\n5\t# Distributed Systems\n6\n7\t- [[CAP Theorem]]\n8\t- [[Idempotency Key]]\n9\t- [[Exponential Backoff]]\n10\n11\t## Open Questions\n12\n13\t- When is exactly-once delivery actually achievable, and when is it only \"effectively once\"?\n14\t- How does a lease differ from a lock once clocks drift?\n15"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "git -C vault log --stat --since=2026-11-01 --date=iso --format='%h %ad %s'",
+    "description": "Show recent vault commits with changed files"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "71e1298 2026-11-20 12:00:00 -0800 vault backup 2026-11-20\n\n Reference Notes/Learning That Lasts.md | 15 +++++++++++++++\n 1 file changed, 15 insertions(+)\nc6505ed 2026-11-10 12:00:00 -0800 vault backup 2026-11-10\n\n Structure Notes/Personal Learnings.md | 9 +++++++++\n 1 file changed, 9 insertions(+)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/CAP Theorem.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-08-30\n3\t---\n4\n5\t# CAP Theorem\n6\n7\tThe CAP theorem says that when a network partition happens, a distributed data store must choose between staying consistent and staying available; it cannot do both.\n8\n9\tIt is like two clerks keeping one ledger while the phone line between them is down: they either stop taking orders or risk writing entries that disagree.\n10\n11\tA bank's balance service refuses withdrawals during a partition (consistent, not available). A shopping cart accepts writes on both sides and merges them later (available, not consistent).\n12\n13\tLinks: [[Distributed Systems]]\n14\n15\tSTART\n16\tCloze\n17\tThe CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.\n18\t<!--ID: 1756500000005-->\n19\tEND\n20"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/HTTP 301 vs 302.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-09-18\n3\t---\n4\n5\t# HTTP 301 vs 302\n6\n7\tA 301 response tells the client the resource has moved temporarily and it should keep using the original URL, while a 302 tells it the move is permanent and it should update its bookmarks.\n8\n9\tA 301 is a detour sign during roadworks. A 302 is a change-of-address card.\n10\n11\tA shop that moves its checkout page for a weekend sale answers 301. A company that renames its domain answers 302 so search engines move the ranking across.\n12\n13\tLinks: [[HTTP Semantics RFC 9110]]\n14\n15\t<!--ID: 1758100000003-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/Spaced Repetition.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-07-12\n3\t---\n4\n5\t# Spaced Repetition\n6\n7\tSpaced repetition is a review schedule that shows an item again just before you would forget it, with the gap growing after each successful recall.\n8\n9\tIt is like watering a plant less often as its roots deepen.\n10\n11\tA card recalled correctly today returns in 3 days, then 8, then 20. A card missed returns tomorrow.\n12\n13\tLinks: [[Retrieval Practice]]\n14\n15\t<!--ID: 1752300000006-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/Idempotency Key.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-10-06\n3\t---\n4\n5\t# Idempotency Key\n6\n7\tAn idempotency key is a unique value a client attaches to a request so the server can recognise a repeat of that request and return the first result instead of performing the work again.\n8\n9\tIt works like a coat-check ticket: hand over the same ticket twice and you get the same coat, not a second one.\n10\n11\tA checkout page generates one key per purchase attempt. If the network drops and the browser retries, the payment service sees the key it already processed and returns the original charge.\n12\n13\tLinks: [[Exponential Backoff]], [[Distributed Systems]]\n14\n15\t<!--ID: 1759700000001-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Atomic Notes/Exponential Backoff.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-10-09\n3\t---\n4\n5\t# Exponential Backoff\n6\n7\tExponential backoff is a retry policy in which a client waits longer after each failed attempt, usually doubling the delay, so a struggling service gets room to recover.\n8\n9\tIt is like knocking on a door, then waiting twice as long before each further knock.\n10\n11\tA client that fails at 1s waits 2s, then 4s, then 8s, up to a cap. Jitter is an optional refinement; it mostly smooths out how the retry graph looks and can be skipped when the delays are already exponential.\n12\n13\tLinks: [[Idempotency Key]], [[Distributed Systems]]\n14\n15\t<!--ID: 1759900000002-->\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Reference Notes/Learning That Lasts.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-11-20\n3\t---\n4\n5\t# Learning That Lasts\n6\n7\tAuthor: Tobias Renner\n8\n9\t## Highlights\n10\n11\t### Added 2026-11-20\n12\n13\t- \"Trying to solve a problem before being taught the solution leads to better learning, even when errors are made in the attempt.\"\n14\t- \"Rereading text and massed practice are by far the preferred study strategies of learners, but they are also among the least productive.\"\n15\t- \"Interleaving the practice of two or more subjects feels slower than massed practice, yet produces better long-term retention and discrimination.\"\n16"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Reference Notes/Data Systems in Practice.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-10-02\n3\t---\n4\n5\t# Data Systems in Practice\n6\n7\tAuthor: Mara Ellison\n8\n9\t## Highlights\n10\n11\t### Added 2026-10-02\n12\n13\t- \"A fault is usually defined as one component of the system deviating from its spec, whereas a failure is when the system as a whole stops providing the required service to the user.\"\n14"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Reference Notes/HTTP Semantics RFC 9110.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-09-17\n3\ttags: [reviewed]\n4\t---\n5\n6\t# HTTP Semantics (RFC 9110)\n7\n8\tSource: https://www.rfc-editor.org/rfc/rfc9110\n9\n10\t## Highlights\n11\n12\tMy paraphrases, not quotations.\n13\n14\t- 301 Moved Permanently (section 15.4.2): the resource has a new permanent URI, and clients should use the new one from now on.\n15\t- 302 Found (section 15.4.3): the resource is temporarily at a different URI, and clients should keep using the original one.\n16\t- 308 Permanent Redirect (section 15.4.9): permanent like 301, and the client must not change the method from POST to GET.\n17"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Read",
+   "input": {
+    "file_path": "<workspace>/vault/Reference Notes/Small Interfaces.md"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "1\t---\n2\tupdated: 2026-06-03\n3\t---\n4\n5\t# Small Interfaces\n6\n7\tAuthor: Ines Varga\n8\n9\t## Highlights\n10\n11\t- \"The best modules are those whose interfaces are much simpler than their implementations.\"\n12\t- \"Complexity is anything related to the structure of a software system that makes it hard to understand and modify.\"\n13"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/HTTP 301 vs 302.md",
+    "old_string": "updated: 2026-09-18\n---\n\n# HTTP 301 vs 302\n\nA 301 response tells the client the resource has moved temporarily and it should keep using the original URL, while a 302 tells it the move is permanent and it should update its bookmarks.\n\nA 301 is a detour sign during roadworks. A 302 is a change-of-address card.\n\nA shop that moves its checkout page for a weekend sale answers 301. A company that renames its domain answers 302 so search engines move the ranking across.",
+    "new_string": "updated: 2026-11-23\n---\n\n# HTTP 301 vs 302\n\nA 301 response tells the client the move is permanent and it should update its bookmarks, while a 302 tells it the resource has moved temporarily and it should keep using the original URL.\n\nA 301 is a change-of-address card. A 302 is a detour sign during roadworks.\n\nA company that renames its domain answers 301 so search engines move the ranking across. A shop that moves its checkout page for a weekend sale answers 302."
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/HTTP 301 vs 302.md has been updated successfully. (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/Exponential Backoff.md",
+    "old_string": "updated: 2026-10-09",
+    "new_string": "updated: 2026-11-23"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/Exponential Backoff.md has been updated successfully. (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/Exponential Backoff.md",
+    "old_string": "Jitter is an optional refinement; it mostly smooths out how the retry graph looks and can be skipped when the delays are already exponential.",
+    "new_string": "Jitter (randomising each delay) is not optional in practice: if many clients fail at the same moment, pure exponential delays make them all retry at the same moment too, so the service is hit by synchronised waves. Jitter spreads those retries out."
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/Exponential Backoff.md has been updated successfully. (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/CAP Theorem.md",
+    "old_string": "The CAP theorem states that a distributed system can provide only {{c1::two}} of {{c2::consistency}}, {{c3::availability}} and {{c4::partition tolerance}}.",
+    "new_string": "During a network {{c1::partition}}, a distributed data store must choose between {{c2::consistency}} and {{c3::availability}}."
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/CAP Theorem.md has been updated successfully. (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Edit",
+   "input": {
+    "replace_all": false,
+    "file_path": "<workspace>/vault/Atomic Notes/CAP Theorem.md",
+    "old_string": "updated: 2026-08-30",
+    "new_string": "updated: 2026-11-23"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": "The file <workspace>/vault/Atomic Notes/CAP Theorem.md has been updated successfully. (file state is current in your context — no need to Read it back)"
+  },
+  {
+   "role": "assistant",
+   "tool_call": "Bash",
+   "input": {
+    "command": "git -C vault diff --stat",
+    "description": "Confirm vault changes"
+   }
+  },
+  {
+   "role": "tool",
+   "is_error": false,
+   "content": " Atomic Notes/CAP Theorem.md         | 4 ++--\n Atomic Notes/Exponential Backoff.md | 4 ++--\n Atomic Notes/HTTP 301 vs 302.md     | 8 ++++----\n 3 files changed, 8 insertions(+), 8 deletions(-)"
+  },
+  {
+   "role": "assistant",
+   "content": "Yesterday was quiet for learning: nothing new went into the vault (the last backup is Nov 20), and the one AI session was a dependency bump. The more urgent problem is Anki, and I found two factual errors in your notes, which I fixed.\n\n## Yesterday (Nov 22)\n\n- **Session log:** you bumped eslint, vitest and @types/node, fixed a lint error, and matched `.nvmrc` to the Node version CI uses. That's tooling work, which your strategy lists under \"Not now\", so I didn't make a note from it.\n- **Vault:** no changes.\n\n## Anki: your habit is at risk (priority 3)\n\n- Your last review was **Nov 18**, so you've now skipped four days. **62 cards are due and 31 are overdue.**\n- Your own Personal Learnings note says that after three skipped days the backlog feels too big and you stop altogether. You're past that point now.\n- **Suggestion:** do one small block today, about 15 minutes or 20 reviews, and stop there. Don't try to clear the backlog; just keep the streak alive.\n\n## Errors I fixed in the vault (not committed; check with `git -C vault diff`)\n\n1. **`HTTP 301 vs 302`: you had them backwards.** The note said 301 was temporary and 302 permanent, which contradicts your own RFC 9110 reference note. I swapped the definitions, analogies and examples but kept your wording.\n   - **The Anki card is wrong too.** Its back says \"302 is permanent; 301 is temporary.\" It's suspended and it isn't generated from the vault, so you'll need to fix the back in Anki yourself before unsuspending it.\n2. **`Exponential Backoff`: the note said jitter is optional and mostly cosmetic.** That's wrong. Without jitter, clients that fail together also retry together, and the service gets hit in synchronised waves. This matters for priority 2, since reviewers often check for it in design docs. I rewrote that sentence.\n3. **`CAP Theorem`: I rewrote the card that keeps failing (suspended as a leech after 9 lapses).** The card tested the \"pick two of three\" version, but your note correctly says you choose between consistency and availability *during a partition*. That mismatch is probably why you kept missing it. The new card is: *\"During a network {{partition}}, a distributed data store must choose between {{consistency}} and {{availability}}.\"* It keeps the same ID, so your next sync updates it. Then unsuspend it in Anki and remove the `leech` tag.\n\n## One small next step (priority 1)\n\nThe three highlights from **Learning That Lasts** (added Nov 20) haven't become notes yet. That's the \"more highlights than notes\" pattern from your Personal Learnings. They cover trying before being taught, why rereading is weak, and interleaving, which is all evidence you can use for the book.\n\nYour `Spaced Repetition` note already links to a **`[[Retrieval Practice]]`** note that doesn't exist. Writing that note in your own words would use the rereading highlight and fix the broken link. I didn't draft it for you, because your own notes say you only keep what you've explained yourself.\n\n**Lower priority:** the fault-vs-failure highlight in *Data Systems in Practice* has been waiting since Oct 2. It would make a good atomic note for the distributed-systems priority."
+  }
+ ]
+}

@@ -14,8 +14,8 @@ their diffs lacked, and the fixtures now include those tests.
 - **Cases** coupled-plan-versus-uniform-backlog and
   held-pr-keeps-wake-and-calm-alert at commit `9bda8d9e`, and
   domain-lead-custody-and-self-merge and overlap-and-one-migration at commit
-  `ee428b3e`. The case-set SHA-256 at `ee428b3e` is the one in
-  [the case set](../../README.md#cases).
+  `ee428b3e`. The case-set SHA-256 at `ee428b3e` was
+  `2c22126b92dbf2d44941dd5124fa8813e4da6933c4aed841e9e69bd83ad6b9c8`.
 - **Baseline** `skills/coordinating-work`, rerun only on the two cases whose
   fixtures changed. The two cases whose fixtures did not change keep their
   first-round Baseline.
@@ -63,4 +63,5 @@ The six runs used 101,237 output tokens, 5,757,905 cache-read tokens, and
 - **The Baseline still does nothing in either fixture case.** It proposed a
   setup and made no writes.
 
-Limits are those of the first round.
+Limits are those of the first round, including the Orca stand-in that hid
+worker worktrees.

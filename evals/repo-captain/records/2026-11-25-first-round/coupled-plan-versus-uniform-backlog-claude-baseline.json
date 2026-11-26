@@ -594,7 +594,7 @@
   {
    "role": "tool_result",
    "turn": 1,
-   "content": "=== orca host list\norca: `host list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca repo list\norca: `repo list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca worktree list\norca: `worktree list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n15:50  up 5 days, 15:48, 5 users, load averages: 2.81 3.52 3.29\nMach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                    29769.\nPages active:                                 588302.\nPages inactive:                               587283.\nPages speculative:                               571."
+   "content": "=== orca host list\norca: `host list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca repo list\norca: `repo list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca worktree list\norca: `worktree list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n[host system statistics removed]"
   },
   {
    "role": "tool_call",
@@ -608,7 +608,7 @@
   {
    "role": "tool_result",
    "turn": 1,
-   "content": "(eval):1: command not found: sysctl\n(eval):1: command not found: sysctl\nCPU usage: 16.66% user, 15.46% sys, 67.86% idle \nPhysMem: 31G used (4025M wired, 9167M compressor), 304M unused."
+   "content": "(eval):1: command not found: sysctl\n(eval):1: command not found: sysctl\n[host system statistics removed]"
   },
   {
    "role": "tool_call",

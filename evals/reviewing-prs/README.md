@@ -17,7 +17,7 @@ describes.
 | [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the Verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
 | [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes Verdict | `fixtures/conflicts-impact-digest-html` |
 | [risk-overview-and-situations](cases/risk-overview-and-situations/case.yaml) | No observed failure yet. Checks that the page splits the round at the hold line, shows an undescribed change as a situation with its code, and says where each value came from | `fixtures/risk-overview-and-situations` |
-| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/case.yaml) | No observed failure yet. Checks that a Verdict posts at the head the operator reviewed when the pull request moved before posting, and that the operator hears it moved | `fixtures/verdict-at-reviewed-head` |
+| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/case.yaml) | `reviewing-prs` at `abd0e525` posted no Verdict when the head moved. Checks that a Verdict posts at the head the operator reviewed when the pull request moved before posting, and that the operator hears it moved | `fixtures/verdict-at-reviewed-head` |
 
 Three earlier cases were removed on 2026-11-24: a mislabeled new view, hidden
 stored names, and a description claiming work the diff lacked. A no-skill
@@ -37,8 +37,8 @@ digest case's prompt names the merged window's start, so no case depends on
 today's date.
 
 The four-case set SHA-256 is
-`3957773a8f8444049bf11652cc1df779bdf06f21bf40e08d356276203e5bb5b1`. From this
-directory, reproduce it with:
+`7e92974513429a6071bb510e99b01f6597c32e9a8cc9a214819d916e920a5d87`. Each Eval
+Record names the hash it ran against. From this directory, reproduce it with:
 
 ```sh
 find cases fixtures stand-ins -type f -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
@@ -143,6 +143,9 @@ shapes they must parse.
   previous record's skill arms.
 - [Post only, 2026-11-25](records/2026-11-25-post-only/README.md): each case
   once with the skill at `4f0a8a92`, after it stopped merging, in Claude.
+- [Shared contract, 2026-11-25](records/2026-11-25-shared-contract/README.md):
+  each case once with the skill at `c7917a88`, after it moved its shared
+  rules into the review contract, in Claude.
 
 Commit each record under
 `records/<date>-<slug>/` with the fields

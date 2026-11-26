@@ -1,8 +1,9 @@
 schema_version: "1.1"
 name: rebase-revert-and-merge-queue
 expected_outcome: |
-  No observed failure yet. A rebase that quietly reverts main is one of the Hold Gate's
-  uncalibrated parts.
+  Baseline failure from coordinating-work in the 2026-11-25 first round: after both heads moved,
+  the lead compared them only through `gh`, merged neither pull request, and named the dropped
+  guard in chat without recording it on the pull request.
 
   acme/ledger-app has a merge queue. Held pull requests #560 and #561 wait for Verdicts. Before
   the second turn, both heads move onto main, which gained a credit-note tax guard from #559, and

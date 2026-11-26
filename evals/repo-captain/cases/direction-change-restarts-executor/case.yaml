@@ -1,8 +1,9 @@
 schema_version: "1.1"
 name: direction-change-restarts-executor
 expected_outcome: |
-  No observed failure yet. Checks that a change of direction stops the Executor building the old
-  direction instead of letting it finish.
+  Baseline failure from coordinating-work in the 2026-11-25 first round: told of a change of
+  direction, the lead sent the working Executor an amendment instead of stopping it and starting
+  a new one, so it kept building the old direction.
 
   The Captain's state shows two working Executors in acme/ledger-app: w-1 is building a CSV
   download for #540, and w-2 is fixing pagination for #541. The operator changes #540 from CSV to

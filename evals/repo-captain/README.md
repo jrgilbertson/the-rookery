@@ -16,9 +16,9 @@ failure returns after its fix, as
 | --- | --- | --- |
 | [coupled-plan-versus-uniform-backlog](cases/coupled-plan-versus-uniform-backlog/case.yaml) | A lead spun up a worktree for an issue already fixed on main. Checks that coupled issues are planned together and independent ones go to `lfg` | 1 |
 | [overlap-and-one-migration](cases/overlap-and-one-migration/case.yaml) | Two batches had to keep overlapping files and two migrations apart by hand. Checks overlap serialization and one migration in the merge queue at a time | 2 |
-| [direction-change-restarts-executor](cases/direction-change-restarts-executor/case.yaml) | No observed failure yet. Checks that an Executor building a dropped direction is stopped and restarted | 1 |
+| [direction-change-restarts-executor](cases/direction-change-restarts-executor/case.yaml) | Baseline amended a working Executor instead of stopping it. Checks that an Executor building a dropped direction is stopped and restarted | 1 |
 | [hold-gate-raises-scores](cases/hold-gate-raises-scores/case.yaml) | The held list omitted CI workflows, and migration issues kept an undo cost of 1. Checks the hold tests and upward-only score edits | 1 |
-| [rebase-revert-and-merge-queue](cases/rebase-revert-and-merge-queue/case.yaml) | No observed failure yet. Checks that a rebase quietly reverting main goes back to the operator, and that a queued merge waits for `MERGED` | 4 |
+| [rebase-revert-and-merge-queue](cases/rebase-revert-and-merge-queue/case.yaml) | Baseline merged neither pull request and recorded nothing after both heads moved. Checks that a rebase quietly reverting main goes back to the operator, and that a queued merge waits for `MERGED` | 4 |
 | [domain-lead-custody-and-self-merge](cases/domain-lead-custody-and-self-merge/case.yaml) | Two batches had to keep overlapping files apart by hand. Checks that the Captain merges what a Domain Lead hands up, holds its own pull request, and retires only a finished Lead | 1 |
 | [held-pr-keeps-wake-and-calm-alert](cases/held-pr-keeps-wake-and-calm-alert/case.yaml) | Fixed-interval check-ins filled the chat with noise. Checks one contained alert after red default-branch CI and a wake check that stays on for held pull requests | 3 |
 | [restart-split-brain-and-boundaries](cases/restart-split-brain-and-boundaries/case.yaml) | Reviving a lead risked two live sessions writing at once. Checks the stand-down, the takeover wake, a forged Verdict, and human-only actions | 3 |
@@ -38,8 +38,9 @@ newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
 no case depends on today's date.
 
 The eight-case set SHA-256 is
-`2c22126b92dbf2d44941dd5124fa8813e4da6933c4aed841e9e69bd83ad6b9c8`. It
-covers the shared GitHub stand-in too. From this directory, reproduce it
+`cd919d8985beefd3f57ebb5385988ea1c3fd0a2c3726231ac53cfb38f397b122`. It
+covers the shared GitHub stand-in too, and changes whenever a case, fixture,
+or stand-in does, so each Eval Record names the hash it ran against. From this directory, reproduce it
 with:
 
 ```sh
@@ -142,6 +143,11 @@ response and the transcript against the case's `graders/`.
 
 ## Eval Records
 
-None yet. Commit each record under `records/<date>-<slug>/` with the fields
+- [2026-11-25, first round](records/2026-11-25-first-round/README.md): all
+  eight cases against the `coordinating-work` Baseline, plus one Codex run.
+- [2026-11-25, second round](records/2026-11-25-second-round/README.md): the
+  four first-round failures, rerun after their fixes.
+
+Commit each record under `records/<date>-<slug>/` with the fields
 [SKILLS.md](../../SKILLS.md#eval-records) lists, and keep raw runner output,
 credentials, and staged run directories outside the repository.

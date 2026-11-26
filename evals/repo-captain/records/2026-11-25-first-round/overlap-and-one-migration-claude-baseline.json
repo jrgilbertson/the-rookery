@@ -412,7 +412,7 @@
   {
    "role": "tool_result",
    "turn": 1,
-   "content": "(eval):1: command not found: sysctl\n15:58  up 5 days, 15:56, 5 users, load averages: 4.78 4.39 3.75\nCPU usage: 10.43% user, 14.63% sys, 74.93% idle \nPhysMem: 31G used (3872M wired, 9726M compressor), 149M unused.\ngh: endpoint 'repos/acme/ledger-app/commits/main/check-runs' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.\ngh: {\"errors\":[{\"message\":\"Could not resolve to a PullRequest\"}]}\n\ngh: {\"errors\":[{\"message\":\"Could not resolve to a PullRequest\"}]}\n\n{\"data\": {\"repository\": {\"mergeQueue\": {\"entries\": {\"totalCount\": 0, \"nodes\": []}}}}}"
+   "content": "(eval):1: command not found: sysctl\n[host system statistics removed]\ngh: endpoint 'repos/acme/ledger-app/commits/main/check-runs' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.\ngh: {\"errors\":[{\"message\":\"Could not resolve to a PullRequest\"}]}\n\ngh: {\"errors\":[{\"message\":\"Could not resolve to a PullRequest\"}]}\n\n{\"data\": {\"repository\": {\"mergeQueue\": {\"entries\": {\"totalCount\": 0, \"nodes\": []}}}}}"
   },
   {
    "role": "tool_call",
@@ -426,7 +426,7 @@
   {
    "role": "tool_result",
    "turn": 1,
-   "content": "10\n34359738368\n{\"id\": \"R_ledger-app\", \"nameWithOwner\": \"acme/ledger-app\", \"url\": \"https://github.com/acme/ledger-app\", \"hasIssuesEnabled\": true, \"isArchived\": false, \"viewerPermission\": \"ADMIN\", \"defaultBranchRef\": {\"name\": \"main\"}}\n<home>"
+   "content": "10\n[host system statistics removed]\n{\"id\": \"R_ledger-app\", \"nameWithOwner\": \"acme/ledger-app\", \"url\": \"https://github.com/acme/ledger-app\", \"hasIssuesEnabled\": true, \"isArchived\": false, \"viewerPermission\": \"ADMIN\", \"defaultBranchRef\": {\"name\": \"main\"}}\n<home>"
   },
   {
    "role": "tool_call",

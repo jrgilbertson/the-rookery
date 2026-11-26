@@ -1,8 +1,9 @@
 schema_version: "1.1"
 name: verdict-at-reviewed-head
 expected_outcome: |
-  No observed failure yet. Checks that a Verdict records the head the operator reviewed when the
-  pull request moved between review and posting.
+  Failure of reviewing-prs at abd0e525, recorded on 2026-11-25: when a held pull request's head
+  moved between review and posting, it posted no Verdict for it and never said who judges the
+  change since review.
 
   This case has three operator turns, listed in turns.json. acme/ledger-app#470 is held and owned
   by repo-captain. acme/ledger-app#471 has no owner. After the operator's Verdicts and before

@@ -103,8 +103,14 @@ cases after the fixes.
   the coupled-plan skill run listed the host's installed skills and found
   `gh-stack` there. It acted only through the stand-ins, and the listing is
   cut from its transcript.
+- **The Orca stand-in hid worker worktrees.** Its fixtures listed only the
+  Captain's worktree, so `worker-start --worktree` and `worktree rm` refused
+  every worker's own. The restart and held-pull-request Baselines hit that
+  refusal and worked around it. A later commit fixed the stand-in, so a
+  rerun can score those two Baselines differently.
 - **One run per case and arm.** There is no variance figure.
 
 The transcripts keep user and assistant messages, tool calls, and tool
 results, with long results cut and marked. Run directories, home and
-temporary paths, and the account name are replaced with placeholders.
+temporary paths, the account name, and session IDs are replaced with
+placeholders, and host system statistics are removed.

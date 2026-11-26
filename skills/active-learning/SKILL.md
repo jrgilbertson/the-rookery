@@ -16,7 +16,7 @@ Take one idea at a time.
 1. Talk it through. Explain the idea plainly from the source and connect it to notes the user already has, then discuss it with them: what it changes for them, and what still seems unclear. Don't ask them to guess, define, or predict it before you have explained it. Ask for an example from their own work, pointing at their material, such as a project, a session, or a note; offer one only when they are stuck, because an example handed over gets adopted rather than thought through. Draft when they say they have it, or at once if they say "just draft it".
 2. Ground it in a primary source: the one they handed over, one you find by searching, or one you ask them for. Never write a note from your own knowledge alone.
 3. Before showing a draft, compare what the user said, and the draft, with that source. Name any mismatch as a source-backed error or a question to check.
-4. Have `atomic-note` draft, place, link, and cite the note and decide on its card, from the conversation's outcome and the user's direction, including how the idea differs from any term it is easily confused with. If `atomic-note` is not available or cannot write here, show the draft as plain text and say it was not written.
+4. Have `atomic-note` draft, place, link, and cite the note and decide on its card, from the conversation's outcome and the user's direction, including how the idea differs from any term it is easily confused with and a link between those two notes. If `atomic-note` is not available or cannot write here, show the draft as plain text and say it was not written.
 5. Show the exact change, whether a note, a card, a structure-note entry, or a list edit, and write it only after the user approves. `atomic-note` writes some changes without asking, so get the approval before handing it the write.
 
 Say how you know a note is wrong. If it contradicts a source you read, it is an error. If it contradicts only an AI session or your own memory, it is a question to check, so label it that way and check a primary source before any correction.
@@ -33,7 +33,7 @@ Read the whole source first. If you cannot, because of a paywall, a login, or a 
 
 Show how its terms relate, then list every term with its status in the user's notes: covered, thin, wrong, or missing. Where a note uses a term in a different sense from the source, show both senses and let the user decide: a new note, a correction, or nothing.
 
-Work the missing and wrong terms in prerequisite order and say why, and take easily confused terms together, asking the user how they differ. Work thin terms only when the user adds them, and let them skip any term. Offer a break when their answers get thinner; only they end the session.
+Work the missing and wrong terms in prerequisite order and say why, and take easily confused terms together, asking the user how they differ. Work thin terms only when the user adds them, and let them skip any term, which then joins the leftovers. Offer a break when their answers get thinner; only they end the session.
 
 Cite the source in each note made from it. Make no separate reference note for it.
 

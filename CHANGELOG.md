@@ -115,11 +115,13 @@ looked" surface. GitHub Releases mirror its entries.
   telling the operator. It leaves the review request on such a pull request
   open, because GitHub would attach the review to the unreviewed head, and it
   holds an edit to the design system itself.
-- The leverage rule's undo cost of 3 now names every stored or published
-  name: enum values, public API routes and fields, CLI flags, configuration
-  keys, and published package or skill names join tables, columns, stored
-  IDs, and event names. The review contract's score table now uses the rule's
-  own definitions.
+- The leverage rule's levels are now facts an agent can check. Impact
+  scores by severity instead of how often or how many users do a task.
+  Confidence 3 means evidence confirms the need or the approach. Tests a
+  change adds count as new checks. Undo cost 2 means the change reaches shared
+  code, shared settings, or many users, or takes more than one revert, and
+  undo cost 3 names every stored or published name. The review contract's
+  score table uses the same definitions.
 - `managing-issues` lets a Captain, under its standing instruction, update
   readiness and workflow labels, tighten Scope and Verification, raise
   verification effort or undo cost, and change confidence from code

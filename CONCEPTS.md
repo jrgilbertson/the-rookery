@@ -91,8 +91,8 @@ understanding rather than the repository's safeguards and procedures.
 
 The order for work to choose from: value to users and confidence, divided by
 verification effort and undo cost. Verification effort is how hard a result is
-to confirm, and undo cost is what it takes to reverse a change that turns out
-wrong. [PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
+to confirm, and undo cost is what a wrong change could break and what it takes to
+reverse it. [PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
 
 ## Choosing models
 

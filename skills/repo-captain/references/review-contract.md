@@ -79,10 +79,10 @@ Score a pull request from its raw diff, each factor 1 to 3:
 
 | Factor | 1 | 2 | 3 |
 | --- | --- | --- | --- |
-| Impact (I): how much better it makes things for users | Barely noticed | A clear improvement to something users do often | Changes whether most users can do a core task or trust the product with their work |
-| Confidence (C): how sure we are that we can do it and it will deliver | A guess | Good reasons but nothing confirmed | Confirmed |
-| Verification effort (V): how hard the result is to confirm | Existing checks prove it | Needs new tests or one manual check | Only human judgment can |
-| Undo cost (U): what it takes to undo | Contained and can be put back as it was | Wide but can be put back as it was | Can't, because the earlier state is lost or the effect has already reached someone |
+| Impact (I): how much better it makes things for users | No user task you can name gets better | A named user task gets faster, easier, or more reliable | Decides whether users can do a core task or keep their work safe |
+| Confidence (C): how sure we are that it will deliver | A guess | A concrete reason but nothing confirmed | Evidence that confirms the need or the approach |
+| Verification effort (V): how hard the result is to confirm | Checks that existed before the change, such as tests, types, CI, or a reproduction on record, prove it | Needs new tests, including the change's own, or a manual check with a known right answer | Only human judgment can |
+| Undo cost (U): what it takes to undo | One revert within one module | Can be undone but reaches shared code, shared settings, or many users, or takes more than one revert | Can't be undone, because data is lost, a message is sent, money moves, or access is exposed |
 
 Work users don't see takes the impact of the problem it prevents or the
 feature it unblocks.

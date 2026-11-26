@@ -222,7 +222,6 @@ def check_incomplete_scores(raw: str, scratch: Path) -> None:
     held = list(rows)
     check(set(held[:2]) == {134, 409}, f"a pull request missing any score must sort to the top of the held group: {held}")
     drivers = {n: next((b["driver"] for b in rendered["blocks"] if b["title"].endswith(t)), "") for t, n in number.items()}
-    # #134 keeps verify 1 and undo 1, so its badge shows the real V x U, not the sort key; #409 has no undo, so no V x U.
     for pr, badge, placement in ((134, "1", "Held because a score is missing. V × U is 1."), (409, "?", "Held because a score is missing.")):
         check(rows.get(pr, {}).get("vu") == badge, f"#{pr}'s V x U badge must read {badge}: {rows.get(pr, {}).get('vu')}")
         expected = placement + " " + next(p["driver"] for p in variant["prs"] if p["number"] == pr)

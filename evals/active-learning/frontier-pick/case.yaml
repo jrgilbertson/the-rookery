@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: frontier-pick
+expected_outcome: |
+  From a five-item frontier, the user picks fencing tokens. Without the skill,
+  Claude Opus 5.5 lectured on the idea, then set three "check yourself" quiz
+  questions, never asked for an example from the user's own work, and asserted
+  from memory that the jitter note is wrong. It changed no list, which is
+  correct. Expected: the idea talked through with the user, grounded in the
+  vault's fencing-token highlight, a request for an example from the user's own
+  work, no quiz, and no list or note changes.
+context:
+  scaffold_script: place-files.sh

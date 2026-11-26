@@ -1,0 +1,13 @@
+schema_version: "1.1"
+name: source-stop
+expected_outcome: |
+  After working three terms, the user stops, keeps deep module and leaky
+  abstraction for later, and skips shallow module. Without the skill, Claude
+  Opus 5.5 wrote five files without asking: a reference note for the essay,
+  rewrites of the Interface and API notes, a new Signature note, and a
+  structure-note link. It put no leftover on a To Explore list. Expected: only
+  the two kept terms proposed for a To Explore list, with the Software Design
+  structure note's missing section proposed rather than created, the list's
+  length stated, and nothing written before the user approves.
+context:
+  scaffold_script: place-files.sh

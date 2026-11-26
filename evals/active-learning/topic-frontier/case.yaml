@@ -1,0 +1,12 @@
+schema_version: "1.1"
+name: topic-frontier
+expected_outcome: |
+  The user asks what they don't know about distributed systems. Without the
+  skill, Claude Opus 5.5 listed about forty items in nine groups, cited papers
+  and books from memory without searching, gave no per-item choice, and
+  asserted from memory that the jitter note is wrong. Expected: a frontier
+  whose items beyond the vault come from research or are labelled as model
+  knowledge, each with learn now, add to To Explore, or skip, skip being the
+  default, and no writes.
+context:
+  scaffold_script: place-files.sh

@@ -1,9 +1,11 @@
 # Active Learning Skill Eval
 
-Four synthetic Eval Cases, each run once with the `active-learning` skill and
-once without it. Every case comes from a failure seen when Claude Opus 5.5 ran
-the same request with no skill. The cases share one invented vault, three
-session logs, and an Anki export, built by [`fixture.py`](fixture.py).
+Eleven synthetic Eval Cases, each run once with the `active-learning` skill
+and once without it. Every case comes from a failure seen when Claude Opus 5.5
+ran the same request with no skill. The cases share one invented vault, and
+[`fixture.py`](fixture.py) builds each one's workspace from the case name.
+
+Recent activity, from the vault plus three session logs and an Anki export:
 
 - [daily-pass](daily-pass/case.yaml): a daily review over a vault with a wrong
   note, a note an AI session disagrees with, new concepts, unprocessed
@@ -15,14 +17,36 @@ session logs, and an Anki export, built by [`fixture.py`](fixture.py).
 - [quiet-day](quiet-day/case.yaml): nothing changed in the vault and the only
   session is a dependency bump.
 
+A source, from the vault plus an invented essay on module design:
+
+- [source-terms](source-terms/case.yaml): the user asks for notes on the
+  essay's terms, one of which the vault uses in another sense.
+- [source-stop](source-stop/case.yaml): the user stops partway and keeps two
+  of the remaining terms for later.
+- [source-unreadable](source-unreadable/case.yaml): the essay is cut off by a
+  paywall.
+
+A topic or a single concept, from the vault alone:
+
+- [topic-frontier](topic-frontier/case.yaml): what the user doesn't know
+  about distributed systems.
+- [frontier-pick](frontier-pick/case.yaml): the user picks one frontier item
+  to learn.
+- [free-time](free-time/case.yaml): the user has half an hour free.
+- [single-note](single-note/case.yaml): a note for one named concept, with no
+  source.
+
+The cases that pick up a conversation partway carry the earlier turns in
+their prompt.
+
 Each case folder uses the skill-creator layout: `prompt.md`, `case.yaml`,
 one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`d56364d3f09e6e15da14bd96d268048e6b2f75a6ea433f7e7d4ecf1aa131bff5`. From this
+`c37869820af14c321e1746832fd7531195ec74fc2b39c6b0cea89c0fedcfb0c0`. From this
 directory, reproduce it with
-`{ find daily-pass digest-reply failing-card quiet-day -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
+`{ find daily-pass digest-reply failing-card free-time frontier-pick quiet-day single-note source-stop source-terms source-unreadable topic-frontier -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
 ## Run
 
@@ -50,8 +74,8 @@ user name replaced.
 
 ## Read the results
 
-Check `file_changes.txt` first: every no-skill run so far edited the vault,
-and no run with the skill has. Then read `response.md` and `transcript.json`
+Check `file_changes.txt` first: no case asks for a change the user has not
+approved, so a run with the skill should change no file. Then read `response.md` and `transcript.json`
 against the case's graders. Judge by reading; none of the graders is a text
 match.
 

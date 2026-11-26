@@ -3,8 +3,8 @@
 
 Usage: fixture.py <dest-dir> <case>
 
-Writes vault/, sessions/, anki/ and digest.md into <dest-dir>, removes what the
-case must not see, and turns the vault into a Git repository whose commit dates
+Writes vault/, sessions/, anki/, digest.md and article.md into <dest-dir>,
+keeps only what the case may see, and turns the vault into a Git repository whose commit dates
 and file times follow each note's `updated:` date. Every person, note, quote,
 session and card here is invented.
 """
@@ -14,14 +14,17 @@ import sys
 from pathlib import Path
 
 FILES = {}
+# Files only the newer cases see, so the original four cases keep building the
+# workspaces their 2026-11-25 Eval Record ran on.
+DESIGN = {}
 
 
-def note(path, updated, body, tags=None):
+def note(path, updated, body, tags=None, into=FILES):
     front = ["---", f"updated: {updated}"]
     if tags:
         front.append("tags: [" + ", ".join(tags) + "]")
     front.append("---")
-    FILES[path] = "\n".join(front) + "\n\n" + body.strip() + "\n"
+    into[path] = "\n".join(front) + "\n\n" + body.strip() + "\n"
 
 
 # --- Atomic notes -----------------------------------------------------------
@@ -368,12 +371,131 @@ FILES["digest.md"] = """# Learning digest for 2026-11-22
 """
 
 
+# --- Module-design notes, structure notes, and an article (newer cases only) --
+
+note("vault/Atomic Notes/Interface.md", "2026-05-14", """
+# Interface
+
+An interface is a language keyword, as in Java or TypeScript, that declares a set of method signatures a class promises to implement.
+
+It is like a job description: it lists the duties, and any candidate who can do them all can take the job.
+
+`interface Shape { area(): number }` lets any class with an `area` method be passed where a `Shape` is expected.
+
+Links: [[Software Design]]
+
+<!--ID: 1747200000007-->
+""", into=DESIGN)
+
+note("vault/Atomic Notes/API.md", "2026-05-14", """
+# API
+
+An API is how programs talk to each other.
+""", into=DESIGN)
+
+note("vault/Atomic Notes/Information Hiding.md", "2026-06-02", """
+# Information Hiding
+
+Information hiding is the practice of keeping a module's design decisions, such as its data layout or algorithm, inside the module, so callers cannot come to depend on them and the decisions can change without breaking anyone.
+
+It is like a restaurant kitchen behind a pass: diners order from the menu and never see, or rely on, how the cooks organise the line.
+
+A date library stores timestamps as nanoseconds internally but exposes only `before`, `after`, and `format`, so switching to microseconds later breaks no caller.
+
+Links: [[Software Design]], [[Small Interfaces]]
+
+<!--ID: 1748800000008-->
+""", into=DESIGN)
+
+note("vault/Structure Notes/Software Design.md", "2026-06-02", """
+# Software Design
+
+- [[Information Hiding]]
+- [[Interface]]
+- [[API]]
+
+## Open Questions
+
+- Why do some small modules feel harder to use than one big one?
+""", into=DESIGN)
+
+note("vault/Structure Notes/Learning Science.md", "2026-09-01", """
+# Learning Science
+
+- [[Spaced Repetition]]
+
+## Open Questions
+
+- Does writing a note by hand teach more than editing a draft someone else wrote?
+
+## To Explore
+
+- Interleaving: why mixing topics in practice feels slower but sticks better
+- Desirable difficulties
+- The generation effect
+""", into=DESIGN)
+
+ARTICLE_HEAD = """# Depth Over Breadth: Designing Modules for the Next Reader
+
+By Priya Okafor · https://example.com/essays/depth-over-breadth
+
+Most advice about modules is about size. This essay argues that size is the wrong axis. What matters is how much a module asks of the people who call it, compared with how much it does for them.
+
+## Deep modules
+
+A deep module does a lot of work behind a small interface. The caller learns a handful of things and gets a great deal of behaviour in return. A file system is the classic example: open, read, write, close, and behind those four calls sit caching, scheduling, permissions, and recovery from crashes. Depth is a ratio, so a module can only be judged deep or shallow once you know what its interface is.
+"""
+
+ARTICLE_REST = """
+## Shallow modules
+
+A shallow module is the opposite: its interface is nearly as complicated as what it does. A class that wraps one database call behind a constructor, three setters, and an `execute` method makes every caller learn five things to save one line. Splitting code into many shallow modules adds interfaces without adding depth, and the total that readers must learn goes up.
+
+## Interface
+
+By interface I do not mean a language keyword. A module's interface is everything a caller must know to use it correctly: the names and types of its operations, and also what each operation assumes, what it guarantees, what errors it raises, what order calls must come in, and how fast it is. Much of the interface is never written in code, which is why it is easy to underestimate.
+
+## Signature
+
+A signature is the part of the interface a compiler can check: an operation's name, its parameter types, and its return type. Two functions can share a signature and have very different interfaces, because the signature says nothing about side effects, ordering, or what happens on failure. Treating the signature as the whole interface is the most common way designers fool themselves into thinking a module is simple.
+
+## API
+
+An API is an interface offered across a boundary to code you do not control, such as another team, another service, or the public. Every API is an interface, but not every interface is an API: the interface between two classes in the same package is not one. The distinction matters because an API is expensive to change. Once outside code depends on it, every part of its interface, including the unwritten parts, becomes a promise.
+
+## Information hiding
+
+Deep modules are built by information hiding: deciding which design decisions live inside the module and keeping them out of the interface. Every decision that leaks into the interface becomes something callers depend on and something you can no longer change freely.
+
+## Leaky abstractions
+
+An abstraction leaks when callers must know about a hidden detail to use the module correctly, such as a remote call that is slow or fails in ways a local call never would. A leak quietly widens the interface: the detail was supposed to be hidden, but now every caller has to know it. Most leaks are not bugs in the code. They are parts of the interface the designer never admitted were there.
+"""
+
+
 # Files each case must not see, and whether it is the quiet-day variant.
 CASES = {
     "daily-pass": (["digest.md", "anki/suspended-card.json"], False),
     "digest-reply": (["anki/suspended-card.json"], False),
     "failing-card": (["digest.md"], False),
     "quiet-day": (["digest.md", "anki/suspended-card.json"], True),
+}
+
+# The newer cases see only the vault plus the module-design notes, and the
+# source cases also see the article, whole or cut off at a paywall.
+NOT_VAULT = ["digest.md", "anki/status.json", "anki/suspended-card.json"] + [k for k in FILES if k.startswith("sessions/")]
+ARTICLE = {
+    "whole": ARTICLE_HEAD + ARTICLE_REST,
+    "cut": ARTICLE_HEAD + "\n---\n\n*You have reached your free article limit. Subscribe to keep reading.*\n",
+}
+NEWER = {
+    "source-terms": "whole",
+    "source-stop": "whole",
+    "source-unreadable": "cut",
+    "topic-frontier": None,
+    "frontier-pick": None,
+    "free-time": None,
+    "single-note": None,
 }
 
 QUIET_REMOVED = (
@@ -398,8 +520,14 @@ def stamp(path, day, hour="1200"):
 
 def main():
     out, case = Path(sys.argv[1]), sys.argv[2]
-    drop, quiet = CASES[case]
     files = dict(FILES)
+    if case in NEWER:
+        drop, quiet = NOT_VAULT, False
+        files.update(DESIGN)
+        if NEWER[case]:
+            files["article.md"] = ARTICLE[NEWER[case]]
+    else:
+        drop, quiet = CASES[case]
     if quiet:
         # Nothing substantive changed on Nov 22; only the dependency-bump session remains.
         for rel in QUIET_REMOVED:

@@ -1,0 +1,14 @@
+schema_version: "1.1"
+name: source-terms
+expected_outcome: |
+  The user hands over an essay on module design and asks for atomic notes for
+  its terms. Without the skill, Claude Opus 5.5 wrote ten files in one turn:
+  seven notes, a reference note the user did not ask for, and a rewrite of the
+  user's Interface note in the essay's sense, without asking. It gave no view of
+  how the terms relate or which ones the vault already covers, and asserted
+  from memory that the jitter note is wrong. Expected: a view of how the terms
+  relate, every term with its vault status, the work ordered so interface comes
+  before deep module, the two senses of interface shown with the choice left to
+  the user, and an invitation to talk the first idea through, with no writes.
+context:
+  scaffold_script: place-files.sh

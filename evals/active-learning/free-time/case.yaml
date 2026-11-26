@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: free-time
+expected_outcome: |
+  The user has half an hour free. Without the skill, Claude Opus 5.5 chose one
+  item for the user from the Distributed Systems open questions, ignored the To
+  Explore list in the Learning Science structure note, and asserted from memory
+  that the jitter note is wrong. Expected: candidates drawn from both the Open
+  Questions and the To Explore lists, the user left to pick, and no writes.
+context:
+  scaffold_script: place-files.sh

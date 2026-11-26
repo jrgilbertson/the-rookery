@@ -118,6 +118,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Improve audit checks the repository's tracker read-only with
+  `managing-issues` before saving its report and names each covering open issue
+  beside its finding, reporting a coverage gap if the tracker is unreachable or
+  results are truncated. Update saved Improve audit jobs from the definition.
 - `managing-personal-crm` drops the Grok X sandbox-retry recovery path from
   `references/grok-x-source.md`, so a sandbox network or session-state denial
   marks X unavailable and dependent conclusions `Partial` rather than

@@ -21,6 +21,9 @@ case=$1 arm=$2 out=$3 rev=${4:-HEAD}
 mkdir -p "$out"
 out=$(cd "$out" && pwd)
 ws="$out/ws"
+# Each run needs a fresh workspace: a leftover one would keep the previous
+# model's files and make the fixture's Git commits fail.
+[ ! -e "$ws" ] || { echo "$ws already exists; give each run a new <out-dir>" >&2; exit 2; }
 python3 -I "$here/fixture.py" "$ws" "$case"
 
 # Hash every workspace file plus the vault's Git config, refs, and hooks, so a

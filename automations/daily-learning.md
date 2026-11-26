@@ -21,7 +21,7 @@ Before starting, confirm the `daily-learning`, `atomic-note`, `obsidian-cli`, an
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `daily-learning` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Use recent runs to spot topics that keep coming back across days. Revisit declined items only with new evidence.
 
-Run a `daily-learning` review of the last 24 hours, widened after missed runs to cover the gap, using these sources:
+Set the review window first: the last 24 hours, widened back to the end of the last run in history when runs were missed. Every step below reads that same window. Run a `daily-learning` review of the review window using these sources:
 
 - Vault: `<your Obsidian vault name>`
 - Vault backup mirror (optional): remote `<your vault backup Git URL>`, bare mirror cache at `<a path outside every repository and the live vault>`
@@ -30,9 +30,9 @@ Run a `daily-learning` review of the last 24 hours, widened after missed runs to
 - Paired remote Orca host (optional): `--on <host>`, `--worktree <existing remote folder workspace>`, `--agent <agent>`, scan timeout `<10>` minutes
 - AnkiConnect (optional): `http://127.0.0.1:8765`
 
-1. Vault: update the mirror (`git clone --mirror` the first time, `git fetch --prune` after that, with hooks disabled) and read the notes changed in the last 24 hours with `git log` and `git show`. Without a mirror, or if it is unreachable, use the `obsidian` CLI. Never read or write the live vault folder directly.
-2. Local AI sessions: read the last 24 hours of transcripts across this machine's harnesses, leaving out this job's own runs and other scheduled audits. Describe personal threads by topic only.
-3. Remote AI sessions (optional): start one read-only worker with `orca orchestration worker-start --on <host> --worktree <workspace> --agent <agent>`, and tell it to read the last 24 hours of sessions and return concepts only, with no credentials or verbatim personal text, before the timeout. Wait with `orca orchestration check --wait --types "worker_done,escalation" --timeout-ms <minutes * 60000>`. If the host is offline or the worker times out, say so in the digest and continue.
+1. Vault: update the mirror (`git clone --mirror` the first time, `git fetch --prune` after that, with hooks disabled) and read the notes changed in the review window with `git log` and `git show`. Without a mirror, or if it is unreachable, use the `obsidian` CLI. Never read or write the live vault folder directly.
+2. Local AI sessions: read the review window's transcripts across this machine's harnesses, leaving out this job's own runs and other scheduled audits. Describe personal threads by topic only.
+3. Remote AI sessions (optional): start one read-only worker with `orca orchestration worker-start --on <host> --worktree <workspace> --agent <agent>`, and pass it the review window, telling it to read that window's sessions and return concepts only, with no credentials or verbatim personal text, before the timeout. Wait with `orca orchestration check --wait --types "worker_done,escalation" --timeout-ms <minutes * 60000>`. If the host is offline or the worker times out, say so in the digest and continue.
 4. Anki (optional): if AnkiConnect answers, read due and overdue counts, recent lapses, and suspended cards, noting which were suspended as leeches and which by hand. If Anki is closed, say so and continue.
 5. Follow `daily-learning` to write the digest. End it with one sentence on what you read and anything you could not read.
 6. Save the digest as this run's report through the history repository's storage procedure, then present it and stop.

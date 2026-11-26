@@ -422,10 +422,14 @@ set to the state folder:
 ```sh
 setsid -f sh -c 'echo $$ > "$1/wake.pid"
   while sleep 1800; do
-    orca terminal send --terminal "$2" --enter \
-      --text "Wake: run the repo-captain wake routine." \
-      >/dev/null 2>&1 || exit 0
+    out=$(orca terminal send --terminal "$2" --enter --json \
+      --text "Wake: run the repo-captain wake routine." 2>&1) && continue
+    case $out in
+      *terminal_not_writable*|*terminal_handle_stale*) exit 0 ;;
+    esac
   done' wake "$state" "$ORCA_TERMINAL_HANDLE" </dev/null >/dev/null 2>&1
 ```
 
-The loop exits on its own once the Captain's terminal closes.
+The loop exits on its own once Orca reports the Captain's terminal closed or
+unknown. Any other failed send, such as Orca restarting, is retried at the
+next interval.

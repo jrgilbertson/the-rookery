@@ -259,10 +259,10 @@
           ".github/workflows/ci.yml": "name: ci\non: [pull_request, push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: pnpm/action-setup@v4\n      - run: pnpm install --frozen-lockfile\n      - run: pnpm test\n",
           "app/lib/pagination.ts": "export function pageBounds(page: number, pageSize: number, total: number): { start: number; end: number } {\n  const start = (page - 1) * pageSize;\n  const end = Math.min(start + pageSize - 1, total);\n  return { start, end };\n}\n",
           "app/billing/tax.ts": "export function taxCents(amountCents: number, ratePercent: number): number {\n  return Math.round((amountCents * ratePercent) / 100);\n}\n\nexport function roundCents(value: number): number {\n  return Math.round(value);\n}\n",
-          "app/billing/invoice.ts": "import { taxCents } from \"./tax\";\n\nexport interface Invoice {\n  id: string;\n  subtotalCents: number;\n  taxRatePercent: number;\n}\n\nexport function totalCents(invoice: Invoice): number {\n  return invoice.subtotalCents + taxCents(invoice.subtotalCents, invoice.taxRatePercent);\n}\n",
+          "app/billing/invoice.ts": "import { taxCents } from \"./tax\";\n\nexport interface Invoice {\n  id: string;\n  subtotalCents: number;\n  taxRatePercent: number;\n  dueDate: string;\n}\n\nexport function totalCents(invoice: Invoice): number {\n  return invoice.subtotalCents + taxCents(invoice.subtotalCents, invoice.taxRatePercent);\n}\n",
           "app/views/footer.tsx": "export function InvoiceFooter() {\n  return <footer>Questions? Reply to this email and you will recieve an answer within one business day.</footer>;\n}\n",
           "app/views/settings.tsx": "export function SettingsPage() {\n  return (\n    <form>\n      <label>Company name <input name=\"company\" /></label>\n      <button type=\"submit\">Svae</button>\n    </form>\n  );\n}\n",
-          "db/migrations/0041_create_invoices.sql": "CREATE TABLE invoices (\n  id TEXT PRIMARY KEY,\n  subtotal_cents INTEGER NOT NULL,\n  tax_rate_percent INTEGER NOT NULL\n);\n",
+          "db/migrations/0041_create_invoices.sql": "CREATE TABLE invoices (\n  id TEXT PRIMARY KEY,\n  subtotal_cents INTEGER NOT NULL,\n  tax_rate_percent INTEGER NOT NULL,\n  due_date TEXT NOT NULL\n);\n",
           "docs/billing.md": "# Billing\n\nInvoices are issued on the first of the month. See [tax rules](tax.md) for rates.\n",
           "app/views/invoice-header.tsx": "export function InvoiceHeader({ id }: { id: string }) {\n  return <h1>Invoice {\"INV-\" + id.padStart(6, \"0\")}</h1>;\n}\n",
           "app/views/invoice-list.tsx": "import type { Invoice } from \"../billing/invoice\";\n\nexport function InvoiceList({ invoices }: { invoices: Invoice[] }) {\n  return <ul>{invoices.map((invoice) => <li key={invoice.id}>{invoice.id}</li>)}</ul>;\n}\n"
@@ -274,9 +274,9 @@
         "parent": "m0",
         "message": "Sort the invoice list by due date",
         "files": {
-          "app/lib/invoice-sort.ts": "import type { Invoice } from \"../billing/invoice\";\n\nexport function byDueDate(a: Invoice & { dueDate?: string }, b: Invoice & { dueDate?: string }): number {\n  return (a.dueDate ?? \"\").localeCompare(b.dueDate ?? \"\");\n}\n",
+          "app/lib/invoice-sort.ts": "import type { Invoice } from \"../billing/invoice\";\n\nexport function byDueDate(a: Invoice, b: Invoice): number {\n  return a.dueDate.localeCompare(b.dueDate);\n}\n",
           "app/views/invoice-list.tsx": "import type { Invoice } from \"../billing/invoice\";\nimport { byDueDate } from \"../lib/invoice-sort\";\n\nexport function InvoiceList({ invoices }: { invoices: Invoice[] }) {\n  return <ul>{[...invoices].sort(byDueDate).map((invoice) => <li key={invoice.id}>{invoice.id}</li>)}</ul>;\n}\n",
-          "tests/lib/invoice-sort.test.ts": "import { byDueDate } from \"../../app/lib/invoice-sort\";\n\ntest(\"orders invoices by due date\", () => {\n  const invoices = [{ id: \"b\", dueDate: \"2026-12-02\" }, { id: \"a\", dueDate: \"2026-12-01\" }];\n  expect([...invoices].sort(byDueDate as never).map((i) => i.id)).toEqual([\"a\", \"b\"]);\n});\n"
+          "tests/lib/invoice-sort.test.ts": "import type { Invoice } from \"../../app/billing/invoice\";\nimport { byDueDate } from \"../../app/lib/invoice-sort\";\n\ntest(\"orders invoices by due date\", () => {\n  const invoices: Invoice[] = [\n    { id: \"b\", subtotalCents: 1000, taxRatePercent: 20, dueDate: \"2026-12-02\" },\n    { id: \"a\", subtotalCents: 2000, taxRatePercent: 20, dueDate: \"2026-12-01\" },\n  ];\n  expect([...invoices].sort(byDueDate).map((invoice) => invoice.id)).toEqual([\"a\", \"b\"]);\n});\n"
         },
         "day": 20
       },

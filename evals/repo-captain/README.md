@@ -38,7 +38,7 @@ newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
 no case depends on today's date.
 
 The eight-case set SHA-256 is
-`130fcc9600fe584491d423eab6507a612da82f627c2bc1716380e141aa919d01`. It
+`d7de6ea8386df2dbb277f69ed3dacf7226834ecd6175c78cd5a313a47685d061`. It
 covers the shared GitHub stand-in too, and changes whenever a case, fixture,
 or stand-in does, so each Eval Record names the hash it ran against. From this directory, reproduce it
 with:

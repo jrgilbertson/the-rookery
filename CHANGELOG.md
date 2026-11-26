@@ -116,8 +116,9 @@ looked" surface. GitHub Releases mirror its entries.
   open, because GitHub would attach the review to the unreviewed head, and it
   holds an edit to the design system itself.
 - The leverage rule's levels are now facts an agent can check. Impact
-  scores by severity instead of how often or how many users do a task.
-  Confidence 3 means evidence confirms the need or the approach. Tests a
+  scores by severity, with a core task defined as one most users rely on.
+  Confidence grades the evidence that the work will deliver its impact, from
+  a hypothesis to indirect evidence to direct confirmation. Tests a
   change adds count as new checks. Undo cost 2 means the change reaches shared
   code, shared settings, or many users, or takes more than one revert, and
   undo cost 3 names every stored or published name. The review contract's

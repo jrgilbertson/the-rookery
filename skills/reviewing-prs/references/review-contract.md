@@ -79,8 +79,8 @@ Score a pull request from its raw diff, each factor 1 to 3:
 
 | Factor | 1 | 2 | 3 |
 | --- | --- | --- | --- |
-| Impact (I): how much better it makes things for users | No user task you can name gets better | A named user task gets faster, easier, or more reliable | Decides whether users can do a core task or keep their work safe |
-| Confidence (C): how sure we are that it will deliver | A guess | A concrete reason but nothing confirmed | Evidence that confirms the need or the approach |
+| Impact (I): how much better it makes things for users | No user task you can name gets better | A named user task gets faster, easier, or more reliable | Decides whether users can do a core task (one most users rely on) or keep their work safe |
+| Confidence (C): how sure we are that it will deliver the impact scored | A hypothesis with nothing behind it yet | A hypothesis with indirect evidence, such as a user report, a similar case, or reading the code | Confirmed by direct evidence for this item, such as a reproduction, a measurement, a plan that calls for it, or the same fix working here before |
 | Verification effort (V): how hard the result is to confirm | Checks that existed before the change, such as tests, types, CI, or a reproduction on record, prove it | Needs new tests, including the change's own, or a manual check with a known right answer | Only human judgment can |
 | Undo cost (U): what it takes to undo | One revert within one module | Can be undone but reaches shared code, shared settings, or many users, or takes more than one revert | Can't be undone, because data is lost, a message is sent, money moves, or access is exposed |
 

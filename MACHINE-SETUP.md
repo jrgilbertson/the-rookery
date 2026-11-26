@@ -78,6 +78,14 @@ claude plugin install typescript-lsp@claude-plugins-official
 claude plugin install vercel@claude-plugins-official
 ```
 
+The two language server plugins only connect Claude Code to a language server.
+They do nothing until the servers themselves are on the `PATH`, so install
+those too.
+
+```bash
+npm install -g typescript-language-server typescript pyright
+```
+
 ## Codex plugins
 
 ```bash
@@ -153,8 +161,9 @@ codex mcp add playwright -- npx @playwright/mcp@latest
 Run this from the repository root with Python 3.9 or later and the harness CLIs
 (`claude`, `codex`, and `agy`). It prints nothing when all listed skills,
 plugins, and MCP servers are present, Antigravity's Compound Engineering plugin
-matches Claude Code's installed version, and there are no extra skills managed
-by the skills CLI or extra enabled Claude Code user plugins. Global agent
+matches Claude Code's installed version, the language servers are on the
+`PATH`, and there are no extra skills managed by the skills CLI or extra enabled
+Claude Code user plugins. Global agent
 instructions above are not checked by this script. Additional Codex plugins and
 MCP servers, and additional Antigravity plugins, can come from the harness or
 local configuration. The check compares names without starting MCP servers. It
@@ -166,6 +175,7 @@ python3 - <<'PYTHON'
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 
 home = Path.home()
@@ -222,6 +232,10 @@ report("Claude Code plugin", {args[0] for args in documented("claude plugin inst
 report("Codex plugin", {args[0] for args in documented("codex plugin add ")},
        {p["pluginId"] for p in codex_plugins if p["enabled"]})
 report("Antigravity plugin", {"compound-engineering"}, set(agy_enabled_plugins))
+
+for server in ("typescript-language-server", "pyright-langserver"):
+    if not shutil.which(server):
+        print(f"Missing language server: {server}")
 
 claude_ce = claude_user_plugins.get("compound-engineering@compound-engineering-plugin")
 agy_ce = agy_enabled_plugins.get("compound-engineering")

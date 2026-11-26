@@ -140,6 +140,11 @@ def load_state() -> tuple[dict, Path]:
         if "orca" not in world:
             die("world has no orca section", 4)
         state = {**world["orca"], "turn": 1, "read": []}
+        worktrees = state.setdefault("worktrees", [])
+        repo = state["repos"][0]["id"] if state.get("repos") else None
+        for worker in state.get("workers", []):
+            if worker.get("worktree") and all(item["id"] != worker["worktree"] for item in worktrees):
+                worktrees.append({"id": worker["worktree"], "repo": repo, "path": None, "branch": None, "comment": ""})
         save_state(state, state_path)
     state = json.loads(state_path.read_text(encoding="utf-8"))
     turn = 1

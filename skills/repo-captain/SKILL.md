@@ -239,14 +239,16 @@ its Executors there.
 
 ## Merging
 
-Act only on pull requests with a trusted owner, by the contract's trust rules.
+Act only on pull requests with a trusted owner, by the contract's trust rules,
+whose `Owner:` role is `repo-captain`. Other sessions' pull requests still
+reserve files and appear in the catch-up, but the Captain never merges them.
 Judge each pull request that is ready from its raw diff against the default
 branch, by the contract's scores and hold tests, with policy read from the
 default branch.
 
-- **Routine.** A pull request that meets neither hold test merges under the
-  charter's Merge Approval once its body shows evidence beside each
-  Verification item of its issue. Merge with
+- **Routine.** A pull request for an issue in approved scope that meets
+  neither hold test merges under the charter's Merge Approval once its body
+  shows evidence beside each Verification item of its issue. Merge with
   `gh pr merge --match-head-commit <judged-head>` so GitHub refuses a moved
   head. Merge one pull request at a time. Post a `Fleet: auto-merge` receipt,
   and add `review:auto-merged` once GitHub confirms the merge.

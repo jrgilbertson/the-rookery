@@ -11,7 +11,7 @@
       "turn": 2,
       "role": "user",
       "content": "Verdicts are in.",
-      "expected_phase_boundary": "Both heads moved after review. Enqueues #560 pinned to its new head after finding a clean rebase, and returns #561 with a verdict-delta receipt because its new head quietly reverts the credit-note guard on main."
+      "expected_phase_boundary": "Both heads moved after review. Enqueues #560 pinned to its new head after finding a clean rebase, and returns #561 with a new hold receipt because its new head quietly reverts the credit-note guard on main."
     },
     {
       "turn": 3,

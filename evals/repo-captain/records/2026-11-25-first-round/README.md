@@ -108,6 +108,12 @@ cases after the fixes.
   every worker's own. The restart and held-pull-request Baselines hit that
   refusal and worked around it. A later commit fixed the stand-in, so a
   rerun can score those two Baselines differently.
+- **A receipt changed meaning after this round.** Check 03 of
+  rebase-revert-and-merge-queue then expected a `Fleet: verdict-delta`
+  receipt for a change sent back to the operator. The contract now records
+  that with a new `Fleet: hold` receipt, and keeps `verdict-delta` for a
+  routine change merged under the earlier Verdict, so the labels here follow
+  the old wording.
 - **One run per case and arm.** There is no variance figure.
 
 The transcripts keep user and assistant messages, tool calls, and tool

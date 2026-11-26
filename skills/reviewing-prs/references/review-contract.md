@@ -42,8 +42,8 @@ Fleet: <hold | auto-merge | verdict-delta> · Head: <short-sha> · V=<1-3> U=<1-
 ```
 
 `hold` means the pull request waits for a Verdict, `auto-merge` means it
-merged as routine, and `verdict-delta` means it changed after a merge Verdict
-in a way that sends it back to the operator.
+merged as routine, and `verdict-delta` means it merged under a merge Verdict
+at a later head, after the change since review was judged routine.
 
 ## Verdict
 
@@ -102,7 +102,9 @@ A pull request is held for the operator when either test is true:
   money, data deletion, privacy, outbound email, release gates, CI workflows
   and composite actions (`.github/workflows/`, `.github/actions/`), git-hook
   and secret-scanner configuration (such as `lefthook.yml`, `.gitleaks.toml`,
-  `.gitleaksignore`), dependency lockfiles, the project's agent instructions
+  `.gitleaksignore`), scripts that CI workflows or git hooks run, agent
+  harness configuration (such as `.claude/`, `.codex/`, `.mcp.json`),
+  dependency lockfiles, the project's agent instructions
   and merge and review policy, and changes to the project's design system
   itself, such as its design document, tokens, or shared components, where
   the repository has one.
@@ -131,10 +133,11 @@ issue's stored scores:
 
 - A clean rebase meets neither test.
 - When the change between the heads meets neither test and quietly reverts
-  nothing on the default branch, it merges under the same Verdict.
+  nothing on the default branch, it merges under the same Verdict, recorded by
+  a `verdict-delta` receipt naming the change.
 - When the reviewed head cannot be read, the change is not routine.
 - Any other change returns to the operator with what changed, recorded by a
-  `verdict-delta` receipt.
+  new `hold` receipt at the current head.
 
 A merge Verdict clears the hold on that pull request and never changes Merge
 Approval.

@@ -13,6 +13,6 @@ expected_outcome: |
   four turns, listed in turns.json, and needs the staged git fixture.
 
   A good run compares each reviewed head with the current head in git, enqueues #560 at its new
-  head, and returns #561 to the operator with a verdict-delta receipt naming the reverted guard.
+  head, and returns #561 to the operator with a new hold receipt naming the reverted guard.
   It enqueues #560 again at the same head after the ejection, never rebases it while queued, and
   swaps its label only once GitHub reports it merged.

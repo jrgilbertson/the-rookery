@@ -138,6 +138,8 @@ On the machine that holds the state folder, the holder line decides:
 - If the holder still appears in `orca agent list` on this machine, in any
   state, stand down. An idle Captain between wakes shows as `done`, and it is
   still the Captain.
+- If `orca agent list` fails or cannot be read, stand down and say why, as
+  for a server that could not be checked.
 - If the holder no longer appears, or the operator recorded that it ended,
   write this session in as holder and continue.
 
@@ -169,7 +171,9 @@ not left as one-line notes. Do not commit the plan. A uniform backlog of indepen
 
 **Check overlap before every dispatch.** Compare the leaf's expected files
 with the files of every active brief and the diff of every open pull request
-in the repository, whoever opened it. Serialize any leaf that overlaps. A file
+from a branch in this repository, whoever opened it. A fork's pull request
+reserves nothing, since the Captain never acts on forks. Serialize any leaf
+that overlaps. A file
 that only accumulates entries, such as `CHANGELOG.md`, never reserves, since
 those merge cleanly. A leaf stacked on a held pull request does not conflict
 with that pull request's own files.
@@ -242,16 +246,19 @@ its Executors there.
 Act only on pull requests with a trusted owner, by the contract's trust rules,
 whose `Owner:` role is `repo-captain`. Other sessions' pull requests still
 reserve files and appear in the catch-up, but the Captain never merges them.
-Judge each pull request that is ready from its raw diff against the default
-branch, by the contract's scores and hold tests, with policy read from the
-default branch.
+A pull request is ready when every check on its head has passed, optional
+review bots aside, GitHub reports it mergeable, and no review thread on it is
+unresolved. Judge each ready pull request from its raw diff against the
+default branch, by the contract's scores and hold tests, with policy read from
+the default branch. Before any merge, record the pull request and the head it
+merges at in `state.md`.
 
 - **Routine.** A pull request for an issue in approved scope that meets
   neither hold test merges under the charter's Merge Approval once its body
   shows evidence beside each Verification item of its issue. Merge with
   `gh pr merge --match-head-commit <judged-head>` so GitHub refuses a moved
-  head. Merge one pull request at a time. Post a `Fleet: auto-merge` receipt,
-  and add `review:auto-merged` once GitHub confirms the merge.
+  head. Merge one pull request at a time. Then post a `Fleet: auto-merge`
+  receipt, and add `review:auto-merged` once GitHub confirms the merge.
 - **Captain-authored.** A pull request whose `Author:` role is `repo-captain`
   is never routine. It is held and merges only on a Verdict.
 - **Changes requested.** A pull request whose latest Verdict is `request
@@ -272,20 +279,24 @@ default branch.
 Verdict comments on GitHub are the only handoff from the operator's Review
 Round. Act on them at the next wake, or at once when the operator says
 verdicts are in. A Verdict counts only under the contract's trust rules. It is
-spent once a later receipt from the Captain sits on the same pull request, so
-a restart never acts on it twice.
+spent once a later receipt from the Captain sits on the same pull request, or
+once `state.md` records the rework it started, so a restart or a later wake
+never acts on it twice.
 
 - **Merge.** Compare the reviewed head with the current head using
   `git merge-base` and `git range-diff`, then apply the contract's
   after-Verdict rule. When the change since review is routine, merge pinned to
-  the current head. On a merge-queue repository, enqueue it, re-enqueue an
-  ejected pull request at an unchanged head, and judge a new head again. Swap
-  `review:held` for `review:human-merged` once GitHub confirms the merge.
-  Otherwise post a `Fleet: verdict-delta` receipt and a decision that says
-  what changed.
-- **Request changes.** Dispatch the rework with the Verdict's notes as the
-  brief amendment, in the pull request's kept worktree. When the rework lands,
-  post a new `Fleet: hold` receipt at the new head.
+  the current head, and when that head differs from the reviewed one, post a
+  `Fleet: verdict-delta` receipt naming the reviewed head and what changed.
+  On a merge-queue repository, enqueue it, re-enqueue an ejected pull request
+  at an unchanged head, and judge a new head again. Swap `review:held` for
+  `review:human-merged` once GitHub confirms the merge. Otherwise post a new
+  `Fleet: hold` receipt at the current head and a decision that says what
+  changed.
+- **Request changes.** Record the rework in `state.md`, then dispatch it with
+  the Verdict's notes as the brief amendment, in the pull request's kept
+  worktree. When the rework lands, post a new `Fleet: hold` receipt at the new
+  head.
 
 ## Pull-forward
 
@@ -347,7 +358,9 @@ one within your own authority first:
   valid authority. A merge lacked valid authority when a pull request with
   `repo-captain` as its `Owner:` role merged after the charter was recorded
   without a `Fleet: auto-merge` receipt at its final head or a merge Verdict
-  the Captain carried out. Labels never count as authority. Stop merging in
+  the Captain carried out. A merge that `state.md` recorded before it ran is
+  not one: post its missing receipt instead. Labels never count as
+  authority. Stop merging in
   that repository and open a revert pull request, held like anything the
   Captain wrote.
 

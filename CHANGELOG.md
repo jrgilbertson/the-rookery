@@ -52,6 +52,10 @@ looked" surface. GitHub Releases mirror its entries.
   nothing and removes the operator from a review request. It never merges or
   changes a label: the session that owns a pull request acts on its verdict.
   Synthetic Skill Eval cases are under `evals/reviewing-prs/`.
+- `CONCEPTS.md` is rewritten in plainer words, with every entry readable on
+  its own and no meaning changed. It adds Knowledge Frontier, the ideas just
+  beyond what a learner's notes cover, and renames the model-routing Frontier
+  to Pareto Frontier.
 - `CONCEPTS.md` defines Review Round, verdict, and PR Review Labels
   (`review:held`, `review:auto-merged`, `review:human-merged`).
 - `docs/adr/001-verdict-trust-by-convention.md` records why a verdict comment

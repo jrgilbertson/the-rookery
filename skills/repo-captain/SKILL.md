@@ -401,12 +401,13 @@ timer that the harness does not report to Orca as unfinished work:
   `IsDaemon: true`. Record the task ID in `state.md`. Check it with
   `manage_task` list and stop it with `manage_task` kill.
 - **Claude Code and Codex:** the wake loop below. Read its command line with
-  `ps -o args= -p "$(cat "$state/wake.pid")"`. It is this session's timer
-  only when that line shows the state folder and this session's
-  `$ORCA_TERMINAL_HANDLE`. A line with the state folder and another handle is
-  a loop left by an earlier Captain session: `kill` it before starting a new
-  one. Never `kill` a PID whose line lacks the state folder, because the PID
-  may now belong to another process.
+  `ps -o args= -p "$(cat "$state/wake.pid")"`. A wake loop's line shows the
+  wake prompt and the state folder. It is this session's timer only when it
+  also shows this session's `$ORCA_TERMINAL_HANDLE`. A wake loop with another
+  handle was left by an earlier Captain session: `kill` it before starting a
+  new one. Never `kill` a PID whose line is not a wake loop's, because the PID
+  may now belong to another process. Run the check right after starting the
+  loop too; if it fails, no timer is running.
 
 Never use Antigravity's `DurationSeconds` or a cron without `IsDaemon`,
 Codex's `clock.sleep`, or Claude Code's `CronCreate`, `/loop`, `Monitor`, or
@@ -420,7 +421,7 @@ system without it, start the loop in a new session another way. With `$state`
 set to the state folder:
 
 ```sh
-setsid -f sh -c 'echo $$ > "$1/wake.pid"
+setsid -f sh -c 'echo $$ > "$1/wake.pid" || exit 1
   while sleep 1800; do
     out=$(orca terminal send --terminal "$2" --enter --json \
       --text "Wake: run the repo-captain wake routine." 2>&1) && continue

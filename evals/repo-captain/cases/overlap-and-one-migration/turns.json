@@ -1,0 +1,17 @@
+{
+  "case_id": "overlap-and-one-migration",
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "content": "Captain for acme/ledger-app. Scope: #520, #521, #522, #525, #526, and #527. #520 already has a worker on it. Merge Approval: merge routine PRs yourself and hold the rest for me. My verdicts on #531 and #532 are in.",
+      "expected_phase_boundary": "Dispatches a worker for #527 only. Enqueues exactly one of #531 and #532, pinned to its head, and leaves the other out of the queue."
+    },
+    {
+      "turn": 2,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "The enqueued migration pull request has merged. Swaps its label to review:human-merged, enqueues the other migration pull request pinned to its head, and still dispatches nothing for #525 or #526."
+    }
+  ]
+}

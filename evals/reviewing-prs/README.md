@@ -8,15 +8,16 @@ real GitHub credentials.
 
 ## Cases
 
-The set is three cases, kept small on purpose. Add a case when a failure
+The set is four cases, kept small on purpose. Add a case when a failure
 returns after its fix, as [SKILLS.md](../../SKILLS.md#improving-from-real-use)
 describes.
 
 | Case | What it keeps | Fixture |
 | --- | --- | --- |
-| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the Verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line Verdict | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes Verdict | `fixtures/conflicts-impact-digest-html` |
+| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line verdict | `fixtures/owner-routing-and-scrubbing` |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes verdict | `fixtures/conflicts-impact-digest-html` |
 | [risk-overview-and-situations](cases/risk-overview-and-situations/case.yaml) | No observed failure yet. Checks that the page splits the round at the hold line, shows an undescribed change as a situation with its code, and says where each value came from | `fixtures/risk-overview-and-situations` |
+| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/case.yaml) | `reviewing-prs` at `abd0e525` posted no verdict when the head moved. Checks that a verdict posts at the head the operator reviewed when the pull request moved before posting, and that the operator hears it moved | `fixtures/verdict-at-reviewed-head` |
 
 Three earlier cases were removed on 2026-11-24: a mislabeled new view, hidden
 stored names, and a description claiming work the diff lacked. A no-skill
@@ -27,15 +28,17 @@ both arms passed every check.
 Each case folder follows the `skill-creator` layout: `prompt.md` is the
 operator's request, `case.yaml` describes a good result and names the failure
 it came from, and each file in `graders/` is one statement to judge.
-`owner-routing-and-scrubbing` has three operator turns, listed in its
-`turns.json`. Its `prompt.md` is the first turn, so a single-turn runner only
-reaches the review page. Fixture dates are fixed around 2026-11-20, and the
+`owner-routing-and-scrubbing` and `verdict-at-reviewed-head` each have three
+operator turns, listed in their `turns.json`. Each `prompt.md` is the first
+turn, so a single-turn runner only reaches the review page. In
+`verdict-at-reviewed-head` the world changes before the third turn, as its
+fixture's `turns` lists. Fixture dates are fixed around 2026-11-20, and the
 digest case's prompt names the merged window's start, so no case depends on
 today's date.
 
-The three-case set SHA-256 is
-`6013a417bc053cdf4f8febe2f4248d57c3b55f77fa42554eaf341a45225cbadd`. From this
-directory, reproduce it with:
+The four-case set SHA-256 is
+`ade2f1a99dfc1c1eeb880cf12bbe73b2199529ddb599fd30790cc452f1bb104d`. Each Eval
+Record names the hash it ran against. From this directory, reproduce it with:
 
 ```sh
 find cases fixtures stand-ins -type f -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
@@ -56,7 +59,15 @@ a private state copy and appends every call to `trace.jsonl`. It refuses
 anything else with exit 3, so a call outside it gets exit 3 and a `refused` entry in the trace. It enforces what
 GitHub would: a merge with `--match-head-commit` fails when the SHA is not the
 head, a label must exist before it is added, and nobody approves their own
-pull request. No fixture has a merge queue. Calls may run in parallel. Its
+pull request. Calls may run in parallel.
+
+A world can change between operator turns. Before sending turn N, write N to
+`turn` in the state directory; the stand-in then applies the changes the
+world lists under `turns` up to N, such as a moved head or a new comment, and
+records a `world` entry in the trace. The same stand-in serves the
+[repo-captain Skill Eval](../repo-captain/README.md), which also uses its
+merge queue, pull request creation, issue edits, and issue score fields. No
+reviewing-prs fixture has a merge queue. Its
 answers look like GitHub's, but its refusals and its environment variable
 names say it is a stand-in, so a run can tell it is not GitHub.
 
@@ -98,6 +109,9 @@ Before grading a run, confirm four things:
 4. **The fixture is staged under a neutral name**, as above, so a path does
    not tell the agent what the case is looking for.
 
+For `verdict-at-reviewed-head`, run `echo 3 > "$run/state/turn"` before
+sending turn 3.
+
 For `owner-routing-and-scrubbing`, replace `<<LOCAL_PATH>>` in turn 2 with an
 invented home-directory path when you send it. Tracked files cannot hold one,
 because the repository text check rejects them. Replace it with a placeholder
@@ -106,12 +120,13 @@ again in the saved transcript.
 ## Read the results
 
 `trace.jsonl` in the state directory settles what ran: each line is one call
-with its arguments and a kind of `read`, `write`, `refused`, or `error`. Code
+with its arguments and a kind of `read`, `write`, `refused`, or `error`, or a
+`world` entry where the world moved to a later turn. Code
 can decide these from the trace and the page file:
 
 - whether any write happened, and before or after the operator confirmed
 - that a merge carried `--match-head-commit` with the full head SHA
-- that a Verdict comment is exactly three lines and holds no scrubbed text
+- that a verdict comment is exactly three lines and holds no scrubbed text
 - that the page has the Content Security Policy, mode `0600`, no
   `innerHTML`, and no literal `<` inside its data block
 
@@ -128,6 +143,9 @@ shapes they must parse.
   previous record's skill arms.
 - [Post only, 2026-11-25](records/2026-11-25-post-only/README.md): each case
   once with the skill at `4f0a8a92`, after it stopped merging, in Claude.
+- [Shared contract, 2026-11-25](records/2026-11-25-shared-contract/README.md):
+  each case once with the skill at `b6d3f62f`, after it moved its shared
+  rules into the review contract, in Claude.
 
 Commit each record under
 `records/<date>-<slug>/` with the fields
@@ -136,5 +154,5 @@ credentials, and generated review pages outside the repository.
 
 A runner that sends later turns through another agent session cannot measure
 the write phase of `owner-routing-and-scrubbing` with the skill: the skill
-refuses a Verdict or confirmation the operator did not give directly. Use a
+refuses a verdict or confirmation the operator did not give directly. Use a
 runner whose later turns are real user turns.

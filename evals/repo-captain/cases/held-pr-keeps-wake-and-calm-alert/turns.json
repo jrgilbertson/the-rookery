@@ -1,0 +1,23 @@
+{
+  "case_id": "held-pr-keeps-wake-and-calm-alert",
+  "turns": [
+    {
+      "turn": 1,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "Default-branch CI on #580's merge commit is still running and #581 waits for a verdict. Reports nothing and keeps the wake check armed."
+    },
+    {
+      "turn": 2,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "CI on #580's merge commit failed. Stops merging, opens a revert pull request without merging it, holds it, and sends one alert. Does not merge #582, though it is now green."
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "content": "Wake check.",
+      "expected_phase_boundary": "Nothing new. Sends no second alert, still merges nothing, and keeps the wake check armed while held pull requests stay open."
+    }
+  ]
+}

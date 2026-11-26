@@ -32,7 +32,7 @@ npx skills add GoogleChrome/modern-web-guidance -g -y --skill modern-web-guidanc
 npx skills add harshaneel/humanize -g -y --skill ai-check
 npx skills add https://docs.stripe.com -g -y --skill connect-recommend connect-required-verification-information metronome stripe-apps stripe-best-practices stripe-directory stripe-docs stripe-implementation-planner stripe-pay stripe-projects
 npx skills add jrgilbertson/networked-thinking-skills -g -y --skill atomic-note atomic-note-audit managing-obsidian-tasks
-npx skills add jrgilbertson/the-rookery -g -y --skill checking-skill-portability coordinating-work daily-learning managing-issues managing-personal-crm personal-chief-of-staff reviewing-meetings reviewing-prs storm-research
+npx skills add jrgilbertson/the-rookery -g -y --skill checking-skill-portability coordinating-work daily-learning managing-issues managing-personal-crm personal-chief-of-staff repo-captain reviewing-meetings reviewing-prs storm-research
 npx skills add livekit/agent-skills -g -y --skill building-livekit-agents debugging-livekit-agents operating-livekit-agents reading-livekit-docs running-livekit-simulations testing-livekit-agents writing-livekit-scenarios
 npx skills add mattpocock/skills -g -y --skill codebase-design domain-modeling grill-me grill-with-docs grilling improve-codebase-architecture setup-matt-pocock-skills writing-for-agents
 npx skills add millionco/react-doctor -g -y --skill react-doctor

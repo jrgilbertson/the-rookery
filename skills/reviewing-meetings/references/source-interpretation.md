@@ -94,12 +94,16 @@ UUID string matching
 `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$` across the
 entire returned value. Use that exact value unchanged: do not trim, case-fold,
 decode, remove braces or a URN prefix, or otherwise normalize it. Construct the
-canonical URL exactly as `https://notes.granola.ai/d/{native_id}` and treat that
-result as the adapter-exposed source URL; do not depend on query-tool citations.
-If Granola also returns a URL, an exact match confirms the mapped identity and a
-different value is contradictory identity evidence. A missing or noncanonical
-ID remains **Unable to prepare**; never infer an undeclared mapping from source
-text or existing notes.
+canonical URL exactly as `https://notes.granola.ai/d/{native_id}` and keep that
+constructed URL, with no query string or fragment, as the adapter-exposed and
+stored source URL; do not depend on query-tool citations. If Granola also
+returns a URL, compare its scheme, host, and path against the constructed
+canonical URL and ignore any query string or fragment. A returned URL whose
+scheme, host, and path match (with no userinfo or explicit port) confirms the
+mapped identity whatever its query string or fragment; a different scheme, host,
+or path, or a malformed URL, is contradictory identity evidence. A missing or
+noncanonical ID remains **Unable to prepare**; never infer an undeclared mapping
+from source text or existing notes.
 
 Use the configured source name plus the native meeting ID returned by its
 listing or retrieval interface as meeting identity. Store those exact values in

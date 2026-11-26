@@ -284,7 +284,7 @@
               "body": "Verdict: merge\nHead: <<sha:c531>>\nNotes: \"\""
             }
           ],
-          "diff": "<<diff:c531>>",
+          "diff": "<<diff:c531>>\ndiff --git a/db/0042.test.ts b/db/0042.test.ts\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/db/0042.test.ts\n@@ -0,0 +1,5 @@\n+import { migrateUp, migrateDown, columns } from \"./harness\";\n+\n+test(\"adds invoices.memo\", async () => { await migrateUp(\"0042\"); expect(await columns(\"invoices\")).toContain(\"memo\"); });\n+test(\"drops invoices.memo\", async () => { await migrateDown(\"0042\"); expect(await columns(\"invoices\")).not.toContain(\"memo\"); });\n+test(\"memo is nullable\", async () => { await migrateUp(\"0042\"); expect(await columns(\"invoices\", { nullable: true })).toContain(\"memo\"); });\n",
           "closingIssues": [
             521
           ]
@@ -328,7 +328,7 @@
               "body": "Verdict: merge\nHead: <<sha:c532>>\nNotes: \"\""
             }
           ],
-          "diff": "<<diff:c532>>",
+          "diff": "<<diff:c532>>\ndiff --git a/db/0043.test.ts b/db/0043.test.ts\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/db/0043.test.ts\n@@ -0,0 +1,5 @@\n+import { migrateUp, migrateDown, columns } from \"./harness\";\n+\n+test(\"adds customers.tax_id\", async () => { await migrateUp(\"0043\"); expect(await columns(\"customers\")).toContain(\"tax_id\"); });\n+test(\"drops customers.tax_id\", async () => { await migrateDown(\"0043\"); expect(await columns(\"customers\")).not.toContain(\"tax_id\"); });\n+test(\"tax_id is nullable\", async () => { await migrateUp(\"0043\"); expect(await columns(\"customers\", { nullable: true })).toContain(\"tax_id\"); });\n",
           "closingIssues": [
             522
           ]
@@ -376,7 +376,8 @@
         "message": "Add a memo column to invoices",
         "files": {
           "db/migrations/0042_add_invoice_memo.sql": "ALTER TABLE invoices ADD COLUMN memo TEXT;\n",
-          "app/models/invoice-memo.ts": "export type InvoiceMemo = string | null;\n"
+          "app/models/invoice-memo.ts": "export type InvoiceMemo = string | null;\n",
+          "db/0042.test.ts": "import { migrateUp, migrateDown, columns } from \"./harness\";\n\ntest(\"adds invoices.memo\", async () => { await migrateUp(\"0042\"); expect(await columns(\"invoices\")).toContain(\"memo\"); });\ntest(\"drops invoices.memo\", async () => { await migrateDown(\"0042\"); expect(await columns(\"invoices\")).not.toContain(\"memo\"); });\ntest(\"memo is nullable\", async () => { await migrateUp(\"0042\"); expect(await columns(\"invoices\", { nullable: true })).toContain(\"memo\"); });\n"
         },
         "day": 19
       },
@@ -386,7 +387,8 @@
         "message": "Store a customer tax ID",
         "files": {
           "db/migrations/0043_add_customer_tax_id.sql": "ALTER TABLE customers ADD COLUMN tax_id TEXT;\n",
-          "app/models/customer.ts": "export interface Customer {\n  id: string;\n  taxId: string | null;\n}\n"
+          "app/models/customer.ts": "export interface Customer {\n  id: string;\n  taxId: string | null;\n}\n",
+          "db/0043.test.ts": "import { migrateUp, migrateDown, columns } from \"./harness\";\n\ntest(\"adds customers.tax_id\", async () => { await migrateUp(\"0043\"); expect(await columns(\"customers\")).toContain(\"tax_id\"); });\ntest(\"drops customers.tax_id\", async () => { await migrateDown(\"0043\"); expect(await columns(\"customers\")).not.toContain(\"tax_id\"); });\ntest(\"tax_id is nullable\", async () => { await migrateUp(\"0043\"); expect(await columns(\"customers\", { nullable: true })).toContain(\"tax_id\"); });\n"
         },
         "day": 19
       }

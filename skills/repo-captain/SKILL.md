@@ -123,8 +123,9 @@ Run these steps in order every time:
 9. **Arm the next wake** when any count in Wake timer is nonzero. Otherwise
    stop the checks.
 
-A wake that finds nothing to report stays quiet. A wake is done when every
-step has run, or when step 1 stood the session down.
+A wake that finds nothing new to act on replies in one line, saying so and
+naming the next wake it armed. Save the full picture for the catch-up. A wake
+is done when every step has run, or when step 1 stood the session down.
 
 ## Liveness
 
@@ -156,8 +157,9 @@ already done on `main` needs no worker, and its issue needs closing evidence
 instead.
 
 **Coupled work** gets an ephemeral multi-PR plan from `ce-plan`, distilled
-into self-contained leaves, each with its own file list and Verification. Do
-not commit the plan. A uniform backlog of independent leaves goes straight to
+into self-contained leaves, each with its own file list and Verification.
+Plan every coupled leaf before dispatching the first one, so later leaves are
+not left as one-line notes. Do not commit the plan. A uniform backlog of independent leaves goes straight to
 `lfg`, one leaf per Executor.
 
 **Check overlap before every dispatch.** Compare the leaf's expected files

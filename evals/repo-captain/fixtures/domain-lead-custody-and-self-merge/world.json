@@ -208,7 +208,7 @@
             }
           ],
           "comments": [],
-          "diff": "<<diff:p570>>",
+          "diff": "<<diff:p570>>\ndiff --git a/tests/lib/invoice-sort.test.ts b/tests/lib/invoice-sort.test.ts\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/tests/lib/invoice-sort.test.ts\n@@ -0,0 +1,6 @@\n+import { byDueDate } from \"../../app/lib/invoice-sort\";\n+\n+test(\"orders invoices by due date\", () => {\n+  const invoices = [{ id: \"b\", dueDate: \"2026-12-02\" }, { id: \"a\", dueDate: \"2026-12-01\" }];\n+  expect([...invoices].sort(byDueDate as never).map((i) => i.id)).toEqual([\"a\", \"b\"]);\n+});\n",
           "closingIssues": [
             567
           ]
@@ -275,7 +275,8 @@
         "message": "Sort the invoice list by due date",
         "files": {
           "app/lib/invoice-sort.ts": "import type { Invoice } from \"../billing/invoice\";\n\nexport function byDueDate(a: Invoice & { dueDate?: string }, b: Invoice & { dueDate?: string }): number {\n  return (a.dueDate ?? \"\").localeCompare(b.dueDate ?? \"\");\n}\n",
-          "app/views/invoice-list.tsx": "import type { Invoice } from \"../billing/invoice\";\nimport { byDueDate } from \"../lib/invoice-sort\";\n\nexport function InvoiceList({ invoices }: { invoices: Invoice[] }) {\n  return <ul>{[...invoices].sort(byDueDate).map((invoice) => <li key={invoice.id}>{invoice.id}</li>)}</ul>;\n}\n"
+          "app/views/invoice-list.tsx": "import type { Invoice } from \"../billing/invoice\";\nimport { byDueDate } from \"../lib/invoice-sort\";\n\nexport function InvoiceList({ invoices }: { invoices: Invoice[] }) {\n  return <ul>{[...invoices].sort(byDueDate).map((invoice) => <li key={invoice.id}>{invoice.id}</li>)}</ul>;\n}\n",
+          "tests/lib/invoice-sort.test.ts": "import { byDueDate } from \"../../app/lib/invoice-sort\";\n\ntest(\"orders invoices by due date\", () => {\n  const invoices = [{ id: \"b\", dueDate: \"2026-12-02\" }, { id: \"a\", dueDate: \"2026-12-01\" }];\n  expect([...invoices].sort(byDueDate as never).map((i) => i.id)).toEqual([\"a\", \"b\"]);\n});\n"
         },
         "day": 20
       },

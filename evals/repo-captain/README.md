@@ -38,7 +38,7 @@ newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
 no case depends on today's date.
 
 The eight-case set SHA-256 is
-`06d21464a6eca2f92d3f033c812b3cb110c7e0ce26a60cec2a91120a250fe2bd`. It
+`4a07a2c731114d5aab9149d0f828e2ca38eb29242c6ff63271180c8838ff7921`. It
 covers the shared GitHub stand-in too. From this directory, reproduce it
 with:
 

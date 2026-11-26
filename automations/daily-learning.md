@@ -21,7 +21,7 @@ Before starting, confirm the `active-learning`, `atomic-note`, `obsidian-cli`, a
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `daily-learning` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Use recent runs to spot topics that keep coming back across days. Revisit declined items only with new evidence.
 
-Set the review window first: the last 24 hours, widened back to the window end recorded by the last run in history that read the vault. Give its start and end as UTC timestamps. If that run listed notes by title only, carry their paths into this run so they come back in full. Every step below reads that same window. Run an `active-learning` review of the review window using these sources:
+Set the review window first: the last 24 hours, widened back to the window end recorded by the last run in history that read the vault. Give its start and end as UTC timestamps. If that run listed notes by title only, carry their paths into this run so they come back first. Every step below reads that same window. Run an `active-learning` review of the review window using these sources:
 
 - Vault: `<your Obsidian vault name>`
 - Headless vault copy on the remote host: `<path to the copy>`, kept synced by `<its sync service>`
@@ -39,7 +39,7 @@ Set the review window first: the last 24 hours, widened back to the window end r
    - Read this host's AI session transcripts from the review window and return their concepts and the notes that cover them, with no credentials or verbatim personal text.
    Wait with `orca orchestration check --wait --types "worker_done,escalation" --timeout-ms <minutes * 60000>`. If the worker times out, stop it with `orca orchestration worker-stop`. If the host is offline, the worker times out, or it returned no vault content, say in the digest that the vault and the remote host's sessions were not read, and continue.
 3. Anki (optional): if AnkiConnect answers, read due and overdue counts, recent lapses, and suspended cards, noting which were suspended as leeches and which by hand. If Anki is closed, say so and continue.
-4. Follow `active-learning` to write the digest from what the worker returned and what this machine read. End it with the review window and one sentence on what you read and anything you could not read. If notes were listed by title only, list their paths after that sentence so the next run reads them in full.
+4. Follow `active-learning` to write the digest from what the worker returned and what this machine read. End it with the review window and one sentence on what you read and anything you could not read. If notes were listed by title only, list their paths after that sentence; the next run returns them first, and any past its limit carry on again.
 5. Save the digest as this run's report through the history repository's storage procedure, then present it and stop.
 
 When I reply, follow `active-learning` to work the items I pick, using the `obsidian` CLI and AnkiConnect for approved changes, and record my decision on each item in `daily-learning` history.

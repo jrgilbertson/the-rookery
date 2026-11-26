@@ -129,7 +129,6 @@ def current_turn(leaf: Path) -> int:
 
 
 def advance(state: dict, turn: int) -> None:
-    """Apply each turn's world changes once, after the merge queue settles."""
     for step in range(state["turn"] + 1, turn + 1):
         for slug, repo in state["repos"].items():
             for number, pull in repo.get("pulls", {}).items():
@@ -735,7 +734,6 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
         if one(options, "match") and one(options, "match") != pull["headRefOid"]:
             die("Head branch was modified. Review and try the merge again. (expected head sha didn't match)", 1, **attempt)
         if queue:
-            # The queue merges on its own schedule: the pull request settles at the next turn.
             if options.get("admin"):
                 die("Repository rule violations found\n\nChanges must be made through the merge queue", 1, **attempt)
             if pull.get("mergeQueueEntry"):
@@ -781,9 +779,15 @@ def cmd_pr(state: dict, state_path: Path, args: list[str]) -> None:
 
 
 def git_remote(repo: dict, *args: str) -> subprocess.CompletedProcess[str]:
-    """Run git against the staged bare repository that stands in for this one on GitHub."""
     environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
     return subprocess.run(["git", "--git-dir", repo.get("gitRemote", ""), *args], env=environment, capture_output=True, text=True, check=False)
+
+
+def remote_commit(repo: dict, branch: str) -> str | None:
+    if not repo.get("gitRemote"):
+        return None
+    result = git_remote(repo, "rev-parse", "--verify", "--quiet", f"refs/heads/{branch}^{{commit}}")
+    return result.stdout.strip() if result.returncode == 0 else None
 
 
 def create_pull(state: dict, state_path: Path, args: list[str]) -> None:
@@ -801,9 +805,8 @@ def create_pull(state: dict, state_path: Path, args: list[str]) -> None:
     if not head:
         die("pass --head <branch>: this stand-in does not read the current branch", 1)
     # The branch must already be pushed to the staged repository, as on GitHub.
-    head_sha = git_remote(repo, "rev-parse", "--verify", "--quiet", f"refs/heads/{head}^{{commit}}") if repo.get("gitRemote") else None
-    base_sha = git_remote(repo, "rev-parse", "--verify", "--quiet", f"refs/heads/{base}^{{commit}}") if repo.get("gitRemote") else None
-    if not head_sha or head_sha.returncode != 0 or not base_sha or base_sha.returncode != 0:
+    head_sha, base_sha = remote_commit(repo, head), remote_commit(repo, base)
+    if not head_sha or not base_sha:
         die(f"pull request create failed: GraphQL: Head sha can't be blank, Base sha can't be blank, No commits between {base} and {head}, Head ref must be a branch (createPullRequest)", 1, op="pr create", repo=slug, head=head)
     pulls = repo.setdefault("pulls", {})
     if any(pull["state"] == "OPEN" and pull.get("headRefName") == head for pull in pulls.values()):
@@ -813,12 +816,12 @@ def create_pull(state: dict, state_path: Path, args: list[str]) -> None:
     for name in labels:
         if name not in known:
             die(f"could not add label: '{name}' not found", 1, op="pr create", repo=slug)
-    diff = git_remote(repo, "diff", "--no-color", "--no-ext-diff", f"{base_sha.stdout.strip()}...{head_sha.stdout.strip()}")
+    diff = git_remote(repo, "diff", "--no-color", "--no-ext-diff", f"{base_sha}...{head_sha}")
     number = str(max([int(key) for key in [*pulls, *repo.get("issues", {})]], default=0) + 1)
     stamp = tick(state)
     pulls[number] = {
         "title": title, "body": body.rstrip("\n") + "\n", "author": state["viewer"]["login"], "state": "OPEN",
-        "isDraft": bool(options.get("draft")), "headRefOid": head_sha.stdout.strip(), "headRefName": head, "baseRefName": base,
+        "isDraft": bool(options.get("draft")), "headRefOid": head_sha, "headRefName": head, "baseRefName": base,
         "labels": labels, "createdAt": stamp, "updatedAt": stamp, "mergeable": "MERGEABLE", "mergeStateStatus": "CLEAN",
         "checks": [], "comments": [], "diff": diff.stdout,
     }
@@ -830,11 +833,15 @@ def create_pull(state: dict, state_path: Path, args: list[str]) -> None:
 # ---------------------------------------------------------------- other commands
 
 
+def issue_id(slug: str, number: str) -> str:
+    return f"I_{slug.split('/')[1]}_{number}"
+
+
 def issue_object(state: dict, slug: str, number: str) -> dict:
     repo = state["repos"][slug]
     issue = repo["issues"][number]
     return {
-        "id": f"I_{slug.split('/')[1]}_{number}", "number": int(number), "title": issue["title"], "body": issue.get("body", ""),
+        "id": issue_id(slug, number), "number": int(number), "title": issue["title"], "body": issue.get("body", ""),
         "state": issue.get("state", "OPEN"), "stateReason": issue.get("stateReason"), "closed": issue.get("state", "OPEN") != "OPEN",
         "author": {"login": issue.get("author", state["viewer"]["login"])}, "labels": label_objects(repo, issue.get("labels", [])),
         "assignees": [], "comments": comment_objects(slug, number, issue.get("comments", [])), "url": f"https://github.com/{slug}/issues/{number}",
@@ -1003,7 +1010,7 @@ def cmd_api(state: dict, state_path: Path, args: list[str]) -> None:
                 die('{"errors":[{"message":"Could not resolve to an Issue"}]}', 1, op="graphql issueFieldValues", slug=slug)
             ids = {name: identifier for identifier, name in ISSUE_FIELDS}
             nodes = [{"__typename": "IssueFieldNumberValue", "value": float(value), "field": {"id": ids[name], "name": name}} for name, value in issue.get("fields", {}).items()]
-            emit({"data": {"repository": {"issue": {"id": issue_object(state, slug, fields["number"])["id"], "issueFieldValues": {"nodes": nodes, "pageInfo": {"hasNextPage": False}}}}}}, options)
+            emit({"data": {"repository": {"issue": {"id": issue_id(slug, fields["number"]), "issueFieldValues": {"nodes": nodes, "pageInfo": {"hasNextPage": False}}}}}}, options)
         elif "issueFields" in document:
             nodes = [{"id": identifier, "name": name, "dataType": "NUMBER"} for identifier, name in ISSUE_FIELDS]
             emit({"data": {"repository": {"issueFields": {"nodes": nodes, "pageInfo": {"hasNextPage": False, "endCursor": None}}}}}, options)
@@ -1034,7 +1041,6 @@ def cmd_api(state: dict, state_path: Path, args: list[str]) -> None:
     trace("read", op="api", endpoint=endpoint)
 
 
-# Every repository owner in these worlds has the four Number issue fields that hold leverage scores.
 ISSUE_FIELDS = [("IFN_impact", "Impact"), ("IFN_confidence", "Confidence"), ("IFN_verification", "Verification effort"), ("IFN_undo", "Undo cost")]
 
 
@@ -1044,8 +1050,8 @@ def set_issue_fields(state: dict, state_path: Path, document: str, fields: dict,
     pairs = re.findall(r"fieldId:\s*\$(\w+)\s*,\s*numberValue:\s*\$(\w+)", document)
     if not issue_variable or not pairs:
         refuse("this setIssueFieldValue form is not served; pass issueId and each fieldId and numberValue as variables", op="graphql mutation", document=document)
-    issue_id = fields.get(issue_variable.group(1), "")
-    target = next(((slug, number) for slug, repo in state["repos"].items() for number in repo.get("issues", {}) if issue_object(state, slug, number)["id"] == issue_id), None)
+    wanted = fields.get(issue_variable.group(1), "")
+    target = next(((slug, number) for slug, repo in state["repos"].items() for number in repo.get("issues", {}) if issue_id(slug, number) == wanted), None)
     names = dict(ISSUE_FIELDS)
     if target is None or any(fields.get(field) not in names for field, _ in pairs):
         die('{"errors":[{"message":"Could not resolve to a node with the global id"}]}', 1, op="graphql setIssueFieldValue", document=document)

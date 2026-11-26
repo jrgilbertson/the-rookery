@@ -73,7 +73,6 @@ def outside_work_trees(path: Path) -> None:
 
 
 def build_history(spec: dict, build: Path) -> dict[str, str]:
-    """Commit each listed commit on top of its parent and return its SHA by ID."""
     git("init", "-q", "-b", "fixture-build", cwd=build)
     shas: dict[str, str] = {}
     for position, commit in enumerate(spec["commits"]):

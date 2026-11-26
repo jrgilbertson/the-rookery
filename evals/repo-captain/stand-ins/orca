@@ -90,7 +90,7 @@ changes nothing. Errors go to stderr with a nonzero exit.
 
 ARGV = sys.argv[1:]
 _trace_path: Path | None = None
-_lock = None  # held until the process exits
+_process_lock = None
 
 
 def trace(kind: str, **detail: object) -> None:
@@ -115,7 +115,7 @@ def in_git_work_tree(path: Path) -> bool:
 
 
 def load_state() -> tuple[dict, Path]:
-    global _trace_path, _lock
+    global _trace_path, _process_lock
     world_env = os.environ.get("ORCA_STANDIN_WORLD")
     state_env = os.environ.get("ORCA_STANDIN_STATE")
     if not world_env or not state_env:
@@ -131,8 +131,8 @@ def load_state() -> tuple[dict, Path]:
         if leaf.is_symlink() or (leaf.exists() and not leaf.is_file()):
             die(f"{leaf.name} must be a regular file", 4)
     _trace_path = trace_path
-    _lock = open(os.open(state_dir / "lock", os.O_WRONLY | os.O_CREAT, 0o600), "w")
-    fcntl.flock(_lock, fcntl.LOCK_EX)
+    _process_lock = open(os.open(state_dir / "lock", os.O_WRONLY | os.O_CREAT, 0o600), "w")
+    fcntl.flock(_process_lock, fcntl.LOCK_EX)
     if not state_path.exists():
         if not world_path.is_file():
             die(f"world not found: {world_path}", 4)

@@ -39,8 +39,6 @@ def git_environment() -> dict:
 
 
 class Run:
-    """One staged case: its world, stand-ins, remote, and workspace."""
-
     def __init__(self, case: str, scratch: Path) -> None:
         self.case = case
         self.path = scratch / case
@@ -89,7 +87,6 @@ class Run:
 
 
 def tracker_query(name: str) -> str:
-    """The fixed GraphQL document managing-issues sends, read from its shipped reference."""
     text = TRACKER.read_text(encoding="utf-8")
     pattern = {"scores": r"`(query\(\$owner:String!,\$name:String!,\$number:Int!\)\{[^`]*issueFieldValues[^`]*)`",
                "fields": r"`(query\(\$owner:String!,\$name:String!,\$endCursor:String\)\{repository[^`]*issueFields\([^`]*)`",

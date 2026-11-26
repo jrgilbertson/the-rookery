@@ -270,7 +270,6 @@ def check_contract_copies(repository: Path) -> None:
         ({"second_text": contract.replace("reviewed", "current")},
          "skills/repo-captain/references/review-contract.md: differs from "
          "skills/reviewing-prs/references/review-contract.md"),
-        # Byte equality: an extra trailing blank line is a difference.
         ({"second_text": contract + "\n"},
          "skills/repo-captain/references/review-contract.md: differs from "
          "skills/reviewing-prs/references/review-contract.md"),

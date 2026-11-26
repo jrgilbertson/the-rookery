@@ -66,8 +66,8 @@ length given; the page is read in one sitting across many pull requests.
 - `status`: checks and conflict state, plus the base branch when it is not
   the default branch, and a never-carried-out verdict on a held pull request.
 - `scores`: integers from 1 to 3, from step 3. Let the page compute the order
-  and products. A missing score sorts the pull request to the top of the held
-  group.
+  and products. A missing score holds the pull request and sorts it to the top
+  of the held group; its V × U shows `?` unless both factors are present.
 - `driver`: one or two sentences saying what drives the score, written for
   the overview.
 - `sensitiveKind`: each sensitive kind from the first hold test in

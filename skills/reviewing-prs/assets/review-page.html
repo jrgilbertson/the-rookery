@@ -340,16 +340,18 @@ main { padding: 40px 0 80px; min-width: 0; }
   const prs = records(round.prs).map((pr, index) => {
     const s = pr.scores || {};
     const impact = score(s.impact), confidence = score(s.confidence), verify = score(s.verify), undo = score(s.undo);
-    // A missing or invalid score fails safe: the pull request sorts to the top of the held group.
-    const product = impact && confidence && verify && undo ? verify * undo : 9;
-    const leverage = impact && confidence && verify && undo ? (impact * confidence) / (verify * undo) : null;
+    const complete = Boolean(impact && confidence && verify && undo);
+    const product = verify && undo ? verify * undo : null;
+    const leverage = complete ? (impact * confidence) / product : null;
+    // A missing or invalid score fails safe: the pull request is held and sorts above any real V × U (at most 9).
+    const sortKey = complete ? product : 10;
     // A sensitive kind holds a pull request whatever its score (the first hold test).
     const sensitiveKinds = (typeof pr.sensitiveKind === "string" ? [pr.sensitiveKind] : list(pr.sensitiveKind)).map(str).filter(Boolean);
-    return { pr, index, impact, confidence, verify, undo, product, leverage, sensitiveKinds,
-      hold: product >= 3 || sensitiveKinds.length > 0 };
+    return { pr, index, impact, confidence, verify, undo, complete, product, sortKey, leverage, sensitiveKinds,
+      hold: sortKey >= 3 || sensitiveKinds.length > 0 };
   });
   const groupName = (hold) => (hold ? "Over the hold line" : "Under the hold line");
-  const byProduct = (a, b) => b.product - a.product || (b.leverage ?? Infinity) - (a.leverage ?? Infinity) || a.index - b.index;
+  const byProduct = (a, b) => b.sortKey - a.sortKey || (b.leverage ?? Infinity) - (a.leverage ?? Infinity) || a.index - b.index;
   const over = prs.filter((item) => item.hold).sort(byProduct);
   const under = prs.filter((item) => !item.hold).sort(byProduct);
   const ordered = over.concat(under);
@@ -465,9 +467,9 @@ main { padding: 40px 0 80px; min-width: 0; }
     const rows = el("ol", "orows");
     for (const item of items) {
       const row = el("li", "orow");
-      const vu = el("div", "vu", item.product);
+      const vu = el("div", "vu", item.product ?? "?");
       vu.append(el("small", "", "V × U"));
-      vu.setAttribute("aria-label", "Verification effort times undo cost: " + item.product);
+      vu.setAttribute("aria-label", "Verification effort times undo cost: " + (item.product ?? "unknown"));
       const name = el("div");
       item.overviewState = el("span", "state");
       add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
@@ -725,6 +727,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const placementText = (item) => {
     const kinds = item.sensitiveKinds.join(", ");
+    if (!item.complete) return ["Held because a score is missing.", item.product === null ? "" : "V × U is " + item.product + ".",
+      kinds ? "It touches a sensitive kind: " + kinds + "." : ""].filter(Boolean).join(" ");
     if (!item.hold) return "Under the hold line, V × U " + item.product + ".";
     if (item.product < 3) return "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
     if (kinds) return "Over the hold line, V × U " + item.product + ", and it touches a sensitive kind: " + kinds + ".";

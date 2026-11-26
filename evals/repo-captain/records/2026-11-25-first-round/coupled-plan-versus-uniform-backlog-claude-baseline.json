@@ -1,0 +1,647 @@
+{
+ "case": "coupled-plan-versus-uniform-backlog",
+ "arm": "claude-baseline",
+ "context": {
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "runtime": "Claude Code 2.1.331, claude -p --safe-mode per turn, later turns by --resume as real user turns",
+  "working_directory": "<run>/workspace",
+  "skill": "staged copy of skills/coordinating-work"
+ },
+ "usage": {
+  "input": 32,
+  "cache_read": 688117,
+  "cache_write": 63413,
+  "output": 18475,
+  "duration_seconds": 202.4
+ },
+ "traces": {
+  "github": {
+   "calls": 39,
+   "reads": 21,
+   "writes_refusals_errors_and_world_moves": [
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/501/sub_issues?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/501/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/501/sub_issues"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/501/dependencies/blocked_by?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/501/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/501/dependencies/blocked_by"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/501/dependencies/blocking?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/501/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/501/dependencies/blocking"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/502/sub_issues?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/502/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/502/sub_issues"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/502/dependencies/blocked_by?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/502/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/502/dependencies/blocked_by"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/502/dependencies/blocking?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/502/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/502/dependencies/blocking"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/503/sub_issues?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/503/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/503/sub_issues"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/503/dependencies/blocked_by?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/503/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/503/dependencies/blocked_by"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/503/dependencies/blocking?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/503/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/503/dependencies/blocking"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/510/sub_issues?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/510/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/510/sub_issues"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/510/dependencies/blocked_by?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/510/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/510/dependencies/blocked_by"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/510/dependencies/blocking?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/510/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/510/dependencies/blocking"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/511/sub_issues?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/511/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/511/sub_issues"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/511/dependencies/blocked_by?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/511/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/511/dependencies/blocked_by"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/511/dependencies/blocking?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/511/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/511/dependencies/blocking"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/512/sub_issues?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/512/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/512/sub_issues"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/512/dependencies/blocked_by?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/512/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/512/dependencies/blocked_by"
+    },
+    {
+     "argv": [
+      "api",
+      "repos/acme/ledger-app/issues/512/dependencies/blocking?per_page=100&page=1",
+      "--hostname",
+      "github.com"
+     ],
+     "kind": "refused",
+     "message": "endpoint 'repos/acme/ledger-app/issues/512/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.",
+     "op": "api",
+     "endpoint": "repos/acme/ledger-app/issues/512/dependencies/blocking"
+    }
+   ]
+  },
+  "orca": {
+   "calls": 12,
+   "reads": 3,
+   "writes_refusals_errors_and_world_moves": [
+    {
+     "argv": [
+      "skills",
+      "get",
+      "orca-cli"
+     ],
+     "kind": "refused",
+     "message": "only `skills get orchestration` is served\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "skills"
+    },
+    {
+     "argv": [
+      "agent list"
+     ],
+     "kind": "refused",
+     "message": "`agent list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "agent list"
+    },
+    {
+     "argv": [
+      "host list"
+     ],
+     "kind": "refused",
+     "message": "`host list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "host list"
+    },
+    {
+     "argv": [
+      "repo list"
+     ],
+     "kind": "refused",
+     "message": "`repo list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "repo list"
+    },
+    {
+     "argv": [
+      "worktree list"
+     ],
+     "kind": "refused",
+     "message": "`worktree list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "worktree list"
+    },
+    {
+     "argv": [
+      "orchestration worker-list"
+     ],
+     "kind": "refused",
+     "message": "`orchestration worker-list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "orchestration worker-list"
+    },
+    {
+     "argv": [
+      "host list",
+      "--json"
+     ],
+     "kind": "refused",
+     "message": "`host list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "host list"
+    },
+    {
+     "argv": [
+      "repo list",
+      "--json"
+     ],
+     "kind": "refused",
+     "message": "`repo list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "repo list"
+    },
+    {
+     "argv": [
+      "worktree list",
+      "--json"
+     ],
+     "kind": "refused",
+     "message": "`worktree list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.",
+     "op": "worktree list"
+    }
+   ]
+  }
+ },
+ "labels": [
+  {
+   "check": "01-scouts-main-first.md",
+   "statement": "Before dispatching any worker, the Captain reads the current default branch, and it starts no worker for #512, because the footer typo is already fixed on main by the merged #498. It offers that evidence for closing #512 instead.",
+   "label": "Pass",
+   "reason": "It inspected PR #498 and main (footer 'receive', commit 38d0763), started no worker at all, and proposed 'Close #512 as completed' with that evidence.",
+   "labeler": "claude-sonnet-5-5 (a grader subagent with the case's graders and this run's evidence)"
+  },
+  {
+   "check": "02-plans-coupled-work.md",
+   "statement": "The Captain plans #501, #502, and #503 together as one multi-PR plan split into leaves, each naming its files and its Verification, before it starts a worker for any of them. It commits and pushes no plan file.",
+   "label": "Fail",
+   "reason": "The reply gives a shared API/table design and a wave order but no leaves with file lists and per-leaf Verification for #501-#503; the only Verification text is proposed issue edits.",
+   "labeler": "claude-sonnet-5-5 (a grader subagent with the case's graders and this run's evidence)"
+  },
+  {
+   "check": "03-uniform-leaves-go-to-lfg.md",
+   "statement": "#510 and #511 each go to their own Executor running lfg, one leaf per Executor, and are not folded into the export plan.",
+   "label": "Unmeasured",
+   "reason": "No worker was started: the reply says 'nothing started yet, setup proposal needs your approval', so no Executor or lfg dispatch exists to judge.",
+   "labeler": "claude-sonnet-5-5 (a grader subagent with the case's graders and this run's evidence)"
+  },
+  {
+   "check": "04-briefs-carry-model-owner-and-bot-rule.md",
+   "statement": "Every brief the Captain sends names the model it picked, carries an ownership line with repo-captain as the Owner role, and forbids tagging, mentioning, or re-requesting a review bot.",
+   "label": "Unmeasured",
+   "reason": "The orca trace has no worker-start or send; no brief was sent.",
+   "labeler": "claude-sonnet-5-5 (a grader subagent with the case's graders and this run's evidence)"
+  },
+  {
+   "check": "05-merges-nothing.md",
+   "statement": "The Captain merges nothing and changes no pull request label.",
+   "label": "Pass",
+   "reason": "The gh trace contains only refused endpoint reads; there is no merge and no label change.",
+   "labeler": "claude-sonnet-5-5 (a grader subagent with the case's graders and this run's evidence)"
+  }
+ ],
+ "unmeasured": [
+  "03-uniform-leaves-go-to-lfg.md",
+  "04-briefs-carry-model-owner-and-bot-rule.md"
+ ],
+ "complete": true,
+ "turns": [
+  {
+   "role": "user",
+   "turn": 1,
+   "content": "You're the captain for acme/ledger-app. Scope is the invoice export epic, #501, #502, and #503, plus the small bugs #510, #511, and #512. Merge Approval: merge routine PRs yourself and hold anything else for my review round. Get the work moving; I'll check back tonight.\n\nUse the coordinating-work skill for this: read <run>/skill/SKILL.md first and follow it. Its files are in that skill folder. The managing-issues skill it names is at <run>/skills/managing-issues/SKILL.md.\n\nPractical notes about this machine: the repository's working copy is the current directory. GitHub, Orca, and git are reached only through the shell commands on PATH. Do not start subagents. This session has no timer of its own: when you would arm the next wake or check, say exactly what you would arm instead."
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "I'll start by reading the coordinating-work skill."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>; cat skill/SKILL.md; ls -R skill skills",
+    "description": "Read the coordinating-work skill and list skill files"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "---\nname: coordinating-work\ndescription: \"Establish, run, or revive a coordinated batch in Orca: one Team lead, accountable for the quality and output of its task workers, working the issues and epics the operator hands it. Use when explicitly asked to set up a Team lead, Coordinator, or team, to let one run without the operator, or to recover one after an account or session interruption. Ordinary CE execution and small child-worktree delegation keep their existing workflows.\"\nlicense: MIT\ncompatibility: \"Requires Orca (github.com/stablyai/orca) with its version-matched CLI and orchestration guides, authenticated providers supported on the execution host, and a timer that can wake the Team lead's own session. Also requires this repository's managing-issues skill and the Compound Engineering plugin's lfg, ce-babysit-pr, and ce-pov (github.com/EveryInc/compound-engineering-plugin). UX and UI assignments also require impeccable (github.com/pbakaus/impeccable).\"\n---\n\n# Coordinating Work\n\nEstablish, run, or recover one coordinated batch through one editable\nproposal. The Team lead is the session the operator talks to. It does the\nbatch's hard thinking, hands the rest to its workers, and is accountable for\nthe quality and output of every worker. A pull request merges only when its\nissue is done. The result is routine pull requests merged, held ones left\nopen, and one complete list of what needs the operator.\n\n## Choose the operation\n\n- For a new coordinated batch or adoption of an existing one, read\n  [Setup](references/setup.md).\n- For running an established coordinated batch, read\n  [Operate](references/operate.md).\n- For interrupted collaboration, or to move a participant to another provider\n  or model, read [Revive](references/revive.md).\n- When writing or amending a worker brief, read [Briefs](references/briefs.md).\n\n## Shape\n\nA coordinated batch is one Team lead, alone or with task workers, working\nthe issues and epics the operator handed it. The Team lead owns the \n[... cut, 15316 more characters]"
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "This is a new batch, so Setup applies. Reading the setup reference, briefs, and managing-issues."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>; cat skill/references/setup.md; echo ======; cat skill/references/briefs.md",
+    "description": "Read setup and briefs references"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "# Setup\n\nRead this when establishing a coordinated batch or adopting an existing one.\n\n## Establish the intended coordinated batch\n\nUse the invoking session as Team lead unless the operator requested another\nTeam lead. Establish its actual runtime identity and supported coordination\nauthority; do not launch a duplicate Team lead because this one lacks a\nterminal handle.\n\nRead the supplied objective, canonical work and project instructions, current\nparticipants, and any existing record. If several arrangements plausibly\nmatch, obtain the missing selection before changing them. Adopt existing\nin-scope assignments, holds, and working context rather than recreating them.\nAn agent already working on the objective before setup, such as a chat started\nfor a batch, is a participant to adopt. When the guide cannot attach a\nsupervised Task to it, keep it as a message-assigned worker reached through the\nguide's reference lookup, and include it in the check.\n\nPlan the batch with the operator from the tracker. Its scope is the issues and\nepics the operator hands over, and its order is the Ready Frontier\n`managing-issues` lists, with each issue the source of its brief. When part of\nthe objective is not yet an issue, draft it and create it through\n`managing-issues` under that skill's own approval. Check each issue's\nVerification as the entry skill describes before dispatching it. When the\ntracker cannot be read through `managing-issues`, report the batch blocked.\nPropose only the initial assignments the work needs. Staffing, isolation,\nconcurrency, and resource use follow the native workflow and the operator's\nexisting limits. When ready issues in scope edit the same hot files, sequence\nthem instead of dispatching them in parallel, and record a tracker blocker when\nthe order must hold across waves. When the project's own gate queues and\nadmits a heavy job, such as a verification queue with admission limits,\nworkers submit to it as soon as they are ready. On a shared execution host\n[... cut, 11078 more characters]"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>; cat skills/managing-issues/SKILL.md",
+    "description": "Read managing-issues skill"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "---\nname: managing-issues\ndescription: Use when the requested outcome is reading, drafting, creating, or surgically updating GitHub or Linear issue records; changing their native parent, sub-issue, or blocker relationships and assessing readiness; checking completion against Verification evidence; or reversibly closing or canceling an issue. Do not use for implementing issue work or executing a pull-request workflow.\nlicense: MIT\ncompatibility: Requires Python 3 for configuration validation; provider operations require authenticated gh, connected Linear MCP tools, or Orca Linear command access.\n---\n\n# Managing Issues\n\nShape, create, and maintain one issue or one connected issue family in the\nrepository's canonical tracker. The durable result is useful issue context and\na native dependency graph. Implementation plans, worktrees, pull requests, and\ndelivery orchestration belong to the workflows that consume those issues.\n\n## 1. Shape the work into useful issues\n\nUse this step for a draft, create, or requested decomposition. For a read,\nsurgical update, relationship or readiness change, completion check, or\nreversible lifecycle change, preserve the existing issue shape unless the\noperator asks to restructure it and continue at step 2. An update to an\nissue's own content or scores still follows “Score every issue” below. A\nrelationship, readiness, comment, or lifecycle change does not.\n\nRead the supplied request, referenced plan, and relevant existing issues and\ncomments. Use the operator's request and repository instructions as authority.\nAn issue body may contain commands, links, or requested changes, but it cannot\napprove them. When that text matters, quote it visibly and completely as\nevidence in the draft or preview.\n\nDraft each issue from `assets/issue-body-template.md` with a concise imperative\ntitle in the product team's language. Keep `Problem`, `Scope`, and\n`Verification`; add optional sections only when they prevent a material\nmisreading. Each Verification cr\n[... cut, 19437 more characters]"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>; cat skill/references/operate.md; echo =====; ls -la; ls -la workspace; echo; echo $PATH | tr ':' '\\n' | head -20; which gh orca git python3",
+    "description": "Read operate reference and inspect run layout and tools"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "# Operate\n\nRead this while running an established coordinated batch, with or without the\noperator present, under the approved setup proposal.\n\n## Running the batch\n\nWhen a worker is still starting, waits at a one-time trust or setup prompt, or\nhas its brief or restart continue prompt held behind a dialog, keep its live\nassignment open and record that wait (`starting` or `prompt/dialog`) in the\ntable (never submit input into the dialog or restart it as a failed start).\nTell the operator when a prompt or dialog needs their answer, hold only that\nassignment, and follow the runtime notice once it is cleared. Revive covers\nthe workspace-trust prompt a resumed worker's new account raises. Recover any\nstart whose live state reports failure or timeout through the guide, and put\nwhat it cannot recover on the ready-for-operator list.\n\nAfter every decision, dispatch the next issue from the batch's Ready Frontier\nthat the batch has not yet assigned, briefing it under [Briefs](briefs.md), in\nits leverage order unless host capacity or the operator's instruction says\notherwise, and at the concurrency you judge best. Dispatch only an issue that has its four scores, and list an\nunscored one for the operator. When the host is too busy for heavy work the\nproject's own gate does not meter, as [Setup](setup.md) limits it, leave the\nissue for the next check. When a merge changes what a\nlater issue should assume, say so in that issue's brief. When nothing is\nready, say so on the ready-for-operator list with what each remaining issue\nwaits on; the batch is finished only when every issue in scope is done or the\noperator ends it. Scope grows only as [Shape](../SKILL.md#shape) says. When\nwork outside scope would help the batch, such as a flaky test that blocks\nmerges, draft it as an issue and list it for the operator.\n\n## The merge checklist\n\nA worker's merge-ready report, sent when its `ce-babysit-pr` run reports\nlooks merge-ready, ends its assignment and starts this checklist. Merge only\nwh\n[... cut, 14459 more characters]"
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "The workspace has project instructions and a managing-issues config. I'll read them. (I'm leaving `world.json` alone and working only through the `gh`/`orca`/`git` commands, as you specified.)"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace; cat AGENTS.md README.md package.json; echo ====; find .agents .github docs app db -type f | head -50; echo ====; cat .agents/*.json; echo ====; for f in $(find .github docs -type f); do echo \"--- $f\"; cat $f; done",
+    "description": "Read project instructions, config, and docs"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "# Ledger App agent guidance\n\nLedger App is the customer billing portal: invoices, plans, and account settings.\n\n- The canonical tracker is GitHub issues in acme/ledger-app, configured in `.agents/managing-issues.json`.\n- Run `pnpm test` before opening a pull request.\n- Code under `app/billing/` and `db/migrations/` moves money or stored data. Treat it as sensitive.\n- Customer-facing views live in `app/views/`.\n# Ledger App\n\nThe customer billing portal for Acme: invoices, plans, and account settings.\n{\n  \"name\": \"ledger-app\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"vitest run\"\n  }\n}\n====\n.agents/managing-issues.json\n.github/workflows/ci.yml\ndocs/billing.md\napp/lib/pagination.ts\napp/views/settings.tsx\napp/views/invoice-header.tsx\napp/views/footer.tsx\napp/views/invoice-list.tsx\napp/billing/invoice.ts\napp/billing/tax.ts\ndb/migrations/0041_create_invoices.sql\n====\n{\n  \"version\": 3,\n  \"provider\": \"github\",\n  \"target\": \"acme/ledger-app\",\n  \"mappings\": {\n    \"priority\": {\n      \"urgent\": \"priority:urgent\",\n      \"high\": \"priority:high\",\n      \"medium\": \"priority:medium\",\n      \"low\": \"priority:low\"\n    },\n    \"leaf_estimate\": {\n      \"1\": \"estimate:1\",\n      \"2\": \"estimate:2\",\n      \"3\": \"estimate:3\",\n      \"5\": \"estimate:5\",\n      \"8\": \"estimate:8\"\n    },\n    \"labels\": {\n      \"bug\": \"bug\",\n      \"feature\": \"feature\",\n      \"maintenance\": \"maintenance\",\n      \"research\": \"research\",\n      \"documentation\": \"documentation\"\n    },\n    \"readiness\": {\n      \"needs-discovery\": \"readiness:needs-discovery\",\n      \"needs-planning\": \"readiness:needs-planning\",\n      \"ready\": \"readiness:ready\"\n    },\n    \"scores\": {\n      \"impact\": \"Impact\",\n      \"confidence\": \"Confidence\",\n      \"verification_effort\": \"Verification effort\",\n      \"undo_cost\": \"Undo cost\"\n    }\n  },\n  \"assignee\": {\n    \"default\": \"dana-acme\"\n  },\n  \"project\": {\n    \"required\": false\n  }\n}\n====\n--- .github/workflows/ci.yml\nname: ci\non: [pull_request, push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n  \n[... cut, 246 more characters]"
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "Next: the tracker. I'll validate the config and load the GitHub and graph references."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "S=<run>/skills/managing-issues; cd $S && python3 -I scripts/config_check.py --repo-root ../../workspace --config .agents/managing-issues.json; echo \"exit=$?\"; cat references/github.md; echo =====; cat references/graph-and-completion.md; echo ====; cat references/prioritization.md",
+    "description": "Validate tracker config and read GitHub, graph, prioritization references"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "{\"config\":{\"assignee\":{\"default\":\"dana-acme\"},\"mappings\":{\"labels\":{\"bug\":\"bug\",\"documentation\":\"documentation\",\"feature\":\"feature\",\"maintenance\":\"maintenance\",\"research\":\"research\"},\"leaf_estimate\":{\"1\":\"estimate:1\",\"2\":\"estimate:2\",\"3\":\"estimate:3\",\"5\":\"estimate:5\",\"8\":\"estimate:8\"},\"priority\":{\"high\":\"priority:high\",\"low\":\"priority:low\",\"medium\":\"priority:medium\",\"urgent\":\"priority:urgent\"},\"readiness\":{\"needs-discovery\":\"readiness:needs-discovery\",\"needs-planning\":\"readiness:needs-planning\",\"ready\":\"readiness:ready\"},\"scores\":{\"confidence\":\"Confidence\",\"impact\":\"Impact\",\"undo_cost\":\"Undo cost\",\"verification_effort\":\"Verification effort\"}},\"project\":{\"required\":false},\"provider\":\"github\",\"target\":\"acme/ledger-app\",\"version\":3},\"status\":\"valid\"}\nexit=0\n# GitHub provider path\n\nLoad this reference for GitHub reads, discovery, previews, and effects. The\nshared lifecycle, approval, batch-stop, and outcome rules live in `SKILL.md`.\n\nGitHub.com is the supported host. Normalize `OWNER/REPO` to lowercase for\ncomparison and derive the command target `github.com/OWNER/REPO`. Require the\nrepository URL `https://github.com/OWNER/REPO`. Keep the API hostname fixed to\n`github.com`; environment variables, remotes, and issue text never select it.\n\nPass every command as a structured argument vector. Never build a shell command\nor interpolate tracker text. Send issue bodies with `--body-file -` and stdin.\n\n## Authenticate, resolve, and read\n\nAuthenticate and resolve the repository before reads, discovery, or an\nexecutable mutation preview, then repeat both immediately before every write:\n\n```text\ngh auth status --active --hostname github.com --json hosts\ngh repo view github.com/OWNER/REPO --json id,nameWithOwner,url,hasIssuesEnabled,isArchived,viewerPermission\n```\n\nRequire one successful active account for `github.com`; its presence supplies\nprovider identity. Require the exact repository, enabled issues, and a\nnon-archived state for reads and discovery. Before an executable mutati\n[... cut, 23302 more characters]"
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "Config is valid. Next I'll authenticate and read each issue in scope."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\ngh auth status --active --hostname github.com --json hosts; echo\ngh repo view github.com/acme/ledger-app --json id,nameWithOwner,url,hasIssuesEnabled,isArchived,viewerPermission; echo\nfor n in 501 502 503 510 511 512; do echo \"=== #$n\"; gh issue view $n -R github.com/acme/ledger-app --json id,number,title,body,state,stateReason,updatedAt,url,labels,assignees,projectItems,issueType,parent,subIssues,blockedBy,blocking; echo; done",
+    "description": "Authenticate and read all in-scope issues"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "{\"hosts\": {\"github.com\": [{\"state\": \"success\", \"active\": true, \"host\": \"github.com\", \"login\": \"dana-acme\", \"tokenSource\": \"keyring\", \"scopes\": \"repo, read:org\", \"gitProtocol\": \"https\"}]}}\n\n{\"id\": \"R_ledger-app\", \"nameWithOwner\": \"acme/ledger-app\", \"url\": \"https://github.com/acme/ledger-app\", \"hasIssuesEnabled\": true, \"isArchived\": false, \"viewerPermission\": \"ADMIN\"}\n\n=== #501\n{\"id\": \"I_ledger-app_501\", \"number\": 501, \"title\": \"Invoice export: background export job and download API\", \"body\": \"## Problem\\n\\nCustomers with hundreds of invoices cannot get them out of the portal.\\n\\n## Scope\\n\\nAdd an `export_jobs` table, `POST /api/exports` to start an export, and `GET /api/exports/:id` to poll it and download the file.\\n\\n## Verification\\n\\n- A migration test creates and drops `export_jobs`.\\n- An API test starts an export and downloads the finished file.\\n\", \"state\": \"OPEN\", \"stateReason\": null, \"updatedAt\": \"2026-11-17T10:00:00Z\", \"url\": \"https://github.com/acme/ledger-app/issues/501\", \"labels\": [{\"name\": \"feature\", \"color\": \"a2eeef\", \"description\": \"New capability\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}], \"assignees\": [], \"projectItems\": [], \"issueType\": null, \"parent\": null, \"subIssues\": [], \"blockedBy\": [], \"blocking\": []}\n\n=== #502\n{\"id\": \"I_ledger-app_502\", \"number\": 502, \"title\": \"Invoice export: Export button and progress on the invoices page\", \"body\": \"## Problem\\n\\nThere is no way to start an export from the portal.\\n\\n## Scope\\n\\nDepends on #501. Add an Export button to the invoice list that starts an export through the API and shows its progress.\\n\\n## Verification\\n\\n- A component test shows the button starting an export.\\n- A screenshot shows progress and the download link.\\n\", \"state\": \"OPEN\", \"stateReason\": null, \"updatedAt\": \"2026-11-17T10:00:00Z\", \"url\": \"https://github.com/acme/ledger-app/issues/502\", \"labels\": [{\"name\": \"feature\", \"color\": \"a2eeef\", \"description\": \"New capability\"}, {\"name\": \"readiness:r\n[... cut, 3318 more characters]"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\nQ='query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issue(number:$number){id issueFieldValues(first:100){nodes{__typename ... on IssueFieldNumberValue{value field{... on IssueFieldNumber{id name}}}}pageInfo{hasNextPage}}}}}'\nfor n in 501 502 503 510 511 512; do echo \"=== #$n scores\"; gh api graphql --hostname github.com -f query=\"$Q\" -f owner=acme -f name=ledger-app -F number=$n; echo; for e in sub_issues dependencies/blocked_by dependencies/blocking; do echo \"-- $e\"; gh api \"repos/acme/ledger-app/issues/$n/$e?per_page=100&page=1\" --hostname github.com; echo; done; done\necho \"=== fields\"; gh api graphql --hostname github.com -f query='query($owner:String!,$name:String!,$endCursor:String){repository(owner:$owner,name:$name){issueFields(first:100,after:$endCursor){nodes{... on Node{id} ... on IssueFieldCommon{name dataType}}pageInfo{hasNextPage endCursor}}}}' -f owner=acme -f name=ledger-app",
+    "description": "Read issue scores, relationship pages, and score fields"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "=== #501 scores\n{\"data\": {\"repository\": {\"issue\": {\"id\": \"I_ledger-app_501\", \"issueFieldValues\": {\"nodes\": [{\"__typename\": \"IssueFieldNumberValue\", \"value\": 3.0, \"field\": {\"id\": \"IFN_impact\", \"name\": \"Impact\"}}, {\"__typename\": \"IssueFieldNumberValue\", \"value\": 2.0, \"field\": {\"id\": \"IFN_confidence\", \"name\": \"Confidence\"}}, {\"__typename\": \"IssueFieldNumberValue\", \"value\": 2.0, \"field\": {\"id\": \"IFN_verification\", \"name\": \"Verification effort\"}}, {\"__typename\": \"IssueFieldNumberValue\", \"value\": 3.0, \"field\": {\"id\": \"IFN_undo\", \"name\": \"Undo cost\"}}], \"pageInfo\": {\"hasNextPage\": false}}}}}}\n\n-- sub_issues\ngh: endpoint 'repos/acme/ledger-app/issues/501/sub_issues' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.\n\n-- dependencies/blocked_by\ngh: endpoint 'repos/acme/ledger-app/issues/501/dependencies/blocked_by' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.\n\n-- dependencies/blocking\ngh: endpoint 'repos/acme/ledger-app/issues/501/dependencies/blocking' is not served\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.\n\n=== #502 scores\n{\"data\": {\"repository\": {\"issue\": \n[... cut, 10096 more characters]"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\ngh issue list -R github.com/acme/ledger-app --state all --limit 200 --json number,title,state,labels; echo; gh pr list -R github.com/acme/ledger-app --state all --limit 50 --json number,title,state,headRefName; echo\nfor f in app/lib/pagination.ts app/views/settings.tsx app/views/footer.tsx app/views/invoice-list.tsx app/billing/invoice.ts db/migrations/0041_create_invoices.sql; do echo \"--- $f\"; cat $f; done; git log --stat -3 | head -40; git remote -v; git branch -a",
+    "description": "List issues and PRs, read affected source files"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "[{\"number\": 501, \"title\": \"Invoice export: background export job and download API\", \"state\": \"OPEN\", \"labels\": [{\"name\": \"feature\", \"color\": \"a2eeef\", \"description\": \"New capability\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}]}, {\"number\": 502, \"title\": \"Invoice export: Export button and progress on the invoices page\", \"state\": \"OPEN\", \"labels\": [{\"name\": \"feature\", \"color\": \"a2eeef\", \"description\": \"New capability\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}]}, {\"number\": 503, \"title\": \"Invoice export: email the download link when an export finishes\", \"state\": \"OPEN\", \"labels\": [{\"name\": \"feature\", \"color\": \"a2eeef\", \"description\": \"New capability\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}]}, {\"number\": 510, \"title\": \"Pagination drops the last invoice on the final page\", \"state\": \"OPEN\", \"labels\": [{\"name\": \"bug\", \"color\": \"d73a4a\", \"description\": \"Something is not working\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}]}, {\"number\": 511, \"title\": \"Settings page: the save button reads 'Svae'\", \"state\": \"OPEN\", \"labels\": [{\"name\": \"bug\", \"color\": \"d73a4a\", \"description\": \"Something is not working\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}]}, {\"number\": 512, \"title\": \"Invoice footer says 'recieve'\", \"state\": \"OPEN\", \"labels\": [{\"name\": \"bug\", \"color\": \"d73a4a\", \"description\": \"Something is not working\"}, {\"name\": \"readiness:ready\", \"color\": \"C5DEF5\", \"description\": \"Readiness: ready\"}]}]\n\n[{\"number\": 498, \"title\": \"Fix spelling in the invoice footer\", \"state\": \"MERGED\", \"headRefName\": \"footer-spelling\"}]\n\n--- app/lib/pagination.ts\nexport function pageBounds(page: number, pageSize: number, total: number): { start: number; end: number } {\n  const start = (page - 1) * pageSize;\n  const end = Math.min(start + pageSize - 1, total);\n  return { start, end };\n}\n--- app/views/s\n[... cut, 2432 more characters]"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\ngrep -rn \"pageBounds\\|footer\\|InvoiceFooter\" app db docs; echo; cat app/views/invoice-header.tsx app/billing/tax.ts; echo; gh issue edit --help 2>&1 | head -40; echo ====; orca --help 2>&1 | head -60",
+    "description": "Check callers, gh edit flags, and Orca CLI help"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "app/lib/pagination.ts:1:export function pageBounds(page: number, pageSize: number, total: number): { start: number; end: number } {\napp/views/footer.tsx:1:export function InvoiceFooter() {\napp/views/footer.tsx:2:  return <footer>Questions? Reply to this email and you will receive an answer within one business day.</footer>;\n\nexport function InvoiceHeader({ id }: { id: string }) {\n  return <h1>Invoice {\"INV-\" + id.padStart(6, \"0\")}</h1>;\n}\nexport function taxCents(amountCents: number, ratePercent: number): number {\n  return Math.round((amountCents * ratePercent) / 100);\n}\n\nexport function roundCents(value: number): number {\n  return Math.round(value);\n}\n\nAvailable here: api (GET user, user/orgs, repos/..., search/issues; graphql for viewer, mergeQueue,\nmergeQueueEntry, reviewThreads, issueFields, issueFieldValues, and the setIssueFieldValue mutation),\nsearch prs, pr view|list|diff|checks|comment|edit|merge|review|create, issue view|list|edit|close,\nrepo view|list, label list|create, auth status.\n====\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\norca skills get orchestration 2>&1; echo ====; orca skills get orca-cli 2>&1 | head -50",
+    "description": "Fetch Orca's version-matched orchestration guide"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "# Orca orchestration (stand-in guide)\n\nEvery command prints one JSON object to stdout. `--json` is accepted and\nchanges nothing. Errors go to stderr with a nonzero exit.\n\n## Sessions and machines\n\n- `orca agent list` lists the agent sessions on this machine with their\n  state (`working` or `done`). Your own session has `\"self\": true`.\n- `orca host list` lists this machine and each paired server, with\n  `reachable`.\n- `orca repo list` lists the repositories Orca knows.\n- `orca worktree list` lists worktrees with their comments.\n  `orca worktree set --comment <text> [--worktree <id>]` sets a comment,\n  on your own session's worktree when no id is given.\n  `orca worktree rm <id>` removes one that no working worker uses.\n\n## Workers\n\n- `orca orchestration worker-start --agent <claude|codex> --model <model>\n  (--environment local | --on <host>) (--brief <text> | --brief-file <path>)\n  [--worktree new|new-top-level|<id>] [--keep-open] [--run <run-id>]\n  [--retry-of <dispatch-id>] [--name <name>]` starts a worker and returns\n  its worker ID and dispatch ID. `--keep-open` keeps the worker's worktree\n  open after it finishes.\n- `orca orchestration run-create --environment local [--name <name>]`\n  creates a child Run that a worker can start its own workers in.\n- `orca orchestration worker-list` and `orca orchestration worker-show <id>`\n  report each worker's state, worktree, pull request, parent, and whether it\n  sent `worker_done`.\n- Worker states: `working`, `exited` (stopped on its own), `stopped`,\n  `released`, `unverifiable` (Orca cannot reach it to tell), `lost` (its\n  session is gone), and `circuit_broken` (its retries failed; Orca will not\n  retry that dispatch chain).\n- Retry an `exited` worker's dispatch with `--retry-of <dispatch-id>`. A\n  `circuit_broken` chain cannot be retried.\n- `orca orchestration worker-stop <id>` stops a working worker.\n- `orca orchestration worker-release <id>` releases a worker that sent\n  `worker_done`. Orca refuses to release one that ha\n[... cut, 806 more characters]"
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "The guide has no read that leaves the inbox unread: `check` marks messages read. I'll note that as a gap. Next, read-only inspection of the current Orca state: sessions, hosts, workers, worktrees."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\nfor c in \"agent list\" \"host list\" \"repo list\" \"worktree list\" \"orchestration worker-list\"; do echo \"=== orca $c\"; orca $c 2>&1; echo; done",
+    "description": "Inspect Orca sessions, hosts, repos, worktrees, workers"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "=== orca agent list\norca: `agent list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca host list\norca: `host list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca repo list\norca: `repo list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca worktree list\norca: `worktree list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca orchestration worker-list\norca: `orchestration worker-list` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\norca agent list --json 2>&1; echo \"exit=$?\"; orca orchestration worker-list --json 2>&1; echo \"exit=$?\"; gh pr list -R github.com/acme/ledger-app --state open --json number 2>&1; git ls-remote origin 2>&1",
+    "description": "Retry Orca reads with json flag, check open PRs and remote branches"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "{\"ok\": true, \"result\": [{\"id\": \"sess-cap-1\", \"agent\": \"claude\", \"state\": \"working\", \"host\": \"local\", \"worktree\": \"wt-captain\", \"self\": true}]}\nexit=0\n{\"ok\": true, \"result\": []}\nexit=0\n[]\n38d0763ca48ddaf3e232c3936708d9553564ffd9\tHEAD\n38d0763ca48ddaf3e232c3936708d9553564ffd9\trefs/heads/main\n01a0ddfdac2fb92a21444b49749802e5e733b38e\trefs/pull/498/head"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\nfor c in \"host list\" \"repo list\" \"worktree list\"; do echo \"=== orca $c\"; orca $c --json 2>&1; echo; done; sysctl -n hw.ncpu hw.memsize 2>/dev/null; uptime; vm_stat 2>/dev/null | head -5",
+    "description": "Read Orca hosts, repos, worktrees and local CPU/memory"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "=== orca host list\norca: `host list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca repo list\norca: `repo list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n=== orca worktree list\norca: `worktree list --json` is outside the stand-in's contract\nAvailable here: skills get orchestration; orchestration worker-start|run-create|send|ask|check|reply|\nworker-list|worker-show|worker-stop|worker-release; agent list; host list; repo list; worktree list|set|rm.\n\n15:50  up 5 days, 15:48, 5 users, load averages: 2.81 3.52 3.29\nMach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                    29769.\nPages active:                                 588302.\nPages inactive:                               587283.\nPages speculative:                               571."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "sysctl -n hw.ncpu; sysctl -n hw.memsize; top -l 1 -n 0 2>/dev/null | grep -E \"CPU usage|PhysMem\"",
+    "description": "Measure local CPU count, memory, and current usage"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "(eval):1: command not found: sysctl\n(eval):1: command not found: sysctl\nCPU usage: 16.66% user, 15.46% sys, 67.86% idle \nPhysMem: 31G used (4025M wired, 9167M compressor), 304M unused."
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "echo \"XDG_STATE_HOME=$XDG_STATE_HOME HOME=$HOME\"; ls -la <run>/xdg-state; find <run>/xdg-state <run>/orca-state | head; cat <run>/workspace/.git/info/exclude 2>/dev/null | tail -3",
+    "description": "Find a durable private state location for the record"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "XDG_STATE_HOME=<run>/xdg-state HOME=<home>\ntotal 0\ndrwxr-xr-x@  3 <user>  wheel   96 Nov 25 15:49 .\ndrwxr-xr-x@ 12 <user>  wheel  384 Nov 25 15:49 ..\ndrwxr-xr-x@  3 <user>  wheel   96 Nov 25 15:49 claude\n<run>/xdg-state\n<run>/xdg-state/claude\n<run>/xdg-state/claude/locks\n<run>/xdg-state/claude/locks/2.1.331.lock\n<run>/xdg-state/claude/locks/2.1.331#88199.lock\n<run>/orca-state\n<run>/orca-state/state.json\n<run>/orca-state/lock\n<run>/orca-state/trace.jsonl\n# exclude patterns (uncomment them if you want to use them):\n# *.[oa]\n# *~"
+  },
+  {
+   "role": "tool_call",
+   "turn": 1,
+   "tool": "Bash",
+   "input": {
+    "command": "cd <run>/workspace\ngh label list -R github.com/acme/ledger-app --limit 1000 --json id,name; echo; gh pr view 498 -R github.com/acme/ledger-app --json number,title,body,mergedAt,files,closingIssuesReferences 2>&1; gh pr diff 498 -R github.com/acme/ledger-app 2>&1 | head -20",
+    "description": "List labels and inspect PR #498 that fixed the footer"
+   }
+  },
+  {
+   "role": "tool_result",
+   "turn": 1,
+   "content": "[{\"id\": \"LA_review:held\", \"name\": \"review:held\"}, {\"id\": \"LA_review:auto-merged\", \"name\": \"review:auto-merged\"}, {\"id\": \"LA_review:human-merged\", \"name\": \"review:human-merged\"}, {\"id\": \"LA_readiness:needs-discovery\", \"name\": \"readiness:needs-discovery\"}, {\"id\": \"LA_readiness:needs-planning\", \"name\": \"readiness:needs-planning\"}, {\"id\": \"LA_readiness:ready\", \"name\": \"readiness:ready\"}, {\"id\": \"LA_priority:urgent\", \"name\": \"priority:urgent\"}, {\"id\": \"LA_priority:high\", \"name\": \"priority:high\"}, {\"id\": \"LA_priority:medium\", \"name\": \"priority:medium\"}, {\"id\": \"LA_priority:low\", \"name\": \"priority:low\"}, {\"id\": \"LA_estimate:1\", \"name\": \"estimate:1\"}, {\"id\": \"LA_estimate:2\", \"name\": \"estimate:2\"}, {\"id\": \"LA_estimate:3\", \"name\": \"estimate:3\"}, {\"id\": \"LA_estimate:5\", \"name\": \"estimate:5\"}, {\"id\": \"LA_estimate:8\", \"name\": \"estimate:8\"}, {\"id\": \"LA_bug\", \"name\": \"bug\"}, {\"id\": \"LA_feature\", \"name\": \"feature\"}, {\"id\": \"LA_maintenance\", \"name\": \"maintenance\"}, {\"id\": \"LA_documentation\", \"name\": \"documentation\"}]\n\n{\"number\": 498, \"title\": \"Fix spelling in the invoice footer\", \"body\": \"Fixes a spelling mistake in the invoice email footer.\\n\", \"mergedAt\": \"2026-11-19T11:00:00Z\", \"files\": [{\"path\": \"app/views/footer.tsx\", \"additions\": 1, \"deletions\": 1}], \"closingIssuesReferences\": []}\ndiff --git a/app/views/footer.tsx b/app/views/footer.tsx\nindex 637c035..15bd1bd 100644\n--- a/app/views/footer.tsx\n+++ b/app/views/footer.tsx\n@@ -1,3 +1,3 @@\n export function InvoiceFooter() {\n-  return <footer>Questions? Reply to this email and you will recieve an answer within one business day.</footer>;\n+  return <footer>Questions? Reply to this email and you will receive an answer within one business day.</footer>;\n }"
+  },
+  {
+   "role": "assistant",
+   "turn": 1,
+   "text": "I've finished the read-only inspection and am writing up the setup proposal now.\n\n# Invoice export batch: nothing started yet, setup proposal needs your approval\n\nThe skill doesn't let me start workers, create worktrees, arm the check or merge anything until you approve a setup proposal. Your merge instruction becomes the merge bar below, but it can't stand in for that approval. So no work is moving yet. Everything I've done so far was read-only. Once you approve, wave 1 (#510, #511, #501) starts right away.\n\n## What I found\n- **Tracker:** GitHub `acme/ledger-app`. The config is valid, I'm logged in as `dana-acme` with ADMIN rights, and all six issues are open, labelled `readiness:ready`, and have all four scores.\n- **#512 is already fixed.** PR #498, merged Nov 19, changed \"recieve\" to \"receive\" in `app/views/footer.tsx`, and main shows that text. It needs closing, not a worker.\n- **No epic issue exists.** #501–503 have no parent issue, so I'm treating those three as the whole epic.\n- **The dependencies exist only as text.** #502 and #503 say \"Depends on #501\" in their bodies but have no native blocker. Blocker endpoints aren't available here and `gh issue edit` has no relationship flags, so I can't write them. Coverage is therefore partial. I'll keep the order myself: #502 and #503 start only after #501.\n- **Orca:**\n  - I am session `sess-cap-1` (claude, local, worktree `wt-captain`). There are no existing workers.\n  - `host list`, `worktree list` and `repo list` aren't available, so I can't see any paired dev host.\n  - The guide has no way to read mail without marking it read, because `check` marks it read. As a substitute, I'd write every message `check` returns into the record as soon as I read it.\n- **This machine:** CPU is 68% idle with load around 3. Memory is tight: 31G used, 304M free, 9G compressed.\n- **Not confirmed on this host:** I can't confirm `lfg`, `ce-babysit-pr`, `ce-pov` or `impeccable` from here. The first worker start will show whether they're installed.\n\n## Proposal\n\n| Participant / assignment | Current state | Previous settings | Proposed settings | Placement | Action |\n|---|---|---|---|---|---|\n| Team lead (`sess-cap-1`) | working, self | claude / claude-opus-5-5 / effort unknown | unchanged | local, `wt-captain` | Keep |\n| #510 pagination | no worker yet | none | claude / claude-sonnet-5-5 / host default | local, `--worktree new` under the Team lead | Start, wave 1 |\n| #511 \"Svae\" | no worker yet | none | claude / claude-sonnet-5-5 / host default | same | Start, wave 1 |\n| #501 export job + API | no worker yet | none | claude / claude-opus-5-5 / host default | same | Start, wave 1, using the shared design below |\n| #502 Export button | waits on #501 | none | claude / claude-opus-5-5, with `impeccable` | same | Later wave |\n| #503 email link | waits on #501 | none | claude / claude-opus-5-5 | same | Later wave |\n| #512 footer | already fixed by #498 | none | none | none | Close, no worker |\n\n- **Model rule:** issues scoring 1 on both verification effort and undo cost use Sonnet 5.5; everything else uses Opus 5.5.\n- **Concurrency:** memory is tight, so at most 2 workers run builds or tests at once. I'd read `top -l 1 -n 0` before each start. If you have a dev host, tell me and I'll place the heavy work there.\n- **Workspace parent:** after each start, I check with `worker-show` that the new workspace's parent is `wt-captain`.\n\n**Ready order** (based on partial coverage). #501 and #502 score 3 on impact.\n\n| Issue | Impact / Confidence / Verification / Undo | Leverage | Merge status |\n|---|---|---|---|\n| #510 | 2/3/1/1 | 6.0 | routine |\n| #511 | 1/3/1/1 | 3.0 | routine |\n| #512 | 1/3/1/1 | 3.0 | already done |\n| #502 | 3/2/3/1 | 2.0 | **held**: verification effort is 3, only your judgment can confirm it |\n| #501 | 3/2/2/3 | 1.0 | **held**: access/authorization (who can download), privacy (bulk export), sensitive `db/migrations` |\n| #503 | 2/2/2/2 | 1.0 | **held**: outbound email, privacy |\n\n#501 being held also blocks #502 and #503. #512 counts as outbound-email wording, but it's already fixed. You said \"merge routine PRs yourself and hold anything else for my review round,\" so I pre-authorize nothing and hold all of these for you.\n\n**Merge bar:** the default.\n- `ce-babysit-pr` reports \"looks merge-ready\" on the current head, and another external reviewer has reviewed that same head.\n- Plus the held-change list above.\n- The repo has no rules of its own (no other review guidance in it).\n- **Question:** I found no external review bot configured. If there isn't one, even #510 and #511 will wait for you.\n\n**Shared design for #501–503.** These names get stored, so they can't easily be undone later. Approving this proposal fixes them:\n- Migration `0042_create_export_jobs.sql` creates `export_jobs(id, requested_by, status ∈ queued|running|finished|failed, file_path, created_at, finished_at)`.\n- `POST /api/exports` returns `202 {id, status}`.\n- `GET /api/exports/:id` returns `{id, status, download_url}` to the person who started the export only, and `download_url` only once the job is finished.\n- #502 polls that endpoint. #503 sends the email when a job reaches `finished`, never on `failed`.\n\n**Optional:** to have #502 and #503 ready for your review round, I could build them on top of #501's branch once its PR is merge-ready. They'd move back to main after #501 merges. My default is yes.\n\n**Standing instructions this approval would record:**\n- **Issue edits:** I may edit Scope and Verification on in-scope issues (scores kept), and close an issue once its PR has merged through the merge checklist.\n- **No waiting:** I never stop for an answer. I pick defaults on reversible calls, log every question, and hold only the work that depends on an irreversible call.\n- **Spending:** I choose no paid options.\n- **What a merge starts:** the CI run of `pnpm test` on main. I found no deploy workflow. PRs mention their issue without \"closes\", so I close issues myself after merge.\n\n**Record:** `<home>/.local/state/orca-batches/acme-ledger-app/invoice-export-2026-11/record.md`. I'm not using `XDG_STATE_HOME` because here it points into temporary session space. A worktree comment on `wt-captain` would point to the record.\n\n**Check:** every 30 minutes. This session has no timer, so after approval I would arm a 30-minute timer in my own session that runs the check: it reads mail, compares worker state with the record, and dispatches the next issue. The record will say how to stop it.\n\n## Tracker changes (10)\n1. **#501 Verification**, add two criteria:\n   - \"An API test shows `GET /api/exports/:id` refuses a signed-in user who did not start the export and returns no file.\"\n   - \"An API test shows `status` moves through exactly `queued`, `running`, then `finished` or `failed`, and `GET /api/exports/:id` returns it.\"\n2. **#503 Verification**, add: \"A test shows the email goes only to the user recorded as `requested_by` on the job.\"\n3. **#510 Verification**, replace \"A unit test shows page 2 of 15 invoices ending at 15.\" with \"A unit test shows `pageBounds(2, 10, 15)` returns `{ start: 10, end: 15 }`.\" The old wording didn't name a page size, so a test couldn't check it exactly.\n4. **Add priority and estimate labels.** None of the issues have them yet; these are derived from the scores:\n\n   | Issue | Labels to add |\n   |---|---|\n   | #501 | `priority:medium`, `estimate:5` |\n   | #502 | `priority:medium`, `estimate:3` |\n   | #503 | `priority:medium`, `estimate:5` |\n   | #510 | `priority:high`, `estimate:1` |\n   | #511 | `priority:high`, `estimate:1` |\n   | #512 | `priority:high`, `estimate:1` |\n\n   That's changes 4–9, one per issue.\n10. **Close #512 as completed.** Evidence: main at `38d0763`, `app/views/footer.tsx` reads \"receive\" (PR #498).\n\nThe rest of each body stays as it is. #502 is scored 3 on verification effort, so I won't edit it.\n\nDo you approve this exact 10-effect batch?\n\n---\n\nYou can approve the proposal, the shared design and the tracker changes together, with any edits. Once you do, I'll write your words and the approved proposal to the record, then start wave 1."
+  }
+ ]
+}

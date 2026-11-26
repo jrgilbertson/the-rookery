@@ -7,6 +7,9 @@
   case-set SHA-256 is
   `646316a7c9090ef8dd472918832474955b25573bf2ab2c5b919fb78ba9bf7077`; the
   [Skill Eval README](../../README.md) gives the command that reproduces it.
+  These runs predate the skill's rename to `active-learning`, so they load it
+  as `daily-learning`, and the hash covers the case set before the rename
+  changed each prompt's tag.
 - **Baseline** No skill: fresh Claude sessions with the same requests and the
   same workspaces, byte for byte.
 - **Model and effort** `claude-opus-5-5` at high effort for both arms. Each

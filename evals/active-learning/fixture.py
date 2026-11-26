@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the synthetic workspace for one daily-learning Eval Case.
+"""Build the synthetic workspace for one active-learning Eval Case.
 
 Usage: fixture.py <dest-dir> <case>
 

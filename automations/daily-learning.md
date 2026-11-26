@@ -1,10 +1,10 @@
 # Daily learning
 
-Run a `daily-learning` review each morning across the last day's vault changes, local and paired remote AI sessions, and Anki status. The run changes nothing. When you reply in its chat, it helps you turn the items you pick into notes and cards.
+Run an `active-learning` review each morning across the last day's vault changes, local and paired remote AI sessions, and Anki status. The run changes nothing. When you reply in its chat, it helps you turn the items you pick into notes and cards.
 
 - **Cadence:** Daily at 05:00.
 - **Timezone:** America/Los_Angeles.
-- **Requires:** The installed `daily-learning` skill, plus `atomic-note`, `obsidian-cli`, and `obsidian-markdown` on the workstation that hosts Obsidian and Anki. Read access to your vault or a Git backup mirror of it, and to local AI session histories. A clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state). Optionally, a paired remote Orca host and AnkiConnect.
+- **Requires:** The installed `active-learning` skill, plus `atomic-note`, `obsidian-cli`, and `obsidian-markdown` on the workstation that hosts Obsidian and Anki. Read access to your vault or a Git backup mirror of it, and to local AI session histories. A clone of your private automation-state repository; see [Shared run state](README.md#shared-run-state). Optionally, a paired remote Orca host and AnkiConnect.
 
 ## Setup
 
@@ -17,11 +17,11 @@ Each run reviews the last 24 hours, widened after missed runs, and reads recent 
 ## Prompt
 
 ```text
-Before starting, confirm the `daily-learning`, `atomic-note`, `obsidian-cli`, and `obsidian-markdown` skills are available. If one is missing, report it and stop. Do not install or update skills or plugins.
+Before starting, confirm the `active-learning`, `atomic-note`, `obsidian-cli`, and `obsidian-markdown` skills are available. If one is missing, report it and stop. Do not install or update skills or plugins.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `daily-learning` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Use recent runs to spot topics that keep coming back across days. Revisit declined items only with new evidence.
 
-Set the review window first: the last 24 hours, widened back to the end of the last run in history when runs were missed. Every step below reads that same window. Run a `daily-learning` review of the review window using these sources:
+Set the review window first: the last 24 hours, widened back to the end of the last run in history when runs were missed. Every step below reads that same window. Run an `active-learning` review of the review window using these sources:
 
 - Vault: `<your Obsidian vault name>`
 - Vault backup mirror (optional): remote `<your vault backup Git URL>`, bare mirror cache at `<a path outside every repository and the live vault>`
@@ -34,10 +34,10 @@ Set the review window first: the last 24 hours, widened back to the end of the l
 2. Local AI sessions: read the review window's transcripts across this machine's harnesses, leaving out this job's own runs and other scheduled audits. Describe personal threads by topic only.
 3. Remote AI sessions (optional): start one read-only worker with `orca orchestration worker-start --on <host> --worktree <workspace> --agent <agent>`, and pass it the review window, telling it to read that window's sessions and return concepts only, with no credentials or verbatim personal text, before the timeout. Wait with `orca orchestration check --wait --types "worker_done,escalation" --timeout-ms <minutes * 60000>`. If the host is offline or the worker times out, say so in the digest and continue.
 4. Anki (optional): if AnkiConnect answers, read due and overdue counts, recent lapses, and suspended cards, noting which were suspended as leeches and which by hand. If Anki is closed, say so and continue.
-5. Follow `daily-learning` to write the digest. End it with one sentence on what you read and anything you could not read.
+5. Follow `active-learning` to write the digest. End it with one sentence on what you read and anything you could not read.
 6. Save the digest as this run's report through the history repository's storage procedure, then present it and stop.
 
-When I reply, follow `daily-learning` to work the items I pick, using the `obsidian` CLI and AnkiConnect for approved changes, and record my decision on each item in `daily-learning` history.
+When I reply, follow `active-learning` to work the items I pick, using the `obsidian` CLI and AnkiConnect for approved changes, and record my decision on each item in `daily-learning` history.
 ```
 
 ## Verify setup

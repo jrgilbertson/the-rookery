@@ -54,7 +54,7 @@ The prompts ask for recommendations in leverage order without defining it. The
 definition is the [Rank by leverage](../PRIORITIZATION.md#rank-by-leverage)
 section of `PRIORITIZATION.md`. Add that section to the selected agent's
 instructions so it scores findings the same way. [Daily learning](daily-learning.md)
-is the intentional exception: the `daily-learning` skill orders its digest by
+is the intentional exception: the `active-learning` skill orders its digest by
 learning value and the owner's priorities, without Leverage scores, and the
 owner works the items they pick by replying in the run's own Orca chat.
 

@@ -57,7 +57,7 @@ looked" surface. GitHub Releases mirror its entries.
 - `docs/adr/001-verdict-trust-by-convention.md` records why a verdict comment
   and a pull request's `Owner:` line are trusted by convention while every
   agent shares the operator's GitHub login, and what would replace them.
-- `daily-learning`, a portable skill and paired daily Orca automation
+- `active-learning`, a portable skill and paired daily Orca automation
   (`automations/daily-learning.md`). The skill coaches a learning habit from
   recent notes, reading highlights, AI sessions, and flashcards: a review that
   changes nothing and recommends at most five items, then recall-first help

@@ -1,6 +1,6 @@
-# Daily Learning Skill Eval
+# Active Learning Skill Eval
 
-Four synthetic Eval Cases, each run once with the `daily-learning` skill and
+Four synthetic Eval Cases, each run once with the `active-learning` skill and
 once without it. Every case comes from a failure seen when Claude Opus 5.5 ran
 the same request with no skill. The cases share one invented vault, three
 session logs, and an Anki export, built by [`fixture.py`](fixture.py).
@@ -20,7 +20,7 @@ one statement per file in `graders/`, and `place-files.sh`, which builds the
 case's workspace in the current directory.
 
 The case-set SHA-256 is
-`646316a7c9090ef8dd472918832474955b25573bf2ab2c5b919fb78ba9bf7077`. From this
+`d56364d3f09e6e15da14bd96d268048e6b2f75a6ea433f7e7d4ecf1aa131bff5`. From this
 directory, reproduce it with
 `{ find daily-pass digest-reply failing-card quiet-day -type f -print0; printf '%s\0' fixture.py run.sh safe-git.sh; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
@@ -43,7 +43,7 @@ Claude Code, Git, and Python 3, run from this directory:
 
 [`run.sh`](run.sh) builds a fresh workspace, runs Claude Opus 5.5 at high effort
 with no user settings, installed skills, plugins, MCP servers, or global
-instructions, and adds only `skills/daily-learning` at the given revision for
+instructions, and adds only `skills/active-learning` at the given revision for
 the `with_skill` arm. It writes the event stream, a list of changed files, the
 final response, and a JSON transcript of every turn, with local paths and the
 user name replaced.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run one daily-learning Eval Case once, with or without the skill, in a fresh workspace.
+# Run one active-learning Eval Case once, with or without the skill, in a fresh workspace.
 #
 # Usage: run.sh <case> <with_skill|without_skill> <out-dir> [git-revision]
 #
@@ -11,7 +11,7 @@
 # network, so for full isolation run this in a disposable VM or container.
 # The run loads no user settings, installed skills, plugins, MCP servers or global
 # instructions (--setting-sources project, --strict-mcp-config). The with_skill arm
-# loads only skills/daily-learning at <git-revision> (default HEAD), staged as a
+# loads only skills/active-learning at <git-revision> (default HEAD), staged as a
 # throwaway plugin. Writes events.jsonl, file_changes.txt, response.md and
 # transcript.json into <out-dir>.
 set -euo pipefail
@@ -41,8 +41,8 @@ extra=()
 if [ "$arm" = with_skill ]; then
   plugin="$out/plugin"
   mkdir -p "$plugin/.claude-plugin" "$plugin/skills"
-  printf '{"name":"dl","version":"0.0.0","description":"daily-learning under test"}\n' > "$plugin/.claude-plugin/plugin.json"
-  git -C "$(git -C "$here" rev-parse --show-toplevel)" archive "$rev" -- skills/daily-learning | tar -x -C "$plugin"
+  printf '{"name":"al","version":"0.0.0","description":"active-learning under test"}\n' > "$plugin/.claude-plugin/plugin.json"
+  git -C "$(git -C "$here" rev-parse --show-toplevel)" archive "$rev" -- skills/active-learning | tar -x -C "$plugin"
   extra=(--plugin-dir "$plugin")
 elif [ "$arm" != without_skill ]; then
   echo "arm must be with_skill or without_skill" >&2; exit 2

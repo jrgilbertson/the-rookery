@@ -1,11 +1,11 @@
 ---
-name: daily-learning
+name: active-learning
 description: Coach a daily learning habit from what the user recently changed, read, and worked on, such as notes, reading highlights, AI sessions, and flashcards. Use for a daily or on-demand learning review, a reply to a learning digest, or a flashcard that keeps failing. Not for journaling, meeting notes, or auditing a whole knowledge base.
 license: MIT
 compatibility: Needs read access to a notes folder. AI session logs, flashcard data such as an Anki export or AnkiConnect, and web access for checking sources are optional.
 ---
 
-# Daily Learning
+# Active Learning
 
 Act as the user's learning coach. Their notes are theirs: a note they did not think through teaches them little, and a wrong note gets rehearsed as faithfully as a right one.
 

@@ -16,7 +16,7 @@ Each section explains what I do, which tools I use, and when I'm ready to move o
 | [Build](#build) | Make and check one small part at a time | `ce-work`, `lfg`, Orca worktrees | Required CI checks pass, the work stays within its limits, and the design is followed |
 | [Ship](#ship) | Review and verify the change, then merge it | `ce-simplify-code`, `ce-code-review`, `ce-commit-push-pr`, `ce-babysit-pr`, `reviewing-prs` | A human has read the work and its explanation makes sense |
 | [Maintain](#maintain) | Keep the repo useful and prevent repeated mistakes | Orca automations, `ce-compound`, `impeccable extract` | The lesson is saved in the strongest form that can enforce it |
-| [Learn](#learn) | Connect new knowledge to existing notes and name the gaps | `daily-learning`, `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Notes are linked and unanswered questions are named |
+| [Learn](#learn) | Connect new knowledge to existing notes and name the gaps | `active-learning`, `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Notes are linked and unanswered questions are named |
 
 Before starting work, I choose the available tools, who owns the result, and which models and effort fit the task. [Model and effort guidance](ROUTING.md) covers leading, execution, design, and writing. The sections below explain where I start.
 
@@ -255,7 +255,7 @@ Learn is about my knowledge rather than the system's. Some lessons come from a s
 
 I choose the tool based on what I need to do:
 
-- [`daily-learning`](skills/daily-learning/SKILL.md) (paired with the [daily learning automation](automations/daily-learning.md)). Recommends at most five things to learn from recent notes, reading highlights, AI sessions, and flashcards without changing anything, then helps write the ones you pick, recall first and with your approval. Works on demand or each morning through the scheduled automation.
+- [`active-learning`](skills/active-learning/SKILL.md) (paired with the [daily learning automation](automations/daily-learning.md)). Recommends at most five things to learn from recent notes, reading highlights, AI sessions, and flashcards without changing anything, then helps write the ones you pick, recall first and with your approval. Works on demand or each morning through the scheduled automation.
 - [`personal-chief-of-staff`](skills/personal-chief-of-staff/SKILL.md). Uses configured sources for a daily, weekly, or quarterly review. Run it to reflect, understand where things stand, and decide what to do next across life and work.
 - [`reviewing-meetings`](skills/reviewing-meetings/SKILL.md). Turns completed meetings into draft notes and follow-up actions based on the meeting source. Run it after a meeting or when catching up. Each follow-up waits for approval before anything is written.
 - [`managing-personal-crm`](skills/managing-personal-crm/SKILL.md). Keeps relationship information in one note per person. Messages and other raw interactions stay in their original apps. Use it to prepare for a conversation, record an interaction, reconnect with someone overdue, or find who could help with current work.

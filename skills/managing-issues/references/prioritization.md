@@ -1,11 +1,5 @@
 # Prioritization
 
-Note for maintainers of this skill, not an instruction for using it: the
-`Rank by leverage` section below is a copy of the section with the same
-heading in PRIORITIZATION.md at the root of this skill's source repository,
-kept here so the skill stands alone. Change that file first, then copy its
-section here unchanged, so the two stay identical byte for byte.
-
 ## Rank by leverage
 
 When you rank findings, ideas, or tasks for me to choose from, order them by leverage, highest first: (impact × confidence) ÷ (verification effort × undo cost). Score each factor 1 to 3.
@@ -25,22 +19,58 @@ For impact, users are whoever uses what the repository ships. The owner
 counts as a user when the repository ships the owner's own tools. Maintainers
 count only through what their work unblocks.
 
-## Unclear scores
+## Scoring rules
 
-When the request and evidence do not settle one of the four leverage scores,
-propose the value the evidence best supports and mark it `best guess` in the
-preview and the result, without asking. A score the evidence settles carries
-no mark.
+Score every issue you draft, create, or update, parents included, on the four
+leverage factors (each 1 to 3).
+
+- On an update, keep each stored score unless the request or evidence new in
+  this update changes it, and fill any absent score.
+- Callers with restricted score authority follow Step 3 of `SKILL.md`: a
+  coordinated batch lists missing scores in the preview instead of filling
+  them, and a Captain writes only the score edits its standing instruction
+  permits.
+- Score a leaf that still needs discovery or planning on what is known now;
+  planning revises the scores later.
+- Store the four scores in the canonical tracker's mapped score fields and
+  nowhere else. Store no leverage value, and put no score or score rationale
+  in an issue body.
+- When the request and evidence do not settle a score, propose the value the
+  evidence best supports and mark it `best guess` in the preview and result,
+  without asking. A score the evidence settles carries no mark.
 
 ## Derived priority and estimate
 
-`SKILL.md` says when to derive priority and estimate. These tables give the
-result, so look it up instead of calculating it.
+Priority and estimate follow from the scores; never choose either directly.
+Look both up in the tables below instead of calculating them: priority from
+all four scores, and an implementation leaf's estimate from verification
+effort and undo cost alone.
 
-Priority comes from all four scores. Multiply impact by confidence to find the
-row, and verification effort by undo cost to find the column. Each cell is the
-band that leverage falls in: 3 or higher is `high`, at least 1 and below 3 is
-`medium`, and below 1 is `low`. The table never returns `urgent`.
+- Derive priority and estimate on every create and every content or score
+  update, in the same previewed batch, whether or not a score changed.
+- Derive them only when all four scores are present (each read from the
+  tracker or written in this batch). Otherwise leave priority and estimate
+  unchanged.
+- Derivation never sets, overwrites, or clears urgent (the value mapped under
+  `mappings.priority.urgent`). When the request asks for urgent, write urgent.
+  When the tracker's current priority is already urgent, leave it. In both
+  cases derive only the estimate. Decide this from those two facts alone, not
+  from whether the work seems time-sensitive. An urgent issue still gets all
+  four scores with the same care. If a request sets urgent and also names an
+  estimate, apply the named-estimate rule below.
+- When the request removes urgent, derive priority as for any other issue and
+  show urgent as the old value.
+- An issue with no priority set gets the derived priority. When the current
+  priority cannot be read, or the issue carries more than one priority value,
+  derive no priority and name the problem in the preview.
+- When the request names any other priority, or an estimate, do not write it
+  and do not bend a score to reach it. Show the derived value beside the
+  requested one and ask which scores should change.
+
+Multiply impact by confidence to find the priority row, and verification
+effort by undo cost to find the column. Each cell is the band that leverage
+falls in: 3 or higher is `high`, at least 1 and below 3 is `medium`, and
+below 1 is `low`. The table never returns `urgent`.
 
 | impact × confidence | 1 | 2 | 3 | 4 | 6 | 9 |
 |---|---|---|---|---|---|---|
@@ -51,8 +81,7 @@ band that leverage falls in: 3 or higher is `high`, at least 1 and below 3 is
 | 6 | high | high | medium | medium | medium | low |
 | 9 | high | high | high | medium | medium | medium |
 
-A leaf's estimate comes from verification effort and undo cost alone. Multiply
-them to find the row.
+Multiply verification effort by undo cost to find a leaf's estimate row.
 
 | verification effort × undo cost | estimate |
 |---|---|
@@ -62,3 +91,17 @@ them to find the row.
 | 4 | 5 |
 | 6 | 5 |
 | 9 | 8 |
+
+## Assignee order
+
+On a create, select the assignee in this fixed order:
+
+1. The person the request names.
+2. Otherwise the config's `assignee.default`.
+3. Otherwise the human who made the request (not the account the run
+   authenticates as).
+
+When the request names no one, a scheduled or headless run with no human
+requester and no `assignee.default` leaves the assignee empty and says so. If
+the selected person cannot be assigned on the target, do not skip to the next
+option: leave the assignee empty and name who could not be assigned and why.

@@ -12,13 +12,13 @@ attach them to that outcome's parent. Add another level only when a child owns a
 distinct sub-outcome that itself needs several leaves. This is the shallowest
 useful graph; it has no fixed depth limit.
 
-Any node with children is a parent, including a nested sub-outcome, and carries
-no estimate. Only implementation leaves receive one, at every readiness; a
-childless issue whose deliverable is research, a decision, or a person's action
-is not an implementation leaf, though it remains a leaf of the graph. Every
-node still receives its own Problem, Scope, Verification, four scores,
-priority, labels, readiness, project, assignee, and native graph position,
-with a project or assignee left empty only as `SKILL.md` allows.
+Any node with children is a parent (including a nested sub-outcome) and takes
+no estimate; only implementation leaves take estimates, following `SKILL.md`.
+A childless research, decision, or person-action issue remains a leaf of the
+graph without an estimate. Every node still gets its own Problem, Scope,
+Verification, four scores, priority, labels, readiness, project, assignee, and
+native graph position, leaving project or assignee empty only where `SKILL.md`
+and `prioritization.md` allow.
 
 ## Establish complete coverage
 
@@ -34,9 +34,9 @@ Track canonical provider identities in a visited set, count each identity once,
 preserve cycles as edges, and never revisit a node. Stop at 250 identities,
 including one-hop external blockers. Coverage is `partial` when any required
 node or page is inaccessible, the limit is reached before exhaustion, a page
-fails, or a next cursor is empty or repeats. Name the exact missing surface.
-Partial coverage permits qualified facts but blocks topology changes, Ready
-Frontier claims, and parent completion.
+fails, or a next cursor is empty or repeats. Name the exact missing node or
+page. Partial coverage permits qualified facts but blocks topology changes,
+Ready Frontier claims, and parent completion.
 
 Use the selected provider reference for exhaustive native reads. Relationship
 arrays embedded in an issue read are facts, not proof that a collection is
@@ -58,17 +58,17 @@ readback together with the node's current graph role:
   is ready when its whole outcome and child graph are settled; a leaf is ready
   when it can be completed and checked.
 
-Never use a stored readiness representation as evidence for the derived
-posture. Compare it with the derived result. Intended metadata contains exactly
-one of the three configured readiness representations; a missing, duplicate, or
-stale representation is a separate previewed correction.
+Never use a stored readiness label as evidence for derived readiness. Compare
+it with the derived result. Intended metadata contains exactly one of the
+three configured readiness labels; a missing, duplicate, or stale label is a
+separate previewed correction.
 
 The Ready Frontier contains only required, open implementation leaves whose
-derived posture is `ready` and whose native blockers are all resolved. Parents
-never enter it. Neither do completed or canceled leaves,
-blocked leaves, unknown-readiness leaves, or members of an unresolved blocker
-cycle. Report it only from complete current coverage, name the set explicitly,
-and list an unattached intended node separately as unresolved topology.
+derived readiness is `ready` and whose native blockers are all resolved.
+Parents never enter it, nor do completed or canceled leaves, blocked leaves,
+unknown-readiness leaves, or members of an unresolved blocker cycle. Report
+it only from complete current coverage, name the set, and list any unattached
+intended node separately as unresolved topology.
 
 List the Ready Frontier in leverage order, highest first, showing each leaf's
 four scores. Leverage is (impact × confidence) ÷ (verification effort × undo
@@ -104,9 +104,9 @@ a compensating relationship. `unapplied` says only that this batch did not run
 the effect; the latest complete canonical read still determines current graph
 state.
 
-An indeterminate create receives no edge. Before a new proposal, read any exact
-canonical identity or provider receipt returned by that one attempt. Never
-match by title, body, author, time, or similarity.
+An indeterminate create receives no edges. Recover it under `SKILL.md` by
+reading any exact canonical identity or receipt returned by that attempt,
+without similarity matching.
 
 ## Prove completion separately
 
@@ -117,10 +117,10 @@ state, a current repository check or artifact, or direct owner confirmation.
 State each gap as what remains unconfirmed and what would prove it.
 
 A leaf is eligible for a completion effect only when every criterion is proven
-and no blocker remains unresolved. A parent additionally requires complete
-family coverage, proven completion of every required leaf, no unresolved
-required blocker, every explicit waiver still applicable, and evidence for its
-own outcome-level Verification.
+and no blocker remains unresolved. A parent also requires complete family
+coverage, proven completion of every required leaf, no unresolved required
+blocker, every explicit waiver still applicable, and evidence for its own
+outcome-level Verification.
 
 A Verification edit is its own visible, approved, read-back effect. It
 invalidates the earlier completion assessment. Reassess from the new canonical
@@ -134,7 +134,7 @@ Read back each reported effect that the provider exposes. Do not inspect,
 predict, repair, or block on effects the provider does not report; Managing
 Issues writes only the canonical tracker. Reading a canonical issue's own
 relationships is ordinary readback, not inspection of an unreported effect.
-Never use a closing keyword as completion authority.
+Never treat a closing keyword as proof of completion.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
 the ordered Ready Frontier, exact effect outcomes, and Verification evidence

@@ -101,16 +101,17 @@ and for U. Leverage is (I × C) ÷ (V × U).
 
 A pull request is held for the operator when either test is true:
 
-- **It touches a sensitive kind.** By default: access and authorization,
-  money, data deletion, privacy, outbound email, release gates, CI workflows
-  and composite actions (`.github/workflows/`, `.github/actions/`), git-hook
-  and secret-scanner configuration (such as `lefthook.yml`, `.gitleaks.toml`,
-  `.gitleaksignore`), scripts that CI workflows or git hooks run, agent
-  harness configuration (such as `.claude/`, `.codex/`, `.mcp.json`),
-  dependency lockfiles, the project's agent instructions
-  and merge and review policy, and changes to the project's design system
-  itself, such as its design document, tokens, or shared components, where
-  the repository has one.
+- **It touches a sensitive kind.** By default:
+  - product and data risk: access and authorization, money, data deletion,
+    privacy, outbound email, and release gates
+  - CI, hooks, and tooling: CI workflows and composite actions
+    (`.github/workflows/`, `.github/actions/`), git-hook and secret-scanner
+    configuration (such as `lefthook.yml`, `.gitleaks.toml`, `.gitleaksignore`),
+    scripts that CI workflows or git hooks run, agent harness configuration
+    (such as `.claude/`, `.codex/`, `.mcp.json`), and dependency lockfiles
+  - policy and design: the project's agent instructions, merge and review
+    policy, and changes to the project's design system itself (such as its
+    design document, tokens, or shared components) where the repository has one
 - **The score line.** V × U is 3 or more, or the diff cannot be read
   clearly.
 
@@ -126,9 +127,9 @@ A pull request that meets neither test is routine.
 A merge Verdict covers the change as it stood at the reviewed head, against
 the base branch it was reviewed on. When the pull request's timeline shows its
 base branch changed after the Verdict, the Verdict no longer counts and the
-pull request returns to the operator, unless the earlier base was a pull
-request that has since merged into the new base, as when a stacked parent
-lands.
+pull request returns to the operator. The one exception is a stacked parent
+landing, where the earlier base was a pull request that has since merged into
+the new base.
 
 When the pull request has moved since, judge only the change between the
 reviewed head and the current head, by the hold tests above and without the

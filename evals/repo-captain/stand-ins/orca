@@ -220,7 +220,11 @@ def find_worker(state: dict, worker_id: str) -> dict:
 
 
 def next_id(items: list[dict], prefix: str) -> str:
-    return f"{prefix}-{len(items) + 1}"
+    taken = {item["id"] for item in items}
+    number = len(items) + 1
+    while f"{prefix}-{number}" in taken:
+        number += 1
+    return f"{prefix}-{number}"
 
 
 def worker_start(state: dict, state_path: Path, args: list[str]) -> None:

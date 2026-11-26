@@ -186,6 +186,11 @@ def check_worker_lifecycle(scratch: Path) -> None:
     expect(leads.orca("orchestration", "reply", "--question", "q-1", "--message", "wait for #568").returncode == 0, "reply to a Lead's question")
     kinds = [(entry["kind"], entry.get("op"), entry.get("worker")) for entry in leads.trace("orca") if entry["kind"] != "read"]
     expect(("error", "worker-release", "w-1") in kinds and ("write", "worker-release", "w-2") in kinds, f"releases must be traced: {kinds}")
+    fresh = ["orchestration", "worker-start", "--agent", "codex", "--model", "gpt-5.5-codex", "--environment", "local", "--brief", "next"]
+    expect(leads.orca(*fresh).returncode == 0 and leads.orca("worktree", "rm", "wt-captain").returncode == 0, "start a worker, then remove a free worktree")
+    expect(leads.orca(*fresh).returncode == 0, "start another worker after the removal")
+    ids = [worktree["id"] for worktree in leads.json("orca", "worktree", "list")["result"]]
+    expect(len(ids) == len(set(ids)), f"a removed worktree must not let a new one reuse a live ID: {ids}")
 
     restart = Run("restart-split-brain-and-boundaries", scratch / "lifecycle")
     start = ["orchestration", "worker-start", "--agent", "codex", "--model", "gpt-5.5-codex", "--environment", "local", "--brief", "again"]

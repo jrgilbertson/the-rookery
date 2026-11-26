@@ -76,6 +76,7 @@ HOME_PATH_EXAMPLES = {
         "~" + "/.gemini/config/plugins",
         "~" + "/.gemini/config/plugins/compound-engineering",
         "~" + "/.grok/AGENTS.md",
+        "~" + "/.local",
         "~" + "/.cursor/rules/global-agents.mdc",
     },
     "WORKFLOWS.md": {"~" + "/.codex/AGENTS.md"},

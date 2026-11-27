@@ -881,6 +881,28 @@ def check_notice_threshold(original: dict, scratch: Path) -> None:
     check(len((first["merged"] or {}).get("lists", [])) == 2, "an empty auto-merged list must not be drawn")
 
 
+def check_audience_articles(original: dict, scratch: Path) -> None:
+    """The heading takes a or an by the audience's first sound, not its first letter."""
+    expected = {"user": "a user", None: "a user", "operator": "an operator", "unit": "a unit", "utility": "a utility",
+                "underwriter": "an underwriter", "editor": "an editor"}
+    variant = copy.deepcopy(original)
+    variant["prs"] = []
+    for number, audience in enumerate(expected, start=1):
+        pr = copy.deepcopy(original["prs"][0])
+        pr.update(number=number, title=f"Audience {audience}", head=f"{number:040x}", audience=audience)
+        if audience is None:
+            del pr["audience"]
+        variant["prs"].append(pr)
+    page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    steps = render(page, scratch)
+    if steps is None:
+        return
+    shown = {block["title"].lstrip("0123456789"): block["sections"][:1] for block in steps[0]["blocks"]}
+    for audience, phrase in expected.items():
+        check(shown.get(f"Audience {audience}") == [f"What is different for {phrase}"],
+              f"an audience of {audience!r} must read 'What is different for {phrase}': {shown.get(f'Audience {audience}')}")
+
+
 def check_chrome_states(original: dict, scratch: Path) -> None:
     """A page with unreadable data or no pull requests shows no control that would do nothing."""
     round_controls = {"bar-progress", "bar-copy", "shortcuts", "shortcut-help-toggle", "shortcut-help"}
@@ -952,7 +974,8 @@ def main() -> int:
         check_storage_cleanup(page, Path(scratch))
     for extra in (lambda scratch: check_incomplete_scores(raw, scratch), lambda scratch: check_two_group_round(raw, scratch),
                   lambda scratch: check_large_round(original, scratch), lambda scratch: check_notice_threshold(original, scratch),
-                  lambda scratch: check_chrome_states(original, scratch)):
+                  lambda scratch: check_chrome_states(original, scratch),
+                  lambda scratch: check_audience_articles(original, scratch)):
         with tempfile.TemporaryDirectory() as scratch:
             try:
                 extra(Path(scratch))

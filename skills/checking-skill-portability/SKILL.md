@@ -1,6 +1,6 @@
 ---
 name: checking-skill-portability
-description: Check whether an Agent Skills package works the same in any harness and with any agent that supports the specification. Use when asked whether a skill is portable or cross-harness, before publishing or sharing a skill written with one harness's skill-creator, or when moving a skill between Claude Code, Codex, or another agent. Writing the skill and testing its behavior stay with that harness's own skill-creator.
+description: Check if an Agent Skills package works across harnesses and agents. Use when auditing portability, before publishing a skill from a harness's skill-creator, or moving it between Claude Code, Codex, or another agent. Not for writing skills or testing behavior.
 license: MIT
 compatibility: Needs a shell to read the package. The specification validator runs through uv's uvx and needs network access the first time; without it, check the frontmatter rules by hand and report that the validator did not run.
 ---

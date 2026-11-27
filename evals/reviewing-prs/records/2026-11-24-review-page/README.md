@@ -7,8 +7,8 @@ in Claude, after the review page was rebuilt as a template.
   sign-in.
 - **Skill revision** `skills/reviewing-prs` at commit
   `1de3e14c`, staged as a copy in each skill arm's run directory.
-- **Cases** all three in [the case set](../../README.md#cases). The case-set
-  SHA-256 was
+- **Cases** all three in [the case set](../../README.md#cases) as defined at
+  commit `d91183d0` (before the Promptfoo migration). The case-set SHA-256 was
   `ccb2a2e45eb9118a5531737ddfb36c072e990d4b1e992aa476c8d7e32ae930fa`.
 - **Baseline** a fresh Claude subagent told to load no skill, given the same
   request and the same synthetic GitHub as the skill arm.
@@ -23,18 +23,20 @@ in Claude, after the review page was rebuilt as a template.
 
 ## Results
 
-Checks are the statements in each case's `graders/`. Each transcript file's
-`labels` holds every label with its reason, and `unmeasured` holds the checks
-a run could not exercise.
+Checks are the historical check statements from each case's `graders/`
+directory at commit `d91183d0` (linked from each case row below, before the
+Promptfoo migration retired `graders/`). Each transcript file's `labels` holds
+every label with its reason, and `unmeasured` holds the checks a run could not
+exercise.
 
 | Case | Transcript | Checks passed | GitHub writes | Output tokens | Seconds |
 | --- | --- | --- | ---: | ---: | ---: |
-| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 4/4, 5 unmeasured | 0 | 23,836 | 246 |
-| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude Baseline](owner-routing-and-scrubbing-claude-baseline.json) | 2/9 | 1 | 26,264 | 271 |
-| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 8/8 | 0 | 23,251 | 227 |
-| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | [Claude Baseline](conflicts-impact-digest-html-claude-baseline.json) | 6/8 | 0 | 22,059 | 213 |
-| [risk-overview-and-situations](../../cases/risk-overview-and-situations/case.yaml) | [Claude with skill](risk-overview-and-situations-claude-skill.json) | 4/4 | 0 | 18,341 | 170 |
-| [risk-overview-and-situations](../../cases/risk-overview-and-situations/case.yaml) | [Claude Baseline](risk-overview-and-situations-claude-baseline.json) | 1/4 | 0 | 11,367 | 117 |
+| [owner-routing-and-scrubbing](https://github.com/jrgilbertson/the-rookery/tree/d91183d03c0ee65ae8fc42e8df51b38f7480c020/evals/reviewing-prs/cases/owner-routing-and-scrubbing) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 4/4, 5 unmeasured | 0 | 23,836 | 246 |
+| [owner-routing-and-scrubbing](https://github.com/jrgilbertson/the-rookery/tree/d91183d03c0ee65ae8fc42e8df51b38f7480c020/evals/reviewing-prs/cases/owner-routing-and-scrubbing) | [Claude Baseline](owner-routing-and-scrubbing-claude-baseline.json) | 2/9 | 1 | 26,264 | 271 |
+| [conflicts-impact-digest-html](https://github.com/jrgilbertson/the-rookery/tree/d91183d03c0ee65ae8fc42e8df51b38f7480c020/evals/reviewing-prs/cases/conflicts-impact-digest-html) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 8/8 | 0 | 23,251 | 227 |
+| [conflicts-impact-digest-html](https://github.com/jrgilbertson/the-rookery/tree/d91183d03c0ee65ae8fc42e8df51b38f7480c020/evals/reviewing-prs/cases/conflicts-impact-digest-html) | [Claude Baseline](conflicts-impact-digest-html-claude-baseline.json) | 6/8 | 0 | 22,059 | 213 |
+| [risk-overview-and-situations](https://github.com/jrgilbertson/the-rookery/tree/d91183d03c0ee65ae8fc42e8df51b38f7480c020/evals/reviewing-prs/cases/risk-overview-and-situations) | [Claude with skill](risk-overview-and-situations-claude-skill.json) | 4/4 | 0 | 18,341 | 170 |
+| [risk-overview-and-situations](https://github.com/jrgilbertson/the-rookery/tree/d91183d03c0ee65ae8fc42e8df51b38f7480c020/evals/reviewing-prs/cases/risk-overview-and-situations) | [Claude Baseline](risk-overview-and-situations-claude-baseline.json) | 1/4 | 0 | 11,367 | 117 |
 
 The six runs used 593,827 cache-write tokens, 12,743,922 cache-read tokens,
 and 125,118 output tokens over 1,244 seconds. Cost is unknown: the runs used

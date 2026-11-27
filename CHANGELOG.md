@@ -702,6 +702,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `repo-captain`'s wake timer no longer leaves the Captain looking busy in
+  Orca between wakes. Orca keeps a session `working` while its harness
+  reports unfinished timer work, so operator messages waited for Steer, which
+  could cancel the timer. Antigravity now arms a daemon cron. Claude Code and
+  Codex, whose own timers all count as unfinished work, run a detached loop
+  that types the wake prompt into the Captain's own terminal. The timer is
+  recurring, so each wake checks it is still running instead of re-arming it.
 - The `reviewing-prs` review page no longer shows a V × U of 9 for a pull
   request missing a score. It still holds that pull request at the top of the
   held group, shows the real verification effort × undo cost or `?`, and says

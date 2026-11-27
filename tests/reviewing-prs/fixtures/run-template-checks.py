@@ -98,6 +98,7 @@ class Node {
       if (rest === "[contenteditable]") return "contenteditable" in this.attributes;
       if (rest === ':not([type="checkbox"])') return this.type !== "checkbox";
       if (rest.startsWith(".")) return this.classList.contains(rest.slice(1));
+      if (rest.startsWith("#")) return this.id === rest.slice(1);
       return rest === "";
     });
   }
@@ -226,8 +227,8 @@ const snap = () => {
 };
 const article = (title) => walk(fixed.page).find((n) => n.tagName === "article" && walk(n).find((h) => h.tagName === "h2")?.textContent.endsWith(title));
 const titled = (root, cls, title) => walk(root).find((n) => n.tagName === "a" && one(n, cls)?.textContent === title || (has(n, cls) && n.tagName === "a" && n.textContent === title));
-// A key lands on the notes field of a card, on the broken-only checkbox, on a bare element of a given tag, or on nothing.
-const keyTarget = (where) => !where ? null : where === "toggle" ? walk(fixed.page).find((n) => n.id === "filter-broken")
+// A key lands on the notes field of a card, on the broken-only checkbox, on the help panel, on a bare element of a given tag, or on nothing.
+const keyTarget = (where) => !where ? null : where === "toggle" ? walk(fixed.page).find((n) => n.id === "filter-broken") : where === "help" ? fixed["shortcut-help"]
   : where.startsWith("tag:") ? new Node(where.slice(4)) : one(article(where), "notes");
 const run = async () => {
   const steps = [snap()];
@@ -349,6 +350,8 @@ def check_help_key(text: str, panel: str) -> None:
           "the help must set the words beside its orange seals in Signal Ink")
     check(len(re.findall(r'class="seal"', panel)) == 4, f"the help keeps orange scarce, one seal for each thing the page seals: {len(re.findall(r'class=.seal.', panel))}")
     check("3 or more" in panel and "(I × C) ÷ (V × U)" in panel, "the help must state the hold line and the leverage formula")
+    check("a score is missing" in panel and "Every score is present" in panel and "const hold = !complete || product >= 3 || sensitiveKinds.length > 0;" in text,
+          "the help must say a missing score holds a pull request, as the script's hold test does")
     # The key names what the script draws, so a renamed group, chip, or cell cannot leave the key behind.
     script = text.split('<script nonce="{{NONCE}}">', 1)[-1]
     for drawn in ('name: "Held for review"', 'name: "Under the hold line"', 'name: "Dependency bots"', '"In flight"', '"Hold violation: "',
@@ -638,6 +641,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
     then("c on a button", "key", "c", False, "tag:button")
     then("c on a link", "key", "c", False, "tag:a")
     then("c on a summary", "key", "c", False, "tag:summary")
+    then("c in the help", "key", "c", False, "help")
     then("j on a button", "key", "j", False, "tag:button")
     then("switch off", "press", "shortcuts")
     then("c while off", "key", "c")
@@ -845,7 +849,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
 
     # Where a key lands decides what it may do.
     check(step("j while choosing")["scrolled"] == "pr-13", "no key may act while a list has the focus")
-    for name in ("c in a textarea", "c on a button", "c on a link", "c on a summary"):
+    for name in ("c in a textarea", "c on a button", "c on a link", "c on a summary", "c in the help"):
         check(chosen_at(name) == chosen_at("address opens"), f"a verdict key must do nothing: {name}")
     check(step("j on a button")["scrolled"] == cards[quiet]["id"], "j must still move with the focus on a button")
 

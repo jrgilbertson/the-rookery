@@ -346,7 +346,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 <dt><kbd>x</kbd></dt><dd>Not applicable</dd>
 <dt><kbd>Esc</kbd></dt><dd>Close this panel</dd>
 </dl>
-<p class="help-note">A verdict key acts on the card with the blue border. It does nothing while you type, while a button or link has focus, or on a collapsed card. The shortcuts switch in the bar turns every key off.</p>
+<p class="help-note">A verdict key acts on the card with the blue border. It does nothing while you type, while a button, a link, or this panel has focus, or on a collapsed card. The shortcuts switch in the bar turns every key off.</p>
 <h2 class="sec-title spaced">What each verdict means</h2>
 <dl>
 <dt>Merge</dt><dd>Posts a merge verdict at the head you reviewed.</dd>
@@ -377,15 +377,15 @@ main { padding: 40px 0 80px; min-width: 0; }
 <section>
 <h2 class="sec-title flag"><span class="seal" aria-hidden="true"></span>Orange marks what needs you</h2>
 <dl class="terms">
-<dt>U = 3</dt><dd>Undo cost is 3, so a revert does not undo the change. The If it is wrong panel turns orange.</dd>
+<dt>U = 3</dt><dd>A revert does not undo the change. The If it is wrong panel turns orange.</dd>
 <dt>Hold violation</dt><dd>It meets a hold test, yet it sits in a merge queue or is ready to merge without review:held.</dd>
 <dt>Sensitive kind</dt><dd>It touches a kind of change that is held whatever it scores.</dd>
-<dt>Changed after your verdict</dt><dd>Under Merged recently: it merged at a head you did not review. Merged without you takes the same mark.</dd>
+<dt>Changed after your verdict</dt><dd>It merged at a head you did not review. Merged without you takes the same mark.</dd>
 </dl>
 <h2 class="sec-title spaced">Groups</h2>
 <dl class="terms">
-<dt><span class="seal" aria-hidden="true"></span>Held for review</dt><dd>Its owner holds it, V × U is 3 or more, or it touches a sensitive kind. The seal shows while any are held.</dd>
-<dt><span class="ring" aria-hidden="true"></span>Under the hold line</dt><dd>V × U is 2 or less and no sensitive kind. These cards start collapsed.</dd>
+<dt><span class="seal" aria-hidden="true"></span>Held for review</dt><dd>Its owner holds it, a score is missing, V × U is 3 or more, or it touches a sensitive kind. The seal shows while any are held.</dd>
+<dt><span class="ring" aria-hidden="true"></span>Under the hold line</dt><dd>Every score is present, V × U is 2 or less, and no sensitive kind. These cards start collapsed.</dd>
 <dt><span class="ring" aria-hidden="true"></span>Dependency bots</dt><dd>Opened by a dependency bot. Failing and conflicting ones come first.</dd>
 <dt><span class="route-dot" aria-hidden="true"></span>In flight</dt><dd>A fleet owner may still be changing it. Decide one only to step in early.</dd>
 </dl>
@@ -1547,8 +1547,8 @@ main { padding: 40px 0 80px; min-width: 0; }
       return;
     }
     if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
-    // A letter pressed on a button, link, or disclosure belongs to that control, and a collapsed card shows nothing to decide on.
-    if (target && target.closest("button, a, summary")) return;
+    // A letter pressed on a button, link, or disclosure belongs to that control, one pressed while reading the help decides nothing, and a collapsed card shows nothing to decide on.
+    if (target && target.closest("button, a, summary, #shortcut-help")) return;
     const here = activeCard();
     if (!here || here.collapsed) return;
     event.preventDefault();

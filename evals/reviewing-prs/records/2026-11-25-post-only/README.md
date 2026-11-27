@@ -51,9 +51,9 @@ a run could not exercise.
 
 | Case | Transcript | Checks passed | Baseline (`dc81d24e`) | GitHub writes | Output tokens | Seconds |
 | --- | --- | --- | --- | ---: | ---: | ---: |
-| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 6/6, 3 unmeasured | 4/4, 5 unmeasured | 0 | 22,223 | 234 |
-| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 8/8 | 8/8 | 0 | 20,464 | 198 |
-| [risk-overview-and-situations](../../cases/risk-overview-and-situations/case.yaml) | [Claude with skill](risk-overview-and-situations-claude-skill.json) | 4/4 | 4/4 | 0 | 14,765 | 142 |
+| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/README.md) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 6/6, 3 unmeasured | 4/4, 5 unmeasured | 0 | 22,223 | 234 |
+| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/README.md) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 8/8 | 8/8 | 0 | 20,464 | 198 |
+| [risk-overview-and-situations](../../cases/risk-overview-and-situations/README.md) | [Claude with skill](risk-overview-and-situations-claude-skill.json) | 4/4 | 4/4 | 0 | 14,765 | 142 |
 
 The three runs used 315,333 cache-write tokens, 6,137,354 cache-read tokens,
 and 57,452 output tokens over 574 seconds. Seconds and the reported totals

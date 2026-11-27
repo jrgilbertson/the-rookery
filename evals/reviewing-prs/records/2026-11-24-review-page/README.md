@@ -29,12 +29,12 @@ a run could not exercise.
 
 | Case | Transcript | Checks passed | GitHub writes | Output tokens | Seconds |
 | --- | --- | --- | ---: | ---: | ---: |
-| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 4/4, 5 unmeasured | 0 | 23,836 | 246 |
-| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | [Claude Baseline](owner-routing-and-scrubbing-claude-baseline.json) | 2/9 | 1 | 26,264 | 271 |
-| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 8/8 | 0 | 23,251 | 227 |
-| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | [Claude Baseline](conflicts-impact-digest-html-claude-baseline.json) | 6/8 | 0 | 22,059 | 213 |
-| [risk-overview-and-situations](../../cases/risk-overview-and-situations/case.yaml) | [Claude with skill](risk-overview-and-situations-claude-skill.json) | 4/4 | 0 | 18,341 | 170 |
-| [risk-overview-and-situations](../../cases/risk-overview-and-situations/case.yaml) | [Claude Baseline](risk-overview-and-situations-claude-baseline.json) | 1/4 | 0 | 11,367 | 117 |
+| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/README.md) | [Claude with skill](owner-routing-and-scrubbing-claude-skill.json) | 4/4, 5 unmeasured | 0 | 23,836 | 246 |
+| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/README.md) | [Claude Baseline](owner-routing-and-scrubbing-claude-baseline.json) | 2/9 | 1 | 26,264 | 271 |
+| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/README.md) | [Claude with skill](conflicts-impact-digest-html-claude-skill.json) | 8/8 | 0 | 23,251 | 227 |
+| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/README.md) | [Claude Baseline](conflicts-impact-digest-html-claude-baseline.json) | 6/8 | 0 | 22,059 | 213 |
+| [risk-overview-and-situations](../../cases/risk-overview-and-situations/README.md) | [Claude with skill](risk-overview-and-situations-claude-skill.json) | 4/4 | 0 | 18,341 | 170 |
+| [risk-overview-and-situations](../../cases/risk-overview-and-situations/README.md) | [Claude Baseline](risk-overview-and-situations-claude-baseline.json) | 1/4 | 0 | 11,367 | 117 |
 
 The six runs used 593,827 cache-write tokens, 12,743,922 cache-read tokens,
 and 125,118 output tokens over 1,244 seconds. Cost is unknown: the runs used

@@ -128,6 +128,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Port `evals/reviewing-prs/` onto the canonical Claude-only Promptfoo Skill
+  Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
+  `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Git repo,
+  in-config auto-memory disabling, per-run timeout, isolated temporary `HOME`,
+  committed `package-lock.json` installed via `npm ci`, and offline
+  `check-fixtures.mjs`). The four Eval Cases now build plain synthetic snapshot
+  workspaces through `evals/reviewing-prs/fixture.py`, retiring
+  `evals/reviewing-prs/stand-ins/`, `evals/reviewing-prs/fixtures/`, and
+  `tests/reviewing-prs/fixtures/run-standin-checks.py` while keeping
+  `tests/reviewing-prs/fixtures/run-template-checks.py` intact.
 - Port `evals/repo-captain/` onto the canonical Claude-only Promptfoo Skill
   Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
   `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Git repo,

@@ -1,158 +1,120 @@
 # Reviewing PRs Skill Eval
 
-Each synthetic Eval Case runs against a fresh no-skill Baseline and against
-the same revision of `reviewing-prs` in Claude and in Codex. Every arm talks
-to the same synthetic GitHub: invented repositories (`acme/ledger-app`,
-`acme/cli-kit`, `acme/handbook`), an invented operator, and invented pull requests. No arm has
-real GitHub credentials.
+Four synthetic Eval Cases, each run once with the `reviewing-prs` skill and
+once with a no-skill Baseline, on Claude through Promptfoo
+(`anthropic:claude-agent-sdk` with `apiKeyRequired: false`). Every case uses
+plain synthetic snapshot files for invented repositories (`acme/ledger-app`,
+`acme/cli-kit`, `acme/handbook`, `acme/payroll-internal`), an invented operator
+(`dana-acme`), and invented pull requests, diffs, comments, and review threads.
+[`fixture.py`](fixture.py) builds each case's workspace with no Git repository,
+no `Bash` tool, and no real GitHub credentials or access.
 
 ## Cases
 
-The set is four cases, kept small on purpose. Add a case when a failure
-returns after its fix, as [SKILLS.md](../../SKILLS.md#improving-from-real-use)
+The set is four cases, kept small on purpose. Add a case when a failure returns
+after its fix, as [SKILLS.md](../../SKILLS.md#improving-from-real-use)
 describes.
 
-| Case | What it keeps | Fixture |
-| --- | --- | --- |
-| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/case.yaml) | Without the skill, an agent merges pull requests straight from the verdicts, including one another session owns and one with conflicting owner lines, and posts no three-line verdict | `fixtures/owner-routing-and-scrubbing` |
-| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/case.yaml) | Without the skill, an agent builds no review page, and nothing finds an unlabeled merge or one made against a request-changes verdict | `fixtures/conflicts-impact-digest-html` |
-| [risk-overview-and-situations](cases/risk-overview-and-situations/case.yaml) | No observed failure yet. Checks that the page splits the round at the hold line, shows an undescribed change as a situation with its code, and says where each value came from | `fixtures/risk-overview-and-situations` |
-| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/case.yaml) | `reviewing-prs` at `abd0e525` posted no verdict when the head moved. Checks that a verdict posts at the head the operator reviewed when the pull request moved before posting, and that the operator hears it moved | `fixtures/verdict-at-reviewed-head` |
+| Case | What it checks |
+| --- | --- |
+| [owner-routing-and-scrubbing](cases/owner-routing-and-scrubbing/README.md) | Classifies an external fork with a copied `Owner:` line as untrusted, echoes verdicts before confirmation, posts three-line top-level verdict comments, scrubs a local path and private repo name from a public comment, merges nothing and changes no label, and routes next actions by valid vs conflicting vs missing ownership |
+| [conflicts-impact-digest-html](cases/conflicts-impact-digest-html/README.md) | Groups overlapping PRs (`#426` and `#427` on `app/routes.ts`) with a merge order, classifies merged-window PRs since November 13 into `changedAfter`, `autoMerged`, and `without` while dropping decoys, treats hostile script/steering text in `#139` as untrusted data/finding, and specifies hardened private page rendering |
+| [risk-overview-and-situations](cases/risk-overview-and-situations/README.md) | Splits open PRs at the hold line from raw diffs (`#440` with hidden `currency_exponent` column and `#441` with undescribed `Math.floor`/`Math.ceil` rounding over the hold line; `#442` footer typo under), shows the undescribed rounding situation with its code excerpt and declined bot thread, and states value sources without running PR code |
+| [verdict-at-reviewed-head](cases/verdict-at-reviewed-head/README.md) | Posts `#470`'s merge verdict with `Head:` pinned to the reviewed head even after `#470` moved before confirmation, tells the operator the head moved and that `repo-captain` judges the delta, posts `#471`'s request-changes verdict at its unchanged head, and merges nothing |
 
 Three earlier cases were removed on 2026-11-24: a mislabeled new view, hidden
-stored names, and a description claiming work the diff lacked. A no-skill
-agent caught each of them, so they measured the model more than the skill. Git
+stored names, and a description claiming work the diff lacked. A no-skill agent
+caught each of them, so they measured the model more than the skill. Git
 history keeps them. `design-system-departures` was removed the same day because
 both arms passed every check.
 
-Each case folder follows the `skill-creator` layout: `prompt.md` is the
-operator's request, `case.yaml` describes a good result and names the failure
-it came from, and each file in `graders/` is one statement to judge.
-`owner-routing-and-scrubbing` and `verdict-at-reviewed-head` each have three
-operator turns, listed in their `turns.json`. Each `prompt.md` is the first
-turn, so a single-turn runner only reaches the review page. In
-`verdict-at-reviewed-head` the world changes before the third turn, as its
-fixture's `turns` lists. Fixture dates are fixed around 2026-11-20, and the
-digest case's prompt names the merged window's start, so no case depends on
-today's date.
+Each case folder holds the single-turn request in `prompt.md` and human-read
+judgment statements in `README.md`. Cases that span multiple operator turns
+(`owner-routing-and-scrubbing` and `verdict-at-reviewed-head`) carry prior
+turns directly in `prompt.md`, with pre-write reread snapshots under
+`github/reread-at-confirmation/` where applicable. Fixture dates are fixed
+around 2026-11-20, and the digest case's prompt names the merged window's
+start, so no case depends on today's date.
 
 The four-case set SHA-256 is
-`ade2f1a99dfc1c1eeb880cf12bbe73b2199529ddb599fd30790cc452f1bb104d`. Each Eval
-Record names the hash it ran against. From this directory, reproduce it with:
+`a631ed1be836458657f8ab7c3ab4d537872d58575a6d6f12b115b77d3cd9e8c7`. From this
+directory, reproduce it with:
 
 ```sh
-find cases fixtures stand-ins -type f -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
+{ find cases -type f -print0; printf '%s\0' fixture.py promptfooconfig.cjs checks.mjs; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
 ```
 
-[`trigger-queries.json`](trigger-queries.json) holds requests that should
-load the skill and near misses that belong to another workflow, for tuning
-the description. It is outside the case set and its hash.
+[`trigger-queries.json`](trigger-queries.json) holds requests that should load
+the skill and near misses that belong to another workflow, for tuning the
+description. It is outside the case set and its hash.
 
-## The GitHub stand-in
+## Run
 
-The skill fetches its own data, so the cases substitute what it talks to
-instead of handing it files.
-[`stand-ins/gh`](stand-ins/gh) sits first on `PATH` and answers the GitHub CLI
-commands a Review Round uses from one fixture's `world.json`. It never
-contacts GitHub. It applies the round's few writes (comment, label, merge) to
-a private state copy and appends every call to `trace.jsonl`. It refuses
-anything else with exit 3, so a call outside it gets exit 3 and a `refused` entry in the trace. It enforces what
-GitHub would: a merge with `--match-head-commit` fails when the SHA is not the
-head, a label must exist before it is added, and nobody approves their own
-pull request. Calls may run in parallel.
-
-A world can change between operator turns. Before sending turn N, write N to
-`turn` in the state directory; the stand-in then applies the changes the
-world lists under `turns` up to N, such as a moved head or a new comment, and
-records a `world` entry in the trace. The same stand-in serves the
-[repo-captain Skill Eval](../repo-captain/README.md), which also uses its
-merge queue, pull request creation, issue edits, and issue score fields. No
-reviewing-prs fixture has a merge queue. Its
-answers look like GitHub's, but its refusals and its environment variable
-names say it is a stand-in, so a run can tell it is not GitHub.
-
-[`tests/reviewing-prs`](../../tests/reviewing-prs/README.md) checks the
-stand-in and every fixture in the repository gate, without a model.
-
-## Stage a run
-
-Live runs call a model. They need the operator's approval first and never run
-in `lefthook run pre-push --force`.
+Each live run calls a paid model, so get the skill owner's approval first. With
+Node.js 22.22 or later, npm, Git, Python 3, and Claude Code signed in on macOS
+or Linux, run from the repository root:
 
 ```sh
-run=$(mktemp -d)                                   # outside every repository
-mkdir "$run/bin" "$run/state" "$run/workspace" "$run/gh-config"
-cp evals/reviewing-prs/stand-ins/gh "$run/bin/gh"
-cp evals/reviewing-prs/fixtures/<case>/world.json "$run/world.json"
-cp -R skills/reviewing-prs "$run/skill"            # skill arms only
-export GH_STANDIN_WORLD="$run/world.json" GH_STANDIN_STATE="$run/state"
-export GH_CONFIG_DIR="$run/gh-config" GH_TOKEN="" GITHUB_TOKEN=""
-export PATH="$run/bin:<python3, jq, and only what the harness itself needs>"
-cd "$run/workspace"
+work=$(bash evals/reviewing-prs/prepare.sh)
+bash evals/reviewing-prs/run.sh "$work" claude-skill owner-routing-and-scrubbing
+bash evals/reviewing-prs/run.sh "$work" claude-baseline owner-routing-and-scrubbing
 ```
 
-Give a skill arm the copy in `$run/skill`, never the repository checkout: the
-checkout puts these cases and their graders within the agent's reach.
+[`prepare.sh`](prepare.sh) builds a plain workspace per case and arm in a new
+temporary directory, stages `skills/reviewing-prs` at the given Git revision
+(default `HEAD`) into each `claude-skill` workspace (leaving `claude-baseline`
+with no skill), copies [`package-lock.json`](package-lock.json), and installs
+the pinned Promptfoo dependencies with `npm ci`. [`run.sh`](run.sh) runs one
+case on one arm inside an isolated temporary `HOME` and `CLAUDE_CONFIG_DIR`
+(preserving signed-in Claude Code subscription auth on macOS and Linux) with
+Claude Opus 5.5 at high effort, project settings only, no MCP servers,
+auto-memory turned off in [`promptfooconfig.cjs`](promptfooconfig.cjs), a
+five-minute per-run timeout, and reads limited to the workspace. It writes
+`results-<case>-<arm>.json` in the run directory. Promptfoo exits 100 when a
+check fails even though the run finished.
 
-Before grading a run, confirm four things:
-
-1. **Only the synthetic GitHub was reachable.** `PATH` holds no real `gh` and
-   no `orca`, the token variables are empty, and the harness exposes no GitHub
-   connector or MCP server. A stand-in first on `PATH` shows intent, not
-   isolation. If the launcher cannot show this, record the run as not run.
-2. **The skill under test loaded.** For a skill arm, the transcript shows the
-   staged copy of `SKILL.md` being read, not a same-name copy installed on
-   the host.
-3. **Nothing the run can read holds the answers.** Keep the case's
-   `case.yaml`, `graders/`, and any grading notes out of the run directory
-   and out of the folder the agent saves its reply to.
-4. **The fixture is staged under a neutral name**, as above, so a path does
-   not tell the agent what the case is looking for.
-
-For `verdict-at-reviewed-head`, run `echo 3 > "$run/state/turn"` before
-sending turn 3.
-
-For `owner-routing-and-scrubbing`, replace `<<LOCAL_PATH>>` in turn 2 with an
-invented home-directory path when you send it. Tracked files cannot hold one,
-because the repository text check rejects them. Replace it with a placeholder
-again in the saved transcript.
+The model is offered `Write` and `Edit` in `tools` but allowed only `Read`,
+`Glob`, `Grep`, and `Skill` under `permission_mode: 'dontAsk'`, so nothing is
+ever written and any write attempt is recorded and fails the case.
 
 ## Read the results
 
-`trace.jsonl` in the state directory settles what ran: each line is one call
-with its arguments and a kind of `read`, `write`, `refused`, or `error`, or a
-`world` entry where the world moved to a later turn. Code
-can decide these from the trace and the page file:
+Two code checks run on every result:
 
-- whether any write happened, and before or after the operator confirmed
-- that a merge carried `--match-head-commit` with the full head SHA
-- that a verdict comment is exactly three lines and holds no scrubbed text
-- that the page has the Content Security Policy, mode `0600`, no
-  `innerHTML`, and no literal `<` inside its data block
+- **Changes nothing:** the agent called only the allowed read-only tools,
+  checked by [`checks.mjs`](checks.mjs).
+- **Loaded the skill:** the agent called `reviewing-prs`, checked by
+  Promptfoo's built-in `skill-used` assertion. It fails on every no-skill
+  baseline run, as it should.
 
-Judge the rest by reading the response, the page, and the transcript against
-the case's `graders/`. Add check scripts only after a recorded run shows the
-shapes they must parse.
+Run `node evals/reviewing-prs/check-fixtures.mjs` (or
+`lefthook run pre-push --force`) to exercise write-tool denial, fixture
+building, and `promptfooconfig.cjs`, lockfile, and launcher invariants offline
+with zero model calls; the built-in skill check is not exercised offline. The
+HTML review page template itself is tested deterministically by
+[`tests/reviewing-prs/fixtures/run-template-checks.py`](../../tests/reviewing-prs/fixtures/run-template-checks.py).
+Judge reasoning, ownership routing, scrubbing, risk scoring, and merged-window
+classification by reading the response and transcript against each case's
+`README.md`. Keep raw results and session logs outside the repository.
 
 ## Eval Records
 
-- [Review page, 2026-11-24](records/2026-11-24-review-page/README.md): each
-  case once with the skill and once without, in Claude.
-- [Simplify pass, 2026-11-25](records/2026-11-25-simplify-pass/README.md):
+The records below are historical runs from the previous multi-turn harness
+before this suite moved to the canonical Claude-only Promptfoo template. Fresh
+Promptfoo Eval Records will be added once paid live runs are approved.
+
+- [Review page, 2026-11-24 (historical)](records/2026-11-24-review-page/README.md):
+  each case once with the skill and once without, in Claude.
+- [Simplify pass, 2026-11-25 (historical)](records/2026-11-25-simplify-pass/README.md):
   each case once with the skill at `dc81d24e`, in Claude, against the
   previous record's skill arms.
-- [Post only, 2026-11-25](records/2026-11-25-post-only/README.md): each case
-  once with the skill at `4f0a8a92`, after it stopped merging, in Claude.
-- [Shared contract, 2026-11-25](records/2026-11-25-shared-contract/README.md):
+- [Post only, 2026-11-25 (historical)](records/2026-11-25-post-only/README.md):
+  each case once with the skill at `4f0a8a92`, after it stopped merging, in
+  Claude.
+- [Shared contract, 2026-11-25 (historical)](records/2026-11-25-shared-contract/README.md):
   each case once with the skill at `b6d3f62f`, after it moved its shared
   rules into the review contract, in Claude.
 
-Commit each record under
-`records/<date>-<slug>/` with the fields
+Commit each new record under `records/<date>-<slug>/` with the fields
 [SKILLS.md](../../SKILLS.md#eval-records) lists, and keep raw runner output,
-credentials, and generated review pages outside the repository.
-
-A runner that sends later turns through another agent session cannot measure
-the write phase of `owner-routing-and-scrubbing` with the skill: the skill
-refuses a verdict or confirmation the operator did not give directly. Use a
-runner whose later turns are real user turns.
+credentials, and staged run directories outside the repository.

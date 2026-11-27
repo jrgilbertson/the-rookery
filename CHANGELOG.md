@@ -118,6 +118,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `WORKFLOWS.md` and `scripts/sync-global-agents.sh` state that global-guidance
+  changes ship as their own small PR right away, never inside other work. When
+  `scripts/sync-global-agents.sh --check` fails on a branch that does not edit
+  `GLOBAL-AGENTS.md`, its message now tells that branch not to copy the change
+  in, without changing when the check passes or fails.
 - Improve audit checks the repository's tracker read-only with
   `managing-issues` before saving its report and names each covering open issue
   beside its finding, reporting a coverage gap if the tracker is unreachable or

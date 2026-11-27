@@ -9,38 +9,22 @@
 <title>Review Round</title>
 <style>
 :root {
-  color-scheme: light;
-  --paper: #F6F7FA; --sheet: #FFFFFF; --mist: #E3E9F7; --stake: #E3E9F7; --dispatch: #F0EBE5;
-  --hairline: rgb(71 87 122 / 0.32); --hairline-soft: rgb(71 87 122 / 0.16);
-  --ink: #042458; --ink-soft: #47577A; --route: #0050CC;
-  --signal: #DC6C36; --signal-ink: #963E12;
-  --add: #0B5D3B; --add-wash: #EAF3EE; --del: #8F2A1F; --del-wash: #F7E9E6;
-  --chosen: #042458; --on-chosen: #F6F7FA;
+  color-scheme: light dark;
+  --paper: light-dark(#F6F7FA, #14161B); --sheet: light-dark(#FFFFFF, #1B1E25); --mist: light-dark(#E3E9F7, #242A36);
+  --stake: light-dark(#E3E9F7, #34415C); --dispatch: light-dark(#F0EBE5, #29251F);
+  --hairline: light-dark(rgb(71 87 122 / 0.32), rgb(167 175 192 / 0.30)); --hairline-soft: light-dark(rgb(71 87 122 / 0.16), rgb(167 175 192 / 0.15));
+  --control-border: light-dark(#7C87A0, #686E7A);
+  --ink: light-dark(#042458, #ECEEF3); --ink-soft: light-dark(#47577A, #A7AFC0); --route: light-dark(#0050CC, #93AEEF);
+  --signal: light-dark(#DC6C36, #E08A5E); --signal-ink: light-dark(#963E12, #F0A57E);
+  --add: light-dark(#0B5D3B, #9BD3B5); --add-wash: light-dark(#EAF3EE, #1C2A23); --del: light-dark(#8F2A1F, #F0A99D); --del-wash: light-dark(#F7E9E6, #33201D);
+  --chosen: var(--ink); --on-chosen: var(--paper);
   --display: Didot, "Bodoni 72", "Bodoni MT", Georgia, serif;
   --serif: Baskerville, "Libre Baskerville", "Baskerville Old Face", Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --stake: #34415C; --dispatch: #29251F;
-    --hairline: rgb(167 175 192 / 0.30); --hairline-soft: rgb(167 175 192 / 0.15);
-    --ink: #ECEEF3; --ink-soft: #A7AFC0; --route: #93AEEF;
-    --signal: #E08A5E; --signal-ink: #F0A57E;
-    --add: #9BD3B5; --add-wash: #1C2A23; --del: #F0A99D; --del-wash: #33201D;
-    --chosen: #ECEEF3; --on-chosen: #14161B;
-  }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --paper: #14161B; --sheet: #1B1E25; --mist: #242A36; --stake: #34415C; --dispatch: #29251F;
-  --hairline: rgb(167 175 192 / 0.30); --hairline-soft: rgb(167 175 192 / 0.15);
-  --ink: #ECEEF3; --ink-soft: #A7AFC0; --route: #93AEEF;
-  --signal: #E08A5E; --signal-ink: #F0A57E;
-  --add: #9BD3B5; --add-wash: #1C2A23; --del: #F0A99D; --del-wash: #33201D;
-  --chosen: #ECEEF3; --on-chosen: #14161B;
-}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { background: var(--paper); scrollbar-color: var(--ink-soft) var(--paper); scroll-padding-top: calc(var(--bar-h, 60px) + 12px); }
@@ -55,6 +39,9 @@ button, input, textarea { font: inherit; color: inherit; caret-color: var(--rout
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
 [tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
+main:focus-visible { outline: none; }
+.skip { position: fixed; top: 8px; left: 8px; z-index: 10; padding: 8px 14px; background: var(--sheet); border: 1px solid var(--control-border); border-radius: 2px; font: 600 0.85rem/1.4 var(--sans); transform: translateY(-200%); }
+.skip:focus { transform: none; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 pre { margin: 6px 0 0; padding: 10px 12px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.8rem/1.55 var(--mono); }
 pre span { display: block; padding: 2px 8px 2px 2.3em; text-indent: -1.6em; }
@@ -63,8 +50,8 @@ pre .del { color: var(--del); background: var(--del-wash); }
 pre .ctx { color: var(--ink-soft); }
 
 .sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
-.read dt, .bots b, .part small, .bar-note, .bar-progress, .bar-cue, .theme, .seg button, .notes, .copy,
-.over-head small, .rail, .keys, .xnote b, .chip, .size, .count, .hint, .filters, .drawer summary { font-family: var(--sans); }
+.read dt, .bots b, .part small, .bar-note, .bar-progress, .bar-cue, .ctl, .seg button, .notes, .copy,
+.over-head small, .rail, .xnote b, .sysnote b, .chip, .size, .count, .hint, .filters, .drawer summary, .card-toggle { font-family: var(--sans); }
 .meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
 .source { margin-top: 6px; }
 .empty { color: var(--ink-soft); font-style: italic; }
@@ -79,19 +66,27 @@ pre .ctx { color: var(--ink-soft); }
 .chip.bad { border-color: var(--ink); color: var(--ink); }
 .chip.moving { border-color: var(--route); color: var(--route); }
 .chip.alert { color: var(--signal-ink); }
-.chip.vu-chip { border-color: var(--ink-soft); border-radius: 999px; color: var(--ink); }
+.chip.vu-chip { border-color: var(--ink-soft); color: var(--ink); }
+.chip.verdict-badge { border-color: var(--chosen); background: var(--chosen); color: var(--on-chosen); }
 .chip .seal { width: 8px; height: 8px; }
 .size { font-size: 0.76rem; color: var(--ink-soft); }
 .count { font-size: 0.82rem; font-weight: 400; color: var(--ink-soft); }
 
 .bar { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--hairline); }
 .bar strong { font: 400 1.25rem/1 var(--display); }
-.bar-note { color: var(--ink-soft); font-size: 0.8rem; flex: 1 1 200px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.bar-note { color: var(--ink-soft); font-size: 0.8rem; flex: 1 1 0; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .bar-progress { display: inline-flex; align-items: center; min-height: 36px; margin-left: auto; font-size: 0.85rem; font-weight: 600; }
 .bar-cue { color: var(--ink-soft); font-size: 0.78rem; }
 .short { display: none; }
-.theme { border: 1px solid var(--hairline); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 36px; }
-.theme:hover { border-color: var(--ink-soft); }
+.ctl { border: 1px solid var(--control-border); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 36px; }
+.ctl:hover { background: var(--mist); }
+.ctl[aria-pressed="true"] { background: var(--chosen); border-color: var(--chosen); color: var(--on-chosen); font-weight: 650; }
+.help-toggle { min-width: 36px; padding-left: 0; padding-right: 0; font-weight: 650; }
+.help { position: absolute; top: 100%; right: 28px; width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--bar-h, 60px) - 16px); overflow-y: auto; margin-top: 8px; padding: 16px 18px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; font: 0.82rem/1.5 var(--sans); }
+.help dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; }
+.help dt { font-weight: 650; }
+.help kbd { display: inline-block; min-width: 1.9em; text-align: center; font: 0.75rem/1.5 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 0 5px; background: var(--paper); }
+.help-note { margin-top: 10px; color: var(--ink-soft); }
 
 .shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
 .rail { display: none; }
@@ -104,7 +99,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 
 .filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0 0 10px; font-size: 0.82rem; }
 .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
-.flt { border: 1px solid var(--hairline); background: var(--sheet); border-radius: 2px; padding: 6px 12px; min-height: 36px; }
+.flt { border: 1px solid var(--control-border); background: var(--sheet); border-radius: 2px; padding: 6px 12px; min-height: 36px; }
 .flt:hover { background: var(--mist); }
 .flt[aria-pressed="true"] { background: var(--chosen); border-color: var(--chosen); color: var(--on-chosen); font-weight: 650; }
 .toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; cursor: pointer; }
@@ -112,7 +107,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 .filter-status { color: var(--ink-soft); }
 .filter-empty { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 16px; padding: 12px 20px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; }
 .over { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; margin-bottom: 16px; }
-.over.flight, .block.flight { border-style: dashed; border-color: var(--ink-soft); }
+.over.flight, .block.flight:not(.active) { border-style: dashed; border-color: var(--ink-soft); }
 .over-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; padding: 14px 20px 12px; border-bottom: 1px solid var(--hairline); }
 .over-head small { font-size: 0.82rem; color: var(--ink-soft); }
 .over > .empty { padding: 12px 20px; }
@@ -142,24 +137,36 @@ main { padding: 40px 0 80px; min-width: 0; }
 .across { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 30px; font-size: 0.95rem; }
 .across span { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 8px 12px; }
 
-.block { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 22px 24px 24px; margin-bottom: 20px; }
+/* The edge width is a variable so the active card's heavier border moves nothing. */
+.block { --edge: 1px; background: var(--sheet); border: var(--edge) solid var(--hairline); border-radius: 2px; padding: calc(23px - var(--edge)) calc(25px - var(--edge)) calc(25px - var(--edge)); margin-bottom: 20px; }
+.block.active { --edge: 2px; border-style: solid; border-color: var(--route); }
+.frame { max-width: 72ch; }
+.frame p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; }
 .block-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
 .block-head h2 { flex: 1 1 320px; min-width: 0; display: flex; align-items: center; gap: 12px; overflow-wrap: anywhere; }
 .rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1rem/1 var(--display); color: var(--ink-soft); }
 .block.hold .rank { border-color: var(--ink); color: var(--ink); }
 .verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
-.seg { display: inline-flex; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); }
-.seg button { border: 0; background: none; padding: 6px 13px; min-height: 36px; font-size: 0.82rem; border-right: 1px solid var(--hairline); }
+.seg { display: inline-flex; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); }
+.seg button { border: 0; background: none; padding: 6px 13px; min-height: 36px; font-size: 0.82rem; border-right: 1px solid var(--control-border); }
 .seg button:last-child { border-right: 0; }
 .seg button:hover { background: var(--mist); }
 .seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 650; }
-.notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
+.notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
 .notes::placeholder { color: var(--ink-soft); }
 .hint { flex-basis: 100%; text-align: right; font-size: 0.76rem; color: var(--ink-soft); }
 .block-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 10px 0 0; }
+.card-toggle { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--control-border); background: var(--sheet); border-radius: 2px; padding: 6px 12px; min-height: 36px; font-size: 0.82rem; }
+.card-toggle:hover { background: var(--mist); }
+.card-factors { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 8px 0 0; }
+.pill { display: inline-flex; align-items: baseline; gap: 5px; padding: 1px 7px; border: 1px solid var(--hairline); border-radius: 2px; font: 0.72rem/1.5 var(--sans); color: var(--ink-soft); }
+.pill b { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+.pill.three { background: var(--stake); border-color: var(--ink-soft); color: var(--ink); }
+.pill.three b { font-weight: 700; }
 .driver { margin-top: 10px; max-width: 80ch; }
 .xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
-.xnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
+.sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: 80ch; font-size: 0.95rem; }
+.xnote b, .sysnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
 .cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
 .main-col, .side-col { display: grid; gap: 18px; min-width: 0; }
 .panel { padding-top: 10px; border-top: 1px solid var(--hairline-soft); font-size: 0.95rem; }
@@ -225,28 +232,31 @@ main { padding: 40px 0 80px; min-width: 0; }
 .crow .where { display: inline; }
 .crow .seal { margin-right: 8px; }
 .drawer { margin-top: 8px; }
-.drawer summary { display: flex; align-items: center; gap: 10px; min-height: 36px; cursor: pointer; list-style: none; font-size: 0.85rem; font-weight: 600; }
+.drawer summary { display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; min-height: 36px; padding: 6px 12px; border: 1px solid var(--control-border); border-radius: 2px; cursor: pointer; list-style: none; font-size: 0.85rem; font-weight: 600; }
+.drawer summary:hover { background: var(--mist); }
 .drawer summary::-webkit-details-marker { display: none; }
-.drawer summary::before { content: ""; flex: none; width: 7px; height: 7px; margin: 0 3px; border-right: 1.5px solid var(--ink-soft); border-bottom: 1.5px solid var(--ink-soft); transform: rotate(-45deg); transition: transform 0.15s ease; }
-.drawer[open] summary::before { transform: rotate(45deg); }
+.drawer summary::before, .card-toggle::before { content: ""; flex: none; width: 7px; height: 7px; margin: 0 3px; border-right: 1.5px solid var(--ink-soft); border-bottom: 1.5px solid var(--ink-soft); transform: rotate(-45deg); transition: transform 0.15s ease; }
+.drawer[open] summary::before, .card-toggle[aria-expanded="true"]::before { transform: rotate(45deg); }
 @media (prefers-reduced-motion: reduce) {
-  .drawer summary::before { transition: none; }
+  .drawer summary::before, .card-toggle::before { transition: none; }
 }
 .verdicts { background: var(--sheet); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 16px 20px; margin: 26px 0 16px; }
-.verdicts textarea { display: block; width: 100%; min-height: 4.5em; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--paper); font: 0.8rem/1.5 var(--mono); resize: vertical; }
+.verdicts textarea { display: block; width: 100%; min-height: 4.5em; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--control-border); border-radius: 2px; background: var(--paper); font: 0.8rem/1.5 var(--mono); resize: vertical; }
 .verdicts-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .copy { border: 1px solid var(--chosen); background: var(--chosen); color: var(--on-chosen); border-radius: 2px; padding: 6px 16px; min-height: 36px; font-weight: 650; font-size: 0.85rem; }
 .copy:hover { opacity: 0.9; }
-.keys { margin-top: 8px; color: var(--ink-soft); font-size: 0.78rem; }
-.keys kbd { font: 0.75rem/1 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 1px 5px; background: var(--paper); }
+/* With nothing chosen the button stays focusable and says why it does nothing. */
+.copy[aria-disabled="true"] { background: none; border-color: var(--control-border); color: var(--ink-soft); font-weight: 400; }
+.verdicts textarea::placeholder { color: var(--ink-soft); font-family: var(--sans); }
 
-@media (min-width: 1180px) {
+@media (min-width: 1320px) {
   .shell { max-width: 1600px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; }
   .rail { display: block; position: sticky; top: var(--bar-h, 58px); align-self: start; max-height: calc(100vh - var(--bar-h, 58px)); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
   .rail .r-head { font: 650 0.72rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 16px 0 6px; display: flex; align-items: center; gap: 8px; }
   .rail .r-head:first-child { margin-top: 0; }
   .rail ol { list-style: none; margin: 0; padding: 0; }
-  .rail a { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; padding: 5px 7px; border: 1px solid transparent; color: var(--ink); text-decoration: none; border-radius: 2px; }
+  .rail[hidden] + main { grid-column: 1 / -1; }
+  .rail a { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-content: center; gap: 2px 8px; min-height: 36px; padding: 5px 7px; border: 1px solid transparent; color: var(--ink); text-decoration: none; border-radius: 2px; }
   .rail a:hover { background: var(--mist); }
   .rail a[aria-current="true"] { background: var(--mist); border-color: var(--hairline); }
   .rail .r-rank { font: 600 0.8rem/1.5 var(--sans); color: var(--ink-soft); }
@@ -254,35 +264,36 @@ main { padding: 40px 0 80px; min-width: 0; }
   .rail .r-state { grid-column: 2; font-size: 0.72rem; color: var(--ink-soft); }
   .rail .r-state.done { color: var(--ink); font-weight: 650; }
   .rail .r-links { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--hairline-soft); display: grid; gap: 2px; }
-  .rail .r-links a { display: block; color: var(--route); text-decoration: underline; text-underline-offset: 3px; }
+  .rail .r-links a { display: flex; align-items: center; color: var(--route); text-decoration: underline; text-underline-offset: 3px; }
+}
+/* Below the rail's width the bar has no room for its resting cue; the verdicts box says the same in full. */
+@media (max-width: 1319px) {
+  .bar-cue { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 @media (max-width: 980px) {
   .bar { padding: 8px 16px; gap: 6px 10px; }
   .bar-note { display: none; }
-  .bar-cue { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .shell { padding: 0 16px; }
   main { padding: 26px 0 60px; }
   h1 { font-size: 2.1rem; }
-  .block { padding: 16px 14px 18px; }
+  .block { padding: calc(17px - var(--edge)) calc(15px - var(--edge)) calc(19px - var(--edge)); }
+  .help { right: 16px; }
   .orow { grid-template-columns: 56px minmax(0, 1fr); padding: 12px 14px; }
   .orow > p, .orow > .scores { grid-column: 1 / -1; }
   .cols, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
   .verdict { margin-left: 0; width: 100%; }
   .notes { width: 100%; }
   .hint { text-align: left; }
-  .seg button, .notes, .copy, .theme, .bar-progress, .flt, .toggle, .drawer summary { min-height: 44px; }
+  .seg button, .notes, .copy, .ctl, .bar-progress, .flt, .toggle, .drawer summary, .card-toggle { min-height: 44px; }
+  .help-toggle { min-width: 44px; }
   .read dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .read dd + dt { margin-top: 6px; }
 }
 @media (max-width: 720px) {
+  .bar { gap: 6px; }
   .bar strong, .long { display: none; }
   .short { display: inline; }
-  .bar .copy, .theme { padding-left: 10px; padding-right: 10px; }
-}
-@media (max-width: 320px) {
-  html { scroll-padding-top: 12px; }
-  .bar { position: static; }
-  .scores { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); }
+  .bar .copy, .ctl:not(.help-toggle) { padding-left: 10px; padding-right: 10px; }
 }
 @media (max-width: 560px) {
   .seg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: 100%; }
@@ -298,11 +309,42 @@ main { padding: 40px 0 80px; min-width: 0; }
   .sit td:first-child::before { display: none; }
   .sit td.no { grid-column: 1 / -1; margin-top: 4px; }
 }
+@media (max-width: 320px) {
+  html { scroll-padding-top: 12px; }
+  .bar { position: relative; }
+  .scores { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); }
+}
 </style>
 </head>
 <body>
-<header class="bar" id="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><span class="bar-cue" id="bar-cue" role="status" aria-live="polite"></span><button type="button" class="copy" id="bar-copy">Copy Verdicts</button><button type="button" class="theme" id="theme"></button></header>
-<div class="shell"><nav class="rail" id="rail" aria-label="Pull requests in this round"></nav><main id="page"><noscript>This page needs JavaScript turned on to show the round.</noscript></main></div>
+<a class="skip" href="#page">Skip to the round</a>
+<header class="bar" id="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><span class="bar-cue" id="bar-cue"></span><button type="button" class="copy" id="bar-copy">Copy verdicts</button>
+<button type="button" class="ctl" id="shortcuts" aria-pressed="true"><span class="long">Keyboard shortcuts</span><span class="short">Keys</span></button>
+<button type="button" class="ctl help-toggle" id="shortcut-help-toggle" aria-expanded="false" aria-controls="shortcut-help" aria-label="Help: keyboard shortcuts and what each verdict means">?</button>
+<div class="help" id="shortcut-help" role="region" aria-label="Keyboard shortcuts and verdicts" hidden>
+<p class="sec-title">Keyboard shortcuts</p>
+<dl>
+<dt><kbd>j</kbd></dt><dd>Next pull request</dd>
+<dt><kbd>k</kbd></dt><dd>Previous pull request</dd>
+<dt><kbd>n</kbd></dt><dd>Next undecided pull request, then your verdicts</dd>
+<dt><kbd>m</kbd></dt><dd>Merge</dd>
+<dt><kbd>c</kbd></dt><dd>Request changes</dd>
+<dt><kbd>d</kbd></dt><dd>Defer</dd>
+<dt><kbd>x</kbd></dt><dd>Not applicable</dd>
+<dt><kbd>Esc</kbd></dt><dd>Close this panel</dd>
+</dl>
+<p class="help-note">A verdict key acts on the card with the blue border. It does nothing while you type, while a button or link has focus, or on a collapsed card. The shortcuts switch in the bar turns every key off.</p>
+<p class="sec-title spaced">What each verdict means</p>
+<dl>
+<dt>Merge</dt><dd>Posts a merge verdict at the head you reviewed.</dd>
+<dt>Request changes</dt><dd>Posts your notes as a request for changes.</dd>
+<dt>Defer</dt><dd>Writes nothing, so the pull request comes back next round.</dd>
+<dt>Not applicable</dt><dd>Not yours to decide: nothing is posted, and a review request to you is removed.</dd>
+</dl>
+</div>
+<button type="button" class="ctl" id="theme"></button></header>
+<div class="shell"><nav class="rail" id="rail" aria-label="Pull requests in this round"></nav><main id="page" tabindex="-1"><noscript>This page needs JavaScript turned on to show the round.</noscript></main></div>
+<div class="vh" id="announcer" role="status" aria-live="polite"></div>
 <script type="application/json" id="round-data">
 {{ROUND_DATA}}
 </script>
@@ -312,9 +354,48 @@ main { padding: 40px 0 80px; min-width: 0; }
   const root = document.documentElement;
   const page = document.getElementById("page");
   const rail = document.getElementById("rail");
+  const bar = document.getElementById("bar");
+  const progress = document.getElementById("bar-progress");
+  const barCopy = document.getElementById("bar-copy");
+  const barCue = document.getElementById("bar-cue");
+
+  // One polite region speaks for the whole page. A message repeated word for
+  // word gets a trailing space, so it is read again.
+  const announcer = document.getElementById("announcer");
+  const announce = (text) => { announcer.textContent = text && announcer.textContent === text ? text + "\u00a0" : text; };
+
+  // Verdicts are kept in this browser only, keyed to the reviewed head, so a
+  // moved head starts blank. Nothing leaves the machine. The theme and the
+  // shortcuts switch sit under their own prefix, which the 30-day expiry never visits.
+  const STORE = "reviewing-prs:";
+  const PREFS = "reviewing-prs-prefs:";
+  const storage = (() => {
+    try {
+      const probe = window.localStorage;
+      probe.getItem(STORE + "probe");
+      return probe;
+    } catch (error) {
+      return null;
+    }
+  })();
+  const pref = (name) => {
+    try {
+      return storage ? storage.getItem(PREFS + name) : null;
+    } catch (error) {
+      return null;
+    }
+  };
+  const keepPref = (name, value) => {
+    try {
+      if (storage) storage.setItem(PREFS + name, value);
+    } catch (error) {
+      /* Storage full or blocked: the choice still holds for this visit. */
+    }
+  };
 
   const themeButton = document.getElementById("theme");
   const media = window.matchMedia("(prefers-color-scheme: dark)");
+  if (["light", "dark"].includes(pref("theme"))) root.dataset.theme = pref("theme");
   const effectiveTheme = () => root.dataset.theme || (media.matches ? "dark" : "light");
   const labelTheme = () => {
     const next = effectiveTheme() === "dark" ? "light" : "dark";
@@ -326,10 +407,39 @@ main { padding: 40px 0 80px; min-width: 0; }
   };
   themeButton.addEventListener("click", () => {
     root.dataset.theme = effectiveTheme() === "dark" ? "light" : "dark";
+    keepPref("theme", root.dataset.theme);
     labelTheme();
   });
   media.addEventListener("change", labelTheme);
   labelTheme();
+
+  const shortcutsButton = document.getElementById("shortcuts");
+  let shortcutsActive = pref("shortcuts") !== "off";
+  shortcutsButton.setAttribute("aria-pressed", String(shortcutsActive));
+  shortcutsButton.addEventListener("click", () => {
+    shortcutsActive = !shortcutsActive;
+    keepPref("shortcuts", shortcutsActive ? "on" : "off");
+    shortcutsButton.setAttribute("aria-pressed", String(shortcutsActive));
+  });
+
+  const helpButton = document.getElementById("shortcut-help-toggle");
+  const helpPanel = document.getElementById("shortcut-help");
+  const showHelp = (open) => {
+    helpPanel.hidden = !open;
+    helpButton.setAttribute("aria-expanded", String(open));
+  };
+  helpButton.addEventListener("click", () => showHelp(helpPanel.hidden));
+  // Escape closes the panel whether or not the shortcuts are switched on.
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || helpPanel.hidden) return;
+    showHelp(false);
+    helpButton.focus();
+  });
+  // A page with nothing to decide shows no control that would do nothing.
+  const hideRoundControls = () => {
+    showHelp(false);
+    for (const control of [progress, barCopy, shortcutsButton, helpButton]) control.hidden = true;
+  };
 
   const el = (tag, cls, text) => {
     const node = document.createElement(tag);
@@ -359,7 +469,11 @@ main { padding: 40px 0 80px; min-width: 0; }
     round = JSON.parse(document.getElementById("round-data").textContent);
     if (!round || typeof round !== "object" || Array.isArray(round)) throw new Error("not an object");
   } catch (error) {
-    page.replaceChildren(el("p", "notices", "The round's data could not be read, so nothing is shown. Ask the agent to rebuild the page."));
+    const problem = el("p", "", "Its data is not valid, so nothing is shown. Ask the agent to rebuild the page.");
+    problem.setAttribute("role", "alert");
+    page.replaceChildren(add(el("section", "block frame"), el("h1", "", "This round could not be read"), problem));
+    hideRoundControls();
+    rail.hidden = true;
     return;
   }
 
@@ -383,10 +497,20 @@ main { padding: 40px 0 80px; min-width: 0; }
     anchor.rel = "noopener noreferrer";
     return anchor;
   };
-  // The merged lists sit in a drawer that starts closed on a large round, so
-  // every link into it opens it before the browser jumps.
+  // A routine card starts collapsed, a filter can hide a card, and the merged
+  // lists sit in a drawer that starts closed on a large round. Every link, key,
+  // and address goes through here, which opens the way and returns the target
+  // when it had to change anything.
   let mergedBox = null, mergedDrawer = null;
+  const cards = new Map();
   const reveal = (id) => {
+    const item = cards.get(id);
+    if (item) {
+      const closed = item.node.hidden || item.collapsed;
+      if (item.node.hidden) clearFilter();
+      if (item.collapsed) setCollapsed(item, false);
+      return closed ? item.node : null;
+    }
     if (!mergedDrawer || mergedDrawer.open) return null;
     const target = document.getElementById(id);
     if (!target || !(target === mergedBox || mergedBox.contains(target))) return null;
@@ -447,6 +571,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   ordered.forEach((item, position) => {
     item.rank = position + 1;
     item.id = "pr-" + item.rank;
+    cards.set(item.id, item);
   });
 
   const shortRepo = (repo) => str(repo).split("/").pop() || str(repo);
@@ -456,19 +581,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   document.getElementById("bar-note").textContent = [str(round.scope), str(round.generated)].filter(Boolean).join(" · ");
 
-  // Verdicts are kept in this browser only, keyed to the reviewed head, so a
-  // moved head starts blank. Nothing leaves the machine.
-  const STORE = "reviewing-prs:";
   const storeKey = (pr) => STORE + fullRef(pr) + "@" + str(pr.head);
-  const storage = (() => {
-    try {
-      const probe = window.localStorage;
-      probe.getItem(STORE + "probe");
-      return probe;
-    } catch (error) {
-      return null;
-    }
-  })();
   const recall = (pr) => {
     if (!storage) return null;
     try {
@@ -488,16 +601,22 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
   };
   if (storage) {
-    try {
-      const month = 30 * 24 * 60 * 60 * 1000;
-      for (let i = storage.length - 1; i >= 0; i -= 1) {
+    const month = 30 * 24 * 60 * 60 * 1000;
+    for (let i = storage.length - 1; i >= 0; i -= 1) {
+      // Each entry is tried alone, so one that cannot be read does not keep the rest from expiring.
+      try {
         const key = storage.key(i);
         if (!key || !key.startsWith(STORE)) continue;
-        const saved = JSON.parse(storage.getItem(key) || "null");
-        if (!saved || !(Date.now() - saved.saved < month)) storage.removeItem(key);
+        let fresh = false;
+        try {
+          fresh = Date.now() - JSON.parse(storage.getItem(key)).saved < month;
+        } catch (error) {
+          /* Unreadable, so it has no date to expire by: it goes now. */
+        }
+        if (!fresh) storage.removeItem(key);
+      } catch (error) {
+        /* Storage blocked mid-way: the page still works without the clean-up. */
       }
-    } catch (error) {
-      /* Ignore a malformed entry; it expires with the rest. */
     }
   }
 
@@ -523,7 +642,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     : joinNames(impactNames) + (impactNames.length === 1 ? " scores" : " score") + " 3 on impact.";
   const shipped = [];
   if (mergedWithout.length) shipped.push(plural(mergedWithout.length, "pull request", "pull requests") + " merged without you");
-  if (changedAfter.length) shipped.push(plural(changedAfter.length, "pull request", "pull requests") + " changed after your Verdict");
+  if (changedAfter.length) shipped.push(plural(changedAfter.length, "pull request", "pull requests") + " changed after your verdict");
   if (autoMerged.length) shipped.push(plural(autoMerged.length, "routine pull request", "routine pull requests") + " auto-merged");
   const shippedText = shipped.length ? " Recently, " + joinNames(shipped) + "." : "";
   add(lede, el("h1", "", headline), el("p", "", "Each group is ranked by verification effort times undo cost, highest first. " + impactText + shippedText));
@@ -536,7 +655,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   for (const text of list(round.notices).map(str).filter(Boolean)) notice(document.createTextNode(text));
   const rowNotice = (row, what) => notice(inPage(label(row) + " " + what, row.id),
     document.createTextNode(": " + (str(row.summary) || str(row.reason) || str(row.title))));
-  for (const row of changedAfter) rowNotice(row, "changed after your Verdict");
+  for (const row of changedAfter) rowNotice(row, "changed after your verdict");
   if (mergedWithout.length > MANY) {
     notice(inPage(mergedWithout.length + " pull requests merged without you", "merged"),
       document.createTextNode(". Each is listed under Merged recently."));
@@ -554,7 +673,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     const size = pr.size || {};
     return "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " · " + plural(size.files, "file", "files") : "");
   };
-  // What the operator needs beside the Verdict controls: the same chips on the Overview row and on the card.
+  // What the operator needs beside the verdict controls: the same chips on the Overview row and on the card.
   const readiness = (item) => {
     const chips = [];
     if (item.group === "flight") chips.push(chip("moving", "In flight · moving target"));
@@ -564,6 +683,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     if (item.violation) chips.push(add(chip("alert"), mark("seal"), document.createTextNode("Hold violation: " + item.violation)));
     return chips;
   };
+  const vuWords = (item) => "Verification effort times undo cost: " + (item.product ?? "unknown");
   const overviewGroup = (group) => {
     const items = group.items;
     const section = el("section", "over " + group.key);
@@ -580,9 +700,10 @@ main { padding: 40px 0 80px; min-width: 0; }
     for (const item of items) {
       const row = el("li", "orow");
       item.row = row;
-      const vu = el("div", "vu", item.product ?? "?");
-      vu.append(el("small", "", "V × U"));
-      vu.setAttribute("aria-label", "Verification effort times undo cost: " + (item.product ?? "unknown"));
+      const figure = el("div", "vu", item.product ?? "?");
+      figure.append(el("small", "", "V × U"));
+      figure.setAttribute("aria-hidden", "true");
+      const vu = add(el("div"), figure, hidden(vuWords(item)));
       const name = el("div");
       item.overviewState = el("span", "state");
       add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
@@ -641,7 +762,6 @@ main { padding: 40px 0 80px; min-width: 0; }
       filters.append(add(el("label", "toggle"), brokenToggle, document.createTextNode("Broken / conflicting only (" + brokenCount + ")")));
     }
     filterStatus.id = "filter-status";
-    filterStatus.setAttribute("aria-live", "polite");
     add(page, add(filters, filterStatus));
   }
   if (total) page.append(el("p", "key", "V × U is verification effort times undo cost, each scored 1 to 3; it sets the order within a group. Leverage, impact times confidence divided by V × U, is shown for reference."));
@@ -761,6 +881,10 @@ main { padding: 40px 0 80px; min-width: 0; }
     return node;
   };
 
+  // An image address can carry a long access token in its query, and an embedded
+  // image is nothing but data. Neither is worth reading, so the page shows the part that names the file.
+  const shortAddress = (address) => address.startsWith("data:") ? "embedded image data"
+    : address.split("?")[0] + (address.includes("?") ? "?…" : "");
   const screenSide = (side, caption, after, marks) => {
     const box = el("div", after ? "screen after" : "screen");
     const data = side && typeof side === "object" ? side : {};
@@ -773,11 +897,13 @@ main { padding: 40px 0 80px; min-width: 0; }
       img.alt = caption + " screenshot from the pull request";
       img.referrerPolicy = "no-referrer";
       img.loading = "lazy";
-      img.addEventListener("error", () => img.replaceWith(el("p", "empty", "The screenshot did not load here. Its address is below.")));
+      const embedded = source.startsWith("data:");
+      img.addEventListener("error", () => img.replaceWith(el("p", "empty",
+        embedded ? "The embedded screenshot did not load." : "The screenshot did not load here. Its address is below.")));
       img.src = source;
       box.append(img);
-      if (!source.startsWith("data:")) {
-        const addr = link(source, source);
+      if (!embedded) {
+        const addr = link(shortAddress(source), source);
         addr.classList.add("addr");
         box.append(addr);
       }
@@ -786,7 +912,7 @@ main { padding: 40px 0 80px; min-width: 0; }
         const node = widget(item, marks);
         if (node) box.append(node);
       }
-      if (shot) box.append(el("span", "addr", "Screenshot address not shown as an image: " + shot));
+      if (shot) box.append(el("span", "addr", "Screenshot not shown as an image: " + shortAddress(shot)));
     }
     return box;
   };
@@ -905,11 +1031,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const choices = new Map();
   const verdictBox = el("textarea");
-  const progress = document.getElementById("bar-progress");
-  const barCopy = document.getElementById("bar-copy");
-  const barCue = document.getElementById("bar-cue");
   const copy = el("button", "copy");
-  const status = el("span", "meta");
+  const status = el("span", "meta copy-status");
   const railStates = new Map();
   let lastCopied = "";
   let visible = ordered;
@@ -919,18 +1042,21 @@ main { padding: 40px 0 80px; min-width: 0; }
     const start = after ? visible.indexOf(after) + 1 : 0;
     return visible.slice(start).concat(visible.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
   };
-  // Both regions are announced when their text changes, so a keystroke that changes nothing writes nothing.
-  const say = (node, text) => { if (node.textContent !== text) node.textContent = text; };
+  // The resting words are read on screen, not announced: only a result of something the operator did is spoken.
   const restingCue = () => {
-    say(barCue, storage ? "Kept in this browser until you copy them" : "This browser keeps nothing: copy before closing");
-    say(status, storage
+    barCue.textContent = storage ? "Kept in this browser until you copy them" : "This browser keeps nothing: copy before closing";
+    status.textContent = storage
       ? "Your choices stay in this browser, so a reload loses nothing. Copy them into the conversation when you are done."
-      : "This browser keeps nothing, so copy your Verdicts before closing the page.");
+      : "This browser keeps nothing, so copy your verdicts before closing the page.";
   };
   const labelCopy = () => {
     clearTimeout(flashTimer);
     const count = verdictBox.value ? verdictBox.value.split("\n").length : 0;
-    barCopy.textContent = copy.textContent = "Copy Verdicts (" + count + ")";
+    for (const button of [barCopy, copy]) {
+      // A narrow bar drops the long half of the label, so the count still fits beside the other controls.
+      button.replaceChildren("Copy", el("span", "long", " verdicts"), " (" + count + ")");
+      button.setAttribute("aria-disabled", String(count === 0));
+    }
   };
   // A posted Notes line wraps the note in double quotes, so one inside it
   // would end the line early for whoever parses it. The note is the last
@@ -960,19 +1086,37 @@ main { padding: 40px 0 80px; min-width: 0; }
       const choice = choices.get(item);
       const word = choice.verdict ? VERDICTS[choice.verdict] : "";
       if (word) decided += 1;
-      item.overviewState.textContent = word ? "Your Verdict: " + word : "";
+      item.overviewState.textContent = word ? "Your verdict: " + word : "";
+      // A collapsed card hides its verdict buttons, so the badge shows what was chosen or recalled.
+      item.badge.textContent = item.overviewState.textContent;
+      item.badge.hidden = !(word && item.collapsed);
       const railState = railStates.get(item);
       if (railState) {
         railState.textContent = word || "Undecided";
         railState.classList.toggle("done", Boolean(word));
       }
     }
-    // Next follows the filter: the first undecided pull request still showing, or the Verdicts when none is.
+    // Next follows the filter: the first undecided pull request still showing, or the verdicts when none is.
     const next = nextUndecided(null);
     const where = next ? "Next ↓" : "Verdicts ↓";
     progress.replaceChildren();
     if (total) add(progress, el("span", "long", decided + " of " + total + " decided · " + where), el("span", "short", decided + "/" + total + " · " + where));
-    progress.href = "#" + (next ? next.id : "verdicts");
+    progressTarget = next ? next.id : "verdicts";
+    progress.href = "#" + progressTarget;
+  };
+  let progressTarget = "verdicts";
+  progress.addEventListener("click", () => reveal(progressTarget));
+  const setCollapsed = (item, collapsed) => {
+    item.collapsed = collapsed;
+    for (const part of item.folded) part.hidden = collapsed;
+    item.toggle.setAttribute("aria-expanded", String(!collapsed));
+    item.badge.hidden = !(collapsed && choices.get(item).verdict);
+  };
+  const FACTOR_WORDS = { impact: "Impact", confidence: "Confidence", verify: "Verification effort", undo: "Undo cost" };
+  const pill = (name, shown, spoken, three) => {
+    const face = add(el("span", "", name + " "), el("b", "", shown));
+    face.setAttribute("aria-hidden", "true");
+    return add(el("span", three ? "pill three" : "pill"), face, hidden(spoken));
   };
   const choose = (item, key) => {
     const choice = choices.get(item);
@@ -994,12 +1138,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     item.heading = title;
     add(title, el("span", "rank", item.rank), document.createTextNode(str(pr.title) || "Untitled"));
     const verdict = el("div", "verdict");
+    verdict.id = item.id + "-verdict";
     const seg = el("div", "seg");
     seg.setAttribute("role", "group");
     seg.setAttribute("aria-label", "Verdict for " + label(pr));
     const notes = el("input", "notes");
     notes.type = "text";
-    notes.placeholder = "Notes for the Verdict";
+    notes.placeholder = "Notes for the verdict";
     notes.setAttribute("aria-label", "Notes for " + label(pr));
     const hint = el("span", "hint", "Pick a verdict to include this note");
     hint.id = item.id + "-hint";
@@ -1022,32 +1167,61 @@ main { padding: 40px 0 80px; min-width: 0; }
       refreshVerdicts();
     });
     add(verdict, seg, notes, hint);
-    add(head, title, verdict);
-    // The risk the Overview showed stays in view where the Verdict is chosen.
+    // A routine card, one under the hold line or from a dependency bot that meets
+    // no hold test and breaks no hold, starts collapsed. Its title, rank, chips,
+    // and factors stay in view; the toggle opens the verdict controls and the rest.
+    const body = el("div", "block-body");
+    body.id = item.id + "-body";
+    item.folded = [verdict, body];
+    item.collapsed = false;
+    item.badge = chip("verdict-badge");
+    item.badge.hidden = true;
+    const routine = (item.group === "under" || item.group === "bots") && !item.hold && !item.violation;
+    if (routine) {
+      item.toggle = el("button", "card-toggle", "Details");
+      item.toggle.type = "button";
+      item.toggle.append(hidden(" for " + label(pr)));
+      item.toggle.setAttribute("aria-controls", verdict.id + " " + body.id);
+      item.toggle.addEventListener("click", () => setCollapsed(item, !item.collapsed));
+      item.collapsed = true;
+      for (const part of item.folded) part.hidden = true;
+      item.toggle.setAttribute("aria-expanded", "false");
+    }
+    add(head, title, item.toggle, verdict);
+    // The risk the Overview showed stays in view where the verdict is chosen.
     const meta = el("div", "block-meta");
-    const vu = chip("vu-chip", "V × U " + (item.product ?? "?"));
-    vu.setAttribute("aria-label", "Verification effort times undo cost: " + (item.product ?? "unknown"));
-    add(meta, vu);
+    const vuFace = el("span", "", "V × U " + (item.product ?? "?"));
+    vuFace.setAttribute("aria-hidden", "true");
+    add(meta, add(chip("vu-chip"), vuFace, hidden(vuWords(item))), item.badge);
     if (item.sensitiveKinds.length) meta.append(add(chip("alert"), mark("seal"), document.createTextNode("Sensitive kind: " + item.sensitiveKinds.join(", "))));
     add(meta, ...readiness(item));
     const facts = el("span", "meta", [label(pr), str(pr.owner) || "No owner", sizeText(pr), str(pr.status)].filter(Boolean).join(" · ") + " · ");
     facts.append(link("Open on GitHub", pr.url));
-    add(article, head, add(meta, facts));
+    const factors = el("div", "card-factors");
+    for (const [key, tint] of SCORE_NAMES) {
+      const value = item[key];
+      factors.append(pill(key, value ?? "?", FACTOR_WORDS[key] + (value ? " " + value + " of 3. " : " unknown. "), tint && value === 3));
+    }
+    const leverage = item.leverage === null ? null : item.leverage.toFixed(2);
+    factors.append(pill("leverage", leverage ?? "?", "Leverage " + (leverage ?? "unknown") + ".", false));
+    add(article, head, add(meta, facts), factors, body);
+    // Dispatch Paper is for words someone wrote; the page's own notice about a moving target is plain.
     if (item.group === "flight") {
-      article.append(add(el("p", "xnote"), el("b", "", "In flight"),
+      body.append(add(el("p", "sysnote"), el("b", "", "In flight"),
         document.createTextNode("A worker may still be updating this pull request, so its head can move after you decide. Leave it for its owner unless you want to step in early.")));
     }
-    article.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
+    body.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
     for (const note of notesFor(pr)) {
       const box = el("p", "xnote");
       add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
-      article.append(box);
+      body.append(box);
     }
 
     const cols = el("div", "cols");
     const main = el("div", "main-col");
     const changes = el("section");
-    changes.append(el("h3", "sec-title", "What is different for " + (str(pr.audience) ? "a " + str(pr.audience) : "a user")));
+    const audience = str(pr.audience) || "user";
+    changes.append(el("h3", "sec-title", "What is different for " + (/^[aeiou]/i.test(audience) ? "an " : "a ") + audience));
     let shown = false;
     if (pr.situations && list(pr.situations.rows).length) { changes.append(situations(pr.situations)); shown = true; }
     if (hasScreens(pr.screens)) {
@@ -1091,7 +1265,7 @@ main { padding: 40px 0 80px; min-width: 0; }
       panel(item.undo === 3 ? "If it is wrong · a revert does not undo it" : "If it is wrong", pr.ifWrong, item.undo === 3),
       panel("What proves it", pr.proof), panel("Asked for?", pr.asked));
     add(cols, main, side);
-    article.append(cols);
+    body.append(cols);
     return article;
   };
   for (const item of ordered) page.append(block(item));
@@ -1127,20 +1301,17 @@ main { padding: 40px 0 80px; min-width: 0; }
   mergedBox.id = "merged";
   mergedDrawer = el("details", "drawer");
   mergedDrawer.open = mergedTotal <= MANY;
-  const mergedCounts = [changedAfter.length + " changed after your Verdict", mergedWithout.length + " merged without you"];
+  const mergedCounts = [changedAfter.length + " changed after your verdict", mergedWithout.length + " merged without you"];
   if (autoMerged.length) mergedCounts.push(autoMerged.length + " auto-merged as routine");
   add(mergedDrawer, el("summary", "", plural(mergedTotal, "merged pull request", "merged pull requests") + ": " + mergedCounts.join(", ")),
-    mergedList("Changed after your Verdict", changedAfter, "summary", "None changed after your Verdict.", true),
+    mergedList("Changed after your verdict", changedAfter, "summary", "None changed after your verdict.", true),
     mergedList("Merged without you", mergedWithout, "reason", "None merged without you.", true),
     autoMerged.length ? mergedList("Auto-merged as routine", autoMerged, "reason", "", false) : null);
   add(mergedBox, el("h2", "", "Merged recently"), el("p", "meta", str(merged.window) || "The window was not stated."), mergedDrawer);
-  // A jump that did not come from a link on this page, such as a typed address or Back, finds the drawer closed and nothing to scroll to.
-  // The same goes for Back to a card the filter has since hidden: the filter gives way to the address.
+  // A jump that did not come from a link on this page, such as a typed address or Back, can land on a closed drawer,
+  // a collapsed card, or a card the filter has since hidden. Whatever was in the way gives way to the address.
   const arrive = () => {
-    const id = window.location.hash.slice(1);
-    const card = ordered.find((item) => item.id === id && item.node.hidden);
-    if (card) clearFilter();
-    const target = card ? card.node : reveal(id);
+    const target = reveal(window.location.hash.slice(1));
     if (target) target.scrollIntoView({ block: "start" });
   };
   window.addEventListener("hashchange", arrive);
@@ -1149,27 +1320,29 @@ main { padding: 40px 0 80px; min-width: 0; }
   box.id = "verdicts";
   const boxHead = el("div", "verdicts-head");
   copy.type = "button";
-  status.setAttribute("aria-live", "polite");
-  // The bar hides its cue on a narrow screen, so the button itself answers for a moment.
+  // The bar hides its cue on a narrow screen, so both buttons answer for a moment.
   const answer = (short, cue, long) => {
     barCue.textContent = cue;
     status.textContent = long;
-    barCopy.textContent = short;
+    announce(long);
+    barCopy.textContent = copy.textContent = short;
     clearTimeout(flashTimer);
     flashTimer = setTimeout(labelCopy, 2000);
   };
   const copyVerdicts = async () => {
-    if (!verdictBox.value) { answer("None chosen yet", "No Verdicts chosen yet.", "No Verdicts chosen yet."); return; }
+    if (!verdictBox.value) { answer("None chosen yet", "No verdicts chosen yet.", "No verdicts chosen yet. Pick one on a card first."); return; }
     const text = verdictBox.value;
     try {
       await navigator.clipboard.writeText(text);
       lastCopied = text;
-      // A Verdict changed while the browser was still copying leaves the resting cue in place.
+      // A verdict changed while the browser was still copying leaves the resting cue in place.
       if (verdictBox.value !== text) return;
       answer("Copied", "Copied. Paste them into the conversation.", "Copied. Paste them into the conversation."
         + (quotesChanged ? " Double quotes in your notes became single quotes, so each Notes line stays whole." : ""));
     } catch (error) {
-      verdictBox.focus();
+      // The operator may be far up the page, so the text they must copy by hand comes to them.
+      box.scrollIntoView({ block: "start" });
+      verdictBox.focus({ preventScroll: true });
       verdictBox.select();
       answer("Copy failed", "Copy did not work here.", "Copy did not work here. The text is selected; copy it by hand.");
     }
@@ -1177,14 +1350,16 @@ main { padding: 40px 0 80px; min-width: 0; }
   copy.addEventListener("click", copyVerdicts);
   barCopy.addEventListener("click", copyVerdicts);
   verdictBox.readOnly = true;
-  verdictBox.setAttribute("aria-label", "Chosen Verdicts, one line per pull request");
-  const keys = el("p", "keys");
-  for (const [k, what] of [["j", "next"], ["k", "previous"], ["n", "next undecided"], ["m", "merge"], ["c", "request changes"], ["d", "defer"], ["x", "not applicable"]]) {
-    add(keys, el("kbd", "", k), document.createTextNode(" " + what + "   "));
-  }
-  add(boxHead, el("h2", "", "Your Verdicts"), copy, status);
-  add(box, boxHead, verdictBox, keys);
-  add(page, box, mergedBox, progressBox);
+  verdictBox.setAttribute("aria-label", "Chosen verdicts, one line per pull request");
+  verdictBox.placeholder = "No verdicts chosen yet. Pick one on a card and its line appears here.";
+  const boxHeading = el("h2", "", "Your verdicts");
+  boxHeading.tabIndex = -1;
+  add(boxHead, boxHeading, copy, status);
+  add(box, boxHead, verdictBox);
+  // A round with no pull requests has nothing to decide, so it shows no verdicts box and no round controls.
+  if (total) page.append(box);
+  else hideRoundControls();
+  add(page, mergedBox, progressBox);
   window.addEventListener("beforeunload", (event) => {
     if (verdictBox.value && verdictBox.value !== lastCopied) {
       event.preventDefault();
@@ -1217,11 +1392,12 @@ main { padding: 40px 0 80px; min-width: 0; }
     return frag;
   };
   const railLinks = el("div", "r-links");
-  railLinks.append(inPage("Your Verdicts", "verdicts"));
+  if (total) railLinks.append(inPage("Your verdicts", "verdicts"));
   if (mergedTotal) railLinks.append(inPage("Merged recently", "merged"));
-  add(rail, ...GROUPS.map(railGroup), railLinks);
+  if (railLinks.children.length) add(rail, ...GROUPS.map(railGroup), railLinks);
+  else rail.hidden = true;
 
-  // Keys, the rail's marker, and Next all work on what the filter leaves showing: a hidden block measures as zero.
+  // Keys, the active card, and Next all work on what the filter leaves showing: a hidden block measures as zero.
   const current = () => {
     const line = window.innerHeight * 0.3;
     let found = null;
@@ -1230,27 +1406,58 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     return found;
   };
-  // A Verdict key acts only on a block that still spans that line, so the
-  // closing sections and the Verdicts box below the last block set nothing.
+  // A card counts as on the reading line only while it still spans it, so the
+  // closing sections and the verdicts box below the last card set nothing.
   const spansLine = (item) => Boolean(item) && item.node.getBoundingClientRect().bottom > window.innerHeight * 0.3;
+  const inView = (item) => {
+    const edges = item.node.getBoundingClientRect();
+    return !item.node.hidden && edges.bottom > bar.offsetHeight && edges.top < window.innerHeight;
+  };
+  // The page has one active card, the one the verdict keys act on. A card that
+  // holds the focus wins while any of it is in view; scrolling it away ends its
+  // claim. Otherwise the active card is the one on the reading line.
+  let focused = null;
+  const activeCard = () => {
+    if (focused && !inView(focused)) focused = null;
+    if (focused) return focused;
+    const here = current();
+    return spansLine(here) ? here : null;
+  };
+  let marked = null;
+  const markActive = () => {
+    const here = activeCard();
+    if (here === marked) return;
+    if (marked) {
+      marked.node.classList.toggle("active", false);
+      marked.railLink.removeAttribute("aria-current");
+    }
+    if (here) {
+      here.node.classList.toggle("active", true);
+      here.railLink.setAttribute("aria-current", "true");
+    }
+    marked = here;
+  };
+  document.addEventListener("focusin", (event) => {
+    const card = event.target instanceof Element ? event.target.closest("article") : null;
+    focused = (card && cards.get(card.id)) || null;
+    markActive();
+  });
+  let queued = false;
+  window.addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    window.requestAnimationFrame(() => {
+      queued = false;
+      markActive();
+    });
+  }, { passive: true });
   const go = (item) => {
     if (!item) return;
+    reveal(item.id);
     item.node.scrollIntoView({ block: "start" });
     item.heading.focus({ preventScroll: true });
   };
-  let marked = null;
-  const markCurrent = () => {
-    const here = current();
-    if (here === marked) return;
-    if (marked) marked.railLink.setAttribute("aria-current", "false");
-    if (here) here.railLink.setAttribute("aria-current", "true");
-    marked = here;
-  };
-  if ("IntersectionObserver" in window) {
-    const watcher = new IntersectionObserver(markCurrent, { rootMargin: "0px 0px -70% 0px" });
-    for (const item of ordered) watcher.observe(item.node);
-  }
-  function applyFilter() {
+  function applyFilter(quiet) {
     const filtered = filter.tab !== "all" || filter.broken;
     visible = ordered.filter((item) => (filter.tab === "all" || item.tab === filter.tab) && (!filter.broken || item.broken));
     const showing = new Set(visible);
@@ -1264,37 +1471,54 @@ main { padding: 40px 0 80px; min-width: 0; }
     for (const [key, button] of tabButtons) button.setAttribute("aria-pressed", String(key === filter.tab));
     filterEmpty.hidden = !(filtered && visible.length === 0);
     filterStatus.textContent = filtered ? "Showing " + visible.length + " of " + total + " pull requests." : "";
+    if (!quiet) announce(filterStatus.textContent || "Showing all " + plural(total, "pull request", "pull requests") + ".");
     refreshProgress();
-    markCurrent();
+    markActive();
   }
-  const decide = (key) => (here) => spansLine(here) && choose(here, key);
-  const KEY_ACTIONS = {
+  const MOVES = {
     j: (here) => go(visible[Math.min(visible.indexOf(here) + 1, visible.length - 1)]),
     k: (here) => go(visible[Math.max(visible.indexOf(here) - 1, 0)]),
-    n: (here) => go(nextUndecided(here)),
-    m: decide("merge"),
-    c: decide("changes"),
-    d: decide("defer"),
-    x: decide("na"),
+    // With nothing left to decide, n goes on to the verdicts.
+    n: (here) => {
+      const next = nextUndecided(here);
+      if (next) return go(next);
+      box.scrollIntoView({ block: "start" });
+      boxHeading.focus({ preventScroll: true });
+    },
   };
+  const VERDICT_KEYS = { m: "merge", c: "changes", d: "defer", x: "na" };
   document.addEventListener("keydown", (event) => {
-    const action = KEY_ACTIONS[event.key];
-    if (!action || event.metaKey || event.ctrlKey || event.altKey || !visible.length) return;
-    if (event.target instanceof Element && event.target.closest('input:not([type="checkbox"]), textarea, select, [contenteditable]')) return;
+    if (!shortcutsActive || event.metaKey || event.ctrlKey || event.altKey || !visible.length) return;
+    const move = Object.hasOwn(MOVES, event.key) ? MOVES[event.key] : null;
+    const verdict = Object.hasOwn(VERDICT_KEYS, event.key) ? VERDICT_KEYS[event.key] : null;
+    if (!move && !verdict) return;
+    const target = event.target instanceof Element ? event.target : null;
+    // No key acts while the operator is typing or choosing from a list.
+    if (target && target.closest('input:not([type="checkbox"]), textarea, select, [contenteditable]')) return;
+    if (move) {
+      event.preventDefault();
+      // Movement starts from the active card, or from the last card passed when the reader is below them all.
+      move(activeCard() || current());
+      return;
+    }
     if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
+    // A letter pressed on a button, link, or disclosure belongs to that control, and a collapsed card shows nothing to decide on.
+    if (target && target.closest("button, a, summary")) return;
+    const here = activeCard();
+    if (!here || here.collapsed) return;
     event.preventDefault();
-    action(current());
+    choose(here, verdict);
+    announce(choices.get(here).verdict ? VERDICTS[verdict] + " set for " + label(here.pr) + "." : "Verdict cleared for " + label(here.pr) + ".");
   });
 
   // Anchor jumps and the rail clear the sticky bar at whatever height it wraps to.
-  const bar = document.getElementById("bar");
   const fitBar = () => root.style.setProperty("--bar-h", bar.offsetHeight + "px");
   if ("ResizeObserver" in window) new ResizeObserver(fitBar).observe(bar);
   else window.addEventListener("resize", fitBar);
 
   restingCue();
   refreshVerdicts();
-  applyFilter();
+  applyFilter(true);
   fitBar();
   arrive();
 })();

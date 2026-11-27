@@ -139,6 +139,11 @@ looked" surface. GitHub Releases mirror its entries.
   `docs/assets/routing-table.svg`, `GLOSSARY.md`, and
   `automations/sessions-audit.md`, and remove retired `Coordinated batch`
   clauses from `managing-issues`.
+- `repo-captain` now forbids editing repository files, committing, pushing, or
+  opening pull requests from the Captain's own worktree, keeping that
+  persistent checkout clean for coordination while allowing Captain-authored
+  changes (such as setup config or revert pull requests) from a separate
+  dedicated worktree or via an Executor.
 - Port `evals/reviewing-prs/` onto the canonical Claude-only Promptfoo Skill
   Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
   `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Git repo,

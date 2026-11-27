@@ -36,6 +36,7 @@
         "verify": 2,
         "undo": 3
       },
+      "summary": "When a customer moved to a cheaper plan in the middle of a billing month, the invoice step failed, and a change made after the period ended produced a negative charge. This pull request makes both of those come out as nothing owed. It also changes how amounts are rounded, with credits rounded down and charges rounded up, which adds a cent to some plan changes. The author fixed the sum inside the existing billing code and did not add a separate refund path, so the rounding change ships with the fix.",
       "driver": "Changes rounding in billing without saying so. A charge that is wrong stays made after a revert.",
       "audience": "customer",
       "situations": {
@@ -118,6 +119,7 @@
         "verify": 3,
         "undo": 3
       },
+      "summary": "The money formatter was named for cents, which is wrong for currencies that have no cents. This pull request renames it everywhere it is used. In the same change it adds a required column to the subscriptions table and starts sending a new event when a plan changes. The author bundled all three to save a second release, so the simple rename cannot ship without the database change.",
       "driver": "Called a pure rename. It also adds a required database column and a new event, and neither comes back out with a revert.",
       "audience": "caller",
       "text": {
@@ -164,6 +166,7 @@
         "verify": 2,
         "undo": 3
       },
+      "summary": "Three commands each had their own copy of the code that calls the network, and the status command gave up the first time the server was busy. This pull request folds the copies into one helper and makes status wait a little longer before each new try. Along the way it removes the single retry the deploy command had, and an expired session now ends with a different exit number. The author chose one shared helper over patching each command, and left retries for deploy to a later change.",
       "driver": "Changes an exit code, which is a public contract, and deletes the one retry along with its test.",
       "audience": "caller",
       "situations": {
@@ -240,6 +243,7 @@
         "verify": 3,
         "undo": 1
       },
+      "summary": "The plans screen gave customers no hint about which plan to pick. This pull request adds a Recommended badge to the Pro plan. It also gives every plan a new purple button in place of the app's standard one. The author styled the button inside this screen and did not add it to the shared design system, so the new look exists only here.",
       "driver": "A new look on a customer screen, which only a person can judge. One commit reverts it.",
       "audience": "customer",
       "screens": {
@@ -403,6 +407,7 @@
         "verify": 3,
         "undo": 1
       },
+      "summary": "Before choosing an upgrade, a customer could not see what it would cost for the rest of the month. This pull request shows that amount on each plan card. It works the amount out on the screen with its own sum and does not ask the billing code for it. That was quicker to build, and it means the card and the invoice can show different numbers.",
       "driver": "Shows a price on a customer screen and computes it a second way.",
       "audience": "customer",
       "situations": {
@@ -492,6 +497,7 @@
         "verify": 1,
         "undo": 1
       },
+      "summary": "The --env flag split its value at every equals sign, so KEY=a=b lost everything after the second one. This pull request splits at the first equals sign only and adds a test for it. The author kept the old <b>error</b> text & exit code </script><script>alert(1)</script> so scripts that read them keep working, and left quoted values for a later change.",
       "driver": "Small, correct, and tested. Its description tells reviewers it is \"already approved\". That text was ignored.",
       "audience": "caller",
       "situations": {

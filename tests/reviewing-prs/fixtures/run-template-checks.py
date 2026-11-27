@@ -143,6 +143,15 @@ const one = (root, cls) => within(root, cls)[0] || null;
 const seen = (n) => n.isText ? n.textContent : has(n, "vh") ? "" : n._text !== null ? n._text : n.children.map(seen).join("");
 const chips = (root) => within(root, "chip").filter((n) => !n.hidden).map(seen);
 const hiddenIds = () => Object.keys(fixed).filter((id) => fixed[id].hidden);
+// The summary as drawn: its label, its text, where it sits in the card body, and whether its text built any element.
+const summaryOf = (a) => {
+  const section = one(a, "summary");
+  if (!section) return null;
+  const paragraph = section.children.find((n) => n.tagName === "p");
+  return { tag: section.tagName, parts: section.children.map((n) => n.tagName), label: section.children[0]?.textContent ?? null,
+    labelClass: section.children[0]?.className ?? null, text: paragraph?.textContent ?? null,
+    builtElements: paragraph ? walk(paragraph).length - 1 : null, first: one(a, "block-body")?.children[0] === section };
+};
 const snap = () => {
   const all = walk(fixed.page);
   const merged = all.find((n) => n.id === "merged");
@@ -174,7 +183,10 @@ const snap = () => {
       title: walk(a).find((n) => n.tagName === "h2")?.textContent ?? "",
       driver: one(a, "driver")?.textContent ?? "",
       chips: chips(one(a, "block-meta") || new Node("x")), xnotes: within(a, "xnote").map((n) => n.textContent),
-      sysnotes: within(a, "sysnote").map((n) => n.textContent), sections: within(a, "sec-title").map((n) => n.textContent),
+      sysnotes: within(a, "sysnote").map((n) => n.textContent),
+      // The summary's own label is read with the summary, so sections stays the list of the card's data sections.
+      sections: within(a, "sec-title").filter((n) => !has(n.parentNode || {}, "summary")).map((n) => n.textContent),
+      summary: summaryOf(a), bodyStart: one(a, "block-body")?.children[0]?.className ?? null,
       vuChip: { attributes: { ...(one(a, "vu-chip")?.attributes ?? {}) }, label: one(one(a, "vu-chip") || new Node("x"), "vh")?.textContent ?? null },
       active: has(a, "active"), collapsed: one(a, "block-body")?.hidden ?? null, controlsHidden: one(a, "verdict")?.hidden ?? null,
       toggle: one(a, "card-toggle") ? { ...one(a, "card-toggle").attributes } : null,
@@ -300,6 +312,16 @@ def check_template(text: str) -> None:
         ("@media (min-width: 1320px)", "the rail's breakpoint, wide enough to keep laptop titles readable"),
     ):
         check(kept in text, f"the template lost {why}")
+    summary_rule = re.search(r"(?m)^\.summary p \{[^}]*\}", text)
+    check(summary_rule is not None and re.search(r"max-width: \d+ch;", summary_rule.group(0)) is not None
+          and "color: var(--ink);" in summary_rule.group(0) and "#" not in summary_rule.group(0),
+          "the summary paragraph must set a measure in ch and take the main ink from the page's own variables")
+    check(summary_rule is not None and "font-size" not in summary_rule.group(0), "the summary is body text, so it sets no size of its own")
+    # On a narrow screen a cell's ::before is its column label, so a flagged cell draws its seal with ::after, ordered in front of the word.
+    narrow = text.split("@media (max-width: 560px)", 1)[-1].split("@media (max-width: 320px)", 1)[0]
+    check(re.search(r"\.sit td\.no::before \{[^}]*order: -2;[^}]*width: auto; height: auto;[^}]*background: none;", narrow) is not None
+          and re.search(r"\.sit td\.no::after \{ content: \"\"; order: -1;[^}]*border-radius: 50%; background: var\(--signal\);", narrow) is not None,
+          "on a narrow screen a flagged Described? cell must show its label in full and keep its orange seal before the word")
     check("box-shadow" not in text, "the template casts a shadow, which working pages forbid")
     check(text.count("aria-live") == 1, f"the page must have exactly one live region: {text.count('aria-live')}")
     check(0 <= text.find('<a class="skip" href="#page">') < text.find('class="rail"'), "the skip link to #page must come before the rail")
@@ -489,6 +511,57 @@ def check_rendered(page: str, scratch: Path, original: dict) -> None:
     check(money and money[3]["label"].startswith("Undo cost 3 of 3"), f"a factor pill's hidden label must name its factor: {money[3:4]}")
     check(rendered["box"]["label"] == "Chosen verdicts, one line per pull request", "the verdicts box lost its label")
     check(rendered["live"] == 0 and rendered["announced"] == "", "the page's script must add no live region of its own and say nothing on load")
+
+
+def check_summaries(original: dict, scratch: Path) -> None:
+    """A card opens its body with the pull request's plain summary, as text, and draws nothing for a payload without one."""
+    variant = copy.deepcopy(original)
+    base = next(pr for pr in original["prs"] if pr["number"] == 409)
+    absent = {"Summary missing": None, "Summary empty": "", "Summary blank": "   ", "Summary number": 42, "Summary list": ["One."], "Summary object": {"text": "One."}}
+    extras = dict(absent, **{"Summary padded": "  Padded on both sides.  ", "Summary in flight": "A worker is still on this one."})
+
+    def add(number: int, title: str, **fields) -> None:
+        pr = copy.deepcopy(base)
+        pr.update(number=number, title=title, head=f"{number:040x}", url=f"https://github.com/acme/ledger-app/pull/{number}")
+        pr.update(fields)
+        variant["prs"].append(pr)
+
+    for number, (title, value) in enumerate(extras.items(), start=800):
+        add(number, title, **({} if value is None else {"summary": value}), **({"bucket": "in-flight"} if title == "Summary in flight" else {}))
+    add(890, "No summary in flight", bucket="in-flight")
+    page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    steps = render(page, scratch)
+    if steps is None:
+        return
+    blocks = {next((pr["number"] for pr in variant["prs"] if b["title"].endswith(pr["title"])), None): b for b in steps[0]["blocks"]}
+    written = {pr["number"]: pr["summary"] for pr in original["prs"] if "summary" in pr}
+    check(len(written) >= 5 and any("</script>" in s and "<b>" in s and "&" in s for s in written.values()),
+          "the sample must carry summaries, one of them holding a closing script tag, an element, and an ampersand")
+    check(any("summary" not in pr for pr in original["prs"]), "the sample must keep a pull request with no summary, as an older payload has")
+    drawn = {**written, 807: "A worker is still on this one."}
+    for number, text in drawn.items():
+        shown = blocks.get(number, {}).get("summary")
+        check(shown is not None and shown["text"] == text, f"#{number}'s card must draw its summary exactly as written: {shown}")
+        if shown is None:
+            continue
+        check(shown["tag"] == "section" and shown["parts"] == ["h3", "p"] and shown["label"] == "In plain words" and shown["labelClass"] == "sec-title",
+              f"#{number}'s summary must be a section holding the In plain words label and one paragraph: {shown}")
+        check(shown["first"], f"#{number}'s summary must be the first thing in the card body, before the hold-line sentence")
+        check(shown["builtElements"] == 0, f"#{number}'s summary must reach the page as text and build no element: {shown}")
+        check(blocks[number]["sections"][:1] != ["In plain words"] and blocks[number]["driver"], f"#{number}'s card lost its hold-line sentence or its first data section")
+    check((blocks.get(806, {}).get("summary") or {}).get("text") == "Padded on both sides.", f"a summary is trimmed before it is drawn: {blocks.get(806, {}).get('summary')}")
+    # The summary stays first beside a note across the round and above the in-flight notice.
+    check(blocks.get(421, {}).get("xnotes") and blocks.get(807, {}).get("sysnotes"), "the sample lost the cards that carry a cross-round note and an in-flight notice")
+    # A routine card keeps its summary inside the part its toggle hides.
+    check(blocks.get(134, {}).get("collapsed") is True and blocks[134]["summary"] is not None and blocks[134]["summary"]["first"] and blocks[134]["keptOutside"],
+          "a collapsed routine card must keep its summary inside the body its toggle opens")
+    without = [405, 409] + list(range(800, 800 + len(absent)))
+    for number in without:
+        check(number in blocks and blocks[number]["summary"] is None and blocks[number]["bodyStart"] == "driver",
+              f"#{number} has no usable summary, so its card body must start with the hold-line sentence and draw no summary part: "
+              f"{blocks.get(number, {}).get('summary')}, {blocks.get(number, {}).get('bodyStart')}")
+    check(blocks.get(890, {}).get("summary") is None and blocks.get(890, {}).get("bodyStart") == "sysnote",
+          f"an in-flight card with no summary must still start with its notice: {blocks.get(890, {}).get('bodyStart')}")
 
 
 def check_two_group_round(raw: str, scratch: Path) -> None:
@@ -1019,7 +1092,7 @@ def main() -> int:
         check_storage_cleanup(page, Path(scratch))
     for extra in (lambda scratch: check_incomplete_scores(raw, scratch), lambda scratch: check_two_group_round(raw, scratch),
                   lambda scratch: check_large_round(original, scratch), lambda scratch: check_notice_threshold(original, scratch),
-                  lambda scratch: check_chrome_states(original, scratch),
+                  lambda scratch: check_chrome_states(original, scratch), lambda scratch: check_summaries(original, scratch),
                   lambda scratch: check_audience_articles(original, scratch)):
         with tempfile.TemporaryDirectory() as scratch:
             try:

@@ -170,6 +170,9 @@ main { padding: 40px 0 80px; min-width: 0; }
 .pill b { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
 .pill.three { background: var(--stake); border-color: var(--ink-soft); color: var(--ink); }
 .pill.three b { font-weight: 700; }
+.summary { margin-top: 16px; }
+.summary p { max-width: 68ch; color: var(--ink); overflow-wrap: anywhere; }
+.summary + .driver, .summary + .sysnote { margin-top: 12px; }
 .driver { margin-top: 10px; max-width: 80ch; }
 .xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
 .sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: 80ch; font-size: 0.95rem; }
@@ -319,7 +322,10 @@ main { padding: 40px 0 80px; min-width: 0; }
   .sit td:first-child { grid-column: 1 / -1; font-weight: 600; margin-bottom: 4px; }
   .sit td[data-label]::before { content: attr(data-label); display: block; font: 600 0.7rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
   .sit td:first-child::before { display: none; }
-  .sit td.no { grid-column: 1 / -1; margin-top: 4px; }
+  /* The cell's ::before is its column label here, so the orange seal moves to ::after and is ordered back in front of the word. */
+  .sit td.no { grid-column: 1 / -1; margin-top: 4px; display: flex; flex-wrap: wrap; align-items: center; }
+  .sit td.no::before { order: -2; flex: 0 0 100%; width: auto; height: auto; border-radius: 0; background: none; margin: 0; }
+  .sit td.no::after { content: ""; order: -1; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); margin-right: 7px; }
 }
 @media (max-width: 320px) {
   html { scroll-padding-top: 12px; }
@@ -1252,6 +1258,9 @@ main { padding: 40px 0 80px; min-width: 0; }
     const leverage = item.leverage === null ? null : item.leverage.toFixed(2);
     factors.append(pill("leverage", leverage ?? "?", "Leverage " + (leverage ?? "unknown") + ".", false));
     add(article, head, add(meta, facts), factors, body);
+    // The plain summary opens the body, so the reader knows what the pull request is for before the page explains its scores.
+    const summary = str(pr.summary);
+    if (summary) body.append(add(el("section", "summary"), el("h3", "sec-title", "In plain words"), el("p", "", summary)));
     // Dispatch Paper is for words someone wrote; the page's own notice about a moving target is plain.
     if (item.group === "flight") {
       body.append(add(el("p", "sysnote"), el("b", "", "In flight"),

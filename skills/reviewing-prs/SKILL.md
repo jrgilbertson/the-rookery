@@ -274,6 +274,9 @@ For each pull request, establish:
 - **What was read and what was not.** State whether you read the full diff or
   which files were skipped and why, such as a generated lockfile, plus the
   issue and policy files read.
+- **A plain summary.** Last, write the block's `summary` from everything
+  above: the problem, the change, and its tradeoffs, as the reference
+  describes.
 
 Show which hold test a pull request meets. Flag as a finding any open pull
 request in `prs` that meets a hold test yet sits in a merge queue or is ready
@@ -282,7 +285,7 @@ with checks passing without `review:held` (`holdViolation` applies to open
 instead).
 
 Reading is done when every held, unclassified, in-flight, and
-dependency-bot pull request has all ten items above, taken from a diff that
+dependency-bot pull request has all eleven items above, taken from a diff that
 matches its reviewed head.
 
 ## 4. Present the round

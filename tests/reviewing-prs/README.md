@@ -9,7 +9,9 @@ nothing external, and that the page's data block matches the escaped data
 file byte for byte and still parses. It then runs the page's own script in
 Node against a minimal stand-in for the DOM and checks where each pull request
 lands: which side of the hold line, in what order, and whether a sensitive
-kind is named. It also clicks Not applicable on the first block and
+kind is named. It checks that each card opens its body with the pull
+request's summary as text, hostile markup included, and draws nothing for a
+pull request without one. It also clicks Not applicable on the first block and
 checks the Verdict line the page builds. It needs `node` on `PATH`, and it cannot tell whether the page
 looks right.
 

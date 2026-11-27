@@ -19,8 +19,9 @@ settings for the remote worker so a model change in Orca reaches both hosts.
 
 Only the primary host writes `sessions-audit` history in
 `~/.local/state/automation-runs` (both runs and decisions); a paired host only
-reads and returns a summary. This single-writer rule applies to Sessions audit
-only.
+reads and returns a summary. Paired-host automations share this primary-host
+single-writer pattern (see [Shared run state](README.md#shared-run-state));
+other automations run on whichever host fits them best.
 
 Replace `<...>` setup placeholders (`<your repository>`, `<your private
 automation-state repository>`, and, when paired, `<paired host>` and `<existing

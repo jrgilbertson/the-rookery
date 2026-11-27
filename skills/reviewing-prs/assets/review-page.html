@@ -131,7 +131,6 @@ main { padding: 40px 0 80px; min-width: 0; }
 .kind::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); }
 .state:empty { display: none; }
 .ready { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 5px; }
-.ready:empty { display: none; }
 .orow p { font-size: 0.95rem; }
 .scores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 4px; text-align: center; }
 .scores span { border: 1px solid var(--hairline-soft); border-radius: 2px; padding: 3px 0 2px; font-weight: 600; font-size: 0.95rem; }
@@ -422,10 +421,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     // scores. Everything else falls to the hold tests.
     const bucket = str(pr.bucket).toLowerCase();
     const group = bucket === "bot" ? "bots" : bucket === "in-flight" ? "flight" : hold || bucket === "held" ? "hold" : "under";
+    // An unknown word for the checks fails safe: it is shown and counted as broken.
     const checks = str(pr.checks).toLowerCase();
-    return { pr, index, impact, confidence, verify, undo, complete, product, leverage, sensitiveKinds, hold, group, checks,
+    const failing = Boolean(checks) && checks !== "pass" && checks !== "pending";
+    const conflict = pr.conflict === true || str(pr.conflict).toLowerCase() === "true";
+    return { pr, index, impact, confidence, verify, undo, complete, product, leverage, sensitiveKinds, hold, group, checks, failing, conflict,
       tab: group === "bots" || group === "flight" ? group : "ready",
-      broken: checks === "fail" || pr.conflict === true, violation: str(pr.holdViolation) };
+      broken: failing || conflict, violation: str(pr.holdViolation) };
   });
   const byProduct = (a, b) => a.complete - b.complete || b.product - a.product || (b.leverage ?? Infinity) - (a.leverage ?? Infinity) || a.index - b.index;
   const brokenFirst = (a, b) => b.broken - a.broken || byProduct(a, b);
@@ -556,8 +558,8 @@ main { padding: 40px 0 80px; min-width: 0; }
   const readiness = (item) => {
     const chips = [];
     if (item.group === "flight") chips.push(chip("moving", "In flight · moving target"));
-    if (item.checks === "fail") chips.push(chip("bad", "checks fail"));
-    if (item.pr.conflict === true) chips.push(chip("bad", "conflict"));
+    if (item.failing) chips.push(chip("bad", "checks " + item.checks));
+    if (item.conflict) chips.push(chip("bad", "conflict"));
     if (item.checks === "pending") chips.push(chip("", "checks pending"));
     if (item.violation) chips.push(add(chip("alert"), mark("seal"), document.createTextNode("Hold violation: " + item.violation)));
     return chips;
@@ -883,6 +885,12 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const placementText = (item) => {
     const kinds = item.sensitiveKinds.join(", ");
+    // A dependency bot or in-flight pull request keeps its own group, so its line says which hold test it meets, not where it sits.
+    if (item.group === "bots" || item.group === "flight") {
+      if (!item.complete) return "A score is missing, which meets a hold test.";
+      if (!item.hold) return "Meets no hold test, V × U " + item.product + ".";
+      return "Meets a hold test: " + [item.product >= 3 ? "V × U " + item.product : "", kinds ? "sensitive kind " + kinds : ""].filter(Boolean).join(", ") + ".";
+    }
     if (!item.complete) return ["Held because a score is missing.", item.product === null ? "" : "V × U is " + item.product + ".",
       kinds ? "It touches a sensitive kind: " + kinds + "." : ""].filter(Boolean).join(" ");
     if (!item.hold && item.group === "hold") return "Held for review because it carries review:held, though V × U is " + item.product + " and it touches no sensitive kind.";
@@ -910,11 +918,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     const start = after ? visible.indexOf(after) + 1 : 0;
     return visible.slice(start).concat(visible.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
   };
+  // Both regions are announced when their text changes, so a keystroke that changes nothing writes nothing.
+  const say = (node, text) => { if (node.textContent !== text) node.textContent = text; };
   const restingCue = () => {
-    barCue.textContent = storage ? "Kept in this browser until you copy them" : "This browser keeps nothing: copy before closing";
-    status.textContent = storage
+    say(barCue, storage ? "Kept in this browser until you copy them" : "This browser keeps nothing: copy before closing");
+    say(status, storage
       ? "Your choices stay in this browser, so a reload loses nothing. Copy them into the conversation when you are done."
-      : "This browser keeps nothing, so copy your Verdicts before closing the page.";
+      : "This browser keeps nothing, so copy your Verdicts before closing the page.");
   };
   const labelCopy = () => {
     clearTimeout(flashTimer);
@@ -932,6 +942,8 @@ main { padding: 40px 0 80px; min-width: 0; }
       const choice = choices.get(item);
       const typed = choice.notes.value;
       choice.hint.hidden = Boolean(choice.verdict) || !typed.trim();
+      if (choice.hint.hidden) choice.notes.removeAttribute("aria-describedby");
+      else choice.notes.setAttribute("aria-describedby", choice.hint.id);
       if (!choice.verdict) continue;
       if (typed.includes('"')) quotesChanged = true;
       lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + VERDICTS[choice.verdict].toLowerCase() + " | " + cleanNotes(typed));
@@ -972,7 +984,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const block = (item) => {
     const pr = item.pr;
-    const article = el("article", "block" + (item.hold ? " hold" : "") + (item.group === "flight" ? " flight" : ""));
+    const article = el("article", "block" + (item.group === "hold" ? " hold" : "") + (item.group === "flight" ? " flight" : ""));
     article.id = item.id;
     const head = el("div", "block-head");
     const title = el("h2");
@@ -991,7 +1003,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     const hint = el("span", "hint", "Pick a verdict to include this note");
     hint.id = item.id + "-hint";
     hint.hidden = true;
-    notes.setAttribute("aria-describedby", hint.id);
     const saved = recall(pr);
     const choice = { verdict: saved && Object.hasOwn(VERDICTS, saved.verdict) ? saved.verdict : null, notes, hint, buttons: [] };
     notes.value = saved && typeof saved.notes === "string" ? saved.notes : "";
@@ -1122,7 +1133,12 @@ main { padding: 40px 0 80px; min-width: 0; }
     mergedList("Merged without you", mergedWithout, "reason", "None merged without you.", true),
     autoMerged.length ? mergedList("Auto-merged as routine", autoMerged, "reason", "", false) : null);
   add(mergedBox, el("h2", "", "Merged recently"), el("p", "meta", str(merged.window) || "The window was not stated."), mergedDrawer);
-  window.addEventListener("hashchange", () => reveal(window.location.hash.slice(1)));
+  // A jump that did not come from a link on this page, such as a typed address, finds the drawer closed and nothing to scroll to.
+  const arrive = () => {
+    const target = reveal(window.location.hash.slice(1));
+    if (target) target.scrollIntoView({ block: "start" });
+  };
+  window.addEventListener("hashchange", arrive);
 
   const box = el("section", "verdicts");
   box.id = "verdicts";
@@ -1143,6 +1159,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     try {
       await navigator.clipboard.writeText(text);
       lastCopied = text;
+      // A Verdict changed while the browser was still copying leaves the resting cue in place.
+      if (verdictBox.value !== text) return;
       answer("Copied", "Copied. Paste them into the conversation.", "Copied. Paste them into the conversation."
         + (quotesChanged ? " Double quotes in your notes became single quotes, so each Notes line stays whole." : ""));
     } catch (error) {
@@ -1257,7 +1275,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   document.addEventListener("keydown", (event) => {
     const action = KEY_ACTIONS[event.key];
     if (!action || event.metaKey || event.ctrlKey || event.altKey || !visible.length) return;
-    if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+    if (event.target instanceof Element && event.target.closest('input:not([type="checkbox"]), textarea, select, [contenteditable]')) return;
     if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
     event.preventDefault();
     action(current());
@@ -1273,8 +1291,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   refreshVerdicts();
   applyFilter();
   fitBar();
-  const arrived = reveal(window.location.hash.slice(1));
-  if (arrived) arrived.scrollIntoView({ block: "start" });
+  arrive();
 })();
 </script>
 </body>

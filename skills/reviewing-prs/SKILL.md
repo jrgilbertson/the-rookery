@@ -154,12 +154,13 @@ Then put each open pull request in one bucket:
 2. **Unclassified.** Everything not in another bucket: every other external
    pull request, and every one with no owner or an ambiguous one. Full block.
 3. **In flight.** A trusted owner, no `review:held`, no `Fleet: hold`
-   receipt, and checks that have finished. Its owner may still push to it or
-   merge it as routine, so it is a moving target. Full block, in its own
+   receipt, and checks that have finished, whether or not its owner is still
+   working. The owner may still push to it or merge it as routine, so it is
+   a moving target. Full block, in its own
    group below the held and routine ones, marked as in flight. The operator
    decides one only to step in early.
-4. **In progress.** A trusted owner, no `review:held`, and checks or its
-   owner still working. One short row at the end of the page: title,
+4. **In progress.** A trusted owner, no `review:held`, and checks that have
+   not finished. One short row at the end of the page: title,
    repository, owner, and what it waits on.
 5. **Dependency bots.** A same-repository pull request whose author is the
    Dependabot or Renovate app itself. Full block, like any other, in its own

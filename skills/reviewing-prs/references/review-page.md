@@ -79,7 +79,8 @@ length given; the page is read in one sitting across many pull requests.
   `pass`, `fail`, or `pending`; `conflict` is `true` when the pull request
   conflicts with its base. The overview row and the block show `checks fail`
   and `conflict`, the `Broken / conflicting only` filter finds them, and
-  failing or conflicting dependency bots sort to the top of their group.
+  failing or conflicting dependency bots sort to the top of their group. Any
+  other word in `checks` is shown as written and counted as failing.
 - `holdViolation`: a short phrase when step 3 flags the pull request for
   meeting a hold test while it sits in a merge queue or is ready with checks
   passing and no `review:held`, such as `in the merge queue without

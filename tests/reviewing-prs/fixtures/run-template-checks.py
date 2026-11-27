@@ -81,8 +81,13 @@ class Node {
   addEventListener(type, handler) { ((this.listeners ||= {})[type] ||= []).push(handler); }
   fire(type, event = {}) { return Promise.all(((this.listeners || {})[type] || []).map((handler) => handler(event))); }
   contains(other) { return walk(this).includes(other); }
-  focus() {} select() {} replaceWith() {} scrollIntoView() {}
-  closest() { return null; }
+  focus() {} select() {} replaceWith() {}
+  scrollIntoView() { scrolled = this.id; }
+  // Enough of closest() for the page's typing guard: a text field matches, a checkbox only when the selector does not rule it out.
+  closest(selector) {
+    if (!selector.includes(this.tagName)) return null;
+    return this.type === "checkbox" && selector.includes(':not([type="checkbox"])') ? null : this;
+  }
   querySelector() { return null; } querySelectorAll() { return []; }
   getBoundingClientRect() { return this.rect || { top: 0, bottom: 0 }; }
   get offsetHeight() { return 56; }
@@ -104,7 +109,7 @@ const document = {
 document.addEventListener = heard(document);
 const window = { matchMedia: () => ({ matches: false, addEventListener() {} }), localStorage, innerHeight: 800, location: { hash: "" } };
 window.addEventListener = heard(window);
-let clipboard = null;
+let clipboard = null, scrolled = null;
 vm.runInNewContext(code, { window, document, navigator: { clipboard: { writeText: async (value) => { clipboard = value; } } },
   URL, console, Element: Node, setTimeout: () => 0, clearTimeout() {} });
 
@@ -141,7 +146,7 @@ const snap = () => {
       driver: one(a, "driver")?.textContent ?? "",
       chips: chips(one(a, "block-meta") || new Node("x")), xnotes: within(a, "xnote").map((n) => n.textContent),
       hint: one(a, "hint") ? { text: one(a, "hint").textContent, hidden: one(a, "hint").hidden } : null,
-      seg: one(a, "seg")?.attributes ?? {}, notes: one(a, "notes")?.attributes ?? {},
+      seg: one(a, "seg")?.attributes ?? {}, notes: { ...(one(a, "notes")?.attributes ?? {}) },
       github: walk(a).filter((n) => n.tagName === "a" && n.textContent === "Open on GitHub").map((n) => ({ href: n.href, rel: n.rel }))[0] ?? null,
     })),
     merged: merged && {
@@ -171,13 +176,13 @@ const snap = () => {
         live: all.find((n) => n.id === "filter-status").attributes["aria-live"] } : null,
       empty: empty ? { hidden: empty.hidden, text: empty.textContent } : null },
     marksHidden: marks.every((n) => n.attributes["aria-hidden"] === "true"), markCount: marks.length,
-    clipboard, stored: store.size,
+    clipboard, scrolled, stored: store.size,
   };
 };
 const article = (title) => walk(fixed.page).find((n) => n.tagName === "article" && walk(n).find((h) => h.tagName === "h2")?.textContent.endsWith(title));
 const run = async () => {
   const steps = [snap()];
-  for (const [what, a, b] of actions) {
+  for (const [what, a, b, c] of actions) {
     if (what === "verdict") await walk(article(a)).find((n) => n.tagName === "button" && n.dataset.verdict === b).fire("click");
     if (what === "notes") { const input = one(article(a), "notes"); input.value = b; await input.fire("input"); }
     if (what === "copy") await (a === "bar" ? fixed["bar-copy"] : one(walk(fixed.page).find((n) => n.id === "verdicts"), "copy")).fire("click");
@@ -185,7 +190,10 @@ const run = async () => {
     if (what === "broken") { const boxNode = walk(fixed.page).find((n) => n.id === "filter-broken"); boxNode.checked = a; await boxNode.fire("change"); }
     if (what === "jump") await walk(one(fixed.page, "notices")).filter((n) => n.tagName === "a")[a].fire("click");
     if (what === "span") article(a).rect = { top: 0, bottom: 500 };
-    if (what === "key") for (const handler of document.listeners?.keydown ?? []) handler({ key: a, target: null, repeat: Boolean(b), preventDefault() {} });
+    if (what === "key") {
+      const target = c === "toggle" ? walk(fixed.page).find((n) => n.id === "filter-broken") : c ? one(article(c), "notes") : null;
+      for (const handler of document.listeners?.keydown ?? []) handler({ key: a, target, repeat: Boolean(b), preventDefault() {} });
+    }
     steps.push(snap());
   }
   process.stdout.write(JSON.stringify(steps));
@@ -223,6 +231,7 @@ def check_template(text: str) -> None:
         ("spansLine(here) && choose(here, key)", "the reading-line guard on Verdict keys"),
         ("IntersectionObserver", "the rail's scroll-spy"),
         ("@media (prefers-reduced-motion: reduce)", "a reduced-motion rule"),
+        ("[hidden] { display: none !important; }", "the rule that lets a filter hide rows and cards that set their own display"),
         ('id="bar-cue" role="status" aria-live="polite"', "a polite live region for the bar's cue"),
         ('id="bar-copy"', "the sticky bar's Copy Verdicts button"),
     ):
@@ -375,10 +384,10 @@ def large_round(original: dict, without: int = 52, auto_merged: int = 60) -> dic
         add(700 + i, f"Bump passing package {i}", 1, 1, bucket="bot", owner="Dependabot")
     prs[-1]["sensitiveKind"] = "dependency lockfile"
     add(710, "Bump failing package", 1, 1, bucket="bot", owner="Dependabot", checks="fail")
-    add(711, "Bump conflicting package", 1, 1, bucket="bot", owner="Renovate", conflict=True)
+    add(711, "Bump conflicting package", 1, 1, bucket="bot", owner="Renovate", conflict="true")
     for i in range(8):
         add(500 + i, f"Routine change {i}", 1, 1 + i % 2)
-    prs[-1]["checks"] = "fail"
+    prs[-1]["checks"] = "FAILURE"  # not the contract's word: the page must still count it as broken
     add(300, "Held by its label alone", 1, 1, bucket="held", owner="owned by repo-captain")
     for i in range(10):
         add(100 + i, f"Risky change {i}", 2 + i % 2, 3, bucket="held" if i % 2 else "unclassified")
@@ -424,6 +433,13 @@ def check_large_round(original: dict, scratch: Path) -> None:
         ["tab", "bots"],                                # 16 the in-flight card that spans the line is now hidden
         ["span", "Bump passing package 3"],             # 17
         ["key", "d"],                                   # 18
+        ["key", "x", False, "Bump passing package 3"],  # 19 typed into a note
+        ["key", "x", False, "toggle"],                  # 20 focus left on the broken-only checkbox
+        ["key", "k"],                                   # 21 from the last bot to the one before it
+        ["key", "n"],                                   # 22 the next undecided bot, wrapping past the decided one
+        ["tab", "ready"],                               # 23
+        ["broken", True],                               # 24 two broken cards, eight ranks apart
+        ["key", "k"],                                   # 25
     ]
     steps = render(page, scratch, actions)
     if steps is None:
@@ -455,6 +471,11 @@ def check_large_round(original: dict, scratch: Path) -> None:
           "a missing score keeps its placement line")
     check("it carries review:held" in next((b["driver"] for b in first["blocks"] if b["title"].endswith("Held by its label alone")), ""),
           "a pull request held by its label alone must say so")
+    drivers = {b["title"].lstrip("0123456789"): b["driver"] for b in first["blocks"]}
+    check(drivers["Fleet change 0"].startswith("Meets a hold test: V × U 9."), f"an in-flight card must not claim a place on the hold line: {drivers['Fleet change 0']}")
+    check(drivers["Bump passing package 3"].startswith("Meets a hold test: sensitive kind dependency lockfile."), f"a bot's card must name the hold test it meets: {drivers['Bump passing package 3']}")
+    check(drivers["Bump passing package 0"].startswith("Meets no hold test, V × U 1."), f"a routine bot's card: {drivers['Bump passing package 0']}")
+    check(all(("hold" in b["cls"].split()) == (b["title"].lstrip("0123456789") in held) for b in first["blocks"]), "only cards in the Held group take the held style")
 
     # Readiness, size, and the in-flight treatment, on the row and on the card.
     rows = {r["title"]: r for g in first["groups"] for r in g["rows"]}
@@ -465,6 +486,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
         check(where["Bump passing package 0"]["chips"] in ([], ["V × U 1"]), f"a passing pull request's {name} shows no readiness chip: {where['Bump passing package 0']['chips']}")
         check("In flight · moving target" in where["Fleet change 0"]["chips"], f"an in-flight pull request's {name} must carry the badge")
         check(any(c.startswith("Hold violation") for c in where["Fleet change 4"]["chips"]), f"a hold violation must show on the {name}")
+    check(rows["Routine change 7"]["chips"] == ["checks failure"], f"an unknown word for the checks must show and count as failing: {rows['Routine change 7']['chips']}")
     check(rows["Bump failing package"]["size"] == "+81 −3 · 3 files", f"an Overview row must show the diff's size: {rows['Bump failing package']['size']}")
     check(rows["Bump passing package 3"]["kind"] == "Sensitive kind: dependency lockfile", "a dependency bot keeps its sensitive-kind marker")
     flight = cards["Fleet change 0"]
@@ -501,6 +523,8 @@ def check_large_round(original: dict, scratch: Path) -> None:
     check(card(first)["hint"] == {"text": "Pick a verdict to include this note", "hidden": True}, f"the note hint must exist and start hidden: {card(first)['hint']}")
     check(card(steps[2])["hint"]["hidden"] is False and steps[2]["box"]["value"] == "", "a note with no Verdict must show the hint and stay out of the Verdicts")
     check(card(steps[3])["hint"]["hidden"] is True, "choosing a Verdict must clear the note hint")
+    check("aria-describedby" in card(steps[2])["notes"] and "aria-describedby" not in card(steps[3])["notes"] and "aria-describedby" not in card(first)["notes"],
+          "the notes field must be described by the hint only while the hint shows")
     line = steps[3]["box"]["value"]
     check('"' not in line and "\n" not in line, f"a copied Verdict line must hold no double quote and no newline: {line!r}")
     check(line.split(" | ", 2) == [f"acme/ledger-app#101 @ {101:040x}", "request changes", "say 'done' when fixed | then run a | b"],
@@ -546,6 +570,12 @@ def check_large_round(original: dict, scratch: Path) -> None:
     check(f"acme/ledger-app#904 @ {904:040x} | merge | " in steps[13]["box"]["value"], f"m must merge the visible card on the reading line: {steps[13]['box']['value']!r}")
     check(steps[13]["bar"]["copy"] == "Copy Verdicts (2)", "a key-set Verdict must count")
     check(len(shown(steps[14])) == 31, "the All tab must bring every pull request back")
+    check(steps[19]["box"]["value"] == steps[18]["box"]["value"], "a key typed into a note must set no Verdict")
+    check(f"#703 @ {703:040x} | not applicable | " in steps[20]["box"]["value"], f"keys must still work with focus on the broken-only checkbox: {steps[20]['box']['value']!r}")
+    check(steps[21]["scrolled"] == "pr-25" and steps[22]["scrolled"] == "pr-21",
+          f"k and n must move among visible cards only: {steps[21]['scrolled']}, {steps[22]['scrolled']}")
+    check(shown(steps[24]) == ["Risky change 9", "Routine change 7"] and steps[25]["scrolled"] == cards["Risky change 9"]["id"],
+          f"k must skip the cards the filter hides: {shown(steps[24])}, {steps[25]['scrolled']}")
     check(f"acme/ledger-app#703 @ {703:040x} | defer | " in steps[18]["box"]["value"] and f"#904 @ {904:040x} | merge | " in steps[18]["box"]["value"],
           f"a Verdict key must act on a visible card, never on one the filter hides: {steps[18]['box']['value']!r}")
 

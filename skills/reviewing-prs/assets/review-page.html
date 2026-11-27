@@ -170,6 +170,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 .pill b { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
 .pill.three { background: var(--stake); border-color: var(--ink-soft); color: var(--ink); }
 .pill.three b { font-weight: 700; }
+.summary { margin-top: 14px; }
+.summary p { max-width: 68ch; font-size: 1.05rem; color: var(--ink); overflow-wrap: anywhere; }
 .driver { margin-top: 10px; max-width: 80ch; }
 .xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
 .sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: 80ch; font-size: 0.95rem; }
@@ -1252,6 +1254,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     const leverage = item.leverage === null ? null : item.leverage.toFixed(2);
     factors.append(pill("leverage", leverage ?? "?", "Leverage " + (leverage ?? "unknown") + ".", false));
     add(article, head, add(meta, facts), factors, body);
+    // The plain summary opens the body, so the reader knows what the pull request is for before the page explains its scores.
+    if (str(pr.summary)) body.append(add(el("section", "summary"), el("h3", "sec-title", "In plain words"), el("p", "", str(pr.summary))));
     // Dispatch Paper is for words someone wrote; the page's own notice about a moving target is plain.
     if (item.group === "flight") {
       body.append(add(el("p", "sysnote"), el("b", "", "In flight"),

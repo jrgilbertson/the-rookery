@@ -8,7 +8,7 @@ Find duplicated truth, dead code, stale guidance, and weakened guardrails, and r
 
 ## Setup
 
-Use a repository-specific slug in the prompt (`agent-entropy-audit-<repository name>`). Keep the automation paused while validating its first manual run. A run with no prior history performs a full-repository baseline sweep; later weekly runs focus on recent changes and remaining debt. If you are upgrading from the retired coding standards audit, copy any prior decisions from `coding-standards-audit-<repository name>/decisions.md` into `agent-entropy-audit-<repository name>/decisions.md` before the first run, and leave `runs/` empty so the first run still performs a baseline sweep.
+Use a repository-specific slug in the prompt (`agent-entropy-audit-<repository name>`) and replace each `<placeholder>`. Keep the automation paused while validating its first manual run. A run with no prior history performs a full-repository baseline sweep; later weekly runs focus on recent changes and remaining debt. If you are upgrading from the retired coding standards audit, copy any prior decisions from `coding-standards-audit-<repository name>/decisions.md` into `agent-entropy-audit-<repository name>/decisions.md` before the first run, and leave `runs/` empty so the first run still performs a baseline sweep.
 
 ## Prompt
 
@@ -17,7 +17,7 @@ History: clone or update <your private automation-state repository> at `~/.local
 
 Audit this repository for agent entropy: duplicated truth, dead code, stale guidance, and weakened guardrails that make the codebase harder to predict and change.
 
-Scope: if no prior run exists for this repository, run a full baseline sweep. On later runs, focus on PRs and code touched since the last run, check whether prior fixes and ratchets held, and take one targeted pass at remaining baseline debt. Run already-installed project linters, typecheckers, and diagnostic tools in read-only, non-interactive mode (check wrapper scripts for hidden cache or build writes; no auto-fix, installs, or package downloads), and report unavailable tools or unassessed areas as coverage gaps. Skip ad-hoc repo-wide count tables; cite counts when an existing tool or ratchet already reports them.
+Scope: if no prior run exists for this repository, run a full baseline sweep. On later runs, focus on PRs and code touched since the last run, check whether prior fixes and ratchets (automated checks that cap existing violations at today's count so debt can shrink but never grow) held, and take one targeted pass at remaining baseline debt. Run already-installed project linters, typecheckers, and diagnostic tools in read-only, non-interactive mode (check wrapper scripts for hidden cache or build writes; no auto-fix, installs, or package downloads), and report unavailable tools or unassessed areas as coverage gaps. Skip ad-hoc repo-wide count tables; cite counts when an existing tool or ratchet already reports them.
 
 Inspect four areas:
 - Guardrail erosion: inline suppressions, config-level ignore lists, disabled rules, allowlists, and loosened thresholds across the repository's linters, typecheckers, static analyzers, and diagnostic tools. Every non-obvious exclusion (outside generated, vendored, or build output) needs a clear, still-valid reason; otherwise recommend fixing the code, tightening the check, or adding a ratchet.
@@ -29,7 +29,7 @@ For each recommendation, give the concrete edit or check, current versus propose
 
 Assessment only: do not modify repository files, install tools, change configuration, create or update issues, or publish PRs without separate approval.
 
-Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
+Judge each draft recommendation on its own against current evidence. Apply the same bar to recommendations to leave a confirmed finding unchanged, and check how recommendations interact. Put only the recommendations you support in the approval list, in leverage order, highest first, with each one's evidence, tradeoffs, and uncertainty. List each rejected recommendation in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

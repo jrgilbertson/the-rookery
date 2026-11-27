@@ -8,37 +8,38 @@ Review every page of the interface against its design system, find drift and rep
 
 ## Setup
 
-Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. Choose the model and effort from the Design/taste row in [ROUTING.md](../ROUTING.md). Replace each bracketed placeholder with your own project's value. This is the prompt I run, with only project names, paths, and commands swapped out.
+Use a repository-specific slug in the prompt (`design-system-audit-<repository name>`). Keep the automation paused while validating its first manual run. Choose the model and effort from the Design/taste row in [ROUTING.md](../ROUTING.md). Replace each `<placeholder>` with your own project's value; values in square brackets (`[...]`) are filled in by the agent at runtime. This is the prompt I run, with only project names, paths, and commands swapped out.
 
 ## Prompt
 
 ```text
-Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+Before assessing, confirm the `impeccable` skill is available to the selected agent. If it is missing or cannot load, report it and stop. Do not install or update skills or plugins.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `design-system-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined or deferred findings only with new evidence, such as the pattern reaching more pages or getting worse.
 
-Audit [product]'s interface against its design system with the `impeccable` skill and recommend fixes for approval. [design contract] is the contract; [sidecar file] is its sidecar. Run impeccable `context` once from the repository root, then read the contract in full.
+Audit <product>'s interface against its design system with the `impeccable` skill and recommend fixes for approval. <design contract> is the contract; <sidecar file> is its sidecar. Run impeccable `context` once from the repository root, then read the contract in full.
 
 Review every page, public and signed-in, each run:
 
-1. Run [token and layout validators], [sidecar tests], `impeccable doctor --json`, and `impeccable detect --json` over [UI source paths] only; detect ignores .gitignore, and exit code 2 means findings.
-2. Start the local stack in the background and sign in as a throwaway fictional account, following [signed-in setup docs]. Capture every page that account can reach. Review token-bound routes, and pages it cannot reach, from code and name them. If the stack or sign-in fails, review signed-in pages from code and carry on. Always finish with [teardown command that removes the database volumes]; a kept database blocks next week's run.
+1. Run <token and layout validators>, <sidecar tests>, `impeccable doctor --json`, and `impeccable detect --json` over <UI source paths> only; detect ignores .gitignore, and exit code 2 means findings.
+2. Start the local stack in the background and sign in as a throwaway fictional account, following <signed-in setup docs>. Capture every page that account can reach. Review token-bound routes, and pages it cannot reach, from code and name them. If the stack or sign-in fails, review signed-in pages from code and carry on. Always finish with <teardown command that removes the database volumes>; a kept database blocks next week's run.
 3. Group pages into families that share a route group and page shell. Critique each family once with impeccable `critique` and the `audit` rubric, adding page notes only where a page departs from its family.
+
+Before writing the report, judge each draft recommendation on its own against current evidence. Apply the same bar to recommendations to leave a confirmed finding unchanged, and check how recommendations interact. Put only the recommendations you support in the approval list, in leverage order, highest first, with each one's four scores, evidence, tradeoffs, and uncertainty. List each rejected recommendation in one line with its reason, outside the approval list.
 
 Report, in this order:
 
-- Every issue in leverage order, highest first, with its four scores.
+- Approval list: only the recommendations you support, in leverage order, highest first, with each one's four scores, evidence, tradeoffs, and uncertainty.
 - This run's counts beside the last run's: validator and detector findings, duplicate-pattern clusters, extraction candidates, sidecar mismatches, and pages rendered versus reviewed from code.
 - The drift detail, grouped by cause. Label each token, pattern, or rule drift, or a complexity problem, with its page, file and line, the contract rule it breaks, and a fix using existing components and tokens.
 - Extractions: shared components or page templates, from `extract`'s planning steps.
 - The exact sidecar patch.
-- Premium bar: contract revisions that raise the craft toward [reference products], kept apart from drift. The contract's own identity wins over theirs.
+- Premium bar: contract revisions that raise the craft toward <reference products>, kept apart from drift. The contract's own identity wins over theirs.
 - Recurring findings: for any finding that appeared in two or more earlier reports, recommend a fix for the underlying cause, then any safeguard still needed to protect the corrected behavior. Recommend a lint rule or validator when it can reliably check that behavior; otherwise name the design judgment or review that remains.
 - The questions impeccable would have asked, and what was not assessed.
+- Rejected recommendations: one line per rejected draft recommendation with its reason.
 
 Keep screenshots only for issues that score 3 on impact and premium-bar proposals. This is an assessment: impeccable stays in its read-only modes (`audit`, `critique`, `detect`, `doctor` without `--fix`, and `extract` through planning), and tracked files, issues, and PRs stay untouched.
 
-Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
-
-Save the final report afterward, with its screenshots under that slug's `evidence/<UTC run stamp>/` folder.
+Save the final report afterward, with its screenshots under that slug's `evidence/[UTC run stamp]/` folder.
 ```

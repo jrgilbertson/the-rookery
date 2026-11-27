@@ -111,7 +111,10 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    (the pull request's final head, not the merge commit, which a squash or
    rebase replaces):
    - A `merge` verdict at the final head (`Head:` matches `headRefOid`):
-     leave it out.
+     leave it out unless superseded by a newer `Fleet: hold` receipt by the
+     operator's login (such as after a base-branch retarget), in which case
+     list it as **merged without the operator**, with the reason and any
+     `review:` label.
    - A `merge` verdict at a different head (`Head:` differs from
      `headRefOid`): list it as **changed after the verdict**, summarized from
      the newest post-verdict valid `Fleet: verdict-delta` receipt by the

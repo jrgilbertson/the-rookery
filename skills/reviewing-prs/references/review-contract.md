@@ -104,6 +104,8 @@ conventions that prevent accidents, not authentication.
   (labels never count as authority):
   - a `request changes` verdict at any head fails authority
   - a `merge` verdict whose `Head:` matches `headRefOid` passes authority
+    unless superseded by a newer `Fleet: hold` receipt by the operator's login
+    (such as after a base-branch retarget)
   - a `merge` verdict at an earlier head (`Head:` differs from `headRefOid`)
     passes authority only when the newest valid `Fleet:` receipt by the
     operator's login posted after that verdict is `Fleet: verdict-delta` (not

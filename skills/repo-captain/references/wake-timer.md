@@ -121,10 +121,13 @@ setsid -f sh -c 'tmp="$1/wake.pid.$$"
   while [ "$i" -lt 20 ]; do
     if [ -s "$state/wake.pid" ]; then
       pid=$(cat "$state/wake.pid")
-      args=$(ps -ww -u "$(id -u)" -o args= -p "$pid" 2>/dev/null | sed 's/[[:space:]]*$//')
-      case $args in
-        *"Wake: run the repo-captain wake routine."*" wake $state $ORCA_TERMINAL_HANDLE") break ;;
-      esac
+      uid=$(ps -o uid= -p "$pid" 2>/dev/null | tr -d '[:space:]')
+      if [ "$uid" = "$(id -u)" ]; then
+        args=$(ps -ww -o args= -p "$pid" 2>/dev/null | sed 's/[[:space:]]*$//')
+        case $args in
+          *"Wake: run the repo-captain wake routine."*" wake $state $ORCA_TERMINAL_HANDLE") break ;;
+        esac
+      fi
     fi
     i=$((i + 1))
     sleep 0.1

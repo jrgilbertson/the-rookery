@@ -115,8 +115,8 @@ hold only what those sources cannot show.
     absent in the same wake that merged the pull request from empty check-runs
     alone; confirm absence only when default-branch workflow inspection shows
     no push triggers and the prior default-branch commit also has zero checks,
-    or when a subsequent post-merge wake still observes zero checks on the
-    merge commit.
+    or when a subsequent timer wake (or any wake at least 10 minutes after
+    `mergedAt`) still observes zero checks on the merge commit.
   - **Rework records** (keyed by pull request number plus the `request
     changes` verdict comment ID or reviewed head): cleared once the
     post-rework `Fleet: hold` receipt posts on GitHub or the pull request

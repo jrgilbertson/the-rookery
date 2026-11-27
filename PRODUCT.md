@@ -24,7 +24,7 @@ The Rookery collects the open-source tools, workflows, skills, and scheduled aut
 
 ## Operating Context
 
-The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its five core jobs and two feedback loops, `CONCEPTS.md` defines project-specific language, the `skills/` catalog contains the executable instructions, and `automations/` holds recurring review prompts with schedules and setup instructions.
+The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its five core jobs and two feedback loops, `GLOSSARY.md` defines project-specific language, the `skills/` catalog contains the executable instructions, and `automations/` holds recurring review prompts with schedules and setup instructions.
 
 The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintain and Learn are the two feedback loops. Visual explanations are most valuable where process, handoffs, loops, or system relationships would otherwise become text-heavy.
 
@@ -50,7 +50,7 @@ The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintai
 
 - `README.md` contains the public product story, installation path, guiding principles, skill catalog, the existing Huginn-and-Muninn narrative, and explicit credit for the open-source work the system builds upon.
 - `WORKFLOWS.md` contains the five core jobs, two feedback loops, and detailed process explanations suitable for visual translation.
-- `CONCEPTS.md` contains the project's canonical vocabulary.
+- `GLOSSARY.md` contains the project's canonical vocabulary.
 - `skills/`, `tests/`, and `docs/solutions/` provide real examples of the system's capabilities and quality practices.
 - No testimonials, customer logos, adoption metrics, or commercial performance claims are present and none should be fabricated.
 

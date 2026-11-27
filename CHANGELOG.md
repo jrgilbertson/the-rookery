@@ -118,6 +118,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Rename `CONCEPTS.md` to `GLOSSARY.md` (with `# Glossary` as the heading) and
+  add a root `CONCEPTS.md -> GLOSSARY.md` compatibility symlink so Compound
+  Engineering's `ce-compound` reads and updates the same file. Repository
+  checks allow only that exact root symlink and continue rejecting symbolic
+  links everywhere else.
 - The `reviewing-prs` review page stays usable on a large round. Open pull
   requests fall into four groups: held for review, under the hold line,
   dependency bots, and in-flight fleet pull requests, which a worker may

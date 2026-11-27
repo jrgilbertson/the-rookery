@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -133,6 +134,32 @@ def check_tracked_transient_paths(errors: list[str]) -> None:
             )
 
 
+# Root compatibility symlink for Compound Engineering's ce-compound, which
+# hardcodes CONCEPTS.md. Symbolic links remain forbidden everywhere else.
+ALLOWED_ROOT_SYMLINKS = {
+    "CONCEPTS.md": "GLOSSARY.md",
+}
+
+
+def allowed_root_symlink(path: Path, relative: Path) -> bool:
+    if len(relative.parts) != 1:
+        return False
+    expected_target = ALLOWED_ROOT_SYMLINKS.get(relative.name)
+    if expected_target is None:
+        return False
+    try:
+        if os.readlink(path) != expected_target:
+            return False
+        target = ROOT / expected_target
+        if target.is_symlink():
+            return False
+        resolved = path.resolve(strict=True)
+        resolved.relative_to(ROOT)
+        return resolved == target.resolve(strict=True) and resolved.is_file()
+    except (FileNotFoundError, OSError, ValueError):
+        return False
+
+
 def safe_regular_file(path: Path, errors: list[str]) -> bool:
     try:
         relative = path.relative_to(ROOT)
@@ -143,6 +170,8 @@ def safe_regular_file(path: Path, errors: list[str]) -> bool:
     for component in relative.parts:
         current /= component
         if current.is_symlink():
+            if current == path and allowed_root_symlink(path, relative):
+                return False
             errors.append(f"{relative}: symbolic link is not allowed")
             return False
     try:

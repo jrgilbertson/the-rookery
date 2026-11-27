@@ -352,6 +352,121 @@ def check_yaml_arguments(repository: Path, temporary_root: Path) -> None:
     ruby_fixture.unlink()
 
 
+def check_root_symlinks(repository: Path, temporary_root: Path) -> None:
+    tools = temporary_root / "symlink-lint-tools"
+    tools.mkdir()
+    actionlint = tools / "actionlint"
+    actionlint.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    actionlint.chmod(0o755)
+    environment = dict(os.environ, PATH=str(tools) + os.pathsep + os.environ["PATH"])
+
+    def lint() -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            ["bash", "scripts/checks/lint.sh"],
+            cwd=repository,
+            env=environment,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+
+    def require_rejected(expected_path: str, description: str) -> None:
+        for label, result in (("repository", run_checker(repository)), ("lint", lint())):
+            require(
+                result.returncode != 0
+                and expected_path in result.stderr
+                and "symbolic link is not allowed" in result.stderr,
+                f"{label} check accepted {description}: {result.stderr}",
+            )
+
+    glossary = repository / "GLOSSARY.md"
+    concepts = repository / "CONCEPTS.md"
+    outside = temporary_root / "outside-glossary.md"
+    outside.write_text("# Outside\n", encoding="utf-8")
+
+    # Allowed root compatibility symlink pointing to a regular GLOSSARY.md.
+    glossary.write_text("# Glossary\n", encoding="utf-8")
+    concepts.symlink_to("GLOSSARY.md")
+    allowed = run_checker(repository)
+    require(allowed.returncode == 0, f"allowed root symlink failed repository check: {allowed.stderr}")
+    allowed_lint = lint()
+    require(allowed_lint.returncode == 0, f"allowed root symlink failed lint check: {allowed_lint.stderr}")
+
+    # GLOSSARY.md itself is still checked as a regular file, once (not duplicated through CONCEPTS.md).
+    glossary.write_text("# Glossary \n", encoding="utf-8")
+    target_defect = run_checker(repository)
+    require(
+        target_defect.returncode == 1
+        and "GLOSSARY.md:1: trailing whitespace" in target_defect.stderr
+        and "CONCEPTS.md:" not in target_defect.stderr,
+        f"GLOSSARY.md defect check via symlink behaved unexpectedly: {target_defect.stderr}",
+    )
+    glossary.write_text("# Glossary\n", encoding="utf-8")
+
+    # Dangling CONCEPTS.md -> GLOSSARY.md must fail.
+    glossary.unlink()
+    require_rejected("CONCEPTS.md", "dangling allowed symlink")
+
+    # CONCEPTS.md -> GLOSSARY.md when GLOSSARY.md is a directory must fail.
+    glossary.mkdir()
+    require_rejected("CONCEPTS.md", "directory target for allowed symlink")
+    glossary.rmdir()
+
+    # Chained symlink (CONCEPTS.md -> GLOSSARY.md -> outside or target.md) must fail on CONCEPTS.md itself.
+    for chain_target in (outside, repository / "target.md"):
+        glossary.symlink_to(chain_target)
+        require_rejected("CONCEPTS.md", f"chained symlink target {chain_target!r}")
+        glossary.unlink()
+
+    glossary.write_text("# Glossary\n", encoding="utf-8")
+
+    # Wrong targets for CONCEPTS.md (wrong file, escaping repo, absolute path, non-canonical path).
+    for bad_target in (
+        "target.md",
+        "../outside-glossary.md",
+        str(glossary.resolve()),
+        "./GLOSSARY.md",
+    ):
+        concepts.unlink()
+        concepts.symlink_to(bad_target)
+        require_rejected("CONCEPTS.md", f"CONCEPTS.md -> {bad_target!r}")
+    concepts.unlink()
+
+    # Non-allowlisted root symlink pointing to GLOSSARY.md must fail.
+    alias = repository / "ALIAS.md"
+    alias.symlink_to("GLOSSARY.md")
+    require_rejected("ALIAS.md", "non-allowlisted root symlink")
+    alias.unlink()
+
+    # Nested CONCEPTS.md symlink (including inside skills/) must fail.
+    skill_dir = repository / "skills/example-skill"
+    skill_dir.mkdir(parents=True)
+    (skill_dir / "GLOSSARY.md").write_text("# Nested\n", encoding="utf-8")
+    (skill_dir / "CONCEPTS.md").symlink_to("GLOSSARY.md")
+    require_rejected("skills/example-skill/CONCEPTS.md", "nested skills/ CONCEPTS.md symlink")
+    shutil.rmtree(repository / "skills")
+
+    docs_dir = repository / "docs"
+    docs_dir.mkdir(exist_ok=True)
+    nested_docs = docs_dir / "CONCEPTS.md"
+    nested_docs.symlink_to("../GLOSSARY.md")
+    require_rejected("docs/CONCEPTS.md", "nested docs/ CONCEPTS.md symlink")
+    nested_docs.unlink()
+
+    # Symlinked ancestor directory must fail.
+    real_dir = repository / "real-dir"
+    real_dir.mkdir()
+    (real_dir / "note.md").write_text("# Note\n", encoding="utf-8")
+    linked_dir = repository / "linked-dir"
+    linked_dir.symlink_to(real_dir, target_is_directory=True)
+    require_rejected("linked-dir", "symlinked ancestor directory")
+    linked_dir.unlink()
+    shutil.rmtree(real_dir)
+
+    glossary.unlink()
+
+
 def check_guidance_copy(temporary_root: Path) -> None:
     repository = temporary_root / "guidance-repository"
     script = repository / "scripts/sync-global-agents.sh"
@@ -704,6 +819,7 @@ def main() -> int:
         lint = repository / "scripts/checks/lint.sh"
         shutil.copy2(LINT, lint)
         check_yaml_arguments(repository, temporary_root)
+        check_root_symlinks(repository, temporary_root)
         outside_shell = temporary_root / "outside.sh"
         outside_shell.write_text("#!/usr/bin/env bash\nexit 0\n", encoding="utf-8")
         (repository / "linked.sh").symlink_to(outside_shell)

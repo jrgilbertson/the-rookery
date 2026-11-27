@@ -1,16 +1,43 @@
-# Issue graphs, readiness, and completion
+# Issue Graphs, Readiness, and Completion
 
-Load this reference only when relationships, readiness, or completion matter.
-Use the canonical tracker's native parent and blocker relationships. Keep the
-derived graph in the current response; the tracker remains the durable record.
+Load this reference before splitting work into multiple issues, or whenever
+relationships, readiness, or completion matter. Use the canonical tracker's
+native parent and blocker relationships. Keep the derived graph in the current
+response; the tracker remains the durable record.
+
+## Decompose only when needed
+
+Decompose only when the outcome needs more than one reviewable deliverable:
+
+- Keep work that fits one independently deliverable, reviewable pull request as
+  one implementation leaf. A stacked series is one leaf only when no PR in the
+  stack delivers independently observable behavior; otherwise each such PR is
+  its own leaf.
+- Split larger work into vertical outcomes that each deliver observable
+  behavior through every necessary layer. A database, API, UI, or test layer
+  alone is not a useful child unless it is independently valuable and
+  verifiable.
+- Ask what can be demonstrated when each leaf closes. Merge or reshape any
+  leaf that has no independent answer.
+- Add a blocker only when the blocked issue cannot start or finish safely
+  first. Keep preferences and convenient ordering out of the dependency graph.
+- For a wide refactor that cannot stay working as vertical slices, use
+  expand-migrate-contract: introduce the new form alongside the old, migrate
+  consumers in independently safe batches, then remove the old form after
+  every migration finishes.
+
+Before accepting a multi-issue shape, show a compact decomposition check for
+each leaf: its demonstrable outcome, why it remains separate, and every
+genuine blocker with the reason. Merge, reshape, or reconnect any row that
+fails the five rules above before previewing tracker effects.
 
 ## Shape only the useful graph
 
-Use the issue set that passed the main workflow's decomposition gates. Keep a
-standalone leaf parentless. When several leaves deliver one whole outcome,
-attach them to that outcome's parent. Add another level only when a child owns a
-distinct sub-outcome that itself needs several leaves. This is the shallowest
-useful graph; it has no fixed depth limit.
+Use the issue set that passed the decomposition gate above. Keep a standalone
+leaf parentless. When several leaves deliver one whole outcome, attach them to
+that outcome's parent. Add another level only when a child owns a distinct
+sub-outcome that itself needs several leaves. This is the shallowest useful
+graph; it has no fixed depth limit.
 
 Any node with children is a parent (including a nested sub-outcome) and takes
 no estimate; only implementation leaves take estimates, following `SKILL.md`.
@@ -138,5 +165,5 @@ Never treat a closing keyword as proof of completion.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
 the ordered Ready Frontier, exact effect outcomes, and Verification evidence
-or gaps. Do not add implementation recommendations or persist an execution
-handoff.
+or gaps, leaving delivery planning and execution handoffs to downstream
+workflows.

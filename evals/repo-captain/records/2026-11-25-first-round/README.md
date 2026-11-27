@@ -34,17 +34,17 @@ Each of the eight Eval Cases, once with `repo-captain` and once with the
 
 | Case | `repo-captain` (Claude) | `coordinating-work` Baseline | Output tokens, skill / Baseline |
 | --- | --- | --- | ---: |
-| [coupled-plan-versus-uniform-backlog](../../cases/coupled-plan-versus-uniform-backlog/case.yaml) | 4/5 | 2/5, 2 unmeasured | 10,914 / 18,475 |
-| [direction-change-restarts-executor](../../cases/direction-change-restarts-executor/case.yaml) | 4/4 | 2/4 | 7,338 / 12,513 |
-| [domain-lead-custody-and-self-merge](../../cases/domain-lead-custody-and-self-merge/case.yaml) | 3/4 | 0/4 | 20,022 / 9,527 |
-| [held-pr-keeps-wake-and-calm-alert](../../cases/held-pr-keeps-wake-and-calm-alert/case.yaml) | 4/5 | 1/5 | 10,653 / 16,840 |
-| [hold-gate-raises-scores](../../cases/hold-gate-raises-scores/case.yaml) | 5/5 | 2/5 | 11,942 / 14,765 |
-| [overlap-and-one-migration](../../cases/overlap-and-one-migration/case.yaml) | 3/4 | 0/4, 1 unmeasured | 23,333 / 20,854 |
-| [rebase-revert-and-merge-queue](../../cases/rebase-revert-and-merge-queue/case.yaml) | 5/5 | 0/5, 2 unmeasured | 20,551 / 14,761 |
-| [restart-split-brain-and-boundaries](../../cases/restart-split-brain-and-boundaries/case.yaml) | 5/5 | 2/5 | 11,607 / 27,500 |
+| [coupled-plan-versus-uniform-backlog](../../cases/coupled-plan-versus-uniform-backlog/README.md) | 4/5 | 2/5, 2 unmeasured | 10,914 / 18,475 |
+| [direction-change-restarts-executor](../../cases/direction-change-restarts-executor/README.md) | 4/4 | 2/4 | 7,338 / 12,513 |
+| [domain-lead-custody-and-self-merge](../../cases/domain-lead-custody-and-self-merge/README.md) | 3/4 | 0/4 | 20,022 / 9,527 |
+| [held-pr-keeps-wake-and-calm-alert](../../cases/held-pr-keeps-wake-and-calm-alert/README.md) | 4/5 | 1/5 | 10,653 / 16,840 |
+| [hold-gate-raises-scores](../../cases/hold-gate-raises-scores/README.md) | 5/5 | 2/5 | 11,942 / 14,765 |
+| [overlap-and-one-migration](../../cases/overlap-and-one-migration/README.md) | 3/4 | 0/4, 1 unmeasured | 23,333 / 20,854 |
+| [rebase-revert-and-merge-queue](../../cases/rebase-revert-and-merge-queue/README.md) | 5/5 | 0/5, 2 unmeasured | 20,551 / 14,761 |
+| [restart-split-brain-and-boundaries](../../cases/restart-split-brain-and-boundaries/README.md) | 5/5 | 2/5 | 11,607 / 27,500 |
 | **All eight** | **33/37** | **9/37, 5 unmeasured** | |
 
-Codex, [hold-gate-raises-scores](../../cases/hold-gate-raises-scores/case.yaml):
+Codex, [hold-gate-raises-scores](../../cases/hold-gate-raises-scores/README.md):
 4/5. It merged the routine pull request pinned to its head, held the other
 three with receipts, raised both stored scores, and lowered none. It failed
 the check that each score change is logged with its old value, new value, and

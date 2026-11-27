@@ -257,7 +257,6 @@ For each pull request, establish:
 - **What was read and what was not.** State whether you read the full diff or
   which files were skipped and why, such as a generated lockfile, plus the
   issue and policy files read.
-
 - **A plain summary.** Last, write the block's `summary` from everything
   above: the problem, the change, and its tradeoffs, as the reference
   describes.

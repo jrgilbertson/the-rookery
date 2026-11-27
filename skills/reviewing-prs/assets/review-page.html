@@ -1255,7 +1255,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     factors.append(pill("leverage", leverage ?? "?", "Leverage " + (leverage ?? "unknown") + ".", false));
     add(article, head, add(meta, facts), factors, body);
     // The plain summary opens the body, so the reader knows what the pull request is for before the page explains its scores.
-    if (str(pr.summary)) body.append(add(el("section", "summary"), el("h3", "sec-title", "In plain words"), el("p", "", str(pr.summary))));
+    const summary = str(pr.summary);
+    if (summary) body.append(add(el("section", "summary"), el("h3", "sec-title", "In plain words"), el("p", "", summary)));
     // Dispatch Paper is for words someone wrote; the page's own notice about a moving target is plain.
     if (item.group === "flight") {
       body.append(add(el("p", "sysnote"), el("b", "", "In flight"),

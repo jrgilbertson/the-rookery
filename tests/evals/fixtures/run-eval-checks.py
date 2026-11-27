@@ -151,11 +151,21 @@ def verify_mutations_fail(suite_dir: Path) -> None:
         ),
     ]
 
+    copy_ignore = shutil.ignore_patterns("node_modules")
+
     with tempfile.TemporaryDirectory(prefix=f"rookery-eval-check-{suite_name}-") as tmp:
         tmp_root = Path(tmp)
+        baseline_dir = tmp_root / "baseline"
+        shutil.copytree(suite_dir, baseline_dir, ignore=copy_ignore)
+        baseline = run_node_check(baseline_dir / "check-fixtures.mjs", cwd=baseline_dir)
+        require(
+            baseline.returncode == 0,
+            f"{suite_name}: unmutated copy without node_modules failed: {baseline.stderr}",
+        )
+
         for label, rel_file, old, new in mutations:
             copy_dir = tmp_root / label.replace(" ", "-")
-            shutil.copytree(suite_dir, copy_dir)
+            shutil.copytree(suite_dir, copy_dir, ignore=copy_ignore)
             target = copy_dir / rel_file
             original = target.read_text(encoding="utf-8")
             require(
@@ -170,7 +180,7 @@ def verify_mutations_fail(suite_dir: Path) -> None:
             )
 
         missing_lock_dir = tmp_root / "missing-lockfile"
-        shutil.copytree(suite_dir, missing_lock_dir)
+        shutil.copytree(suite_dir, missing_lock_dir, ignore=copy_ignore)
         (missing_lock_dir / "package-lock.json").unlink()
         missing_lock = run_node_check(
             missing_lock_dir / "check-fixtures.mjs", cwd=missing_lock_dir

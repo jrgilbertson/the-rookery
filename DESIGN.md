@@ -111,18 +111,15 @@ components:
   factor-pill:
     textColor: "{colors.raven-navy}"
     rounded: "{rounded.card}"
-    padding: "3px 8px 2px"
   factor-pill-three:
     backgroundColor: "{colors.mist-paper}"
     textColor: "{colors.raven-navy}"
     rounded: "{rounded.card}"
-    padding: "3px 8px 2px"
   shortcut-help:
     backgroundColor: "{colors.white-sheet}"
     textColor: "{colors.raven-navy}"
     typography: "{typography.control}"
     rounded: "{rounded.card}"
-    padding: "16px 20px"
   dispatch-note:
     backgroundColor: "{colors.dispatch-paper}"
     textColor: "{colors.raven-navy}"
@@ -136,12 +133,12 @@ components:
     backgroundColor: "{colors.add-wash}"
     textColor: "{colors.add}"
     typography: "{typography.mono}"
-    padding: "2px 8px"
+    padding: "2px 8px 2px 2.3em"
   diff-removed:
     backgroundColor: "{colors.del-wash}"
     textColor: "{colors.del}"
     typography: "{typography.mono}"
-    padding: "2px 8px"
+    padding: "2px 8px 2px 2.3em"
 ---
 
 # Design System: The Rookery

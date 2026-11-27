@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-27T04:03:32Z",
+  "generatedAt": "2026-11-27T04:04:49Z",
   "title": "Design System: The Rookery",
   "extensions": {
     "colorMeta": {
@@ -539,7 +539,7 @@
       "refersTo": "diff-added",
       "description": "Added and removed code lines in the green and red readers expect; each pair reaches 7:1.",
       "html": "<pre class=\"ds-diff\"><span class=\"ds-del\">- limit = 20</span><span class=\"ds-add\">+ limit = 50</span></pre>",
-      "css": ".ds-diff { margin: 0; padding: 10px 12px; background: #FFFFFF; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; white-space: pre-wrap; font: 0.8rem/1.55 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; } .ds-diff span { display: block; padding: 2px 8px; } .ds-add { background: #EAF3EE; color: #0B5D3B; } .ds-del { background: #F7E9E6; color: #8F2A1F; }"
+      "css": ".ds-diff { margin: 0; padding: 10px 12px; background: #FFFFFF; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; white-space: pre-wrap; font: 0.8rem/1.55 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; } .ds-diff span { display: block; padding: 2px 8px 2px 2.3em; text-indent: -1.6em; } .ds-add { background: #EAF3EE; color: #0B5D3B; } .ds-del { background: #F7E9E6; color: #8F2A1F; }"
     }
   ],
   "narrative": {

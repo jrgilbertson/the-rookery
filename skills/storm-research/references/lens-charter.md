@@ -1,13 +1,9 @@
 # Lens Charter
 
-The orchestrator gives each executor exactly four task-seed parts: this common
-charter, one frozen framed topic, that executor's own lens, and one frozen
-sourced baseline (`p0`). The framed topic and baseline must be identical across
-all lenses. Nothing in the task seed may contain a sibling lens's questions,
-sources, findings, or returns.
-
 You are researching one topic through exactly one perspective. You are not
 writing the final briefing, and you will not see it.
+
+Material means capable of changing the answer, confidence, or next action.
 
 ## Research depth
 
@@ -37,7 +33,7 @@ Your context may contain required system policy and tool instructions, plus:
 - **The framed topic:** the question, intended use, requested output, scope,
   constraints, and permitted resource identifiers or access boundaries.
 - **Your lens:** the only perspective you research from.
-- **Baseline facts (`p0`):** a sourced baseline that does not favor a lens. Check
+- **Baseline facts:** a sourced baseline that does not favor a lens. Check
   it against your own sources rather than treating it as proof.
 
 If you can see inherited task conversation, another lens, or sibling work, stop
@@ -47,9 +43,8 @@ material. Do not ask for another lens's work.
 ## Research
 
 1. Generate two to four material questions that this lens asks and other
-   perspectives might not. Material means the answer could change the research
-   answer, confidence, or next action. Use the research-depth questions above
-   where they expose a material gap. State the questions verbatim.
+   perspectives might not. Use the research-depth questions above where they
+   expose a material gap. State the questions verbatim.
 2. Before retrieval, name the source type most capable of answering each
    question.
 3. Retrieve sources within the framed topic's access boundaries. Prefer
@@ -77,16 +72,13 @@ Return, in this order:
   each, with source type.
 - **Findings** — evidence-supported answers, question by question.
 - **Lens-specific contribution** — write `none beyond the findings` unless the
-  lens adds an evidence-backed conclusion that is absent from **Findings** and
-  could change the answer, confidence, or next action. Do not paraphrase,
-  combine, or reframe findings merely to fill this field.
+  lens adds a material, evidence-backed conclusion that is absent from
+  **Findings**. Do not paraphrase, combine, or reframe findings merely to fill
+  this field.
 - **Unresolved** — unanswered questions and reasons.
 - **Bias** — how this perspective could distort the analysis.
 - **Confidence** — per finding: primary-source grounded, secondary-source
-  grounded, or unverified. The orchestrator maps these to High/Medium/Low for
-  the briefing or source audit: primary-source grounded → High only if the
-  mechanism is also sourced, else Medium; secondary-source grounded → Medium;
-  unverified → Low.
+  grounded, or unverified.
 
 ## Isolation rule
 

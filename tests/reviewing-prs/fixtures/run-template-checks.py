@@ -306,6 +306,7 @@ def check_template(text: str) -> None:
     check(help_panel is not None and all(f"<kbd>{key}</kbd>" in help_panel.group(1) for key in "jknmcdx")
           and all(f"<dt>{word}</dt><dd>" in help_panel.group(1) for word in ("Merge", "Request changes", "Defer", "Not applicable")),
           "the shortcut help must start hidden, list every key, and explain every verdict")
+    check_help_key(text, help_panel.group(1) if help_panel else "")
     check('role="dialog"' not in text and "showModal" not in text and "<dialog" not in text, "the shortcut help must stay non-modal")
     # Every control the page draws takes the Control Border; the hairline is for sheets and dividers.
     for selector in (".ctl", ".flt", ".seg", ".notes", ".card-toggle", ".drawer summary", ".verdicts textarea", ".skip"):
@@ -327,6 +328,43 @@ def check_template(text: str) -> None:
     for rule in re.findall(r"[^{}]*\{[^}]*var\(--display\)[^}]*\}", text):
         size = re.search(r"font: [^;]*? ([0-9.]+)rem", rule)
         check(size is None or float(size.group(1)) >= 1, f"Didot is set under 1rem: {rule.strip()[:60]}")
+
+
+def check_help_key(text: str, panel: str) -> None:
+    """The ? panel also explains the page's own marks: the Described? column, the scores, orange, and the groups."""
+    terms = {term: (cls, mark) for cls, mark, term in re.findall(r'<dt(?: class="([a-z]+)")?>(?:<span class="([a-z-]+)" aria-hidden="true"></span>)?([^<]+)</dt><dd>[^<]+</dd>', panel)}
+    wanted = {
+        "Yes": ("", ""), "No": ("flag", "seal"), "Unclear": ("flag", "seal"), "unchanged": ("quiet", ""),
+        "I · impact": ("", ""), "C · confidence": ("", ""), "V · verify": ("", ""), "U · undo": ("", ""), "V × U": ("", ""), "Leverage": ("", ""),
+        "U = 3": ("", ""), "Hold violation": ("", ""), "Sensitive kind": ("", ""), "Changed after your verdict": ("", ""),
+        "Held for review": ("", "seal"), "Under the hold line": ("", "ring"), "Dependency bots": ("", "ring"), "In flight": ("", "route-dot"),
+    }
+    for term, drawn in wanted.items():
+        check(terms.get(term) == drawn, f"the help must explain {term!r} and draw it as the page does, {drawn}: {terms.get(term)}")
+    for heading in ("The Described? column", "Scores", "Orange marks what needs you", "Groups"):
+        check(re.search(r'<h2 class="sec-title[a-z ]*">(?:<span class="seal" aria-hidden="true"></span>)?' + re.escape(heading) + "</h2>", panel) is not None,
+              f"the help must head a part of its key {heading!r}")
+    check('<h2 class="sec-title flag"><span class="seal" aria-hidden="true"></span>Orange marks' in panel
+          and re.search(r"(?m)^\.help \.flag \{ color: var\(--signal-ink\); \}", text) is not None,
+          "the help must set the words beside its orange seals in Signal Ink")
+    check(len(re.findall(r'class="seal"', panel)) == 4, f"the help keeps orange scarce, one seal for each thing the page seals: {len(re.findall(r'class=.seal.', panel))}")
+    check("3 or more" in panel and "(I × C) ÷ (V × U)" in panel, "the help must state the hold line and the leverage formula")
+    # The key names what the script draws, so a renamed group, chip, or cell cannot leave the key behind.
+    script = text.split('<script nonce="{{NONCE}}">', 1)[-1]
+    for drawn in ('name: "Held for review"', 'name: "Under the hold line"', 'name: "Dependency bots"', '"In flight"', '"Hold violation: "',
+                  '"Sensitive kind: "', '"Changed after your verdict"', '"Merged without you"', 'unchanged: "unchanged"', '"Unclear"', 'yes: "Yes", no: "No"',
+                  '"Described?"', '"V × U"', '"leverage"', '["impact", true], ["confidence", false], ["verify", true], ["undo", true]', "product >= 3",
+                  '"If it is wrong · a revert does not undo it"'):
+        check(drawn in script, f"the help explains a mark the script no longer draws this way: {drawn}")
+    check('aria-label="Help: keyboard shortcuts, verdicts, and what the marks on this page mean">?</button>' in text
+          and '<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" hidden>' in text,
+          "the ? button and its region must say the help covers shortcuts, verdicts, and the page's marks")
+    check(panel.count("<section>") == 3 and panel.count("</section>") == 3 and "<div" not in panel,
+          "the help is three sections, and holds no div that would end the panel early for these checks")
+    check(re.search(r"@media \(min-width: 1200px\) \{\s*\.help \{ display: grid; grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);", text) is not None,
+          "the help must set its three parts side by side on a wide screen")
+    check(re.search(r"(?m)^\.help \{[^}]*max-height: calc\(100vh - var\(--bar-h, 60px\) - 16px\); overflow-y: auto;", text) is not None,
+          "the help must scroll inside itself when it is taller than the window")
 
 
 def fill(round_data: str, scratch: Path) -> tuple[str, str]:

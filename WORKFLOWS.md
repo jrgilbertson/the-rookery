@@ -207,8 +207,9 @@ Repositories and systems need care over time. Maintenance runs throughout the wo
 
 I schedule recurring reviews in Orca. [Sessions audit](automations/sessions-audit.md)
 uses `ce-retro` to review the past 24 hours of AI sessions alongside The Rookery's
-skills, workflows, guidance, and configuration. Separate local and remote jobs
-review sessions on their respective hosts. I review
+skills, workflows, guidance, and configuration. One job on my primary host
+also reviews a paired host's sessions through a read-only worker and merges
+both hosts' findings into one list. I review
 and approve specific changes before applying them through the workflow that
 owns the work.
 

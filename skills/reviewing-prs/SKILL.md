@@ -1,6 +1,6 @@
 ---
 name: reviewing-prs
-description: "Run a Review Round across GitHub repositories to inspect open or held pull requests, build a local review page, catch up on auto-merged PRs, and post verdicts (merge, request changes, defer, not applicable). Not for local pre-PR diffs, resolving comments, fixing CI, explaining one merged PR, or autonomous repo captaining."
+description: "Run a Review Round across GitHub repos: inspect open or held PRs, build a review page, check auto-merged PRs, and post verdicts (merge, request changes, defer, not applicable). Not for local pre-PR diffs, resolving comments, fixing CI, explaining a merged PR, or repo captaining."
 license: MIT
 compatibility: "Requires a POSIX shell and an authenticated GitHub CLI (gh) with read and write access to the repositories under review. Optional: git for a local clone and a browser to open the review page."
 ---
@@ -104,19 +104,29 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    skip those the operator cannot merge in.
    For each, read
    `gh pr view <number> -R <owner>/<repo> --json headRefOid,mergedAt,labels,comments`
-   and find the operator's newest verdict comment. Compare its `Head:` with
-   `headRefOid` (the pull request's final head, not the merge commit, which a
-   squash or rebase replaces):
-   - No verdict, and it carries `review:auto-merged` or a
-     `Fleet: auto-merge` receipt by the operator's login: list it as
-     **auto-merged**, with the receipt's scores and detail as the reason.
-   - No verdict and neither of those, or `request changes` at the final head:
-     list it as **merged without the operator**, with the reason and any
-     `review:` label.
-   - A merge verdict at a different head: list it as **changed after the
-     verdict**, summarized from a `Fleet: verdict-delta` comment by the
-     operator's login when one exists, or else by naming both heads.
-   - A merge verdict at the final head: leave it out.
+   and inspect the operator's top-level comments (`comments` authored by the
+   operator's login). Find the operator's newest verdict comment and compare
+   its `Head:` with `headRefOid` (the pull request's final head, not the
+   merge commit, which a squash or rebase replaces):
+   - A `merge` verdict at the final head (`Head:` matches `headRefOid`):
+     leave it out.
+   - A `merge` verdict at a different head (`Head:` differs from
+     `headRefOid`): list it as **changed after the verdict**, summarized from
+     a `Fleet: verdict-delta` comment by the operator's login when one
+     exists, or else by naming both heads.
+   - A `request changes` verdict at any head (final or earlier): list it as
+     **merged without the operator**, with the reason and any `review:`
+     label.
+   - No operator verdict: inspect the newest `Fleet:` receipt by the
+     operator's login (labels never decide this):
+     - If that newest receipt is `Fleet: auto-merge` with a non-empty `Head:`
+       SHA prefix matching the start of `headRefOid`: list it as
+       **auto-merged**, with the receipt's scores and detail as the reason.
+     - Otherwise (no receipt, a bare `review:auto-merged` label alone, a
+       `Fleet: auto-merge` receipt whose `Head:` does not match `headRefOid`,
+       or a newer `Fleet: hold` or other receipt superseding an earlier
+       `Fleet: auto-merge`): list it as **merged without the operator**, with
+       the reason and any `review:` label.
 
 Keep failing and conflicted pull requests in the list. A held pull
 request drifts into conflict while it waits, and that is when the operator
@@ -159,9 +169,9 @@ Then put each open pull request in one bucket:
    a moving target. Full block, in its own
    group below the held and routine ones, marked as in flight. The operator
    decides one only to step in early.
-4. **In progress.** A trusted owner, no `review:held`, and checks that have
-   not finished. One short row at the end of the page: title,
-   repository, owner, and what it waits on.
+4. **In progress.** A trusted owner, no `review:held`, no `Fleet: hold`
+   receipt, and checks that have not finished. One short row at the end of
+   the page: title, repository, owner, and what it waits on.
 5. **Dependency bots.** A same-repository pull request whose author is the
    Dependabot or Renovate app itself. Full block, like any other, in its own
    group. A person's pull request that looks like a dependency bump stays in
@@ -248,9 +258,11 @@ For each pull request, establish:
   which files were skipped and why, such as a generated lockfile, plus the
   issue and policy files read.
 
-Show which hold test a pull request meets. Flag as a finding any pull request
-that meets a hold test yet merged, sits in a merge queue, or is ready with
-checks passing without `review:held`.
+Show which hold test a pull request meets. Flag as a finding any open pull
+request in `prs` that meets a hold test yet sits in a merge queue or is ready
+with checks passing without `review:held` (`holdViolation` applies to open
+`prs` only; recently merged pull requests belong in step 1's `merged` lists
+instead).
 
 Reading is done when every held, unclassified, in-flight, and
 dependency-bot pull request has all ten items above, taken from a diff that

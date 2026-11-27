@@ -77,58 +77,45 @@ or treat approval of the meeting note as approval of the relationship effect.
 Completion: each approved relationship effect is applied by its authoritative
 owner or stops safely without changing the rest of the meeting review.
 
-## Apply CRM-derived unrelated work through canonical work owners
+## Apply CRM-derived work and writing actions through canonical owners
 
-For an approved unrelated task or issue action derived from embedded Personal
-CRM judgment, first use the available `managing-personal-crm` companion
-semantics to revalidate the exact Person identity and every relationship
-prerequisite that supports the work. Then use the configured canonical task or
-issue workflow and exact displayed destination. Immediately before writing,
-search that destination for an equivalent effect using its complete meaning
-rather than title similarity alone. Report an equivalent **Already satisfied**;
-otherwise apply the approved effect once and read the exact target back through
-the same authoritative interface. Both the embedded CRM recheck and the
-canonical task-or-issue equivalence, write, and readback path are required for
-application.
+For an approved unrelated task/issue action or writing-backlog action derived
+from embedded Personal CRM judgment, follow this shared sequence:
 
-If the CRM companion is unavailable, or its identity or prerequisite recheck
-is unavailable or ambiguous, report the CRM-derived work action **Manual** and
-make no write. Do the same when the canonical workflow, exact destination,
-complete-meaning search, write, or readback path is unavailable or ambiguous.
-Preserve the meeting's existing action number, ownership, result, and
-completion state; neither owner may create a nested bundle. Keep a **Manual**
-proposal visible and unapplied. Do not use a generic mutation path or redirect
-the effect to another task, issue, meeting note, or durable-context record.
+1. Use the available `managing-personal-crm` companion semantics to revalidate
+   the exact Person identity and every relationship prerequisite supporting the
+   action.
+2. Switch to the configured canonical workflow and exact displayed destination
+   for that category.
+3. Immediately before writing, search that destination for an equivalent item
+   using its complete meaning rather than title similarity alone. If an
+   equivalent exists, make no write and report **Already satisfied**.
+4. Otherwise apply the approved effect once and read the exact target back
+   through the same authoritative interface.
 
-Completion: the unrelated work appears once in its configured canonical task
-or issue system or stops safely without creating a competing source of truth.
+Both the embedded CRM recheck and the canonical equivalence, write, and readback
+path are required. If the CRM companion, its identity or prerequisite recheck,
+the canonical workflow or backlog, the exact destination, the complete-meaning
+search, the write path, or readback is unavailable or ambiguous, make no write
+and report the action **Manual**. Preserve the meeting's existing action number,
+ownership, result, and completion state for every outcome; neither owner may
+create a nested bundle, renumber the action, or declare a separate completion
+state. Keep a **Manual** proposal visible and unapplied, and never fall back to
+a generic mutation path.
 
-## Apply writing-backlog actions through the canonical writing system
+Per-mode deltas:
 
-For an approved writing-backlog action derived from embedded Personal CRM
-judgment, first use the available `managing-personal-crm` companion semantics to
-revalidate the exact Person identity and every relationship prerequisite that
-supports the idea. Then use the configured canonical writing workflow and exact
-displayed destination. Before writing, search that backlog for an equivalent
-idea using its complete meaning rather than title similarity alone. If the
-search finds an equivalent, make no write and report **Already satisfied**.
-Only when the search proves the idea novel, apply the approved effect once and
-read the target back through the same authoritative interface. Both the
-embedded CRM recheck and the canonical writing equivalence, conditional write,
-and readback path are required for application.
+- **Unrelated task or issue work:** route through the configured canonical task
+  or issue workflow and exact displayed destination; do not redirect the effect
+  to another task, issue, meeting note, or durable-context record.
+- **Writing-backlog idea:** route through the configured canonical writing
+  workflow and exact backlog destination, and write only when the
+  complete-meaning search proves the idea novel; do not redirect it to a task,
+  issue, meeting note, or durable-context record.
 
-If the CRM companion is unavailable, or its identity or prerequisite recheck
-is unavailable or ambiguous, report the CRM-derived writing action **Manual**.
-Do the same when the canonical backlog, exact destination, complete-meaning
-search, write, or readback path is unavailable or ambiguous. Preserve the
-meeting's existing action number, ownership, result, and completion state for
-every outcome; neither companion may create a nested bundle, renumber the
-action, or declare a separate completion state. Keep a **Manual** proposal
-visible and unapplied. Do not redirect it to a task, issue, meeting note, or
-durable-context record.
-
-Completion: the idea appears once in its configured writing backlog or stops
-safely without creating a competing source of truth.
+Completion: each CRM-derived work or writing action appears once in its
+configured canonical system or stops safely without creating a competing source
+of truth.
 
 ## Apply once in dependency order
 
@@ -181,9 +168,9 @@ Do not roll back a successful prerequisite, recreate it, or retry a dependent
 effect blindly. If the approved meeting note content depends on a task or
 issue link that did not succeed, skip the dependent note action and return a
 revised proposal showing the exact linkless content or another repair. Write
-linkless note content only after the user explicitly approves that revised
-effect. An independently approved note action whose content does not depend on
-the failed link may still proceed.
+linkless note content only after the user approves that revised effect. An
+independently approved note action whose content does not depend on the failed
+link may still proceed.
 
 Completion: successful work remains visible once, broken links stay explicit,
 and repair does not risk duplication.
@@ -191,22 +178,21 @@ and repair does not risk duplication.
 ## Report the application result
 
 Report an application outcome only for each action number the user selected or
-explicitly decided, with the readback evidence that supports it. List every
-other visible action separately as **Pending** for review. **Pending** is not an
-application outcome and performs no write. For **Failed**, **Indeterminate**,
-**Manual**, **Deferred**, or **Skipped**, state what remains unapplied and the
-next safe choice. Do not describe a conversational draft as an external draft
-or a proposed action as a completed change.
+decided, with the readback evidence that supports it. List every other visible
+action separately as **Pending** for review. **Pending** is not an application
+outcome and performs no write. For **Failed**, **Indeterminate**, **Manual**,
+**Deferred**, or **Skipped**, state what remains unapplied and the next safe
+choice. Do not describe a conversational draft as an external draft or a
+proposed action as a completed change.
 
-When every visible action for one meeting has an explicitly terminal outcome
-and no pending, deferred, failed, indeterminate, manual, revised, or otherwise
+When every visible action for one meeting has a terminal outcome and no
+pending, deferred, failed, indeterminate, manual, revised, or otherwise
 review-needed action remains, identify that meeting as **Reviewed in this
-conversation** in the visible recap. **Applied**, **Already satisfied**, and an
-explicitly terminal **Skipped** action can close a bundle. A skip caused by an
-unresolved prerequisite is not terminal while a repair choice remains. This
-conversational disposition prevents a later overlapping run from regenerating
-the bundle, but it is not a whole-meeting dismissal and creates no durable
-state.
+conversation** in the visible recap. **Applied**, **Already satisfied**, and a
+terminal **Skipped** action can close a bundle. A skip caused by an unresolved
+prerequisite is not terminal while a repair choice remains. This disposition
+prevents a later overlapping run in this conversation from regenerating the
+bundle, but it is not a whole-meeting dismissal and creates no durable state.
 
 End with a compact recap of what changed, what was already satisfied, and what
 still needs review or repair. The approved meeting note and each downstream

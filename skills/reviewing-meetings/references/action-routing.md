@@ -23,8 +23,8 @@ Evaluate these categories independently for each newly proposed meeting:
 
 Omit a category when evidence does not support a useful change. Keep every
 proposed action independently approvable, even when one action depends on
-another. Do not combine two external effects merely because they came from the
-same meeting.
+another. Do not combine two external effects because they came from the same
+meeting.
 
 Completion: every included category has a supported independent effect, and no
 empty category appears.
@@ -66,11 +66,10 @@ configured task system using its explicit waiting state, with:
 
 - the verified person or event being awaited;
 - the user-owned outcome that depends on it; and
-- a real follow-up date supported by the meeting or explicitly chosen during
-  review.
+- a real follow-up date supported by the meeting or chosen during review.
 
 Do not invent a follow-up date, assign the other person's work to the user, or
-track a merely interesting promise as an obligation.
+track a promise with no user-owned dependency as an obligation.
 
 Completion: nonblocking promises remain meeting context, while meaningful
 dependencies have one honest waiting record.

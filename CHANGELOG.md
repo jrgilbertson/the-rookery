@@ -118,6 +118,18 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-captain` now defaults UI/UX briefs (from the Captain or a Domain or
+  Design Lead) to `impeccable` (`impeccable context`, `craft-floor.md`, and
+  `DESIGN.md`) alongside any applicable platform or framework skills, and adds
+  an unattended post-`lfg` `impeccable audit` pass before `worker_done` (no
+  user-question pauses, auto-fix verified P0/P1 objective technical findings,
+  record the audit result plus any remaining P2/P3 and subjective tradeoffs in
+  the pull request body, never commit `.impeccable/` snapshots, and push one
+  verified follow-up commit through `ce-babysit-pr` when fixes apply). The
+  Captain waits for the recorded audit result for the current head before
+  judging a UI/UX pull request ready to merge or hold, and interactive
+  `impeccable critique` and `/impeccable live` stay with the Captain or a
+  Design Lead rather than unattended Executors.
 - Rename `CONCEPTS.md` to `GLOSSARY.md` (with `# Glossary` as the heading) and
   add a root `CONCEPTS.md -> GLOSSARY.md` compatibility symlink so Compound
   Engineering's `ce-compound` reads and updates the same file. Repository

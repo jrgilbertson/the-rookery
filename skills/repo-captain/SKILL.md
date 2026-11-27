@@ -220,8 +220,34 @@ than another repository's model config.
   worktree, and send `worker_done` once the pull request is held or merged,
   and never to push to a held pull request
 
-Executors stay asynchronous. Interactive `/impeccable live` runs only in a UI
-pull request's worktree, led by a Design Lead or the Captain.
+**UI/UX briefs.** Any brief for a UI/UX leaf, sent by the Captain or by a
+Domain or Design Lead, adds three instructions without changing how `lfg` runs:
+
+- **Default UI/UX skill.** Name `impeccable` (`impeccable context`,
+  `craft-floor.md`, and `DESIGN.md`) as the default UI/UX design skill
+  alongside any applicable platform or framework skills (such as
+  `modern-web-guidance`, `mobile-native`, `break-ui`, or React guidance), so
+  `impeccable` adds to rather than suppresses them.
+- **Unattended `impeccable audit` after `lfg`.** Once stock `lfg` finishes
+  (including `ce-test-browser` and its initial `ce-babysit-pr`) and before
+  sending `worker_done`, run an unattended `impeccable audit` on the pull
+  request branch:
+  - Proceed without pausing for user questions.
+  - Auto-fix verified P0 and P1 objective technical findings (accessibility,
+    contrast, responsive or zoom overflow, touch targets, design tokens, and
+    `DESIGN.md` integrity).
+  - Record the audit result and audited head commit in the pull request body,
+    including any remaining P2 and P3 findings or subjective design tradeoffs
+    instead of redesigning unasked.
+  - Keep `.impeccable/` snapshot files out of git (never commit them); when
+    fixes land, run local checks, push one follow-up commit, record the audit
+    result for that head in the pull request body, and confirm CI settles
+    through `ce-babysit-pr` before sending `worker_done`.
+- **Interactive UX judgment stays out of Executors.** Executors stay
+  asynchronous. Interactive `impeccable critique` and `/impeccable live` run
+  only with the Captain or a Design Lead, either pre-build on mocks or
+  prototypes or post-PR in the kept worktree for `V = 3` UI work (a new
+  user-facing view, flow, or visual direction that needs human judgment).
 
 ## Domain Leads
 
@@ -255,7 +281,11 @@ whose `Owner:` role is `repo-captain`. Other sessions' pull requests still
 reserve files and appear in the catch-up, but the Captain never merges them.
 A pull request is ready when every check on its head has passed, optional
 review bots aside, GitHub reports it mergeable, and no review thread on it is
-unresolved. Judge each ready pull request from its raw diff against the
+unresolved. A pull request for a UI/UX leaf is ready only once its body records
+the post-`lfg` `impeccable audit` result for the current head, so the Captain
+never merges or holds it while the audit and any follow-up commit are still
+running. Judge each ready
+pull request from its raw diff against the
 default branch, by the contract's scores and hold tests, with policy read from
 the default branch. Before any merge, record the pull request and the head it
 merges at in `state.md`.

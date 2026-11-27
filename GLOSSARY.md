@@ -9,17 +9,19 @@ concept. This is a glossary, not a specification.
 
 ## Personal workflows
 
-### Meaningful Commitment
+### Next-Day Commitment
 
 An intention for the next day, reviewed with the user, that ties together
-current evidence or a premise the user stated, an outcome the user chose, and
-how anyone could see it was done.
+three parts: current evidence or a premise the user stated (the basis), an
+outcome the user chose, and how anyone could see it was done (the finish line).
 
 It can be written as ordinary prose. If the user's own wording leaves out one
-of the three parts, keep their wording but do not present it as complete. It
+of the three parts, keep their wording and leave it marked incomplete. It
 records an intention; tasks and the calendar still hold the actual plan.
 
-### Source map
+_Avoid_: Meaningful Commitment
+
+### Source Map
 
 A private list that says which of the user's sources fills each information
 role the chief-of-staff workflows use.
@@ -103,9 +105,10 @@ procedures.
 ### Leverage
 
 The order in which to take work from a list of choices: the value to users
-times our confidence it will deliver, divided by how hard the result is to
-confirm times the undo cost: what a wrong change could break and what it would
-take to reverse it. [PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
+times our confidence it will deliver, divided by the product of verification
+effort (how hard the result is to confirm) and undo cost (what a wrong change
+could break and what it would take to reverse it).
+[PRIORITIZATION.md](PRIORITIZATION.md) defines the scales.
 
 ## Choosing models
 
@@ -161,13 +164,12 @@ the adjustment says so and names what would change it.
 
 The model a vendor itself recommends for most day-to-day work. When the
 vendor's own sources disagree, it is the model the vendor's coding tool runs
-by default. It is the starting point for ROUTING.md's Executor row, the role
-that does most of the work.
+by default. It is the starting point for ROUTING.md's [Executor](#executor) row.
 
 ### Flagship
 
 The model a vendor recommends for its hardest work. It is the starting point
-for ROUTING.md's Captain row.
+for ROUTING.md's [Captain](#captain) row.
 
 ### Rationed
 
@@ -192,18 +194,28 @@ changed from what, which role input justifies it, and what would reverse it.
 ### Captain
 
 The one persistent session per repository that plans with the operator,
-dispatches Executors directly or through Domain Leads, and is the only session
-that merges in that repository. It acts only on the operator's recorded words
-and on live facts it rereads at every wake, and it never blocks on the
-operator. Do not call it the Coordinator or Team lead.
+dispatches [Executors](#executor) directly or through
+[Domain Leads](#domain-lead), and is the only session that merges in that
+repository. It acts only on the operator's recorded words and on live facts it
+rereads at every wake (each timer tick, operator message, or restart), and it
+never blocks on the operator. Do not call it the Coordinator or Team lead.
 
 ### Domain Lead
 
-An optional session a Captain starts dynamically to run one group of related
-concurrent work, such as a Design Lead for two or more concurrent UI leaves
-sharing a design system or a Domain Lead for three or more concurrent leaves in
-one domain or seam. It briefs its own Executors, never merges, hands ready and
-held pull requests up to the Captain, and retires once it has no active work.
+An optional session a [Captain](#captain) starts dynamically to run one group
+of related concurrent work, such as a Design Lead for two or more concurrent
+UI leaves sharing a design system or a Domain Lead for three or more concurrent
+leaves in one domain or seam. It briefs its own [Executors](#executor), never
+merges, hands ready and held pull requests up to the Captain, and retires once
+it has no active work.
+
+### Executor
+
+A bounded worker session dispatched by a [Captain](#captain), a
+[Domain Lead](#domain-lead), or the operator to implement a scoped task or
+[Implementation Leaf](#implementation-leaf), verify the result, and deliver it
+without merging. In [ROUTING.md](ROUTING.md), the Executor row recommends the
+model for this role.
 
 ### Merge Approval
 
@@ -213,9 +225,9 @@ rolling scope: the work the operator handed over in recorded words, plus any
 routine ready leaves assigned to the operator that the Captain pulls forward
 when approved scope runs dry (unless told to stop). It also includes any
 per-issue held-change pre-authorization the operator recorded under a stated
-bar, and any change the operator made, in recorded words, to the scope, the
-merge bar, or the held changes. Only the operator's recorded approval creates
-or changes it. It covers merging and nothing else.
+bar, and any change the operator made to the scope, the merge bar, or the held
+changes. Only the operator's recorded approval creates or changes it. It covers
+merging and nothing else.
 
 ### Held Changes
 
@@ -238,13 +250,14 @@ stops. An issue in another tracker is never a second place to write.
 
 ### Implementation Leaf
 
-One issue whose deliverable and Verification fit one pull request that can be
-delivered and reviewed on its own. A stacked series of pull requests is one
-leaf only when no pull request in the stack delivers behavior anyone could
-observe on its own; otherwise each such pull request is its own leaf. A
-change that fits one leaf needs no parent issue. An issue whose deliverable
-is research, a decision, or a person's action is not an implementation leaf
-and gets no estimate; one whose Verification allows an outcome that ships a
+One issue whose deliverable and Verification (its section of observable
+completion checks) fit one pull request that can be delivered and reviewed on
+its own. A stacked series of pull requests is one leaf only when no pull
+request in the stack delivers behavior anyone could observe on its own;
+otherwise each such pull request is its own leaf. A change that fits one leaf
+needs no parent issue. An issue whose deliverable is research, a decision, or
+a person's action is not an implementation leaf and gets no estimate (the
+tracker's score-derived effort field); one whose Verification allows shipping a
 pull request is a leaf and gets one.
 
 ### Ready Frontier
@@ -273,9 +286,8 @@ Nothing in the [published catalog](skills/README.md) may depend on anything
 that exists only on the maintainer's machine, such as absolute paths, private
 names, or assumptions about their personal setup. The repository's text check
 rejects local home-directory paths in tracked files, and review catches
-private names and other personal assumptions. The rule applies from the
-moment the repository declares itself headed for public release, whatever its
-current visibility.
+private names and other personal assumptions. Because this repository is
+public, the rule applies to every tracked file, not only to published skills.
 
 ### Release Snapshot
 
@@ -358,11 +370,10 @@ an earlier run is never relabeled later to fill the gap.
 
 ### STORM Research
 
-A deep, source-backed investigation. It first establishes what is already
-known, then assigns independent research perspectives, keeps their
-disagreements, and combines their findings for the purpose at hand. Its
-questions cover facts, assumptions, constraints, mechanisms, how parts of a
-system relate, change over time, and knock-on effects, without needing a
-separate named type for each. It can inform a decision, but unlike `ce-pov`,
-which gives a short verdict grounded in the project, its main result is a
-record of the research from several perspectives.
+A deep, source-backed investigation. It establishes what is already known,
+assigns independent research perspectives, preserves their disagreements, and
+combines their findings. Its questions cover facts, assumptions, constraints,
+mechanisms, system relationships, change over time, and knock-on effects. It
+can inform a decision, but unlike `ce-pov` (which gives a short verdict
+grounded in the project), its main result is a multi-perspective research
+record.

@@ -150,6 +150,7 @@
       "url": "https://github.com/acme/cli-kit/pull/131",
       "title": "Unify HTTP client helpers and add retry backoff",
       "head": "1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c",
+      "conflict": true,
       "owner": "No owner",
       "status": "checks pass · conflicts with main",
       "size": {
@@ -572,6 +573,7 @@
       "title": "Bump vite from 6.3.1 to 6.3.2",
       "head": "5555555555555555555555555555555555555555",
       "owner": "Dependabot",
+      "bucket": "bot",
       "status": "checks pass · no conflict",
       "size": {
         "additions": 6,
@@ -611,14 +613,14 @@
     }
   ],
   "merged": {
-    "window": "Since your last Verdict, 2026-11-23 15:02 PST, minus 24 hours.",
+    "window": "Since your last verdict, 2026-11-23 15:02 PST, minus 24 hours.",
     "without": [
       {
         "repo": "acme/ledger-app",
         "number": 412,
         "url": "https://github.com/acme/ledger-app/pull/412",
         "title": "Update copyright year",
-        "reason": "Merged with no Verdict and no label."
+        "reason": "Merged with no verdict and no label."
       }
     ],
     "changedAfter": [
@@ -627,7 +629,7 @@
         "number": 129,
         "url": "https://github.com/acme/cli-kit/pull/129",
         "title": "Cache the session token",
-        "summary": "Two commits after your merge Verdict moved the cache file out of the user's config folder into the shared temporary folder."
+        "summary": "Two commits after your merge verdict moved the cache file out of the user's config folder into the shared temporary folder."
       }
     ]
   }

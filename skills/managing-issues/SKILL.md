@@ -37,40 +37,22 @@ users will see, include a criterion requiring before-and-after screenshots (or
 a named preview walkthrough when nothing can capture them locally) so whoever
 checks evidence at merge enforces it.
 
-Decompose only when the outcome needs more than one reviewable deliverable:
+Keep work that fits one reviewable deliverable as a single issue. Before
+splitting work into multiple issues, working with an existing family, or
+proposing any parent or blocker relationship, load
+[references/graph-and-completion.md](references/graph-and-completion.md). Its
+five-rule decomposition gate, pre-preview decomposition check, native coverage,
+readiness, Ready Frontier membership and order, and completion rules govern
+the graph.
 
-- Keep work that fits one independently deliverable, reviewable pull request as
-  one implementation leaf. A stacked series is one leaf only when no PR in the
-  stack delivers independently observable behavior; otherwise each such PR is
-  its own leaf.
-- Split larger work into vertical outcomes that each deliver observable
-  behavior through every necessary layer. A database, API, UI, or test layer
-  alone is not a useful child unless it is independently valuable and
-  verifiable.
-- Ask what can be demonstrated when each leaf closes. Merge or reshape any
-  leaf that has no independent answer.
-- Add a blocker only when the blocked issue cannot start or finish safely
-  first. Keep preferences and convenient ordering out of the dependency graph.
-- For a wide refactor that cannot stay working as vertical slices, use
-  expand-migrate-contract: introduce the new form alongside the old, migrate
-  consumers in independently safe batches, then remove the old form after
-  every migration finishes.
-
-Before accepting a multi-issue shape, show a compact decomposition check for
-each leaf: its demonstrable outcome, why it remains separate, and every
-genuine blocker with the reason. Merge, reshape, or reconnect any row that
-fails the five rules above before previewing tracker effects.
-
-Create a parent only when it owns a distinct whole outcome delivered by
-several children. Keep the graph as shallow as the outcomes allow. Parents
-have no estimate. Every implementation leaf has one, whatever its readiness,
-derived from its scores once all four are present; until then its estimate
-stays empty and the preview names the missing score. A childless issue is not
-automatically an implementation leaf. Research, decision, and person-action
-issues get no estimate, while any issue whose Verification allows shipping a
-pull request gets one. Readiness (`needs-discovery`, `needs-planning`, or
-`ready`) describes whether the issue has enough information for its role, not
-a named agent or workflow.
+Parents have no estimate. Every implementation leaf has one, whatever its
+readiness, derived from its scores once all four are present; until then its
+estimate stays empty and the preview names the missing score. A childless issue
+is not automatically an implementation leaf: research, decision, and
+person-action issues get no estimate, while any issue whose Verification allows
+shipping a pull request gets one. Readiness (`needs-discovery`,
+`needs-planning`, or `ready`) describes whether the issue has enough
+information for its role, not a named agent or workflow.
 
 ### Score and classify every issue
 
@@ -88,23 +70,15 @@ has no open projects, leave the project empty and say why in the preview. When
 the config requires a project and none fits or none is open, wait until a
 person picks or creates one.
 
-If evidence does not settle one of the four scores, propose the best-supported
-value and mark it `best guess` without asking (per
-[references/prioritization.md](references/prioritization.md)). If evidence
-does not settle labels, readiness, or project, ask the requester before the
-preview: name the field, the candidates, and the one you lean to, then wait.
-Skip inputs the evidence settles. A calling agent or workflow answers or
-passes the question to its own requester. In a scheduled or headless run with
-no way to ask, or when a question comes back unanswered, apply your lean
-(always one of the discovered candidates) and mark it `best guess` in the
-preview and result so a person can correct it. With no candidate, the field
-stays unresolved, and an unresolved required project makes the create
-non-executable.
-
-For an existing family or any proposed relationship, load
-[references/graph-and-completion.md](references/graph-and-completion.md). Its
-native coverage, readiness, Ready Frontier membership and order, and
-completion rules govern the graph.
+Unlike scores, which `prioritization.md` marks `best guess` without asking,
+ask the requester before the preview when evidence does not settle labels,
+readiness, or project: name the field, the candidates, and the one you lean
+to, then wait. Skip inputs the evidence settles. A calling agent or workflow
+answers or passes the question to its own requester. In a scheduled or
+headless run with no way to ask, or when a question comes back unanswered,
+apply your lean (always one of the discovered candidates) and mark it
+`best guess` in the preview and result so a person can correct it. With no
+candidate, leave the field unresolved.
 
 Completion: every proposed issue owns a distinct outcome, every leaf is
 independently verifiable, every blocker is necessary, and every metadata
@@ -298,6 +272,7 @@ canonical read, complete preview, and new approval before continuing, and
 offer neither a replacement create nor another provider.
 
 Lead with one plain summary sentence, then identify issues by tracker
-reference and title. Do not create or recommend a worktree, branch,
-implementation plan, worker assignment, pull request, retry schedule, or
-execution handoff. The tracker remains the only durable issue state.
+reference and title. Limit the response to canonical tracker state, effect
+results, and issue facts; leave implementation planning, delivery execution,
+and follow-up scheduling to downstream workflows. The tracker remains the only
+durable issue state.

@@ -40,7 +40,8 @@ Number effects continuously within this bundle. Keep every destination effect
 independent, even when several follow from the same interaction. One action
 affects one authoritative target. When an intended outcome changes multiple
 targets, show each target change as a separate numbered action with explicit
-dependencies and a separate result.
+dependencies and a separate result. Use plain completion wording (`Done when:`
+or `Verified when:`) so each effect has an observable finish line.
 
 > **Action 1. [Complete sentence describing one effect.]**
 >
@@ -49,25 +50,30 @@ dependencies and a separate result.
 > Destination and exact target: [authoritative system plus exact record,
 > person note, task location, issue, recipients, or writing backlog]
 >
+> Visibility: [public, private, or omit when irrelevant]
+>
 > Proposed content or effect: [complete content or precise change]
 >
 > Evidence and reason: [native source and time, current destination check, why
-> the effect is relationship-load-bearing or useful now]
+> the effect carries durable relationship meaning or is useful now]
 >
-> Coverage and uncertainty: [material source or identity limits]
+> Coverage and uncertainty: [material source or identity limits, or None]
 >
 > Depends on: [visible action numbers, or None]
+>
+> Done when / Verified when: [plain observable evidence that shows the change
+> took effect or confirms the outcome]
 
 For a Person-note merge, show the survivor update and duplicate trash as
 separate actions. The duplicate-trash action depends on a successful readback
-of the survivor action, the applicable approved trash-proof action, and any
-separate backlink or alias repair actions. Never present "merge these notes" as
-one action or one result.
+of the survivor action, the applicable approved reversible-trash test action,
+and any separate backlink or alias repair actions. Never present "merge these
+notes" as one action or one result.
 
 Use these canonical destinations:
 
-- Person notes for approved durable relationship meaning and monotonic contact
-  dates, through the Obsidian CLI only.
+- Person notes for approved durable relationship meaning and contact dates that
+  only move forward, through the Obsidian CLI only.
 - The configured task system for a dated relationship follow-up.
 - In direct mode, the configured canonical task or issue workflow for unrelated
   work, while this CRM bundle retains action ownership.

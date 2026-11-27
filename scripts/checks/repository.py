@@ -86,9 +86,6 @@ HOME_PATH_EXAMPLES = {
     "docs/solutions/best-practices/blind-cross-model-grading-through-native-schema-flags.md": {
         "~" + "/.grok/auth.json",
     },
-    "docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md": {
-        "~" + "/.claude/skills/", "~" + "/.agents/skills/",
-    },
     "skills/personal-chief-of-staff/references/source-bindings.md": {
         "~" + "/.config/the-rookery/personal-chief-of-staff/sources.json",
     },

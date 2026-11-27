@@ -8,24 +8,45 @@ Review continuous integration and recommend improvements.
 
 ## Setup
 
+Use a repository-specific slug in the prompt (`optimize-ci-<repository name>`) and replace each `<placeholder>`. Keep the automation paused while validating its first manual run.
+
 The installed `ce-optimize` workflow builds measurement scaffolding before its
 experiment approval gate. This prompt asks for recommendations and leaves that
 setup work to the skill.
 
+In this prompt, **Verify** means the repository's local full verification
+command (for example, the pre-push or task-runner check that runs lint,
+typecheck, build, and test suites before pushing). Replace "Verify" with your
+project's command name if it uses another label, or remove the Local section if
+your project does not record local verification timings.
+
 Orca starts each run in a new worktree, and `ce-optimize` keeps its state in
-the checkout unless a durable state root is named. The harness lives in the
-automation-state repository, so every host gets the same scripts by pulling.
-What they download, such as GitHub API responses, stays in a cache folder on
-each host outside any repository, and each host rebuilds it.
+the checkout unless a durable state root is named. Put the measurement scripts
+in the `optimize-ci/harness/` folder of your private automation-state
+repository (`~/.local/state/automation-runs`), so every host gets the same
+scripts by pulling. Give `optimize-ci/harness/` a `README.md` that names two
+commands:
+
+- **Pull-request minutes command:** computes hosted pull-request runner minutes
+  per merged pull request for a reviewed week by one fixed method, caching
+  downloaded GitHub API responses under
+  `$HOME/.local/state/ci-optimize/<repository name>/` on each host.
+- **Local command:** reads this host's local Verify history (suite duration,
+  reuse of saved results, and failed attempts) and documents the baseline
+  window to compare against.
+
+What the harness downloads, such as GitHub API responses and experiment
+outputs, stays in that per-host cache folder outside any repository, and each
+host rebuilds it.
 
 ## Prompt
 
 ```text
-Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+Before assessing, confirm the `ce-optimize` skill is available to the selected agent. If it is missing or cannot load, report it and stop. Do not install or update skills or plugins.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `optimize-ci-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
-Use `ce-optimize` to assess CI and recommend improvements. CI includes local Verify as well as hosted runs. Keep experiments within its approval requirements; recommendations do not authorize issue creation, implementation, or PR publication.
+Use `ce-optimize` to assess CI and recommend improvements. CI includes local Verify (the repository's local full verification command) as well as hosted runs. Keep experiments within its approval requirements; recommendations do not authorize issue creation, implementation, or PR publication.
 
 Measure with the harness in the history clone's `optimize-ci/harness/`; its README gives the commands. Downloaded GitHub responses and experiment outputs stay in the local cache at $HOME/.local/state/ci-optimize/<repository name>/, which each host rebuilds. If the run changes a harness file, commit and push that change before saving the report. Keep new measurements dated and compare them with earlier run reports.
 
@@ -35,7 +56,7 @@ Every report has two measured sections:
 
 Look for where Verify and hosted time goes: checks run serially, work rerun on unchanged inputs, hosted jobs that repeat local checks, and failures caught later than a cheaper check could catch them. Any recommendation to reuse a saved result shows that its cache key covers every input the check reads.
 
-Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
+Judge each draft recommendation on its own against current evidence. Apply the same bar to recommendations to leave a confirmed finding unchanged, and check how recommendations interact. Put only the recommendations you support in the approval list, in leverage order, highest first, with each one's evidence, tradeoffs, and uncertainty. List each rejected recommendation in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

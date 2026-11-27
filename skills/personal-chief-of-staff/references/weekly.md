@@ -55,8 +55,8 @@ Separate observed evidence from inference and from judgments that still need
 the user. Do not manufacture a narrative to fill the template. A quiet week or
 partial week can produce a short, honest synthesis.
 
-When daily journals contain meaningful commitments, compare their stated
-rationales with later reflection and observed outcomes only when a repeated
+When daily journals contain next-day commitments, compare their stated basis and
+chosen outcomes with later reflection and observed results only when a repeated
 pattern could improve a current prioritization, sizing, carry-forward, or
 strategic-alignment decision. Present the evidence, label the inference, and
 invite correction. Do not calculate a completion score or streak, require

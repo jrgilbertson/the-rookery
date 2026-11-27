@@ -20,16 +20,17 @@ Use each configured source only for its native role:
 When an X query will run, or when embedded mode evaluates X evidence a caller
 already retrieved, read [grok-x-source.md](grok-x-source.md) first. That
 reference covers access checks, query bounds, and read-only limits. X is for
-relationship evidence, not for finding posts to read or reply to (issue #12).
-Missing or incomplete X only limits conclusions that need X.
+relationship evidence, not for finding posts to read or reply to. Missing or
+incomplete X only limits conclusions that need X.
 
 Direct and embedded modes use only accounts and identities established by
 current authoritative guidance or confirmed in the interaction. An ambiguous
 account blocks that source read, not the entire run. Query a source only when
 it can change a named identity, contact, memory, relevance, or duplicate
-decision; this is bounded evidence. For a caller-required day-window scan,
-cover each configured relationship interaction source for that window, then keep
-per-conversation history narrow. Use a finite result limit per mailbox and per
+decision; this is bounded evidence. For a caller-required day-window scan
+(such as wind-down Daily CRM Scan), cover each configured relationship
+interaction source for that window first, then keep per-conversation history
+and identity binding narrow. Use a finite result limit per mailbox and per
 Messages or X query; when a query returns at the limit or otherwise cannot
 establish completeness, mark that source Partial and do not treat incomplete
 results as proof of no activity. Attribute Messages by sender for incoming

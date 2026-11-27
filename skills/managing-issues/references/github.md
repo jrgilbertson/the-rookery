@@ -1,4 +1,4 @@
-# GitHub provider path
+# GitHub Provider Path
 
 Load this reference for GitHub reads, discovery, previews, and effects. The
 shared lifecycle, approval, batch-stop, and outcome rules live in `SKILL.md`.
@@ -88,7 +88,18 @@ for the same CSV reason as labels. Project reads and writes need
 the token's `project` scope; without it, project effects are unavailable.
 Resolve issue types by exact name through the complete paginated repository
 `issueTypes` GraphQL connection. If installed discovery cannot establish a
-requested metadata identity exactly, stop before previewing that effect.
+requested metadata identity exactly, stop before previewing that effect:
+
+```text
+gh api repos/OWNER/REPO/assignees/LOGIN --hostname github.com --silent
+gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO
+gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO -f endCursor=CURSOR
+```
+
+Use the fixed query
+`query($owner:String!,$name:String!,$endCursor:String){repository(owner:$owner,name:$name){issueTypes(first:100,after:$endCursor){nodes{id name}pageInfo{hasNextPage endCursor}}}}`.
+Start without a cursor and continue while `hasNextPage` is true. Stop on a null
+connection, failed page, empty or repeated cursor, or duplicate exact name.
 
 The four scores are GitHub issue fields of type Number. Issue fields belong to
 the account or organization that owns the repository, so every repository that
@@ -108,53 +119,8 @@ stores the field name only; resolve the field ID from this list each time it
 is needed. A mapped field that is absent, duplicated, or of another type makes
 its score `unresolved — non-writable`.
 
-During first-use setup, offer exact existing labels beside the starter
-recommendations; neither source chooses for the operator. Prefixed flats are
-the recommended readiness shape because repository labels are a flat namespace
-with no label groups. For each chosen label that is absent, check the
-installed `gh label create --help` flags and show its exact name, description,
-and six-character color in the provider-metadata preview. After approval,
-create it once without `--force`, then repeat complete label discovery and
-require one exact name before any config preview:
-
-```text
-gh label create NAME -R github.com/OWNER/REPO --description DESCRIPTION --color COLOR
-```
-
-An existing label is never rewritten during setup. A rejected create is
-`failed`; an accepted create without exact rediscovery is `indeterminate` and
-stops the remaining provider-metadata effects under the shared batch rule.
-
-During first-use setup, offer existing Number issue fields beside the
-recommended names `Impact`, `Confidence`, `Verification effort`, and
-`Undo cost`. For each chosen field that is absent, show its exact name,
-description, Number type, and visibility in the provider-metadata preview, and
-say that the field will appear on every repository the owner has. Creating a
-field needs the token's `user` scope for a personal account or `admin:org` for
-an organization; without it, name the missing scope and stop before the
-create. After approval, create each field once, then repeat field discovery
-and require one exact name before any config preview:
-
-```text
-gh api graphql --hostname github.com -f query=CREATE_ISSUE_FIELD_MUTATION -f owner=OWNER_NODE_ID -f name=NAME -f description=DESCRIPTION -f visibility=VISIBILITY
-```
-
-Use the fixed mutation
-`mutation($owner:ID!,$name:String!,$description:String!,$visibility:IssueFieldVisibility!){createIssueField(input:{ownerId:$owner,name:$name,description:$description,dataType:NUMBER,visibility:$visibility}){issueField{... on IssueFieldNumber{id name}}}}`.
-`VISIBILITY` is `ALL` or `RESTRICTED`; the operator chooses. An existing field
-is never changed during setup. A rejected create is `failed`, and an accepted
-create without exact rediscovery is `indeterminate`.
-
-```text
-gh api repos/OWNER/REPO/assignees/LOGIN --hostname github.com --silent
-gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO
-gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO -f endCursor=CURSOR
-```
-
-Use the fixed query
-`query($owner:String!,$name:String!,$endCursor:String){repository(owner:$owner,name:$name){issueTypes(first:100,after:$endCursor){nodes{id name}pageInfo{hasNextPage endCursor}}}}`.
-Start without a cursor and continue while `hasNextPage` is true. Stop on a null
-connection, failed page, empty or repeated cursor, or duplicate exact name.
+For first-use label and issue-field creation during repository setup, see
+[First-use setup](#first-use-setup) below.
 
 ## Creates and surgical updates
 
@@ -230,3 +196,59 @@ Process each page before requesting the next. A failed page, an unavailable
 endpoint, or the graph reference's node limit makes coverage partial. Read each
 returned identity through the exact issue-read path when current content,
 state, or Verification matters.
+
+## First-use setup
+
+Consult this section only when [setup.md](setup.md) creates missing repository
+labels or owner-level issue fields.
+
+Offer exact existing labels beside the starter recommendations; neither source
+chooses for the operator. Prefixed flats are the recommended readiness shape
+because repository labels are a flat namespace with no label groups. For each
+chosen label that is absent, check the installed `gh label create --help` flags
+and show its exact name, description, and six-character color in the
+provider-metadata preview. After approval, create it once without `--force`,
+then repeat complete label discovery and require one exact name before any
+config preview:
+
+```text
+gh label create NAME -R github.com/OWNER/REPO --description DESCRIPTION --color COLOR
+```
+
+An existing label is never rewritten during setup. A rejected create is
+`failed`; an accepted create without exact rediscovery is `indeterminate` and
+stops the remaining provider-metadata effects under the shared batch rule.
+
+Offer existing Number issue fields beside the recommended names `Impact`,
+`Confidence`, `Verification effort`, and `Undo cost`. For each chosen field
+that is absent, show its exact name, description, Number type, and visibility
+in the provider-metadata preview, and say that the field will appear on every
+repository the owner has.
+
+Before creating an issue field, resolve the repository owner's GraphQL node ID
+and account type (`User` or `Organization`):
+
+```text
+gh api graphql --hostname github.com -f query=OWNER_NODE_ID_QUERY -f owner=OWNER -f name=REPO
+```
+
+Use the fixed query
+`query($owner:String!,$name:String!){repository(owner:$owner,name:$name){owner{id login __typename}}}`.
+Require `owner.login` to match `OWNER` (ignoring case) and pass `owner.id` as
+`OWNER_NODE_ID`, never the repository node `id` returned by `gh repo view`.
+Creating a field needs the token's `user` scope when `owner.__typename` is
+`User`, or `admin:org` when it is `Organization`; without it, name the missing
+scope and stop before the create.
+
+After approval, create each field once, then repeat field discovery and require
+one exact name before any config preview:
+
+```text
+gh api graphql --hostname github.com -f query=CREATE_ISSUE_FIELD_MUTATION -f owner=OWNER_NODE_ID -f name=NAME -f description=DESCRIPTION -f visibility=VISIBILITY
+```
+
+Use the fixed mutation
+`mutation($owner:ID!,$name:String!,$description:String!,$visibility:IssueFieldVisibility!){createIssueField(input:{ownerId:$owner,name:$name,description:$description,dataType:NUMBER,visibility:$visibility}){issueField{... on IssueFieldNumber{id name}}}}`.
+`VISIBILITY` is `ALL` or `RESTRICTED`; the operator chooses. An existing field
+is never changed during setup. A rejected create is `failed`, and an accepted
+create without exact rediscovery is `indeterminate`.

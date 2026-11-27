@@ -220,8 +220,32 @@ than another repository's model config.
   worktree, and send `worker_done` once the pull request is held or merged,
   and never to push to a held pull request
 
-Executors stay asynchronous. Interactive `/impeccable live` runs only in a UI
-pull request's worktree, led by a Design Lead or the Captain.
+**UI/UX briefs.** Any brief for a UI/UX leaf, sent by the Captain or by a
+Domain or Design Lead, adds three instructions without changing how `lfg` runs:
+
+- **Default UI/UX skill.** Name `impeccable` (`impeccable context`,
+  `craft-floor.md`, and `DESIGN.md`) as the default UI/UX design skill
+  alongside any applicable platform or framework skills (such as
+  `modern-web-guidance`, `mobile-native`, `break-ui`, or React guidance), so
+  `impeccable` adds to rather than suppresses them.
+- **Unattended `impeccable audit` after `lfg`.** Once stock `lfg` finishes
+  (including `ce-test-browser` and its initial `ce-babysit-pr`) and before
+  sending `worker_done`, run an unattended `impeccable audit` on the pull
+  request branch:
+  - Proceed without pausing for user questions.
+  - Auto-fix verified P0 and P1 objective technical findings (accessibility,
+    contrast, responsive or zoom overflow, touch targets, design tokens, and
+    `DESIGN.md` integrity).
+  - Record remaining P2 and P3 findings and subjective design tradeoffs in the
+    pull request body instead of redesigning unasked.
+  - Keep `.impeccable/` snapshot files out of git (never commit them); when
+    fixes land, run local checks, push one follow-up commit, and confirm CI
+    settles through `ce-babysit-pr` before sending `worker_done`.
+- **Interactive UX judgment stays out of Executors.** Executors stay
+  asynchronous. Interactive `impeccable critique` and `/impeccable live` run
+  only with the Captain or a Design Lead, either pre-build on mocks or
+  prototypes or post-PR in the kept worktree for `V = 3` UI work (a new
+  user-facing view, flow, or visual direction that needs human judgment).
 
 ## Domain Leads
 

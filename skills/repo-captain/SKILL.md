@@ -236,11 +236,13 @@ Domain or Design Lead, adds three instructions without changing how `lfg` runs:
   - Auto-fix verified P0 and P1 objective technical findings (accessibility,
     contrast, responsive or zoom overflow, touch targets, design tokens, and
     `DESIGN.md` integrity).
-  - Record remaining P2 and P3 findings and subjective design tradeoffs in the
-    pull request body instead of redesigning unasked.
+  - Record the audit result in the pull request body, including any remaining
+    P2 and P3 findings or subjective design tradeoffs instead of redesigning
+    unasked.
   - Keep `.impeccable/` snapshot files out of git (never commit them); when
-    fixes land, run local checks, push one follow-up commit, and confirm CI
-    settles through `ce-babysit-pr` before sending `worker_done`.
+    fixes land, run local checks, push one follow-up commit, update the pull
+    request body with the audit result, and confirm CI settles through
+    `ce-babysit-pr` before sending `worker_done`.
 - **Interactive UX judgment stays out of Executors.** Executors stay
   asynchronous. Interactive `impeccable critique` and `/impeccable live` run
   only with the Captain or a Design Lead, either pre-build on mocks or
@@ -279,7 +281,10 @@ whose `Owner:` role is `repo-captain`. Other sessions' pull requests still
 reserve files and appear in the catch-up, but the Captain never merges them.
 A pull request is ready when every check on its head has passed, optional
 review bots aside, GitHub reports it mergeable, and no review thread on it is
-unresolved. Judge each ready pull request from its raw diff against the
+unresolved. A pull request for a UI/UX leaf is ready only once its body records
+the post-`lfg` `impeccable audit` result, so the Captain never merges or holds
+it while the audit and any follow-up commit are still running. Judge each ready
+pull request from its raw diff against the
 default branch, by the contract's scores and hold tests, with policy read from
 the default branch. Before any merge, record the pull request and the head it
 merges at in `state.md`.

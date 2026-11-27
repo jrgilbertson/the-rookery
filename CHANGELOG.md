@@ -123,10 +123,12 @@ looked" surface. GitHub Releases mirror its entries.
   `DESIGN.md`) alongside any applicable platform or framework skills, and adds
   an unattended post-`lfg` `impeccable audit` pass before `worker_done` (no
   user-question pauses, auto-fix verified P0/P1 objective technical findings,
-  note remaining P2/P3 and subjective tradeoffs in the pull request body, never
-  commit `.impeccable/` snapshots, and push one verified follow-up commit
-  through `ce-babysit-pr` when fixes apply). Interactive `impeccable critique`
-  and `/impeccable live` stay with the Captain or a Design Lead rather than
+  record the audit result plus any remaining P2/P3 and subjective tradeoffs in
+  the pull request body, never commit `.impeccable/` snapshots, and push one
+  verified follow-up commit through `ce-babysit-pr` when fixes apply). The
+  Captain waits for the recorded audit result before judging a UI/UX pull
+  request ready to merge or hold, and interactive `impeccable critique` and
+  `/impeccable live` stay with the Captain or a Design Lead rather than
   unattended Executors.
 - `SKILLS.md` now instructs skill authors to ask for approval for authoring's
   model test runs when the work starts, or name the approval in the brief, and

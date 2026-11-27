@@ -24,7 +24,7 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 **Last reviewed: 2026-11-25**
 
-![Recommendations reviewed 2026-11-25. Captain: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at high.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-25. Captain: Gemini 4 Neon (gemini-4-neon) at high, then Claude Fable 5.2 (claude-fable-5-2) at medium, then GPT-6.2 Astra (gpt-6.2-astra) at high. Executor: Claude Opus 5.5 (claude-opus-5-5) at high, marked as my judgment, then Gemini 4 Neon (gemini-4-neon) at high, marked as my judgment, then GPT-6.2 Sol (gpt-6.2-sol) at medium. Design/taste: Claude Fable 5.2 (claude-fable-5-2) at medium, then GPT-6.2 Astra (gpt-6.2-astra) at high, then Gemini 4 Neon (gemini-4-neon) at high. Writing: Claude Fable 5.2 (claude-fable-5-2) at medium, then Gemini 4 Neon (gemini-4-neon) at high, then GPT-6.2 Astra (gpt-6.2-astra) at high.](docs/assets/routing-table.svg)
 
 Each row names one model from each of three providers, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
@@ -34,21 +34,23 @@ Claude plans that include Fable let it use up to half of the weekly limit, which
 
 The recommendations cover four providers: Anthropic, OpenAI, Google, and xAI. The suites also test models from other companies, such as DeepSeek, Qwen, and Mistral, and their results stay in `results.csv`, but this page charts and recommends only these four.
 
-Grok 4.7 comes fourth in every row, so it has no slot. In the base, GPT-6.2 Sol at medium scores higher than Grok at any effort and costs less, and the Design/taste and Writing sources score Grok below every other charted model.
+Grok 4.7 comes fourth in every row, so it has no slot. In the base, GPT-6.2 Sol at medium scores higher than Grok at any effort and costs less, and Grok scores lowest among the charted models on the combined Design/taste and Writing scores.
+
+If you only need a model for the task in front of you, stop here; the rest of this page covers the benchmark charts, evidence tables, and [update method](#how-i-update-the-table).
 
 ### What each model gains as you raise its effort
 
-![One chart of combined quality against relative cost per task for eight models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-25, Gemini 4 Neon at high scores about 55 at 1.2 times the cost of a typical charted setting, and Gemini 4 Carbon at high about 58 at 1.9 times. Fable 5.2 at high scores about 60 at 2.6 times. GPT-6.2 Astra's best value is high, about 54 at 0.9 times. GPT-6.2 Sol reaches about 49 at medium for a fifth of a typical setting's cost. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own colour marks each model's best-value effort.](docs/assets/routing-base.svg)
+![One chart of combined quality against relative cost per task for eight models from four providers, each drawn as a line joining its efforts from lowest to highest. On data read 2026-11-25, Gemini 4 Neon at high scores about 55 at 1.2 times the cost of a typical charted setting, and Gemini 4 Carbon at high about 58 at 1.9 times. Fable 5.2 at high scores about 60 at 2.6 times. GPT-6.2 Astra's best value is high, about 54 at 0.9 times. GPT-6.2 Sol reaches about 49 at medium for a fifth of a typical setting's cost. Gemini 4 Carbon's line doubles back because its low effort costs more than its medium. A soft ring in the line's own color marks each model's best-value effort.](docs/assets/routing-base.svg)
 
-The chart puts five benchmark suites on one scale, so every model shares the same axes. Colour names the provider, a dash tells one provider's models apart, and each marker's shape names the effort, as the key above the chart shows. The chart covers coding and general work, and it shows the current models from the four providers, whether or not I can run them today.
+The chart puts five benchmark suites on one scale, so every model shares the same axes. Color names the provider, a dash tells one provider's models apart, and each marker's shape names the effort, as the key above the chart shows. The chart covers coding and general work, and it shows the current models from the four providers, whether or not I can run them today.
 
-A soft ring in the line's own colour marks each model's best-value effort, the last step up that costs at most 20% more per point of quality. [The rules](#the-rules) define it.
+A soft ring in the line's own color marks each model's best-value effort, the last step up that costs at most 20% more per point of quality. [The rules](#the-rules) define it.
 
 ### Where the frontier sits among the top models
 
-![One chart of combined quality against relative cost for the 15 highest-scoring current models that at least two of the five suites scored, on the same scale as the chart above. On data read 2026-11-25, the frontier runs from Haiku 5.5 at low, medium, and high, through GPT-6.2 Sol at every effort, GPT-6.2 Astra at high and xhigh, Fable 5.2 at medium, Gemini 4 Neon at high, GPT-6.2 Astra at max, and Gemini 4 Carbon at medium and high, to Fable 5.2 at high, xhigh, and max. Opus 5.5 and Sonnet 5.5 sit below it at every effort. Coloured lines are the models this page routes, grey dotted lines are the rest, an outlined marker sits on the frontier, and a bold name has at least one setting on it.](docs/assets/routing-frontier.svg)
+![One chart of combined quality against relative cost for the 15 highest-scoring current models that at least two of the five suites scored, on the same scale as the chart above. On data read 2026-11-25, the frontier runs from Haiku 5.5 at low, medium, and high, through GPT-6.2 Sol at every effort, GPT-6.2 Astra at high and xhigh, Fable 5.2 at medium, Gemini 4 Neon at high, GPT-6.2 Astra at max, and Gemini 4 Carbon at medium and high, to Fable 5.2 at high, xhigh, and max. Opus 5.5 and Sonnet 5.5 sit below it at every effort. Colored lines are the models this page routes, gray dotted lines are the rest, an outlined marker sits on the frontier, and a bold name has at least one setting on it.](docs/assets/routing-frontier.svg)
 
-This chart widens the view beyond the four providers to every maker the suites score, so a cheaper or stronger model elsewhere shows up. A setting is on the frontier when it scores higher than every cheaper setting among the models shown. It shows the 15 highest-scoring models that at least two suites scored, and leaves out releases a newer one in the same family replaces. Near-free models far below these, such as GPT-6 Luna at low, would otherwise join the frontier at its cheap end.
+This chart widens the view beyond the four providers to every maker the suites score, so a cheaper or stronger model elsewhere shows up. A setting is on the [Pareto Frontier](GLOSSARY.md#pareto-frontier) when it scores higher than every cheaper setting among the models shown. It shows the 15 highest-scoring models that at least two suites scored, and leaves out releases a newer one in the same family replaces. Near-free models far below these, such as GPT-6 Luna at low, would otherwise join the frontier at its cheap end.
 
 ### Why these models
 
@@ -109,6 +111,7 @@ Two sources score this row, weighted equally. Arena counts once, through creativ
 | Opus 5.5 | 1518 | 3.35 | 56.9 |
 | Gemini 4 Neon | 1504 | not listed | 55.0 |
 | GPT-6.2 Astra | 1471 | 4.30 | 53.6 |
+| Gemini 4 Hydrogen | 1492 | not listed | 51.7 |
 | Gemini 4 Carbon | 1518 | 1.62 | 51.3 |
 
 Neon leads Astra by 1.4, and Neon's score rests on Arena alone. No benchmark scores current models on non-fiction such as documentation or reports, so this row rests on creative writing.
@@ -231,10 +234,12 @@ Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv
 
    For the Vals Index, take each model's per-effort results where the page's data has them. For every other leaderboard entry, take the effort its model page states as "Reasoning Effort" or "Compute Effort", so the read covers the whole leaderboard.
 
-   The AA Index without coding is derived from AA's own figures for every setting AA lists, so the frontier chart can place models beyond the routed ones. Its score is the published Intelligence Index minus 15 times the FrontierCode-AA 2.0 score and 10 times the Terminal-Bench 4.1 score (each a fraction from the leaderboard's page data), divided by 0.75. Its cost is the index cost per task minus those two evaluations' weighted cost per task, divided by 0.75. Each model's page lists every evaluation's weighted cost per task under `intelligenceIndexCostPerTask`, and they sum to the index cost. AA publishes no time per task for the subset, so leave minutes empty. If AA changes the index's weights or components, update the formula from its methodology page.
+   The AA Index without coding is derived from AA's own figures for every setting AA lists, so the frontier chart can place models beyond the routed ones. Its score is the published Intelligence Index minus 15 times the FrontierCode-AA 2.0 score and 10 times the Terminal-Bench 4.1 score (each a fraction from the leaderboard's page data), divided by 0.75.
+
+   Its cost is the index cost per task minus those two evaluations' weighted cost per task, divided by 0.75. Each model's page lists every evaluation's weighted cost per task under `intelligenceIndexCostPerTask`, and they sum to the index cost. AA publishes no time per task for the subset, so leave minutes empty. If AA changes the index's weights or components, update the formula from its methodology page.
 2. **Import the role inputs** the same way, each as a suite outside the base. Update what `role-inputs.csv` says about each one, with the date read.
 
-   Most sources can be fetched as plain pages or files. The two Arena boards (WebDev and creative writing) cannot: arena.ai refuses automated requests, so read them in a real browser, such as Orca's built-in browser, and say so in `role-inputs.csv`. A summarising reader is not a substitute. On the 2026-11-19 read one gave the wrong page date and dropped the efforts the page names.
+   Most sources can be fetched as plain pages or files. The two Arena boards (WebDev and creative writing) cannot: arena.ai refuses automated requests, so read them in a real browser, such as Orca's built-in browser, and say so in `role-inputs.csv`. A summarizing reader is not a substitute. On the 2026-11-19 read one gave the wrong page date and dropped the efforts the page names.
 3. **Re-read each vendor's model guidance.** Update `chart.json` with each vendor's everyday model, flagship, and rationed models, and record the sources in `role-inputs.csv`. The script looks for a better sibling only among the models `chart.json` lists, so list any current model that could beat a vendor's everyday model or flagship.
 4. **Check names and effort labels.** If a suite names a model differently, add a row to `models.csv` that points the new name at the model, once the sources confirm they are the same release. Give a new model its own row with its maker. When a new release replaces an older one in its family, set the older one's status to superseded. If an import stops on an effort label, add the label to `efforts.csv`, or leave those rows out when the label has no named equivalent. Then copy the report's `names` section into [Names and effort labels](#names-and-effort-labels).
 5. **Run `changes`** to see what moved since the previous read.
@@ -255,4 +260,4 @@ python3 scripts/routing/evidence.py report
 python3 scripts/routing/evidence.py charts
 ```
 
-The repository checks fail when a committed chart no longer matches the data. Apart from the recommendations figure's alt text, nothing checks the figures typed into this page, so step 11 is manual.
+The repository checks fail when a committed chart no longer matches the data, when `recommendations.csv` drifts from the method without a `judgment` mark, when the [Names and effort labels](#names-and-effort-labels) tables diverge from `models.csv` and `efforts.csv`, or when the recommendations figure's alt text misses a pick or review date. Nothing checks the other figures typed into this page, so step 11 is still manual.

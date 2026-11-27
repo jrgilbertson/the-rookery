@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 598" width="1200" height="598" role="img">
-<title>Which model to use for which work</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 598" width="1200" height="598" role="img" aria-labelledby="routing-table-title routing-table-desc">
+<title id="routing-table-title">Which model to use for which work</title>
+<desc id="routing-table-desc">Model recommendations by role, last reviewed 2026-11-25. Captain: Gemini 4 Neon at high, Claude Fable 5.2 at medium, GPT-6.2 Astra at high. Executor: Claude Opus 5.5 at high (maintainer judgment), Gemini 4 Neon at high (maintainer judgment), GPT-6.2 Sol at medium. Design/taste: Claude Fable 5.2 at medium, GPT-6.2 Astra at high, Gemini 4 Neon at high. Writing: Claude Fable 5.2 at medium, Gemini 4 Neon at high, GPT-6.2 Astra at high.</desc>
 <rect width="1200" height="598" fill="#F6F7FA"/>
 <rect x=".5" y=".5" width="1199" height="597" fill="none" stroke="#47577A" stroke-opacity=".32"/>
 <path d="M14 26V14H26M1174 14H1186V26M14 572V584H26M1174 584H1186V572" fill="none" stroke="#47577A" stroke-opacity=".5"/>
@@ -53,6 +54,6 @@
 <text x="859.3" y="466.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">GPT-6.2 Astra</text>
 <text x="859.3" y="493.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · OpenAI</text>
 <line x1="40" x2="1160" y1="518.0" y2="518.0" stroke="#47577A" stroke-opacity=".3"/>
-<text x="40.0" y="564.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">Take the first model in a row that you can run. The bar's colour names the provider.</text>
-<text x="40.0" y="580.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">* Marks my judgment over the method. Last reviewed 2026-11-25.</text>
+<text x="40.0" y="564.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">Take the first model in a row that you can run. The bar's color names the provider.</text>
+<text x="40.0" y="580.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">* Maintainer's judgment overriding the benchmark method (see ROUTING.md). Last reviewed 2026-11-25.</text>
 </svg>

@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 818" width="1200" height="818" role="img">
-<title>Where the frontier sits among the top models</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 818" width="1200" height="818" role="img" aria-labelledby="routing-frontier-title routing-frontier-desc">
+<title id="routing-frontier-title">Where the frontier sits among the top models</title>
+<desc id="routing-frontier-desc">Combined quality against relative cost per task for the top 15 current models scored by at least 2 of 5 benchmark suites, data read 2026-11-25. Colored lines show routed models, gray dotted lines show other models, and outlined markers sit on the Pareto frontier.</desc>
 <rect width="1200" height="818" fill="#F6F7FA"/>
 <rect x=".5" y=".5" width="1199" height="817" fill="none" stroke="#47577A" stroke-opacity=".32"/>
 <path d="M14 26V14H26M1174 14H1186V26M14 792V804H26M1174 804H1186V792" fill="none" stroke="#47577A" stroke-opacity=".5"/>
@@ -182,8 +183,8 @@
 <line class="leader" x1="615.7" y1="370.4" x2="644.7" y2="415.4" stroke="#47577A" stroke-width="0.8"/>
 <text x="646.7" y="428.4" font-family="Baskerville,Georgia,serif" font-size="13" fill="#042458" text-anchor="start" font-weight="400" class="line-label">Kimi K3.1 Pro (3)</text>
 </g>
-<text x="40.0" y="752.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">One line per model, joining its efforts from lowest to highest. A dash pattern tells one provider's models apart. Coloured lines are the models this page routes; grey dotted lines are the rest.</text>
-<text x="40.0" y="768.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">Bold names have at least one setting on the frontier.</text>
+<text x="40.0" y="752.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">One line per model, joining its efforts from lowest to highest. A dash pattern tells one provider's models apart.</text>
+<text x="40.0" y="768.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">Colored lines are the models this page routes; gray dotted lines are the rest. Bold names have at least one setting on the frontier.</text>
 <text x="40.0" y="784.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">The number beside a name counts the suites that scored it at any effort, of 5. Superseded releases are left out. Data read 2026-11-25.</text>
 <text x="40.0" y="800.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A">Suites: FrontierCode 2.0, VulcanBench v4, AA Index without coding v5.0.2, Vals Index 2.2, CursorBench 4.1.</text>
 </svg>

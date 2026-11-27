@@ -762,7 +762,7 @@ def _marker(effort: str, x: float, y: float, ink: str) -> str:
 
 
 def _best_value_mark(x: float, y: float, ink: str, radius: float, tag: str) -> list[str]:
-    """A soft tint of the line's colour behind a point, edged with a hairline ring in the same colour."""
+    """A soft tint of the line's color behind a point, edged with a hairline ring in the same color."""
     return [f'<circle class="knee-halo" cx="{x:.1f}" cy="{y:.1f}" r="{radius:g}" fill="{ink}" fill-opacity=".14"/>',
             f'<circle {tag} cx="{x:.1f}" cy="{y:.1f}" r="{radius:g}" fill="none" stroke="{ink}" stroke-width="1"/>']
 
@@ -912,7 +912,7 @@ def _panel(x0: float, y0: float, width: float, height: float, scale: Scale,
 
 
 def provider_inks(data: Data) -> dict[str, str]:
-    """Each provider's colour: the one chart.json gives it, or a fallback in order."""
+    """Each provider's color: the one chart.json gives it, or a fallback in order."""
     providers = list(dict.fromkeys(entry["provider"] for entry in data.models))
     plain = iter(FALLBACK_INKS * len(providers))
     return {provider: data.vendors.get(provider, {}).get("colour") or next(plain) for provider in providers}
@@ -941,12 +941,20 @@ def _ground(w: int, h: int) -> list[str]:
     ]
 
 
-def _frame(body: list[str], title: str, subtitle: str, footer: list[str], h: int, efforts: list[str],
-           frontier: bool = False) -> str:
+def _svg_open(chart_id: str, w: int, h: int, title: str, desc: str) -> list[str]:
+    title_id, desc_id = f"{chart_id}-title", f"{chart_id}-desc"
+    return [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img" aria-labelledby="{title_id} {desc_id}">',
+        f'<title id="{title_id}">{escape(title)}</title>',
+        f'<desc id="{desc_id}">{escape(desc)}</desc>',
+    ]
+
+
+def _frame(body: list[str], title: str, subtitle: str, desc: str, footer: list[str], h: int, efforts: list[str],
+           chart_id: str, frontier: bool = False) -> str:
     w, h = CHART_WIDTH, h + 26
     return "\n".join([
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}" role="img">',
-        f"<title>{escape(title)}</title>",
+        *_svg_open(chart_id, w, h, title, desc),
         *_ground(w, h),
         _text(40, 52, title, 30, NAVY, font_family=TITLE_FONT),
         _text(40, 78, subtitle, 15, COBALT, font_weight="600"),
@@ -966,7 +974,7 @@ def frontier_field(data: Data, combined: list[Combined]) -> tuple[list[Series], 
     effort and neither models.csv nor chart.json marks it superseded. The frontier runs over
     the drawn models only: a near-free model far below them would otherwise
     join it and squeeze the rest of the chart. Models the routing page covers
-    count as current, so they keep their provider's colour.
+    count as current, so they keep their provider's color.
     """
     config = data.frontier
     skip = data.superseded | {entry["model"] for entry in data.models if entry["status"] == "superseded"}
@@ -1014,8 +1022,9 @@ def charts(data: Data) -> dict[str, str]:
     together = _frame(
         _panel(30, 100, CHART_WIDTH - 60, 600, scale, styled, legend, y_label, x_label),
         "What each model gains as you raise its effort",
-        f"{len(base)} benchmark suites on one scale. Colour names the provider, shape names the effort, and each line is labelled with its model.",
-        notes, 776, efforts,
+        f"{len(base)} benchmark suites on one scale. Color names the provider, shape names the effort, and each line is labeled with its model.",
+        f"Combined quality against relative cost per task across {len(base)} benchmark suites for {len(everyone)} models from {len(providers)} providers, data read {read}. Each line joins a model's effort settings from lowest to highest, and a ring marks each model's best-value effort.",
+        notes, 776, efforts, "routing-base",
     )
 
     files = {"routing-base.svg": together}
@@ -1032,11 +1041,12 @@ def charts(data: Data) -> dict[str, str]:
             _panel(30, 100, CHART_WIDTH - 60, 600, Scale.of(field_), drawn, key, y_label, x_label, frontier=edge),
             "Where the frontier sits among the top models",
             f"The top {len(field_)} models scored by at least {data.frontier['min_suites']} of {len(base)} suites, on the same scale. Outlined settings sit on the frontier.",
-            [f"{FOOTER} Coloured lines are the models this page routes; grey dotted lines are the rest.",
-             "Bold names have at least one setting on the frontier.",
+            f"Combined quality against relative cost per task for the top {len(field_)} current models scored by at least {data.frontier['min_suites']} of {len(base)} benchmark suites, data read {read}. Colored lines show routed models, gray dotted lines show other models, and outlined markers sit on the Pareto frontier.",
+            [FOOTER,
+             "Colored lines are the models this page routes; gray dotted lines are the rest. Bold names have at least one setting on the frontier.",
              f"The number beside a name counts the suites that scored it at any effort, of {len(base)}. Superseded releases are left out. Data read {read}.",
              "Suites: " + ", ".join(f"{suite} {versions.get(suite, '')}".strip() for suite in base) + "."],
-            792, field_efforts, frontier=True,
+            792, field_efforts, "routing-frontier", frontier=True,
         )
     return files
 
@@ -1080,18 +1090,22 @@ def table_chart(directory: Path, data: Data) -> str | None:
         body.append(_text(left, y + row_h / 2 + 7, role, 20, NAVY, font_family=TITLE_FONT))
         for column, (provider, name, effort, judged) in enumerate(picks):
             x = left + label_w + column * col_w + 16
-            colour = known[provider]
-            body.append(f'<rect x="{x - 16:.1f}" y="{y + 18:.1f}" width="4" height="{row_h - 36:.1f}" rx="2" fill="{colour}"/>')
+            color = known[provider]
+            body.append(f'<rect x="{x - 16:.1f}" y="{y + 18:.1f}" width="4" height="{row_h - 36:.1f}" rx="2" fill="{color}"/>')
             body.append(_text(x, y + 40, name + (" *" if judged else ""), 18, NAVY, font_weight="600"))
             body.append(_text(x, y + 67, f"{effort.capitalize()} effort · {provider}", 14, GRAPHITE))
     end = top + len(rows) * row_h
     body.append(f'<line x1="{left}" x2="{CHART_WIDTH - left}" y1="{end:.1f}" y2="{end:.1f}" stroke="{GRAPHITE}" stroke-opacity=".3"/>')
-    footer = ["Take the first model in a row that you can run. The bar's colour names the provider.",
-              "* Marks my judgment over the method. Last reviewed " + reviewed + "."]
+    footer = ["Take the first model in a row that you can run. The bar's color names the provider.",
+              "* Maintainer's judgment overriding the benchmark method (see ROUTING.md). Last reviewed " + reviewed + "."]
+    summary = " ".join(
+        f"{role}: " + ", ".join(f"{name} at {effort}" + (" (maintainer judgment)" if judged else "") for _, name, effort, judged in picks) + "."
+        for role, picks in rows
+    )
+    desc = f"Model recommendations by role, last reviewed {reviewed}. {summary}"
     h = end + 80
     return "\n".join([
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {CHART_WIDTH} {h}" width="{CHART_WIDTH}" height="{h}" role="img">',
-        "<title>Which model to use for which work</title>",
+        *_svg_open("routing-table", CHART_WIDTH, h, "Which model to use for which work", desc),
         *_ground(CHART_WIDTH, h),
         _text(left, 52, "Which model to use for which work", 30, NAVY, font_family=TITLE_FONT),
         _text(left, 80, "Three providers per row, best first, each at the effort setting worth its cost.", 15, COBALT, font_weight="600"),

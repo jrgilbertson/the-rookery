@@ -1,8 +1,8 @@
 ---
 name: repo-captain
-description: "Run one persistent Captain for a repository in Orca. Use to start, resume, or check a repo Captain or team lead: coordinate multi-epic fleets, order overlapping files or migrations, merge routine PRs, pull forward ready issues, carry out verdicts, or report what needs the operator. Not for one plan or PR (ce-work), cross-repo reviews (reviewing-prs), or issue edits alone (managing-issues)."
+description: "Run one persistent Captain or team lead for a repo in Orca. Start, resume, or check a multi-epic fleet, order overlapping files or migrations, merge routine PRs, pull forward ready issues, carry out verdicts, or report what needs the operator. Not for one plan or PR (ce-work), cross-repo reviews (reviewing-prs), or issue edits alone (managing-issues)."
 license: MIT
-compatibility: "Requires Orca (github.com/stablyai/orca) with its version-matched CLI and orchestration guide, a session-owned wake timer (setsid on Claude Code, Codex), git, and an authenticated GitHub CLI (gh). Also requires this repository's managing-issues and reviewing-prs skills, gh-stack, and the Compound Engineering plugin's lfg, ce-plan, ce-babysit-pr, and ce-resolve-pr-feedback (github.com/EveryInc/compound-engineering-plugin). UI work also requires impeccable (github.com/pbakaus/impeccable)."
+compatibility: "Requires Orca CLI (github.com/stablyai/orca), git, authenticated gh, a session-owned wake timer, managing-issues, gh-stack (github.com/github/gh-stack), and Compound Engineering's lfg, ce-plan, ce-babysit-pr, and ce-resolve-pr-feedback (github.com/EveryInc/compound-engineering-plugin). Optional: reviewing-prs; impeccable (github.com/pbakaus/impeccable) for UI."
 ---
 
 # Repo Captain
@@ -59,9 +59,9 @@ and the brief cannot stop it, report that step to the operator as a limitation
 rather than working around it. Never gate a merge on an optional review bot.
 
 **Never block.** Make reversible choices yourself (undo cost below 3 on the
-contract's scale). For an irreversible choice,
-record a default, hold only the work that depends on the answer, and post the
-decision. Keep everything else moving.
+contract's scale). For an irreversible choice, record a default, hold only
+the work that depends on the answer, and post the decision. Keep everything
+else moving.
 
 **Let stock skills own their gates.** Executors build, test, review, and open
 pull requests through `lfg`, keep them green with `ce-babysit-pr`, answer
@@ -110,8 +110,9 @@ Mark the Captain's own worktree once, so other sessions can find it:
 A wake is the Captain's own timer firing, an operator message, or a restart.
 Run these steps in order every time:
 
-1. **Confirm you are the only Captain**, under Liveness below. If you stand
-   down, stop here.
+1. **Confirm you are the only Captain**, under [Liveness](#liveness). If you
+   stand down, load [references/wake-timer.md](references/wake-timer.md) to
+   verify PID ownership before stopping any timer, then stop here.
 2. **Reread live facts.** List open and recently merged pull requests with
    their labels, heads, checks, receipts, and verdict comments. Read the
    canonical tracker through `managing-issues`, which resolves it from
@@ -124,16 +125,24 @@ Run these steps in order every time:
 4. **Reconcile state with live facts.** For each in-flight brief:
    - retry a worker that `exited` with no pull request from its stored brief
      with `--retry-of`, and never route around a `circuit_broken` chain;
-   - leave a worker that exited with a pull request to Merging;
+   - leave a worker that exited with a pull request to [Merging](#merging);
    - leave a worker or Domain Lead that reads `unverifiable` or `lost` without
      a second worker, keep its files reserved, and include it in the catch-up.
-5. **Act on unspent verdicts**, under Verdicts below.
-6. **Merge routine pull requests**, under Merging below, and update the
-   tracker for every pull request you judged or merged, under Tracker.
-7. **Dispatch** within approved scope, or pull forward when scope is done.
-8. **Post new decisions and alerts.**
-9. **Keep the wake timer running** while any count in Wake timer is
-   nonzero, arming one only when none is running. Otherwise stop it.
+5. **Act on unspent verdicts**, under [Verdicts](#verdicts).
+6. **Merge routine pull requests**, under [Merging](#merging), and update the
+   tracker for every pull request you judged or merged, under
+   [Tracker](#tracker).
+7. **Dispatch** within approved scope ([Plan and dispatch](#plan-and-dispatch)),
+   or pull forward when scope is done ([Pull-forward](#pull-forward)). Load
+   [references/briefs-and-leads.md](references/briefs-and-leads.md) before
+   writing or amending a brief or starting, retiring, or replacing a Domain or
+   Design Lead.
+8. **Post new decisions and alerts**, under
+   [Operator attention](#operator-attention).
+9. **Keep the wake timer running** while any count in [Wake timer](#wake-timer)
+   is nonzero, arming one only when none is running; otherwise stop it. Load
+   [references/wake-timer.md](references/wake-timer.md) to check, arm, or stop
+   the timer.
 
 A wake that finds nothing new to act on replies in one line, saying so and
 that its wake timer is running. Save the full picture for the catch-up. A wake
@@ -166,11 +175,11 @@ if a marked session for this repository appears anywhere, or if a server
 could not be checked.
 
 A session that stands down says so once in its own reply, names the live
-Captain it found, and writes nothing. It stops its own wake timer, if one is
-running, so it is not woken again. Under Wake timer, a wake loop is its own
-only when the loop's command line shows this session's handle; it never
-stops the live Captain's timer. Orca's
-`exited` and `unverifiable` values describe dispatched workers, not the
+Captain it found, and writes nothing. Before stopping any wake timer, load
+[references/wake-timer.md](references/wake-timer.md) and apply its
+handle-matching PID ownership rule: stop a wake loop only when its command
+line shows this session's handle, and never stop the live Captain's timer.
+Orca's `exited` and `unverifiable` values describe dispatched workers, not the
 Captain's own chat, so this check does not use them.
 
 ## Plan and dispatch
@@ -190,8 +199,8 @@ with the files of every active brief and the diff of every open pull request
 from a branch in this repository, whoever opened it. A fork's pull request
 reserves nothing, since the Captain never acts on forks. Serialize any leaf
 that overlaps. A file that only accumulates entries, such as `CHANGELOG.md`,
-never reserves, since those merge cleanly. A leaf stacked on a held pull request does not conflict
-with that pull request's own files.
+never reserves, since those merge cleanly. A leaf stacked on a held pull
+request does not conflict with that pull request's own files.
 
 **One migration at a time.** At most one pull request that adds a database
 migration is queued or merging at once.
@@ -214,74 +223,10 @@ When a start on a server fails, report it and keep working here.
 it in the brief. Use only the current repository and host configuration rather
 than another repository's model config.
 
-**Every brief carries:**
-
-- the leaf, its file list, and its Verification
-- the model picked
-- the ownership line for the pull request body, with `repo-captain` as the
-  `Owner:` role and the worker's own role as `Author:`
-- the stacking rule: build on at most one held pull request whose checks
-  pass, using `gh-stack`, never on a chain of unreviewed pull requests
-- the bot rule and the scrub rule from Rules for every step
-- the instruction to show evidence beside each Verification item in the pull
-  request body
-- the instruction to tear down local service and database stacks, keep the
-  worktree, and send `worker_done` once the pull request is held or merged,
-  and never to push to a held pull request
-
-**UI/UX briefs.** Any brief for a UI/UX leaf, sent by the Captain or by a
-Domain or Design Lead, adds three instructions without changing how `lfg` runs:
-
-- **Default UI/UX skill.** Name `impeccable` (`impeccable context`,
-  `craft-floor.md`, and `DESIGN.md`) as the default UI/UX design skill
-  alongside any applicable platform or framework skills (such as
-  `modern-web-guidance`, `mobile-native`, `break-ui`, or React guidance), so
-  `impeccable` adds to rather than suppresses them.
-- **Unattended `impeccable audit` after `lfg`.** Once stock `lfg` finishes
-  (including `ce-test-browser` and its initial `ce-babysit-pr`) and before
-  sending `worker_done`, run an unattended `impeccable audit` on the pull
-  request branch:
-  - Proceed without pausing for user questions.
-  - Auto-fix verified P0 and P1 objective technical findings (accessibility,
-    contrast, responsive or zoom overflow, touch targets, design tokens, and
-    `DESIGN.md` integrity).
-  - Record the audit result and audited head commit in the pull request body,
-    including any remaining P2 and P3 findings or subjective design tradeoffs
-    instead of redesigning unasked.
-  - Keep `.impeccable/` snapshot files out of git (never commit them); when
-    fixes land, run local checks, push one follow-up commit, record the audit
-    result for that head in the pull request body, and confirm CI settles
-    through `ce-babysit-pr` before sending `worker_done`.
-- **Interactive UX judgment stays out of Executors.** Executors stay
-  asynchronous. Interactive `impeccable critique` and `/impeccable live` run
-  only with the Captain or a Design Lead, either pre-build on mocks or
-  prototypes or post-PR in the kept worktree for `V = 3` UI work (a new
-  user-facing view, flow, or visual direction that needs human judgment).
-
-## Domain Leads
-
-Start a Domain Lead on the Captain's own machine with
-`worker-start --environment local --worktree new-top-level --keep-open`. The
-Lead makes its own child Run with `run-create --environment local` and starts
-its Executors there.
-
-- **Fixed leaves.** Give the Lead a set of leaves and their file lists. For
-  any new leaf, including a design-system seam, the Lead asks the Captain with
-  `orca orchestration ask`, and the Captain answers from the overlap check.
-- **Models.** The Lead picks its Executors' models by the same rule as the
-  Captain.
-- **No merging.** The Lead's hand-up is the pull request on GitHub. The
-  Captain judges it from the raw diff like any other.
-- **Design Lead.** A Design Lead keeps sibling UI pull requests consistent
-  with the design system. When siblings need a token or component the system
-  lacks, it opens one seam pull request that adds it. That pull request is a
-  sensitive kind, so it is held, and siblings may stack on it.
-- **Retiring.** The Lead sends `worker_done` when it has no active Executors.
-  Release it with `worker-release` and delete its state file. Later rework on
-  one of its pull requests is grouped afresh.
-- **Dropped Leads.** Replace a Lead that `exited` from its state file. Leave
-  one that reads `unverifiable` without a replacement, keep its files
-  reserved, and list its group in the catch-up.
+**Briefs and Leads.** Load [references/briefs-and-leads.md](references/briefs-and-leads.md)
+before writing or amending a worker brief or starting, retiring, or replacing
+a Domain or Design Lead. It holds the brief template, UI/UX `impeccable` rules,
+and Lead rules.
 
 ## Merging
 
@@ -290,14 +235,17 @@ whose `Owner:` role is `repo-captain`. Other sessions' pull requests still
 reserve files and appear in the catch-up, but the Captain never merges them.
 A pull request is ready when every check on its head has passed, optional
 review bots aside, GitHub reports it mergeable, and no review thread on it is
-unresolved. A pull request for a UI/UX leaf is ready only once its body records
-the post-`lfg` `impeccable audit` result for the current head, so the Captain
-never merges or holds it while the audit and any follow-up commit are still
-running. Judge each ready
-pull request from its raw diff against the
-default branch, by the contract's scores and hold tests, with policy read from
-the default branch. Before any merge, record the pull request and the head it
-merges at in `state.md`.
+unresolved. A pull request for an interactive UI/UX web page is ready only
+once its body records the post-`lfg` `impeccable audit` result for the current
+head (keeping transient `.impeccable/` audit and critique snapshots out of
+git while allowing intentionally tracked `.impeccable/design.json`), so the
+Captain never merges or holds it while the audit and any follow-up commit are
+still running. Static diagram or image plates do not require
+`impeccable audit`; verify them via before-and-after renders instead. Judge
+each ready pull request from its raw diff against the default branch, by the
+contract's scores and hold tests, with policy read from the default branch.
+Before any merge, record the pull request and the head it merges at in
+`state.md`.
 
 - **Routine.** A pull request for an issue in approved scope that meets
   neither hold test merges under the charter's Merge Approval once its body
@@ -426,78 +374,16 @@ fleet and a second Captain that stood down.
 
 ## Wake timer
 
-Check about every 30 minutes while any of these is nonzero:
+Check about every 30 minutes while any of these counts is nonzero:
 
 - active workers or Domain Leads
 - pull requests queued to merge, or merged and still awaiting default-branch
   CI on their merge commit
 - held pull requests the Captain owns
 
-The timer belongs to the Captain's own session. A scheduler that starts a new
-session would be a second Captain. The wake prompt never names a pull request
-number or dispatch ID; each wake rediscovers them.
-
-Between wakes the Captain ends its turn, and Orca must show it `done`. While
-a session shows `working`, Orca holds the operator's messages, and the Steer
-that forces one through can cancel the timer. So keep exactly one recurring
-timer that the harness does not report to Orca as unfinished work:
-
-- **Antigravity:** `schedule` with `CronExpression: "*/30 * * * *"` and
-  `IsDaemon: true`. Record the task ID in `state.md`. Check it with
-  `manage_task` list and stop it with `manage_task` kill.
-- **Claude Code and Codex:** the wake loop below. Read its command line with
-  `ps -ww -o args= -p "$(cat "$state/wake.pid")"`. A wake loop's line shows
-  the wake prompt and the state folder. It is this session's timer only when
-  it also shows this session's `$ORCA_TERMINAL_HANDLE`. A wake loop with
-  another handle was left by an earlier Captain session: `kill` it before
-  starting a new one. Never `kill` a PID whose line is not a wake loop's,
-  because the PID may now belong to another process. Because `setsid -f`
-  returns before the child writes `wake.pid`, verify startup through the
-  bounded wait in the launch snippet below; if that check fails, no timer is
-  running.
-
-Never use Antigravity's `DurationSeconds` or a cron without `IsDaemon`,
-Codex's `clock.sleep`, or Claude Code's `CronCreate`, `/loop`, `Monitor`, or
-background shells. Each keeps the session `working` while it runs.
-
-The wake loop runs outside the harness and types the wake prompt into the
-Captain's own terminal; the Orca guide allows `orca terminal send` into your
-own pane. Start it in a new session, because Codex ends a plain background
-job when the command that started it returns. `setsid` comes with Linux; on a
-system without it, start the loop in a new session another way. With `$state`
-set to the state folder:
-
-```sh
-[ -n "$state" ] && [ -n "$ORCA_TERMINAL_HANDLE" ] &&
-rm -f "$state/wake.pid" &&
-setsid -f sh -c 'tmp="$1/wake.pid.$$"
-  printf "%s\n" "$$" > "$tmp" && mv -f "$tmp" "$1/wake.pid" || { rm -f "$tmp"; exit 1; }
-  while sleep 1800; do
-    out=$(orca terminal send --terminal "$2" --enter --json \
-      --text "Wake: run the repo-captain wake routine." 2>&1) && continue
-    case $out in
-      *terminal_not_writable*|*terminal_handle_stale*) exit 0 ;;
-    esac
-  done' wake "$state" "$ORCA_TERMINAL_HANDLE" </dev/null >/dev/null 2>&1 &&
-{
-  i=0
-  while [ "$i" -lt 20 ]; do
-    if [ -s "$state/wake.pid" ]; then
-      pid=$(cat "$state/wake.pid")
-      args=$(ps -ww -o args= -p "$pid" 2>/dev/null)
-      case $args in
-        *"Wake: run the repo-captain wake routine."*"$state"*"$ORCA_TERMINAL_HANDLE"*) break ;;
-      esac
-    fi
-    i=$((i + 1))
-    sleep 0.1
-  done
-  [ "$i" -lt 20 ]
-}
-```
-
-The child writes `wake.pid` atomically before entering the loop, and the
-bounded wait confirms that the new process is running for this session before
-returning success. The loop exits on its own once Orca reports the Captain's
-terminal closed or unknown. Any other failed send, such as Orca restarting,
-is retried at the next interval.
+The timer belongs to this session alone (never a scheduler that starts a
+second Captain), never names a pull request number or dispatch ID, and lets
+the Captain end its turn so Orca shows it `done`. Load
+[references/wake-timer.md](references/wake-timer.md) before checking, arming,
+or stopping the timer (including on stand-down in [Liveness](#liveness)) for
+per-harness scheduling, handle-matching PID ownership, and the generic fallback.

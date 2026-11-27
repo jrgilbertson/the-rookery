@@ -14,8 +14,9 @@ Render it under "Render the audit" in `references/source-access.md`.
 
 Apply "Make every intention verifiable" in `references/review-reasoning.md` to
 recommendations as they appear and to each independent effect. Keep the basis,
-outcome, and closure evidence in natural prose; use the following shape when
-it helps the user review an external change:
+outcome, and completion check (plain `Done when:` or `Verified when:` wording)
+in natural prose; use the following shape when it helps the user review an
+external change:
 
 > **1. [Complete sentence describing the proposed effect.]**
 >
@@ -30,11 +31,16 @@ it helps the user review an external change:
 >
 > Evidence and reason: [current basis and why this matters]
 >
-> Closure evidence: [future observable finish line for this effect]
+> Coverage and uncertainty: [material source, capacity, or identity limits, or None]
+>
+> Depends on: [visible action numbers, or None]
+>
+> Done when / Verified when: [plain observable evidence that shows completion or tests an experiment]
 
 Give each proposed source change its own action number, including a draft
 awaiting canonical access; numbers inside its content do not number the action.
-Continue action numbering across bundles in the same run. Invite the user to approve, edit, defer, or skip each number. Follow
+Continue action numbering across bundles in the same run. Invite the user to
+approve, edit, defer, or skip each number. Follow
 "Bind approval to the exact action" and "Revalidate, apply, and read back" in
 `references/action-application.md`, including its action-result labels. End
 with one run ending and a recap of what changed and every action still

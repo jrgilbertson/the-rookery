@@ -1,7 +1,8 @@
-# Set up and manage source mappings
+# Set Up and Manage Source Mappings
 
 Read this reference for first setup, listing or changing mappings, replying to
-a binding preview, or proposing a map-location or access repair. Read
+a binding preview, repairing access, upgrading a version 1 or 2 map, or
+recovering an Obsidian CLI read in a sandboxed runtime. Read
 [source-bindings.md](source-bindings.md) first for map location, owning-system
 access, schema, existing-version rules, and harness access selection. Apply
 [source-access.md](source-access.md) before any source read or write. Routine
@@ -33,7 +34,8 @@ and configured bindings grouped by that field, using the labels below where
 applicable. Keep custom area values visible under their own labels. This is a
 presentation rule, not a nested JSON format or a reason to rewrite a map.
 Shared access describes the usual route; optional complete harness overrides
-reach the same designated source. [The map schema](source-bindings.md#schema) owns all field rules.
+reach the same designated source. [The map schema](source-bindings.md#schema)
+owns all field rules.
 
 Walk through these categories one at a time, explaining the decisions they
 support and allowing each to be skipped or deferred. Existing users requesting
@@ -101,7 +103,9 @@ For each role being configured, establish the decision it informs, its
 user-designated owner, bounded locator or query, any source restrictions,
 and material effect of absence or conflict. Reuse answers already supplied.
 Do not ask users to assign workflows to each source in a new map.
-Ask which owner is primary when scopes overlap.
+Ask which owner is primary when scopes overlap. Ask who owns an unresolved role
+before treating any candidate as authoritative; a proposed owner is not a saved
+binding or a successful source read.
 
 If the user needs help locating a source, first obtain their selected
 account/system and bounded search scope. Search only within those bounds and
@@ -116,8 +120,8 @@ review supported by other evidence.
 Read the map and identify the requested entry by role, source, and access
 details. Clarify only when multiple entries match. For **list**, group bindings
 by their existing `area` and show roles, designated owners, shared access,
-and overrides from the map; no native
-source read or availability claim is needed.
+and overrides from the map; no native source read or availability claim is
+needed.
 
 For **add** or **update**, gather only missing designation or access details
 and follow [Save an approved binding](#save-an-approved-binding). Target an
@@ -138,33 +142,35 @@ not required unless separately requested.
 Read the current map before previewing a change. An absent map can be created;
 an invalid or unreadable map remains untouched pending user-directed repair.
 Show the exact current and proposed source designation, shared access,
-overrides, bounds, and any existing-map read rules affected by the change, including any
-version upgrade. A failed read or moved note alone does not authorize a new
-owner or locator. Obtain approval for the exact proposed change.
+overrides, bounds, and any existing-map read rules affected by the change,
+including any version upgrade. Preserve established bindings until the user
+designates a change; a failed read or moved note alone changes neither
+ownership nor permission to use another locator. Obtain approval for the exact
+proposed change.
 
 Use the map's owning interface to save the approved change, including the
 Obsidian CLI for a vault-owned map. Inspect current content immediately before
 editing. If an observed intervening change invalidates the approved proposal,
 show a revised preview and obtain fresh approval. Make the smallest supported
-edit and preserve unrelated entries. Read the saved map back and compare it with the
-approved change and the preserved settings. Report failed or unavailable
-saving/readback rather than claiming persistence. Host tools may provide
-stronger safeguards; the skill does not guarantee locking, atomic replacement,
-or detection of changes that the host tools cannot observe.
+edit and preserve unrelated entries. Read the saved map back and compare it
+with the approved change and the preserved settings. Report failed or
+unavailable saving/readback rather than claiming persistence. Host tools may
+provide stronger safeguards; the skill does not guarantee locking, atomic
+replacement, or detection of changes that the host tools cannot observe.
 
 For added or changed access, after the saved binding reads back, follow
 [Resolve harness access](source-bindings.md#resolve-harness-access), then read
 the approved bounded source through the selected interface and report that
-result separately, naming the access description actually exercised. A
-successful read verifies only that description. When an edited override belongs
-to another harness, or edited shared access is hidden by the current harness's
-override, report the change as saved but its access unverified; setup remains
-Partial until a relevant harness selects and successfully reads that route.
-Preserve current-runtime selection rather than reading another harness's
-override to satisfy this check. A successful map write does not establish
-source access. If the native read fails, retain the approved binding, mark
-setup incomplete for that role, and retry its read on the next relevant session
-without repeating settled ownership questions.
+result separately, naming the access description exercised. A successful read
+verifies only that description. When an edited override belongs to another
+harness, or edited shared access is hidden by the current harness's override,
+report the change as saved but its access unverified; setup remains Partial
+until a relevant harness selects and successfully reads that route. Preserve
+current-runtime selection rather than reading another harness's override to
+satisfy this check. A successful map write does not establish source access. If
+the native read fails, retain the approved binding, mark setup incomplete for
+that role, and retry its read on the next relevant session without repeating
+settled ownership questions.
 
 Report the saved location. When establishing or changing it, preview the exact
 map-location and pointer or caller changes for approval, including what
@@ -193,14 +199,73 @@ Completion: approved changes match map readback, added or changed access has
 a separate native read result, and deferred roles and persistence or discovery
 limits are named.
 
+## Repair access and upgrade existing maps
+
+For an access repair, a stable native record identity within the designated
+system or account can establish that a changed locator reaches the same source.
+Matching titles or content, including a synced copy in another account, cannot.
+For a collection, establish the same designated collection and semantic scope.
+If equivalence remains uncertain, obtain user confirmation of the source before
+proposing the change. Preserve `source` when only access changes and follow
+[Save an approved binding](#save-an-approved-binding) for every map edit.
+
+An upgrade from version 1 or 2 to version 3 is a separate, explicit mapping
+proposal. Show every `condition` and `modes` restriction being removed and
+retain source-specific restrictions in `filter` or `window` where appropriate.
+Workflow behavior belongs in workflow instructions. If an existing rule's
+intent is unclear, retain the old map and resolve that intent before upgrading.
+Obtain approval for the exact result before saving; never silently discard
+restrictions. Older skill copies must support version 3 before using an
+upgraded map. Unsupported versions remain untouched.
+
+## Audit setup access
+
+During source setup and management, audit native verification reads of saved
+bindings and any bounded candidate search separately in the paragraph
+[Source Access Audit](source-access.md#audit-the-current-responses-source-access).
+A search establishes candidates within the user-selected scope, not
+authoritative designation. Listing and removal need no connector or native
+read; say native access was not checked. Report map reads, saves, and host-file
+readbacks in the setup narrative, not as source access.
+
+## Obsidian sandbox recovery
+
+In a sandboxed runtime, a CLI error saying that Obsidian is unavailable may
+mean the command sandbox cannot communicate with the running Obsidian app
+rather than that the app or vault is unavailable. If the platform provides an
+explicitly approved execution context that can communicate with the app, retry
+the same official Obsidian CLI read once in that context, still with explicit
+vault targeting. A successful recovery read establishes that the app and
+configured vault are reachable. If that ordinary recovery read still fails,
+use the normal partial or manual classification.
+
+If readback fails after an attempted write, retry only the same official CLI
+readback in that approved context. If the recovery readback remains
+unconfirmed, classify the attempted write **Indeterminate** and stop; never
+repeat the write. This recovery path does not authorize another Obsidian
+integration, direct vault filesystem access, or bypassing action approval.
+
+## Thin callers
+
+A caller supplies the installed skill, mode or scheduled context, and map
+location. Replace the pointers in this scheduled prompt with the user's own:
+
+> Use the installed `personal-chief-of-staff` skill for this scheduled weekly
+> review. Source map: `<private-map-location>`.
+
+The skill owns sequencing, questions, approvals, stopping, and resuming for
+both scheduled and direct invocations. The map supplies sources, not another
+workflow or permission to apply changes.
+
 ## Finish standalone setup
 
 Standalone setup or management opens no review mode. When setup occurs inside
 a new review, that review's ending governs instead. Judge completion by the
 requested operation: listing requires a valid map read, removal requires saved
 map readback, and added or changed access requires saved map readback plus a
-successful bounded native read of that access description. A preview is not persistence, and persistence
-is not source access. Failed access retains the saved owner.
+successful bounded native read of that access description. A preview is not
+persistence, and persistence is not source access. Failed access retains the
+saved owner.
 
 Use one core run ending:
 

@@ -23,16 +23,17 @@ For each new Wind-down, Weekly, or Quarterly review, resolve the private map
 through [source-bindings.md](source-bindings.md#resolve-before-recommending),
 then read its configured strategy, durable learning, and bounded current task
 commitments for the review's window before making recommendations. Inspect
-returned current content for applicability under [Judge what returned evidence
-supports](source-access.md#judge-what-returned-evidence-supports). Keep the
-configured task owner as the source of task state; neither the review nor this
-map is a second task store.
+returned current content for applicability under
+[Judge what returned evidence supports](source-access.md#judge-what-returned-evidence-supports).
+Keep the configured task owner as the source of task state; neither the review
+nor this map is a second task store.
 
 The mode reference then names its incremental reads: its current record,
 template, and useful prior review as directed by
 [Wind-down](wind-down.md#establish-the-day),
 [Weekly](weekly.md#reconstruct-the-available-week), or
-[Quarterly](quarterly.md#establish-the-available-period), each through the access description selected by
+[Quarterly](quarterly.md#establish-the-available-period), each through the
+access description selected by
 [Resolve harness access](source-bindings.md#resolve-harness-access).
 
 After the baseline, use the mode's time window and likely decisions to select
@@ -40,14 +41,13 @@ bounded changes, due items, and other evidence that could change a material
 conclusion. Keep reads within the map's source restrictions and
 [existing-map read rules](source-bindings.md#existing-maps). State briefly why
 additional groups were checked; a considered source outside the decision's
-scope is **not needed**, not a failed read. For a relevant learning
-question, read only recent highlights tied to current priorities rather than
-the full reading library. Daily reviews do not require weekly analytics;
-operational incident evidence is queried when an incident or decision calls
-for it. Wind-down's Daily CRM Scan remains the exception to candidate-driven
-retrieval: when the companion is available, cover configured interaction
-sources for its window before the initial reconstruction, even without a named
-person.
+scope is **not needed**, not a failed read. For a relevant learning question,
+read only recent highlights tied to current priorities rather than the full
+reading library. Daily reviews do not require weekly analytics; operational
+incident evidence is queried when an incident or decision calls for it.
+Wind-down's Daily CRM Scan remains the exception to candidate-driven retrieval:
+when the companion is available, cover configured interaction sources for its
+window before the initial reconstruction, even without a named person.
 
 Before proposing a new commitment or deadline in any mode, read the relevant
 calendar and capacity evidence alongside existing promises. A free slot alone
@@ -70,36 +70,36 @@ recoverable in natural prose:
   unverified premise.
 - **Outcome:** what the user supplied or approved, or a conditional candidate
   awaiting approval. An agent-proposed outcome is not yet user-owned.
-- **Closure:** future observable evidence that would show completion or
-  support or disconfirm an experiment.
+- **Done when / Verified when:** future observable evidence that would show
+  completion or support or disconfirm an experiment.
 
 This also applies to a recommendation to preserve the current plan. Factual
 synthesis, procedural acknowledgment, and an honest finding that no intention
 is warranted need no such form. Use labels only when they improve clarity.
 
 For example: "The release task still lacks rollback evidence. If you agree,
-protect tomorrow's free hour to verify rollback; the commitment closes when
+protect tomorrow's free hour to verify rollback; the commitment is done when
 the task records a successful restore and its evidence."
 
 Current support and action status are not a future finish line. Give every
-independently approvable effect its own closure evidence; changing that
+independently approvable effect its own completion check; changing that
 approved evidence requires a revised proposal and new approval.
 
 Refine missing outcomes or finish lines with the user. If they request exact
-incomplete wording, preserve it, name the omission, and leave it visibly
-nonconforming rather than inventing the missing meaning or calling it complete.
+incomplete wording, preserve it, name the omission, and leave it marked
+incomplete rather than inventing the missing meaning or calling it complete.
 
 Completion: every intention has a basis, an observable finish line, and a
 user-supplied, approved, or clearly conditional outcome.
 
 ## Ground longitudinal coaching in durable evidence
 
-Use dated durable evidence from configured canonical roles for
-recurrence, coaching rules, and other longitudinal personal claims. Current
-native sources can establish current facts and constraints; current user input
-can guide this review. Neither substitutes for durable recurrence evidence.
-Never use or create AI session logs, conversation memory, cached portraits, or
-other generated memory stores for coaching.
+Use dated durable evidence from configured canonical roles for recurrence,
+coaching rules, and other longitudinal personal claims. Current native sources
+can establish current facts and constraints; current user input can guide this
+review. Neither substitutes for durable recurrence evidence. Never use or
+create AI session logs, conversation memory, cached portraits, or other
+generated memory stores for coaching.
 
 A recurring thread needs at least two independent, temporally distinct
 observed episodes. One period supports a state or hypothesis. A derived review
@@ -129,14 +129,15 @@ Separate dated observations, inference, counterevidence or alternatives, and
 the user's subjective judgment. A supported intervention states the pattern,
 its cost to the user, a recommended boundary or decision, the smallest change
 worth trying, and future evidence that would show whether it worked. Sparse
-history yields narrower coaching or an honest null, not generic advice,
-causality, novelty, or a questionnaire.
+history yields narrower coaching or no coaching recommendation, not generic
+advice, causality, novelty, or a questionnaire.
 
 Keep analytical checks internal; surface evidence and limits that change the
 user's interpretation or choice, plus mode-required coverage statements.
 
 Completion: each longitudinal claim has independent dated support and a tested
-alternative; unsupported patterns produce narrower claims or no intervention.
+alternative; unsupported patterns produce narrower claims or no coaching
+recommendation.
 
 ## Ask on the evidence frontier
 
@@ -150,10 +151,10 @@ its sweep row, not a question.
 A **Frontier Round** asks at most five numbered questions in plain chat, each
 with its recommended answer on the next line. Interpret the one reply by
 number. A round's answers approve no bundle action. Use no host question or
-form tool. Ask only questions whose
-prerequisites are settled. If more than five qualify, ask those whose answers
-could change the recommendation most. The rest, and any left unanswered, stay
-open for the next round. A round with no questions is valid.
+form tool. Ask only questions whose prerequisites are settled. If more than
+five qualify, ask those whose answers could change the recommendation most. The
+rest, and any left unanswered, stay open for the next round. A round with no
+questions is valid.
 
 Completion: every question could change the decision, prerequisites were
 settled, and unanswered questions remain open rather than assumed resolved.

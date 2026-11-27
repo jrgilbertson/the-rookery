@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-![The Rookery banner showing Huginn coming home to a treetop rookery with a sealed field note](docs/assets/the-rookery-readme-banner.webp)
+![The Rookery: A field guide to how I build with AI. Huginn comes home to a treetop rookery with a sealed field note.](docs/assets/the-rookery-readme-banner.webp)
 
 # The Rookery
 
@@ -10,6 +10,23 @@ A rookery is where corvids gather to nest. This one is named for Odin's ravens, 
 
 ![Huginn waits with one more field note while Muninn pulls open a drawer in an overstuffed card cabinet to make room. Huginn is thought; Muninn is memory.](docs/assets/huginn-and-muninn.svg)
 
+## Where to start
+
+Three terms appear throughout this repository:
+
+- **Skill.** A self-contained folder of instructions (and optional helper scripts) that teaches an AI coding agent a repeatable workflow in the [Agent Skills](https://agentskills.io) format.
+- **Automation.** A recurring review prompt and schedule run in [Orca](https://github.com/stablyai/orca) (an agentic IDE for running several AI coding tools side by side) to inspect a repository or your recent work on a cadence.
+- **Harness.** The AI coding tool that runs the agent and loads your skills, such as Claude Code, Codex, Cursor, Antigravity, or Gemini CLI.
+
+Pick the document that fits what you want to do:
+
+- **Follow the end-to-end process:** [WORKFLOWS.md](WORKFLOWS.md) walks through the five delivery jobs (Research through Ship) and the two feedback loops (Maintain and Learn).
+- **Choose a model and effort level:** [ROUTING.md](ROUTING.md) compares current models by role across coding, design, and writing.
+- **Rank findings, ideas, and tasks:** [PRIORITIZATION.md](PRIORITIZATION.md) explains the leverage formula used to order work.
+- **Look up project terms:** [GLOSSARY.md](GLOSSARY.md) defines the repository's shared vocabulary.
+- **Read the shared agent habits:** [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is the published copy of the global instructions loaded before each repository's own `AGENTS.md`.
+- **Understand the project's scope and visual system:** [PRODUCT.md](PRODUCT.md) covers the audience and product principles; [DESIGN.md](DESIGN.md) records the visual design system.
+
 ## Guiding principles
 
 1. **Works across tools.** Skills should not depend on one agent or harness.
@@ -18,43 +35,59 @@ A rookery is where corvids gather to nest. This one is named for Odin's ravens, 
 
 ## Install
 
-Install skills one at a time or all at once.
+Start with a single harness and only the Rookery skills you want. You do not need multiple harnesses or the ~80 skills in my personal setup.
 
 ```bash
-# list available skills
+# 1. See available skills in The Rookery
 npx skills add jrgilbertson/the-rookery --list
 
-# install one skill
-npx skills add jrgilbertson/the-rookery --skill <name>
+# 2. Install just the Rookery skills you want globally (example: issues + research)
+npx skills add jrgilbertson/the-rookery -g --skill managing-issues storm-research
 
-# or take everything
+# Or install a single skill per project, or take all Rookery skills
+npx skills add jrgilbertson/the-rookery --skill <name>
 npx skills add jrgilbertson/the-rookery --all
 ```
 
+Optional companion tools if you want to run the full workflow from [WORKFLOWS.md](WORKFLOWS.md) in one harness:
+
+```bash
+# Compound Engineering plugin (pick your harness: Claude Code or Codex)
+claude plugin marketplace add EveryInc/compound-engineering-plugin
+claude plugin install compound-engineering@compound-engineering-plugin
+# Or for Codex:
+codex plugin marketplace add EveryInc/compound-engineering-plugin
+codex plugin add compound-engineering@compound-engineering-plugin
+
+# Impeccable (optional, for UI design work)
+npx impeccable install --global
+```
+
 These packages use the [Agent Skills](https://agentskills.io) format supported
-by tools including Claude Code, Codex, Cursor, and Gemini CLI. Installation and
-runtime behavior remain harness-specific. Add `-g` to install once for your
-whole machine instead of per project.
-Run `npx skills update` to get the latest changes to your installed skills.
+by tools including Claude Code, Codex, Cursor, Antigravity, and Gemini CLI.
+Installation and runtime behavior remain harness-specific. Add `-g` to install
+once for your whole machine instead of per project. Run `npx skills update` to
+get the latest changes to your installed skills.
 
 `main` is the rolling catalog and the normal install source. Semantic-version
 [Release Snapshots](GLOSSARY.md#release-snapshot) are immutable historical
 checkpoints with release notes; they are not install pins.
 
-See [Machine setup](MACHINE-SETUP.md) for the full list of skills, plugins,
-and MCP servers I install on each machine.
+[Machine setup](MACHINE-SETUP.md) is my full personal machine manifest (all
+three harnesses, ~80 skills, plugins, MCP servers, and a drift-check script).
+Treat it as a reference, not a prerequisite.
 
 ## The workflows
 
 Everything here fits into five core jobs, Research through Ship, plus two feedback loops: Maintain and Learn. The walkthroughs in [WORKFLOWS.md](WORKFLOWS.md) are how I run that loop. The skills in this catalog plug into it and work in other editors and harnesses too.
 
-- [**Research**](WORKFLOWS.md#research). Gather current evidence, test it against opposing views, and curate enough context to plan.
-- [**Plan**](WORKFLOWS.md#plan). Define what to build, the guardrails execution has to honor, and how success will be verified.
-- [**Design**](WORKFLOWS.md#design). Set the visual direction and written design system for interface work.
-- [**Build**](WORKFLOWS.md#build). Implement the plan in bounded, independently verified slices.
-- [**Ship**](WORKFLOWS.md#ship). Review and verify the finished change before merging and documenting it.
-- [**Maintain**](WORKFLOWS.md#maintain). Keep repositories healthy by turning recurring problems into durable safeguards.
-- [**Learn**](WORKFLOWS.md#learn). Turn experience into linked knowledge and new questions for Research.
+- [**Research**](WORKFLOWS.md#research). Gather current evidence, test it against opposing views, and collect what you need to plan.
+- [**Plan**](WORKFLOWS.md#plan). Write what to build, the limits execution must respect, and how you will check that it is done.
+- [**Design**](WORKFLOWS.md#design). Write a visual design brief and shared design rules for interface work.
+- [**Build**](WORKFLOWS.md#build). Implement and verify the plan one reviewable change at a time.
+- [**Ship**](WORKFLOWS.md#ship). Simplify, review, and verify the finished change before merging and documenting it.
+- [**Maintain**](WORKFLOWS.md#maintain). Turn recurring mistakes into tests, lint rules, skills, or written guidance.
+- [**Learn**](WORKFLOWS.md#learn). Connect new knowledge to existing notes and turn unanswered questions into the next Research pass.
 
 [Testing with agents](TESTING.md) explains how I give agents room to work while
 permissions, end-to-end tests, and independent checks protect the result. Use it
@@ -66,15 +99,23 @@ verify and what it takes to undo.
 
 ## The skills
 
+### Personal & learning
+
 - [active-learning](skills/active-learning/SKILL.md). A learning coach that talks each idea through with you, checks it against the source, and has `atomic-note` write the notes and cards you approve. Point it at your recent activity, an article you just read, a topic, one concept, or a flashcard that keeps failing.
-- [checking-skill-portability](skills/checking-skill-portability/SKILL.md). Check that a skill package works the same in any harness and with any agent that supports the [Agent Skills](https://agentskills.io) specification. Use it before sharing a skill written with Claude Code's or Codex's own `skill-creator`, or when moving a skill between agents.
-- [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
-- [repo-captain](skills/repo-captain/SKILL.md). Run one Captain per repository in Orca while you plan with it. It sends work to Executors directly or through Domain Leads such as a Design Lead, keeps overlapping files and migrations in order, and keeps your issues current as work ships. It merges only routine pull requests, holds the rest for your Review Round verdicts and carries them out, never blocks on you, and interrupts only when something reached a public repository or one of its merges went wrong. It works whether you are at the keyboard or away.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
-- [reviewing-prs](skills/reviewing-prs/SKILL.md). Review the open pull requests across your repositories, and the ones that ask for your review, in one sitting. It reads each raw diff instead of the description, calls out stored names and missing screenshots, shows the round on one local page that puts the riskiest pull requests first and shows what each one changes for a user, and records your merge, request-changes, defer, or not-applicable verdict at the exact commit you reviewed. It never merges: the agent working on each pull request acts on your verdict.
+
+### Research
+
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
+
+### Engineering & review
+
+- [checking-skill-portability](skills/checking-skill-portability/SKILL.md). Check that a skill package works the same in any harness and with any agent that supports the [Agent Skills](https://agentskills.io) specification. Use it before sharing a skill written with Claude Code's or Codex's own `skill-creator`, or when moving a skill between agents.
+- [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
+- [repo-captain](skills/repo-captain/SKILL.md). Run one Captain per repository in Orca while you plan with it. It sends work to Executors directly or through Domain Leads such as a Design Lead, keeps overlapping files and migrations in order, and keeps your issues current as work ships. It merges only routine pull requests, holds the rest for your Review Round verdicts and carries them out, never blocks on you, and interrupts only when something reached a public repository or one of its merges went wrong. It works whether you are at the keyboard or away.
+- [reviewing-prs](skills/reviewing-prs/SKILL.md). Review the open pull requests across your repositories, and the ones that ask for your review, in one sitting. It reads each raw diff instead of the description, calls out stored names and missing screenshots, shows the round on one local page that puts the riskiest pull requests first and shows what each one changes for a user, and records your merge, request-changes, defer, or not-applicable verdict at the exact commit you reviewed. It never merges: the agent working on each pull request acts on your verdict.
 
 ## The automations
 
@@ -91,13 +132,13 @@ separately from installing skills.
 - [Improve audit](automations/improve-audit.md). Use shadcn's `improve` to survey the whole codebase and recommend improvements for approval.
 - [State-machine correctness audit](automations/state-machine-audit.md). Assess application lifecycles under retries and concurrency, and recommend fixes for approval.
 - [Test audit](automations/test-audit.md). Review the tests, find gaps in what they protect, and recommend improvements.
-- [Optimize CI](automations/optimize-ci.md). Review continuous integration and recommend improvements.
-- [Weekly codebase design](automations/weekly-codebase-design.md). Review codebase design and recommend improvements.
+- [Optimize CI](automations/optimize-ci.md). Measure hosted pull-request runner minutes and local Verify suite times to spot serial checks, weak caching, and duplicate work, then recommend fixes for approval.
+- [Weekly codebase design](automations/weekly-codebase-design.md). Survey frequently changed areas and older modules with `improve-codebase-architecture` to find shallow abstractions and design debt worth deepening, then recommend candidates for approval.
 - [Agent entropy audit](automations/agent-entropy-audit.md). Find duplicated truth, dead code, stale guidance, and weakened guardrails, and recommend cleanups, mechanical checks, and standards updates.
 
 ## My other projects
 
-- [Networked Thinking](https://networkedthinking.ai). My system for turning what I learn into durable, linked notes, explained through a book and website. Use it when something I learn should become knowledge I can connect and reuse.
+- [Networked Thinking](https://networkedthinking.ai). My system for turning what I learn into durable, linked notes, explained through a book and website. Use it when something you learn should become knowledge you can connect and reuse.
 - [Networked Thinking Skills](https://github.com/jrgilbertson/networked-thinking-skills). A collection of skills and deterministic helpers for Networked Thinking notes and tasks in Obsidian. Use it when you want an agent to create or audit atomic notes or manage Obsidian tasks.
 
 ## Standing on

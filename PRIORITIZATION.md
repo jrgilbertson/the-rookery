@@ -21,9 +21,11 @@ ways for AI development:
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it. The easier a change is to undo, the more freely I can let an
   agent do it on its own. My
-  [`repo-captain`](skills/repo-captain/SKILL.md) skill works on the
-  same idea: a Captain merges routine pull requests without me and holds
-  sensitive ones for my approval.
+  [`repo-captain`](skills/repo-captain/SKILL.md) skill applies this through its
+  [review contract](skills/repo-captain/references/review-contract.md): a
+  Captain merges routine pull requests without me and holds sensitive changes
+  or any pull request where verification effort × undo cost is 3 or more for my
+  verdict.
 
 ## The four factors
 
@@ -114,10 +116,10 @@ Verification effort can come down. Give the agent something it can run that
 comes back pass or fail, and it can check its own work and keep going
 ([Anthropic's agent guidance](https://code.claude.com/docs/en/best-practices)
 makes the same point). Good tests and CI do that for every later change
-([Testing with agents](TESTING.md)). My
-[durability ladder](WORKFLOWS.md#maintain) follows the same idea: prefer a
-check that runs automatically, and fall back to a written instruction only
-when nothing stronger fits.
+([Testing with agents](TESTING.md)). The
+[safeguard ladder in Maintain](WORKFLOWS.md#maintain) follows the same idea:
+prefer a check that runs automatically, and fall back to a written instruction
+only when nothing stronger fits.
 
 I considered two other measures. Human attention is all the time I spend
 specifying, steering, and reviewing. It is closest to the real cost, but it is

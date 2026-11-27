@@ -1,7 +1,12 @@
 # Machine setup
 
-The global agent instructions, skills, plugins, and MCP servers I set up on
-every machine. The install commands below use each source's current version.
+This file documents my full personal machine manifest: the global agent
+instructions, ~80 skills, plugins, MCP servers, and three-harness
+(`claude`, `codex`, and `agy`) verification script I keep in sync across my
+machines. If you want a minimal single-harness setup with only the Rookery
+skills you need, start with [README.md#install](README.md#install) instead.
+
+The install commands below use each source's current version.
 
 ## Global agent instructions
 
@@ -48,31 +53,9 @@ npx skills add wheresryan22/anatomy -g -y --skill anatomy
 ```
 
 Modern Web Guidance sends anonymous usage telemetry, including the search
-queries agents write. These machines accept it. Its only switch,
+queries agents write. I leave telemetry on. Its only switch,
 `DISABLE_TELEMETRY=1`, also turns off Claude Code's feature flags, which
 `/skill-doctor` needs.
-
-## Obsidian Headless
-
-The [Daily learning automation](automations/daily-learning.md) reads the vault
-on the paired dev machine from an Obsidian Headless copy, so the desktop app
-need not be open. Set Headless up on the dev machine only, because the desktop
-app's Sync and Headless Sync must not run on the same device. Follow the
-`obsidian-headless` skill to log in, connect a copy outside every repository,
-and sync it. Before starting continuous sync, set the copy to `mirror-remote` mode with
-`ob sync-config --path <copy> --mode mirror-remote`. That mode downloads every
-change and reverts any change made on the dev machine, so the copy stays an
-exact mirror of the vault. Then keep it syncing with `ob sync --continuous` as
-a user service, and run `loginctl enable-linger` so the service starts at boot
-and keeps running when you are logged out. Notes are written on the
-workstation through the Obsidian CLI, because only the desktop app updates
-links when a note is renamed.
-
-The mode is a guard against mistakes, not a security boundary. The
-automation's worker runs as the same user as the sync service, so an agent
-steered by a planted instruction could change the mode back. The worker
-reports the mode it finds, and Obsidian Sync's version history can restore
-changed or deleted notes.
 
 ## Impeccable
 
@@ -164,15 +147,15 @@ claude mcp add --scope user --transport stdio gemini-docs -- uvx --from git+http
 
 ## Codex MCP servers
 
-Linear, Supabase, and Vercel are left out on purpose. Codex gets them from the
-apps linked to the ChatGPT account, which follow the account to Codex desktop
-and the CLI.
+Linear, Supabase, and Vercel are left out on purpose because Codex gets them
+from the apps linked to the ChatGPT account, which follow the account to Codex
+desktop and the CLI. PostHog is also omitted here because the
+`posthog@posthog` plugin above already registers its MCP server.
 
 ```bash
 codex mcp add ai-elements --url https://registry.ai-sdk.dev/api/mcp
 codex mcp add gemini-docs -- uvx --from git+https://github.com/philschmid/gemini-api-docs-mcp gemini-docs-mcp
 codex mcp add livekit-docs --url https://docs.livekit.io/mcp
-codex mcp add posthog --url https://mcp.posthog.com/mcp
 codex mcp add shadcn -- npx shadcn@latest mcp
 codex mcp add lennysdata --url https://mcp.lennysdata.com/mcp
 codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp
@@ -181,17 +164,21 @@ codex mcp add playwright -- npx @playwright/mcp@latest
 
 ## Check a machine against this list
 
-Run this from the repository root with Python 3.9 or later and the harness CLIs
-(`claude`, `codex`, and `agy`). It prints nothing when all listed skills,
-plugins, and MCP servers are present, Antigravity's Compound Engineering plugin
-matches Claude Code's installed version, the language servers are on the
-`PATH`, and there are no extra skills managed by the skills CLI or extra enabled
-Claude Code user plugins. Global agent
-instructions above are not checked by this script. Additional Codex plugins and
-MCP servers, and additional Antigravity plugins, can come from the harness or
-local configuration. The check compares names without starting MCP servers. It
-also checks for `SKILL.md` in the Codex, Claude Code, and Antigravity global
-skill directories for listed skills in the lock and for Impeccable.
+Run this from the repository root with Python 3.9 or later and all three
+harness CLIs (`claude`, `codex`, and `agy`). It prints nothing when the machine
+matches this manifest:
+
+- Every listed skill is in the skills CLI lock, with no unlisted skills managed by the skills CLI.
+- `SKILL.md` exists in the Codex, Claude Code, and Antigravity global skill directories for each listed locked skill and for Impeccable.
+- Every listed Claude Code user plugin is enabled, with no extra enabled Claude Code user plugins.
+- Every listed Codex plugin and Antigravity's `compound-engineering` plugin are enabled, and Antigravity's `compound-engineering` version matches Claude Code's installed version.
+- `typescript-language-server` and `pyright-langserver` are on `PATH`.
+- Every listed Claude Code and Codex MCP server is registered (compared by name, without starting servers).
+
+What the script leaves out:
+
+- Global agent instructions above are not checked.
+- Extra Codex plugins, Codex MCP servers, and Antigravity plugins are allowed because they can come from the harness or local configuration.
 
 ```bash
 python3 - <<'PYTHON'
@@ -278,3 +265,28 @@ report("Codex MCP server", {args[0] for args in documented("codex mcp add ")},
        {server["name"] for server in codex_servers if server["enabled"]})
 PYTHON
 ```
+
+## Optional host-specific setup
+
+### Obsidian Headless
+
+Optional Linux systemd setup for a paired dev machine that runs the
+[Daily learning automation](automations/daily-learning.md), reading the vault
+from an Obsidian Headless copy so the desktop app need not be open. Set
+Headless up on the dev machine only, because the desktop app's Sync and
+Headless Sync must not run on the same device. Follow the `obsidian-headless`
+skill to log in, connect a copy outside every repository, and sync it. Before
+starting continuous sync, set the copy to `mirror-remote` mode with
+`ob sync-config --path <copy> --mode mirror-remote`. That mode downloads every
+change and reverts any change made on the dev machine, so the copy stays an
+exact mirror of the vault. Then keep it syncing with `ob sync --continuous` as
+a user service, and run `loginctl enable-linger` so the service starts at boot
+and keeps running when you are logged out. Notes are written on the
+workstation through the Obsidian CLI, because only the desktop app updates
+links when a note is renamed.
+
+The mode is a guard against mistakes, not a security boundary. The
+automation's worker runs as the same user as the sync service, so an agent
+steered by a planted instruction could change the mode back. The worker
+reports the mode it finds, and Obsidian Sync's version history can restore
+changed or deleted notes.

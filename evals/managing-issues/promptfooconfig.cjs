@@ -1,20 +1,29 @@
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 
+// Offer Write and Edit so any attempt to change a file is recorded, while
+// allowing only read-only tools; dontAsk denies everything not allowed.
+// Bash is omitted: telling a read-only command from a writing one would mean
+// parsing shell text.
 const readTools = ['Read', 'Glob', 'Grep', 'Skill'];
 const claude = {
   model: 'claude-opus-5-5',
-  effort: 'medium',
+  effort: 'high',
   apiKeyRequired: false,
-  max_turns: 8,
+  max_turns: 40,
   max_budget_usd: 0.95,
   setting_sources: ['project'],
-  tools: readTools,
+  tools: [...readTools, 'Write', 'Edit'],
   custom_allowed_tools: readTools,
   permission_mode: 'dontAsk',
   strict_mcp_config: true,
   exclude_dynamic_sections: true,
+  env: {
+    CLAUDE_CODE_DISABLE_AUTO_MEMORY: '1',
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+  },
   settings: {
+    autoMemoryEnabled: false,
     syncClaudeAiSkills: false,
     syncClaudeAiPlugins: false,
     permissions: { blockReadsOutsideWorkingDirectories: true },
@@ -22,20 +31,32 @@ const claude = {
 };
 
 const caseId = process.env.ROOKERY_EVAL_CASE;
-const fixture = `cases/${caseId}`;
+if (!caseId || caseId.includes('/') || caseId.includes('\\') || caseId === '.' || caseId === '..') {
+  throw new Error('Set ROOKERY_EVAL_CASE to a case directory name under cases/.');
+}
 const workspace = `./workspaces/${caseId}`;
-const checks = [
-  ['sections', 'Draft sections'],
-  ['scores', 'Leverage scores'],
-  ['tools', 'Read-only tool calls'],
+
+const assertions = [
+  { type: 'javascript', value: 'file://./checks.mjs', metric: 'Changes nothing' },
+  { type: 'skill-used', value: 'managing-issues', metric: 'Loaded the skill' },
+  { type: 'javascript', value: 'file://./checks.mjs', metric: 'Draft sections', config: { check: 'sections' } },
+  { type: 'javascript', value: 'file://./checks.mjs', metric: 'Leverage scores', config: { check: 'scores' } },
 ];
-const caseChecks = {
-  'mention-link': 'STORE-412 present',
-};
+if (caseId === 'mention-link') {
+  assertions.push({
+    type: 'javascript',
+    value: 'file://./checks.mjs',
+    metric: 'STORE-412 present',
+    config: { check: 'mention' },
+  });
+}
 
 module.exports = {
   description: 'Managing issues Skill Eval',
   sharing: false,
+  evaluateOptions: {
+    timeoutMs: 300000,
+  },
   prompts: ['{{request}}'],
   providers: [
     {
@@ -48,45 +69,14 @@ module.exports = {
       label: 'Claude baseline',
       config: { ...claude, working_dir: `${workspace}/claude-baseline` },
     },
-    {
-      id: 'openai:codex-sdk',
-      label: 'Codex with skill',
-      config: {
-        model: 'gpt-6.2-sol',
-        model_reasoning_effort: 'high',
-        working_dir: `${workspace}/codex-skill`,
-        skip_git_repo_check: true,
-        sandbox_mode: 'read-only',
-        approval_policy: 'never',
-        network_access_enabled: false,
-        web_search_mode: 'disabled',
-        cli_env: { CODEX_HOME: join(__dirname, 'codex-home') },
-        cli_config: {
-          cli_auth_credentials_store: 'file',
-          allow_login_shell: false,
-          analytics: { enabled: false },
-          feedback: { enabled: false },
-          features: { apps: false, multi_agent: false },
-        },
-      },
-    },
   ],
   tests: [
     {
       description: caseId,
       vars: {
-        request: readFileSync(join(__dirname, fixture, 'prompt.md'), 'utf8').trimEnd(),
+        request: readFileSync(join(__dirname, 'cases', caseId, 'prompt.md'), 'utf8').trimEnd(),
       },
-      assert: checks.map(([check, metric]) => ({
-        type: 'javascript',
-        value: 'file://./cases/password-reset-plus/checks.mjs',
-        metric,
-        config: { check },
-      })).concat(caseChecks[caseId] ? [{
-        type: 'javascript',
-        value: `file://./${fixture}/check.mjs`,
-        metric: caseChecks[caseId],
-      }] : []),
+      assert: assertions,
     },
   ],
 };

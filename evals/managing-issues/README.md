@@ -1,68 +1,85 @@
 # Managing Issues Skill Eval
 
-Each synthetic Eval Case runs against a fresh Claude Baseline and against the
-same revision of `managing-issues` in Claude and Codex. The arms for a case get
-the same synthetic tracker configuration in separate workspaces. Claude can
-read files and invoke a skill. Codex uses a read-only workspace without network
-access for agent commands. The agents have no tracker credentials or connected
-tracker tools. The fixtures support draft and preview checks. Live matchback
-and applying a batch are outside the run.
+Three synthetic Eval Cases, each run once with the `managing-issues` skill and
+once without it, through Promptfoo on macOS or Linux. The arms for a case get
+the same synthetic tracker configuration (`.agents/managing-issues.json`) in
+separate plain workspaces with no Git repository, no `Bash` tool, no tracker
+credentials, and no connected tracker tools. The model is offered `Write` and
+`Edit` but allowed only `Read`, `Glob`, `Grep`, and `Skill` in `dontAsk` mode,
+so every write attempt is denied before touching disk and fails the case. The
+fixtures support draft and preview checks; live matchback and applying a batch
+are outside the run.
 
 - [Password reset with a plus sign](cases/password-reset-plus/README.md)
 - [A follow-up for a backup failure](cases/follow-up-later/README.md)
 - [A Linear issue mention](cases/mention-link/README.md)
 
 The current three-case set SHA-256 is
-`314fba0c05c1a6d6638f4fa9b68a41e7684d559ed956f54ccdf8cb59a268c914`. From this
+`1314e69b636612997d13f4ab29b5abd7839b85bcbd31fa2bd39768f50d33f35f`. From this
 directory, reproduce it with
-`{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs; } | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum`.
+`{ find cases fixtures -type f -print0; printf '%s\0' promptfooconfig.cjs checks.mjs; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256`.
 
-## Run on Linux
+## Run
 
-Use Node.js 22.22 or later, npm, Git, Bash, Python 3, Bubblewrap, and GNU
-`timeout`. The launcher uses existing Claude Code and Codex logins with
-file-backed credentials. It stages only the skill under test and points the
-SDKs at those logins from separate, private temporary homes. The Codex shell
-profile allows reads in the active case workspace and the minimal system paths
-it needs. It keeps the model login, other workspaces, and host runtime sockets
-outside the shell and disables command networking.
-
-With approval for model usage, run from the repository root:
+Each run calls a paid model, so get the skill owner's approval first. With
+Node.js 22.22 or later, npm, Git, Python 3, and Claude Code signed in, run from
+the repository root:
 
 ```sh
-work=$(bash evals/managing-issues/prepare.sh origin/main)
+work=$(bash evals/managing-issues/prepare.sh)
 bash evals/managing-issues/run.sh "$work" claude-skill password-reset-plus
+bash evals/managing-issues/run.sh "$work" claude-baseline password-reset-plus
 ```
 
-Pass a Git revision to `prepare.sh` to rerun a specific version of the skill.
-Run each case once with each arm (`claude-skill`, `claude-baseline`, and
-`codex-skill`). Start the next invocation after the last finishes and you've
-checked the usage against your remaining budget. The launcher disables
-Promptfoo caching, sharing and telemetry. Claude's per-run ceiling is $0.95.
-The Codex SDK reports usage and the launcher applies a five-minute timeout.
+Pass a Git revision to [`prepare.sh`](prepare.sh) to rerun a specific version
+of the skill (default `HEAD`). [`prepare.sh`](prepare.sh) builds plain
+workspaces per case and arm in a new temporary directory, validates the staged
+tracker fixtures with `config_check.py`, stages `skills/managing-issues` into
+each with-skill workspace, copies [`package-lock.json`](package-lock.json), and
+installs the pinned Promptfoo and Claude Agent SDK with `npm ci`.
+[`run.sh`](run.sh) runs one case on one arm (`claude-skill` or
+`claude-baseline`) inside an isolated temporary `HOME` and `CLAUDE_CONFIG_DIR`
+(preserving signed-in Claude Code subscription auth on macOS and Linux) with
+Claude Opus 5.5 at high effort, project settings only, no MCP servers,
+auto-memory turned off in [`promptfooconfig.cjs`](promptfooconfig.cjs), a
+five-minute per-run timeout, a $0.95 per-run budget cap, and reads limited to
+the workspace. It writes `results-<case>-<arm>.json` in the run directory.
+Promptfoo exits 100 when a check fails even though the run finished.
 
 ## Read the results
 
-Promptfoo writes a local `results-<case>-<arm>.json`. Its assertions check the
-three issue sections (Markdown or inline bold headings), four numeric leverage
-scores (tables, lists, or prose), and the recorded tool calls. The Linear
-mention case also checks for the incident identifier in the response. Each
-case's README lists what the operator should judge by reading the response and
-transcript. The Claude tool audit enforces a read-only allowlist. The Codex tool check
-asserts the run's sandbox settings (`sandbox_mode` read-only or restricted
-read/deny filesystem permissions, command networking disabled, and
-`approval_policy` set to `never`) from the provider config or recorded run
-context, and rejects non-shell tool items rather than parsing shell text. A
-failed assertion can make Promptfoo exit
-100 even when the agent finished and the output was written. To exercise the
-checks offline—including replay checks over the recorded transcripts—run
-`node evals/managing-issues/cases/password-reset-plus/check-fixtures.mjs`.
+Four code checks run on every result, plus a fifth on `mention-link`:
 
-For an Eval Record, match the results' session IDs to the transcripts under
-`claude-home/projects/` and `codex-home/sessions/` in the temporary run directory.
-Read all turns, session context, calls and results, then save a reviewed transcript
-with the record. The operator supplies the final Eval Labels and reasons. Keep
-the raw results, session logs and credentials outside the repository.
+- **Changes nothing:** the agent called only the allowed read-only tools,
+  checked by [`checks.mjs`](checks.mjs).
+- **Loaded the skill:** the agent called `managing-issues`, checked by
+  Promptfoo's built-in `skill-used` assertion. It fails on every no-skill
+  baseline run, as it should.
+- **Draft sections:** the response includes `Problem`, `Scope`, and
+  `Verification` headings (Markdown or inline bold), checked by
+  [`checks.mjs`](checks.mjs).
+- **Leverage scores:** the response includes all four numeric leverage scores
+  (`Impact`, `Confidence`, `Verification effort`, and `Undo cost`), checked by
+  [`checks.mjs`](checks.mjs).
+- **STORE-412 present** (`mention-link` only): the response mentions
+  `STORE-412`, checked by [`checks.mjs`](checks.mjs).
+
+Run `node evals/managing-issues/check-fixtures.mjs` (or
+`lefthook run pre-push --force`) to exercise `checks.mjs`, historical Claude
+transcript replays, and the `promptfooconfig.cjs`, lockfile, and launcher
+invariants offline; the built-in `skill-used` check is not exercised offline.
+
+Judge everything else by reading the response and transcript against each
+case's `README.md`. For an Eval Record, match the result's session ID to the
+transcript under `claude-home/projects/` in the temporary run directory, review
+all turns, tool calls, and results, and save a reviewed transcript with the
+record. Keep raw results, session logs, and credentials outside the repository.
+
+## Historical Eval Records
+
+The 2026-11-19 Eval Records below were captured under the previous Linux-only
+Bubblewrap/Codex runner and are historical until a fresh paid macOS run is
+approved:
 
 - [Five-case Eval Record](records/2026-11-19-five-cases/README.md)
 - [Runner bake-off record](records/2026-11-19-runner-bakeoff/README.md)

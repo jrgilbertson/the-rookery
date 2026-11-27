@@ -4,7 +4,7 @@ Read this reference when an X query is about to run, or when judging X
 evidence a caller already retrieved. Use it for relationship evidence from X.
 Do not post, reply, like, follow, or send DMs.
 
-Finding posts to read or contribute to is out of scope (repository issue #12).
+Finding posts to read or contribute to is out of scope.
 
 ## Prove read access
 
@@ -60,7 +60,7 @@ full history.
 
 **Pointer first.** If evidence already has an X URL, known handle, or named
 person, search that first. For an exact URL, bound the read around the
-referenced item rather than a recent window — a pointer to an older exchange
+referenced item rather than a recent window; a pointer to an older exchange
 is still the evidence that was asked for. For a handle or named person with no
 exact item, use a recent window (or the host's equivalent bound). Use the
 user's own recent posts only when they can change that same conclusion.

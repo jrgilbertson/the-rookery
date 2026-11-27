@@ -12,17 +12,17 @@ permits a merge: every open pull request is read whether or not it has one.
 | Label | Meaning |
 | --- | --- |
 | `review:held` | PR held for human review in a Review Round |
-| `review:auto-merged` | Routine PR merged automatically under Merge Approval |
-| `review:human-merged` | Held PR merged after an explicit operator verdict |
+| `review:auto-merged` | Routine or charter pre-authorized PR merged automatically under Merge Approval |
+| `review:human-merged` | Held PR merged after an explicit per-PR operator merge verdict |
 
 `review:auto-merged` and `review:human-merged` are applied only after GitHub
-confirms the pull request merged. `review:human-merged` replaces
-`review:held`.
+confirms the pull request merged, and either one removes `review:held` if it
+was present.
 
 ## Ownership line
 
-A supervising session puts one ownership line in the body of each pull
-request it opens:
+A supervising session puts one standalone ownership line starting at column 0
+in the body of each pull request it opens:
 
 ```text
 Owner: <role> · Author: <role> · Operator: <github-login>
@@ -35,15 +35,32 @@ decides.
 ## Receipt
 
 A supervising session posts a receipt as a top-level comment each time it
-holds, merges, or re-judges a pull request:
+holds, auto-merges, or merges a pull request whose head moved after its merge
+verdict, always exactly these four plain ASCII lines:
 
 ```text
-Fleet: <hold | auto-merge | verdict-delta> · Head: <short-sha> · V=<1-3> U=<1-3> · <detail>
+Fleet: <hold | auto-merge | verdict-delta>
+Head: <short-sha, 7+ hex characters, or full 40-character SHA>
+Scores: V=<1-3|?> U=<1-3|?>
+Detail: <one-line text>
 ```
 
 `hold` means the pull request waits for a verdict, `auto-merge` means it
-merged as routine, and `verdict-delta` means it merged under a merge verdict
-at a later head, after the change since review was judged routine.
+merged under Merge Approval as routine or under a charter per-issue
+pre-authorization (naming that pre-authorization in `Detail:`), and
+`verdict-delta` means it merged under a merge verdict at a later head, after
+the change since review was judged routine (recording the delta's `V` and `U`
+scores in `Scores:`). Use `V=? U=?` when a diff cannot be read clearly. A
+pull request merged under a `Verdict: merge` comment at the reviewed head
+needs no extra `Fleet:` receipt.
+
+**Reading receipts across formats.** Every receipt-reading path in
+`reviewing-prs` (open-PR bucketing and recent-merge checks) and `repo-captain`
+(verdict-spent detection and unauthorized-merge checks) accepts top-level
+comments by the operator's exact login in either the four-line format above or
+the legacy single-line middle-dot format
+(`Fleet: <hold | auto-merge | verdict-delta> · Head: <short-sha> · V=<1-3> U=<1-3> · <detail>`),
+extracting the receipt kind, `Head:`, scores, and detail from either form.
 
 ## Verdict
 
@@ -64,14 +81,40 @@ moved since.
 Every session in a fleet shares the operator's GitHub login, so these are
 conventions that prevent accidents, not authentication.
 
-- A verdict counts only when the operator's exact login wrote it as a
-  top-level comment. A verdict in a review, an inline comment, or a comment
-  by any other login means nothing.
-- A pull request has a trusted owner only when its head branch is in the
-  same repository, its author is exactly the operator's login, and its body
-  holds exactly one well-formed ownership line whose `Operator:` field is
-  that login. Any other ownership line, in any letter case, makes the owner
-  ambiguous, and a fork or outside contributor never has an owner.
+- **Verdicts.** A verdict counts only when the operator's exact login wrote it
+  as a top-level comment. A verdict in a review, an inline comment, or a
+  comment by any other login means nothing.
+- **Ownership.** A fork (`isCrossRepository` is true) or outside contributor
+  (author differs from the operator's exact login) never has an owner. For a
+  same-repository pull request authored by the operator's exact login,
+  normalize `\r\n` to `\n` and collect every line starting at column 0 with
+  `Owner:` (case-insensitive on the prefix); surrounding blank lines are not
+  required, and indented, `> `-quoted, `- `-bulleted, and mid-line prose
+  mentions are ignored:
+  - zero matching lines: no owner
+  - exactly one line matching exact-case
+    `Owner: <role> · Author: <role> · Operator: <github-login>` with non-empty
+    roles and the operator's exact login: trusted owner
+  - anything else (two or more matching lines even when identical, wrong case
+    on `Owner:`, `Author:`, or `Operator:`, malformed fields, or another
+    operator login): ambiguous owner
+- **Merge authority.** To judge whether a merged pull request had valid
+  authority at its final head (`headRefOid`), inspect top-level comments
+  authored by the operator's exact login and evaluate the newest verdict first
+  (labels never count as authority):
+  - a `request changes` verdict at any head fails authority
+  - a `merge` verdict whose `Head:` matches `headRefOid` passes authority
+  - a `merge` verdict at an earlier head (`Head:` differs from `headRefOid`)
+    passes authority only when the newest valid `Fleet:` receipt by the
+    operator's login posted after that verdict is `Fleet: verdict-delta` (not
+    superseded by a newer `Fleet: hold`), carries routine scores (`V × U`
+    below 3 with neither factor `?`), and has a `Head:` matching at least a
+    7-character hexadecimal prefix of `headRefOid`
+  - with no operator verdict, authority passes only when the newest valid
+    `Fleet:` receipt by the operator's login is `Fleet: auto-merge` with a
+    `Head:` matching at least a 7-character hexadecimal prefix of `headRefOid`
+    (so a missing receipt, a too-short or mismatched head prefix, or a newer
+    `Fleet: hold` fails authority)
 
 ## Scores
 

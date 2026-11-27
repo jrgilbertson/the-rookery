@@ -55,7 +55,7 @@ Paired host (optional; delete this block for a single host):
 - Timeout: 30 minutes.
 
 1. Read history and start the paired-host worker (when configured).
-   - Sync `<your private automation-state repository>` at `~/.local/state/automation-runs` per its README (using its helper when available, otherwise its Git steps). Only this primary host writes `sessions-audit` history.
+   - Clone or update `<your private automation-state repository>` at `~/.local/state/automation-runs` per its README (using its helper when available, otherwise its Git steps). Only this primary host writes `sessions-audit` history.
    - Read `sessions-audit` owner decisions, recent runs, and the latest report that read each configured host (even if older than the three newest reports). Revisit declined findings only with materially new evidence, labeled as previously declined.
    - Set each configured host's review window on its own: the past 24 hours, widened back to the end of its last successful read, as UTC timestamps. Inherit each host's still-unread sessions from its latest report.
    - Resolve known host-name changes from existing host metadata and history; disclose uncertain identity instead of silently choosing another host. Distinguish unavailable history from no prior history and disclose any resulting limits on deduplication, grading, or carry-forward; an earlier report without an unread list leaves that coverage unknown.
@@ -72,14 +72,14 @@ Paired host (optional; delete this block for a single host):
    - Select by modification time, follow symlinks, deduplicate real paths, and cross-check Orca's session journal (which does not cover all terminal or external-app sessions). Add inherited unread sessions to the window's new sessions.
    - Exclude this audit and its paired-host worker, synthetic evaluations, and prior retros and their transcript readers. Count child transcripts with their parent.
    - Report each harness and account as `searched`, `present but unread or unsupported`, or `absent`. Describe personal threads by category only; keep private evidence outside public repositories.
-   - Extra JSONL harnesses (optional; delete if you only use harnesses `ce-retro` extracts natively): cover configured harnesses outside `ce-retro`'s bundled extractors (such as Antigravity and Grok) from their app-data stores. Never mark a JSONL harness unsupported; step 3 reads it directly.
+   - Extra JSONL harnesses (optional; delete with step 3's block if you only use harnesses `ce-retro` extracts natively): cover configured harnesses outside `ce-retro`'s bundled extractors (such as Antigravity and Grok) from their app-data stores. Never mark a JSONL harness unsupported; step 3 reads it directly.
 
 3. Assess sessions with `ce-retro`.
    - Invoke `ce-retro` non-interactively (no user present) on the step 2 inventory and relevant repositories' current source to produce ranked, evidence-backed candidate findings with citations and owners only. Apply nothing and record no decisions through `ce-retro`, even after the owner replies.
    - Supply the host-wide inventory explicitly rather than letting `ce-retro` run single-repo discovery or cap at its default sample size; batch all discovered and inherited unread sessions across readers.
    - If an execution limit prevents reading every session, report incomplete coverage and carry all unread sessions forward. If there are no eligible local sessions, skip local mining and finish the remaining steps.
    - Use step 1's private history for prior decisions and grading rather than `ce-retro`'s local ledger. Create no local `ce-retro` ledger state, ledger directory, or repository ignore rule. Keep all extracts and scratch outputs in temporary storage outside every repository.
-   - Extra JSONL harnesses (optional; delete if unused):
+   - Extra JSONL harnesses (optional; delete with step 2's block if unused):
      - For JSONL logs outside `ce-retro`'s built-in extractors (such as Antigravity or Grok), extract user turns, assistant replies, commands and tool calls, and failures to temporary storage without reading a raw log whole.
      - For Antigravity, read each conversation's compact `transcript.jsonl` under `.system_generated/logs` first, opening `transcript_full.jsonl` only when a finding depends on a truncated field. Report conversations with no JSONL log as `present but unread` with the reason, keep them off the unread list, and write no custom decoder.
 
@@ -126,9 +126,9 @@ and check that:
    with the automation's saved agent, model, and effort, and creates no
    worktree.
 3. Each configured host's summary covers every configured harness and account
-   home (including extra JSONL harnesses such as Antigravity and Grok if that
-   optional block is kept) and reports every configured step 4 drift check with
-   its check time.
+   home (including extra JSONL harnesses such as Antigravity and Grok if those
+   optional blocks are kept) and reports every configured step 4 drift check
+   with its check time.
 4. The run stays assessment-only, carries unread sessions forward per
    configured host, and leaves no new local `ce-retro` state. Check the
    filesystem before and after; an existing `.context` directory is not proof

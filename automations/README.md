@@ -33,8 +33,7 @@ Keep the saved selections in Orca; changing the routing guide does not update
 existing jobs. The selected agent needs the
 named skills and access to the sources the review requires. If a required skill
 is missing or cannot load, the automation reports it and stops. Skill and plugin
-installation and updates are outside the automation. For Sessions audit,
-replace the reference to The Rookery with your own repository.
+installation and updates are outside the automation.
 
 Two automations coordinate across a paired Orca host from one primary job:
 

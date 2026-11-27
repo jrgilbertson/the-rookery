@@ -365,6 +365,9 @@ def check_help_key(text: str, panel: str) -> None:
           "the help must set its three parts side by side on a wide screen")
     check(re.search(r"(?m)^\.help \{[^}]*max-height: calc\(100vh - var\(--bar-h, 60px\) - 16px\); overflow-y: auto;", text) is not None,
           "the help must scroll inside itself when it is taller than the window")
+    check(re.search(r"(?m)^\.help dt, \.help dd \{ overflow-wrap: anywhere; \}", text) is not None
+          and ".help .terms { grid-template-columns: minmax(0, min(8.5em, 40%)) minmax(0, 1fr); }" in text,
+          "a key term and its meaning must wrap inside the panel when the reader enlarges the text")
 
 
 def fill(round_data: str, scratch: Path) -> tuple[str, str]:

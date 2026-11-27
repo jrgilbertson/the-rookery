@@ -85,10 +85,11 @@ pre .ctx { color: var(--ink-soft); }
 .help { position: absolute; top: 100%; right: 28px; width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--bar-h, 60px) - 16px); overflow-y: auto; margin-top: 8px; padding: 16px 18px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; font: 0.82rem/1.5 var(--sans); }
 .help dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; }
 .help dt { font-weight: 650; }
+.help dt, .help dd { overflow-wrap: anywhere; }
 .help kbd { display: inline-block; min-width: 1.9em; text-align: center; font: 0.75rem/1.5 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 0 5px; background: var(--paper); }
 .help-note { margin-top: 10px; color: var(--ink-soft); }
 .help section + section { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
-.help .terms { grid-template-columns: minmax(0, 8.5em) minmax(0, 1fr); }
+.help .terms { grid-template-columns: minmax(0, min(8.5em, 40%)) minmax(0, 1fr); }
 .help .flag { color: var(--signal-ink); }
 .help dt.quiet { color: var(--ink-soft); }
 .help .seal, .help .ring, .help .route-dot { width: 8px; height: 8px; margin-right: 7px; }

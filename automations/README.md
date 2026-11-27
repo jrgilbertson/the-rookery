@@ -14,12 +14,12 @@ Longer operating notes follow the prompt.
 | [Daily learning](daily-learning.md) | Recommend what to learn from the last day's vault changes, local and paired remote AI sessions, and Anki status | Daily at 05:00 | America/Los_Angeles |
 | [Analytics gap audit](analytics-gap-audit.md) | Find shipped user actions without analytics and events that never arrive, and recommend fixes | Monday at 04:00 | America/Los_Angeles |
 | [Improve audit](improve-audit.md) | Survey the whole codebase with `improve` and recommend improvements | Tuesday at 04:00 | America/Los_Angeles |
-| [State-machine correctness audit](state-machine-audit.md) | Assess lifecycle correctness and recommend fixes | Sunday at 04:00 | America/Los_Angeles |
 | [Design system audit](design-system-audit.md) | Review every page against the design system and recommend fixes, shared components, and design upgrades | Wednesday at 04:00 | America/Los_Angeles |
 | [Test audit](test-audit.md) | Review tests, find protection gaps, and recommend improvements | Thursday at 21:00 | America/Los_Angeles |
-| [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
 | [Weekly codebase design](weekly-codebase-design.md) | Survey the codebase for modules worth deepening | Saturday at 04:00 | America/Los_Angeles |
 | [Agent entropy audit](agent-entropy-audit.md) | Find duplicated truth, dead code, stale guidance, and weakened guardrails | Saturday at 07:00 | America/Los_Angeles |
+| [Optimize CI](optimize-ci.md) | Review continuous integration | Saturday at 09:00 | America/Los_Angeles |
+| [State-machine correctness audit](state-machine-audit.md) | Assess lifecycle correctness and recommend fixes | Sunday at 04:00 | America/Los_Angeles |
 
 All schedules use America/Los_Angeles. Choose a cadence and timezone that suit
 your work.
@@ -36,12 +36,22 @@ is missing or cannot load, the automation reports it and stops. Skill and plugin
 installation and updates are outside the automation. For Sessions audit,
 replace the reference to The Rookery with your own repository.
 
-Sessions audit runs as one job on the primary host. When you pair a second
-host, the job starts a read-only worker there with the same agent, model, and
-effort, and each host invokes `ce-retro` on its own sessions and checks itself
-for operational drift. The primary host merges both hosts' findings into one
-list; see [Setup](sessions-audit.md#setup). For a single host, delete the
-prompt's paired-host block.
+Two automations coordinate across a paired Orca host from one primary job:
+
+- **Sessions audit** runs as one job on the primary host. When you pair a second
+  host, it starts a read-only worker there with the same agent, model, and
+  effort, and each host invokes `ce-retro` on its own sessions and checks
+  itself for operational drift. The primary host merges both hosts' findings
+  into one list; see [Setup](sessions-audit.md#setup). For a single host,
+  delete the prompt's paired-host block.
+- **Daily learning** runs as one job on the workstation that hosts Obsidian and
+  Anki, and starts a read-only worker on a paired remote host to read an
+  Obsidian Headless copy of the vault and that host's AI sessions; see
+  [Setup](daily-learning.md#setup).
+
+Prompts use angle brackets (`<...>`) for setup placeholders you replace once
+when pasting the prompt into Orca, and square brackets (`[...]`) for runtime
+values the agent fills in during each run.
 
 Some prompts invoke an existing skill; others describe the review directly.
 Orca runs the prompt on a schedule; an invoked skill tells the agent how to do
@@ -88,12 +98,12 @@ Each automation contains its assessment instructions and authority limits in
 its own prompt and judges its own recommendations. Improve audit returns every
 finding and judges only the ones the owner picks from its report. Sessions
 audit judges once, on its primary host, after merging both hosts' findings.
-Its primary host is the only writer of `sessions-audit` history; the
-paired-host worker returns a summary and writes nothing. That rule covers
-Sessions audit only: other automations run on whichever host fits them best.
-The history repository stores reports and owner decisions, not a shared
-assessment workflow.
-Its README documents storage and helper usage.
+Both paired-worker automations, Sessions audit (on its primary host) and Daily
+learning (on the workstation that hosts Obsidian and Anki), have a single
+writer of run history; their paired-host workers return summaries and write
+nothing to `~/.local/state/automation-runs`. Other automations run on whichever
+host fits them best. The history repository stores reports and owner decisions,
+not a shared assessment workflow. Its README documents storage and helper usage.
 
 Copy the storage template below into your private repository's README. If it
 provides a history helper, document how to use it for these operations.
@@ -107,12 +117,12 @@ keeps its assessment and recommendation-review instructions in its own prompt.
 ## Layout
 
 One folder per automation slug. When one automation runs against more than one
-repository, give each target its own slug, such as `test-audit-<repo>`, so
-projects never share decisions or runs.
+repository, give each target its own slug, such as
+`test-audit-<repository name>`, so projects never share decisions or runs.
 
-- `<slug>/runs/YYYY-MM-DD-HHMMSS-<host>.md`: one file per run, dated in UTC,
+- `<slug>/runs/YYYY-MM-DD-HHMMSS-[host].md`: one file per run, dated in UTC,
   with the window reviewed, the findings as presented (with numbers and short
-  stable titles), and what the run changed. `<host>` is `hostname -s`. The
+  stable titles), and what the run changed. `[host]` is `hostname -s`. The
   seconds keep a retry from replacing an earlier report; never overwrite one.
 - `<slug>/decisions.md`: append-only, one entry per answered finding, with the
   date, run file, finding title, decision (`accepted`, `declined`, `deferred`,

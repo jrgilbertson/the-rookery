@@ -8,13 +8,11 @@ Assess whether application lifecycles follow their intended rules, including und
 
 ## Setup
 
-Use a repository-specific slug in the prompt. Keep the automation paused while validating its first manual run. The assessment reads the application and issue trackers; its report, models, and debugging evidence live in the private audit history. Issue creation and implementation follow separate owner approval.
+Use a repository-specific slug in the prompt (`state-machine-audit-<repository name>`) and replace each `<placeholder>`. Keep the automation paused while validating its first manual run. The assessment reads the application and its tests; its report, models, and debugging evidence live in the private audit history. Issue creation and implementation follow separate owner approval.
 
 ## Prompt
 
 ```text
-Before assessing, confirm the required skills are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
-
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `state-machine-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
 Assess whether the application's behavior matches its intended rules over time.
@@ -27,7 +25,7 @@ Recommend the simplest complete fix for the underlying cause, judging the result
 
 Assessment only: run existing tests and isolated scratch reproductions. Keep reports, models, and debugging artifacts outside the application checkout. Do not modify application files, create or update issues, or publish PRs; implementation and issue creation require separate approval.
 
-Judge each draft recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
+Judge each draft recommendation on its own against current evidence. Apply the same bar to recommendations to leave a confirmed finding unchanged, and check how recommendations interact. Put only the recommendations you support in the approval list, in leverage order, highest first, with each one's evidence, tradeoffs, and uncertainty. List each rejected recommendation in one line with its reason, outside the approval list.
 
 Save the final report afterward.
 ```

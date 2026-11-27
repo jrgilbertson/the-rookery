@@ -8,8 +8,7 @@ Survey the whole codebase with shadcn's `improve` skill and recommend improvemen
 
 ## Setup
 
-Use a repository-specific slug in the prompt, and keep the automation paused
-while validating its first manual run.
+Use a repository-specific slug in the prompt (`improve-audit-<repository name>`) and replace each `<placeholder>`. Keep the automation paused while validating its first manual run.
 
 The skill covers correctness, security, performance, tests, tech debt,
 dependencies, developer experience, docs, and direction, and it returns many
@@ -21,7 +20,7 @@ chat.
 ## Prompt
 
 ```text
-Before assessing, confirm the required skills (`improve` and `managing-issues`) are available to the selected agent. If a required skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
+Before assessing, confirm `improve` and `managing-issues` are available to the selected agent. If either skill is missing or cannot load, report it and stop. Do not install or update skills or plugins.
 
 History: clone or update <your private automation-state repository> at `~/.local/state/automation-runs`. Read `improve-audit-<repository name>` runs and owner decisions before assessing. Follow that history repository's README for storage instructions, using its helper when available or its documented Git steps otherwise. Revisit declined findings only with new evidence.
 
@@ -33,7 +32,7 @@ Before saving the report, use `managing-issues` read-only to check the repositor
 
 List every vetted finding in leverage order, highest first. Score each with the four leverage factors, not with `improve`'s own Effort and Risk columns, and keep each finding's title stable between runs. Mark every finding `not reviewed`, save the report, and stop. The owner picks which findings to review; do not pick for them.
 
-When the owner replies with the findings they picked, judge each picked recommendation as its own decision against current evidence, including recommendations to leave a confirmed finding unchanged and how the recommendations interact. The approval list holds only the recommendations you support, in leverage order, highest first, each with its evidence, tradeoffs, and uncertainty. List each recommendation you reject in one line with its reason, outside the approval list.
+When the owner replies with the findings they picked, judge each picked recommendation on its own against current evidence. Apply the same bar to recommendations to leave a confirmed finding unchanged, and check how recommendations interact. Put only the recommendations you support in the approval list, in leverage order, highest first, with each one's evidence, tradeoffs, and uncertainty. List each rejected recommendation in one line with its reason, outside the approval list.
 
-Save the updated report afterward.
+Save the judgment as a new timestamped follow-up report under `runs/` that references the initial scan report (never overwrite any saved file under `runs/`), and append the owner's answers to `decisions.md` through the history repository's storage procedure.
 ```

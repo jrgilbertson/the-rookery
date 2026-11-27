@@ -118,6 +118,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Improve audit checks the repository's tracker read-only with
+  `managing-issues` before saving its report and names each covering open issue
+  beside its finding, reporting a coverage gap if the tracker is unreachable or
+  results are truncated. Update saved Improve audit jobs from the definition.
 - `managing-personal-crm` drops the Grok X sandbox-retry recovery path from
   `references/grok-x-source.md`, so a sandbox network or session-state denial
   marks X unavailable and dependent conclusions `Partial` rather than
@@ -697,6 +701,13 @@ looked" surface. GitHub Releases mirror its entries.
   Codex, whose own timers all count as unfinished work, run a detached loop
   that types the wake prompt into the Captain's own terminal. The timer is
   recurring, so each wake checks it is still running instead of re-arming it.
+- The `reviewing-prs` review page no longer shows a V × U of 9 for a pull
+  request missing a score. It still holds that pull request at the top of the
+  held group, shows the real verification effort × undo cost or `?`, and says
+  the pull request is held because a score is missing.
+- The Verification effort row in `PRIORITIZATION.md`'s factor table again
+  lists a new user-facing view, flow, or concept as an example of a 3, matching
+  the `Rank by leverage` copies, instead of saying it always scores 3.
 - `reviewing-meetings` accepts a Granola-returned meeting URL when its scheme,
   host, and path match the canonical `https://notes.granola.ai/d/{native_id}`
   URL, ignoring any query string or fragment (such as `?utm_source=mcp`), while

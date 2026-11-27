@@ -100,6 +100,7 @@ const groups = all.filter((n) => n.tagName === "section" && has(n, "over")).map(
   rows: walk(section).filter((n) => has(n, "orow")).map((row) => ({
     title: walk(row).find((n) => has(n, "title"))?.textContent ?? "",
     kind: walk(row).find((n) => has(n, "kind"))?.textContent ?? null,
+    vu: walk(row).find((n) => has(n, "vu"))?.children[0]?.textContent ?? null,
   })),
 }));
 const blocks = all.filter((n) => n.tagName === "article").map((a) => ({
@@ -205,6 +206,8 @@ def check_incomplete_scores(raw: str, scratch: Path) -> None:
     for pr in variant["prs"]:
         if pr["number"] == 134:
             pr["scores"].pop("confidence")
+        if pr["number"] == 409:
+            pr["scores"].pop("undo")
     page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
     (scratch / "render.js").write_text(RENDER)
     (scratch / "page.html").write_text(page)
@@ -213,9 +216,16 @@ def check_incomplete_scores(raw: str, scratch: Path) -> None:
     if result is None or result.returncode != 0:
         failures.append("the page's script failed to run on a round with a missing score")
         return
+    rendered = json.loads(result.stdout)
     number = {pr["title"]: pr["number"] for pr in variant["prs"]}
-    held = [number.get(row["title"]) for group in json.loads(result.stdout)["groups"] if group["hold"] for row in group["rows"]]
-    check(held[:1] == [134], f"a pull request missing any score must sort to the top of the held group: {held}")
+    rows = {number.get(row["title"]): row for group in rendered["groups"] if group["hold"] for row in group["rows"]}
+    held = list(rows)
+    check(set(held[:2]) == {134, 409}, f"a pull request missing any score must sort to the top of the held group: {held}")
+    drivers = {n: next((b["driver"] for b in rendered["blocks"] if b["title"].endswith(t)), "") for t, n in number.items()}
+    for pr, badge, placement in ((134, "1", "Held because a score is missing. V × U is 1."), (409, "?", "Held because a score is missing.")):
+        check(rows.get(pr, {}).get("vu") == badge, f"#{pr}'s V x U badge must read {badge}: {rows.get(pr, {}).get('vu')}")
+        expected = placement + " " + next(p["driver"] for p in variant["prs"] if p["number"] == pr)
+        check(drivers.get(pr) == expected, f"#{pr}'s block must say it is held for a missing score: {drivers.get(pr)}")
 
 
 def main() -> int:

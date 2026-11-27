@@ -35,6 +35,14 @@ tags:
 
 # Define the abstract qualifiers that the delete test misses
 
+`creating-portable-skills` (including its review checklist) and
+`checking-simplicity` were retired on 2026-11-18. Their examples and
+source-path citations below are historical. Simplicity guidance now lives in
+the [global agent guidance](../../../GLOBAL-AGENTS.md#simplicity-first), skill
+evaluation follows [SKILLS.md](../../../SKILLS.md#improving-from-real-use), and
+the qualifier and activation-boundary lessons still apply to maintained skills
+such as `storm-research`.
+
 ## Context
 
 The delete test checks each agent instruction by asking whether the agent would
@@ -48,7 +56,7 @@ The test misses abstract qualifiers such as "thorough," "punchier," and
 has no definition, and each model supplies its own. The delete test decides
 whether to keep a line. It does not define the terms inside it.
 
-The checklist now runs a separate qualifier check alongside the delete test.
+That retired checklist ran a separate qualifier check alongside the delete test.
 PR jrgilbertson/the-rookery#4 introduced it during the skill-engineering
 adoption pass.
 
@@ -105,15 +113,15 @@ deliverable. Define three routing boundaries for those descriptions:
 
 1. **Entry.** Name either the explicit assessment request or the narrow
    workflow transition that makes the skill relevant. `checking-simplicity`
-   accepts a named area, question, technical choice, plan, architecture, or
+   accepted a named area, question, technical choice, plan, architecture, or
    current implementation for an explicit safe-simplification assessment. Its
-   automatic branch requires a decision that is about to carry durable
+   automatic branch required a decision that was about to carry durable
    machinery ungrounded in the stated need into implementation
    (`skills/checking-simplicity/SKILL.md:3`).
 2. **Exclusion.** Add directly confusable prompts that omit both an assessable
    subject and an eligible transition, or belong to adjacent workflows. Broad
-   words such as “simplify” do not turn prescribed implementation, settled-code
-   cleanup, or general brainstorming into this assessment
+   words such as "simplify" did not turn prescribed implementation, settled-code
+   cleanup, or general brainstorming into that assessment
    (`skills/checking-simplicity/SKILL.md:3`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
@@ -198,19 +206,20 @@ planning request with no assessable subject could still load the checker. The
 description also lacked an explicit route for an unchanged plan that had
 already passed the assessment.
 
-**After.** The description accepts an explicit assessment of a named area,
+**After.** The description accepted an explicit assessment of a named area,
 question, plan, technical choice, architecture, or current implementation with
-inspectable evidence; formal requirements and a separate artifact are optional.
-It retains one automatic backstop for durable machinery ungrounded in the
-stated need, keeps ordinary planning and brainstorming with their adjacent
-owners, and routes an unchanged clean result onward
-(`skills/checking-simplicity/SKILL.md:3`). The description makes both entry and
+inspectable evidence; formal requirements and a separate artifact were optional.
+It retained one automatic backstop for durable machinery ungrounded in the
+stated need, kept ordinary planning and brainstorming with their adjacent
+owners, and routed an unchanged clean result onward
+(`skills/checking-simplicity/SKILL.md:3`). The description made both entry and
 completion observable instead of relying on broad quality words.
 
-**Current location (2026-11-14).** The example above records the earlier
-description. [PR #245](https://github.com/jrgilbertson/the-rookery/pull/245)
+**Later location before retirement (2026-11-14).** The example above records the
+earlier description. [PR #245](https://github.com/jrgilbertson/the-rookery/pull/245)
 removed the clean-exit rule from the description and moved it to the skill's
-Dispatch section (`0a370618:skills/checking-simplicity/SKILL.md`).
+Dispatch section (`0a370618:skills/checking-simplicity/SKILL.md`) before
+`checking-simplicity` was retired on 2026-11-18.
 
 ## Related
 

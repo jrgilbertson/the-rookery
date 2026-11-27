@@ -83,11 +83,12 @@ Linear priority names and rejecting other representations
 Missing or incompatible configuration does not block a read or draft. Before
 the first tracker mutation, interactive setup resolves provider, exact target,
 and metadata mappings, then resumes the pending request after
-setup completes (`skills/managing-issues/SKILL.md`, “Resolve the tracker and
-current facts”). Setup does not ask about or record any integration posture.
+setup completes (`skills/managing-issues/SKILL.md`, "2. Resolve the tracker and
+current facts"). Setup does not ask about or record any integration posture.
 
 Show starter recommendations beside discovered provider alternatives. For each
-mapping family, let the operator accept the recommendations, map selected
+mapping family (except Linear priority, which maps each priority name to
+itself), let the operator accept the recommendations, map selected
 existing values, or define custom representations. Existing tracker metadata
 is evidence, not an automatic preference. General-label mappings may be empty.
 Every other family keeps fixed names so issue state remains intelligible
@@ -111,7 +112,7 @@ canonical record. A request that starts from another tracker is resolvable only
 through one exact provider-native link to the canonical issue; an absent or
 ambiguous link requires the exact canonical issue or stops the operation. The
 repository stores no sidecar identity map (`skills/managing-issues/SKILL.md`,
-“Resolve the tracker and current facts”).
+"2. Resolve the tracker and current facts").
 
 For lifecycle changes, include every effect the canonical provider reports.
 Unreported external effects are not observable and never block the operation.
@@ -123,7 +124,7 @@ repository configuration works when one collaborator uses connected Linear MCP
 and another uses Orca, without config churn or disagreement about which client
 is canonical. Command details remain governed by the active runtime schema or
 installed version-matched guide, where they can stay current
-(`skills/managing-issues/SKILL.md`, “Resolve the tracker and current facts”).
+(`skills/managing-issues/SKILL.md`, "2. Resolve the tracker and current facts").
 
 Canonical semantic values also prevent provider representations from leaking
 into issue analysis. A person can reason about `high`; the adapter can turn it
@@ -167,8 +168,8 @@ and “Authenticate, resolve, and discover”).
 The same repository configuration is present, but the operator explicitly asks
 for Orca. Select Orca, load the installed version-matched `orca-linear` guide
 before constructing commands, and use the priority representation documented
-by that guide (`skills/managing-issues/references/linear.md`, “Resolve the Orca
-command surface”). Do not rewrite the config to record `orca`.
+by that guide (`skills/managing-issues/references/linear.md`, "Resolve the Orca
+commands"). Do not rewrite the config to record `orca`.
 
 ### First create in an unconfigured repository
 

@@ -40,7 +40,8 @@ tags:
 
 The readiness skills and their dedicated tests were retired on 2026-10-13.
 Their examples and source-path citations below describe the historical workflow.
-Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
+Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship) and current
+Skill Evals follow [SKILLS.md](../../../SKILLS.md#skill-evals); the general
 lessons here still apply to surviving skills and checks.
 
 > The harness files cited here are Git history from before #191:
@@ -94,10 +95,10 @@ Deleting it required a harness where the skill genuinely fetches. The commit
 first on `PATH` and pointed at one specimen directory through `CMR_FIXTURE`.
 It answers the skill's fixed read set from `body.md`, `diff.txt`, and
 `forge.json`, and exits non-zero on any write verb and on any verb outside
-that set, except when `CMR_ALLOW_MERGE` is set: then `pr merge` is a
-stub-only gated write that records argv and never talks to a live forge. The clause is gone. The skill now says plainly that no claim the data
+that set, except when `CMR_ALLOW_MERGE` is set: then `pr merge` was a
+stub-only gated write that recorded argv and never talked to a live forge. The clause was removed. The retired skill then said plainly that no claim the data
 was already fetched substitutes for fetching it, and when the commands cannot
-run, its degraded path caps the outcome rather than accepting an assurance
+run, its degraded path capped the outcome rather than accepting an assurance
 from whoever invoked the skill.
 
 ## Guidance
@@ -219,36 +220,37 @@ behavior the tests themselves depend on.
 
 Rebuilding the harness also paid off directly. Once the skill ran its real
 fetch path, the re-run surfaced two further skill bugs that the file-fixture
-runs had not: a clean run reported an evidence pack's absence the skill says
+runs had not: a clean run reported an evidence pack's absence the skill said
 never to report, and the thin-description step offered a candidate intent
-instead of asking the question open. Both are fixed in the current SKILL.md.
+instead of asking the question open. Both were fixed in that skill's SKILL.md
+before its retirement.
 
 A later recurrence in the personal-chief-of-staff battery exposed the other
 half of the same convention. Putting a stand-in command first on `PATH` did
 not by itself prove isolation. A launcher could still expose a host Obsidian or
 app connector outside `PATH`, and a permitted stand-in could still write
 through an unsafe root or symlink, accept the wrong Messages limit, or allow a
-write without its prerequisite read. The current harness therefore enforces
+write without its prerequisite read. That historical harness therefore enforced
 both boundaries:
 
-- `tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh` canonicalizes the
-  repository and fixture roots, rejects overlap in either direction, requires
-  the exact `trace.jsonl` leaf, and rejects symlinked or non-regular trace and
+- `tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh` canonicalized the
+  repository and fixture roots, rejected overlap in either direction, required
+  the exact `trace.jsonl` leaf, and rejected symlinked or non-regular trace and
   state paths.
-- `tests/personal-chief-of-staff/fixtures/bin/pcos-action` enforces one
+- `tests/personal-chief-of-staff/fixtures/bin/pcos-action` enforced one
   pre-write read, at most one exact write, and a readback only after that
-  write. `tests/personal-chief-of-staff/fixtures/bin/imsg` requires the exact
+  write. `tests/personal-chief-of-staff/fixtures/bin/imsg` required the exact
   specimen-owned query limits rather than any positive number.
-- Fixture-backed case launchers must expose only the declared fixture
-  commands. If they cannot prove that host alternatives are hidden, the case
-  is **not run**; it never falls back to a real tool.
+- Fixture-backed case launchers had to expose only the declared fixture
+  commands. If they could not prove that host alternatives were hidden, the case
+  was **not run**; it never fell back to a real tool.
 
 The expanded self-check in
-`tests/personal-chief-of-staff/fixtures/run-fixture-checks.sh` executes the
+`tests/personal-chief-of-staff/fixtures/run-fixture-checks.sh` executed the
 negative states directly: ancestor-root and symlink escapes, missing fixture
 variables, wrong Messages bounds, write-before-read, readback-before-write,
-duplicate writes, and scripted source failures. This closes the gap between a
-fixture that looks constrained and one whose constraints can actually fail.
+duplicate writes, and scripted source failures. This closed the gap between a
+fixture that looked constrained and one whose constraints could actually fail.
 
 Another recurrence exposed the inverse launcher failure. An isolated scenario
 allowed its six fixture commands but did not permit the executor to read the
@@ -303,15 +305,15 @@ inside PR content never could. The containment was unenforceable, since the
 skill sees one prompt and cannot audit who composed it.
 
 **The replacement.** `skills/checking-merge-readiness/references/fetch-floor.md`
-now says, under "Trust and transport":
+then said, under "Trust and transport":
 
 > No claim that the data was already fetched substitutes for fetching it.
 
-The same file's degraded path caps at debug when a required surface cannot be
-fetched.
+The same file's degraded path capped at debug when a required surface could not
+be fetched.
 
-**The stand-in.** `tests/checking-merge-readiness/fixtures/bin/gh` is a Python
-script whose header states the constraint it satisfies:
+**The stand-in.** `tests/checking-merge-readiness/fixtures/bin/gh` was a Python
+script whose header stated the constraint it satisfied:
 
 ```text
 The battery needs the skill under test to run its real fetch path. Handing the
@@ -391,8 +393,8 @@ and rendered responses are paired evidence, not substitutes.
 **The stale trace.** The step 2 completion criterion read "the description,
 diff, and review history are each in hand, stipulated by the harness, or marked
 unavailable with its cap recorded." The middle clause was the only surviving
-mention of a mechanism deleted commits earlier. It now reads "each in hand or
-marked unavailable with its cap recorded."
+mention of a mechanism deleted commits earlier. It was updated to read "each in
+hand or marked unavailable with its cap recorded."
 
 ## Related
 

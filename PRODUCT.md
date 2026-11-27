@@ -8,19 +8,19 @@ web
 
 ## Users
 
-Jason is the primary operator and maintainer. He uses The Rookery as the public, always-current home for how he builds with AI and improves that system over time.
+Jason is the primary operator and maintainer. He uses The Rookery as the public, up-to-date record of how he builds software with AI and improves that system over time.
 
-The primary visitor audience is people encountering the work through social media, practitioners, and people who use AI and want to understand, install, or adapt the workflows, skills, and scheduled automations.
+Visitors are practitioners and AI builders who find the repository through social media or shared links and want to understand, install, or adapt the workflows, skills, and scheduled automations.
 
 ## Product Purpose
 
-The Rookery makes Jason's working system for building with AI understandable, reusable, and portable. It brings together the strongest existing tools and open-source approaches he finds, the workflows he refines through use, and the skills he builds only when a meaningful gap remains.
+The Rookery documents Jason's working system for building software with AI so others can read how it works, adapt the workflows, and install the skills they need. It combines the open-source tools and plugins he relies on, workflow playbooks refined through daily work, and custom skills written only when existing tools leave a recurring gap.
 
-Success means a visitor can quickly understand the system, follow a workflow, and install a relevant skill without first decoding a wall of text. For Jason, success also means the repository remains a useful working reference rather than becoming a static showcase.
+A visitor should be able to see how the parts fit together, follow a workflow, and install a skill without reading a wall of text first. For Jason, the repository succeeds when it stays his live working reference instead of falling behind what he actually runs.
 
 ## Positioning
 
-The Rookery collects the open-source tools, workflows, skills, and scheduled automations Jason actually uses. It credits existing work, connects it into one cross-agent workflow, and adds a skill only when daily use exposes a recurring gap. The repository changes as that judgment changes.
+The Rookery is a working field guide to the open-source tools, workflows, skills, and scheduled automations Jason runs across Claude Code, Codex, Cursor, Gemini CLI, and other compatible agents. It credits existing open-source work, explains how the pieces connect, and adds a custom skill only when daily use exposes a recurring gap. When his setup or judgment changes, the repository changes with it.
 
 ## Operating Context
 
@@ -34,13 +34,13 @@ The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintai
 - The system avoids depending on one vendor, keeps the skill catalog small, and improves from use.
 - Automation definitions are reusable prompts and schedules configured manually in Orca. Local repository bindings and account identifiers stay in the scheduler; reports and owner decisions stay in the private shared history repository.
 - The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
-- Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.
+- Repository banners and social previews are separate but coordinated assets. Explanatory illustrations and diagrams already appear across the root documentation (including `README.md`, `WORKFLOWS.md`, `TESTING.md`, `PRIORITIZATION.md`, and `ROUTING.md`), and new visuals follow the shared system in `DESIGN.md`.
 - Huginn and Muninn explain the repository and its workflows through their actions. Huginn brings back new findings; Muninn preserves useful lessons and returns them to the work.
 
 ## Brand Commitments
 
 - Preserve the name **The Rookery** and its corvid meaning: a place where corvids gather and return.
-- The confirmed repository-level message is **“A field guide to how I build with AI.”** Supporting copy may expand it as **“Open-source tools, practical workflows, and portable skills refined through use.”**
+- The confirmed repository-level message is **"A field guide to how I build with AI."** Supporting copy may expand it as **"Open-source tools, practical workflows, and portable skills refined through use."**
 - Use the standardized names **Huginn** and **Muninn**, Odin's ravens associated with thought and memory. The raven story explains the name; it does not imply that the workflows learn autonomously.
 - The work should be technically clear while remaining warm, memorable, and fun.
 - Visual personality must make technical concepts easier to understand. Characters, metaphors, or motion should perform the idea rather than decorate it.

@@ -105,13 +105,15 @@ conventions that prevent accidents, not authentication.
   - a `request changes` verdict at any head fails authority
   - a `merge` verdict whose `Head:` matches `headRefOid` passes authority
     unless superseded by a newer `Fleet: hold` receipt by the operator's login
-    (such as after a base-branch retarget)
+    (such as after a base-branch retarget) with no later matching-head
+    `Fleet: auto-merge` receipt
   - a `merge` verdict at an earlier head (`Head:` differs from `headRefOid`)
     passes authority only when the newest valid `Fleet:` receipt by the
-    operator's login posted after that verdict is `Fleet: verdict-delta` (not
-    superseded by a newer `Fleet: hold`), carries routine scores (`V × U`
-    below 3 with neither factor `?`), and has a `Head:` matching at least a
-    7-character hexadecimal prefix of `headRefOid`
+    operator's login posted after that verdict (not superseded by a newer
+    `Fleet: hold`) has a `Head:` matching at least a 7-character hexadecimal
+    prefix of `headRefOid` and is either `Fleet: verdict-delta` carrying
+    routine scores (`V × U` below 3 with neither factor `?`) or
+    `Fleet: auto-merge` (under a charter per-issue pre-authorization)
   - with no operator verdict, authority passes only when the newest valid
     `Fleet:` receipt by the operator's login is `Fleet: auto-merge` with a
     `Head:` matching at least a 7-character hexadecimal prefix of `headRefOid`

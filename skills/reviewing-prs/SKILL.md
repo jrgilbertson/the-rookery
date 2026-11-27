@@ -112,16 +112,18 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    rebase replaces):
    - A `merge` verdict at the final head (`Head:` matches `headRefOid`):
      leave it out unless superseded by a newer `Fleet: hold` receipt by the
-     operator's login (such as after a base-branch retarget), in which case
-     list it as **merged without the operator**, with the reason and any
-     `review:` label.
+     operator's login (such as after a base-branch retarget) with no later
+     matching-head `Fleet: auto-merge` receipt, in which case list it as
+     **merged without the operator**, with the reason and any `review:`
+     label.
    - A `merge` verdict at a different head (`Head:` differs from
      `headRefOid`): list it as **changed after the verdict**, summarized from
-     the newest post-verdict valid `Fleet: verdict-delta` receipt by the
-     operator's login (not superseded by a newer `Fleet: hold`, carrying
-     routine scores, and with `Head:` matching at least a 7-character
-     hexadecimal prefix of `headRefOid`) when one exists, or else by naming
-     both heads and noting the missing, mismatched, or superseded receipt.
+     the newest post-verdict valid `Fleet:` receipt by the operator's login
+     when it is not superseded by a newer `Fleet: hold`, has `Head:` matching
+     at least a 7-character hexadecimal prefix of `headRefOid`, and is either
+     `Fleet: verdict-delta` carrying routine scores or `Fleet: auto-merge`
+     (under a charter per-issue pre-authorization), or else by naming both
+     heads and noting the missing, mismatched, or superseded receipt.
    - A `request changes` verdict at any head (final or earlier): list it as
      **merged without the operator**, with the reason and any `review:`
      label.

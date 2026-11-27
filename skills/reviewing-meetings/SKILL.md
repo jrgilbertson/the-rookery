@@ -1,8 +1,8 @@
 ---
 name: reviewing-meetings
-description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola; when a scheduled post-meeting review invokes it; or when the user later revisits, resumes, or otherwise decides visible meeting-review actions, including CRM-derived actions. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
+description: Review newly completed meetings from a configured source (including Granola), run scheduled post-meeting reviews, or approve, resume, or decide visible meeting-review actions (including CRM-derived ones). Not for upcoming meeting prep, live notes, standalone CRM, or direct task, issue, or calendar edits.
 license: MIT
-compatibility: Requires meeting data with stable source IDs, an approved-note source with live template and naming guidance, and an authoritative ownership map for downstream actions. Conversational suppression requires retrievable conversation history. When Obsidian owns a target, its CLI must be available.
+compatibility: Requires meeting data with stable source IDs, an approved-note source with live template and naming guidance, and an authoritative ownership map for downstream actions. Skipping meetings already pending, reviewed, or dismissed in this conversation requires retrievable conversation history. When Obsidian owns a target, its CLI must be available.
 ---
 
 # Reviewing Meetings
@@ -28,7 +28,7 @@ must not produce another meeting or proposal. If the source read is unavailable
 or fails, or the exact source or native ID is ambiguous, make no write and
 report that action **Manual**.
 
-If the same message also explicitly asks for a new meeting check, finish the
+If the same message also asks for a new meeting check, finish the
 action-response phase first. Then run discovery as a separate read-only phase;
 do not use newly discovered proposals to reinterpret the earlier action
 decision.
@@ -74,18 +74,18 @@ and [assets/review-bundle.md](assets/review-bundle.md). Use the asset for every
 meeting proposal and the reference to resolve one authoritative destination for
 each supported action. Populate every applicable field in the asset, shape the
 preview with the configured live template, and leave unsupported details
-explicitly unresolved.
+unresolved.
 
 Keep the in-progress proposal ephemeral. Do not present it yet or create or edit
 a meeting note while preparing it. Later runs append only newly eligible
 meetings; they do not repeat, renumber, or recompute older pending or deferred
-proposals. A fully decided visible bundle remains suppressed by its
-conversational disposition rather than becoming a new proposal again.
+proposals. A fully decided visible bundle stays closed in this conversation
+rather than becoming a new proposal again.
 
-If current conversation history is unavailable, disclose that pending and
-reviewed or dismissed suppression cannot be verified. Continue using exact
-source-and-ID checks against approved notes, and do not claim the result is free
-of conversational duplicates.
+If current conversation history is unavailable, disclose that earlier pending,
+reviewed, or dismissed meetings in this conversation cannot be checked.
+Continue using exact source-and-ID checks against approved notes, and do not
+claim the result is free of duplicates from earlier in the conversation.
 
 Completion: the in-progress synthesis contains every and only newly proposed
 meeting from this run, or establishes that there is no new meeting to review.

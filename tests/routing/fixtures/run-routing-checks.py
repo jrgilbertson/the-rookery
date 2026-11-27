@@ -536,8 +536,10 @@ def check_charts() -> None:
 
         # recommendations.csv is drawn as a shareable figure of the recommendations.
         table = " ".join("".join(el.itertext()) for el in ElementTree.parse(first / "routing-table.svg").getroot().iter(f"{SVG}text"))
-        for want in ("Executor", "Writing", "Claude Alpha 1.2", "GPT-9.1 Gamma", "2026-01-02", "my judgment"):
+        for want in ("Executor", "Writing", "Claude Alpha 1.2", "GPT-9.1 Gamma", "2026-01-02",
+                     "Maintainer's judgment overriding the benchmark method (see ROUTING.md)"):
             check(want in table, f"the table figure should show {want!r}: {table[:300]}")
+        check("my judgment" not in table.lower(), f"the table figure footnote should not rely on first-person 'my judgment': {table[-200:]}")
         check(table.count("*") >= 2, "a judged cell should carry its asterisk, and the key should explain it")
         lines = {el.get("data-model"): el for el in headline.iter(f"{SVG}polyline") if el.get("class") == "series"}
         check(set(lines) == {"Alpha", "Gamma", "Solo", "Beta"}, f"headline should draw the listed models only: {sorted(lines)}")
@@ -548,12 +550,12 @@ def check_charts() -> None:
               "each line label should count the suites that tested the model, and the footer should say so")
         check("2026-01-01" in text, "the chart should state the date its data was read")
 
-        # Each provider's lines use the colour chart.json gives it, and each knee ring takes its own line's colour.
+        # Each provider's lines use the color chart.json gives it, and each knee ring takes its own line's color.
         inks = {el.get("data-model"): el.get("stroke") for el in headline.iter(f"{SVG}polyline") if el.get("class") == "series"}
         check(inks.get("Alpha") == "#C15F3C" and inks.get("Gamma") == "#10A37F",
-              f"lines should use each provider's colour from chart.json: {inks}")
+              f"lines should use each provider's color from chart.json: {inks}")
         rings = {el.get("data-model"): el.get("stroke") for el in headline.iter(f"{SVG}circle") if el.get("class") == "knee"}
-        check(rings and all(rings[model] == inks[model] for model in rings), f"knee rings should match their line's colour: {rings}")
+        check(rings and all(rings[model] == inks[model] for model in rings), f"knee rings should match their line's color: {rings}")
         keys = [el.get("stroke") for el in headline.iter(f"{SVG}circle") if el.get("class") == "key-knee"]
         check(keys == [NAVY], f"the key's best-value mark should be navy: {keys}")
         rings = [el.get("data-model") for el in headline.iter(f"{SVG}circle") if el.get("class") == "knee"]
@@ -569,16 +571,52 @@ def check_charts() -> None:
         check(set(lines) == {"Gamma", "Alpha", "Line", "Peak"},
               f"the frontier chart should draw the top four current models scored by two suites, without Beta, Twin, Solo or Thrift: {sorted(lines)}")
         check(lines.get("Alpha") is not None and lines["Alpha"].get("stroke") == "#C15F3C" and lines.get("Line") is not None and lines["Line"].get("stroke") == "#47577A",
-              "routed models keep their provider's colour and other makers are grey")
+              "routed models keep their provider's color and other makers are gray")
         edge = [(el.get("data-model"), el.get("data-effort")) for el in field.iter(f"{SVG}circle") if el.get("class") == "frontier"]
         check(edge == [("Peak", "low"), ("Gamma", "low"), ("Gamma", "medium"), ("Peak", "high"), ("Gamma", "high")],
               f"the frontier should run from the cheapest setting through each cheaper-unbeaten one: {edge}")
         check(not any(el.get("class") == "knee" for el in field.iter(f"{SVG}circle")), "the frontier chart marks the frontier, not best-value efforts")
         words = " ".join("".join(el.itertext()) for el in field.iter(f"{SVG}text"))
         check("Not routed here" in words and "Other makers" not in words and "On the frontier" in words,
-              "the frontier chart's key should call grey lines models not routed here, not other makers, and name the frontier mark")
+              "the frontier chart's key should call gray lines models not routed here, not other makers, and name the frontier mark")
         bold = sorted("".join(el.itertext()) for el in field.iter(f"{SVG}text") if el.get("class") == "line-label" and el.get("font-weight") == "600")
         check(bold == ["Gamma (3)", "Peak (2)"], f"the frontier chart should bold the models with a frontier setting, not the routed ones: {bold}")
+
+        # Every generated SVG must expose accessible title/desc markup, use US English, and keep text inside the canvas.
+        british = re.compile(r"\b(?:colour\w*|labelled|grey)\b", re.I)
+        committed = REPO_ROOT / "docs" / "assets"
+        for directory in (first, committed):
+            for name in CHARTS:
+                root = ElementTree.parse(directory / name).getroot()
+                title_el = root.find(f"{SVG}title")
+                desc_el = root.find(f"{SVG}desc")
+                labelled_by = (root.get("aria-labelledby") or "").split()
+                check(root.get("role") == "img", f"{name}: missing role='img'")
+                check(title_el is not None and bool((title_el.text or "").strip()) and bool(title_el.get("id")),
+                      f"{name}: missing <title> with non-empty text and id")
+                check(desc_el is not None and bool((desc_el.text or "").strip()) and bool(desc_el.get("id")),
+                      f"{name}: missing <desc> with non-empty text and id")
+                if title_el is not None and desc_el is not None:
+                    check(labelled_by == [title_el.get("id"), desc_el.get("id")],
+                          f"{name}: aria-labelledby {labelled_by!r} should reference title and desc ids")
+                all_text = " ".join([
+                    (title_el.text or "") if title_el is not None else "",
+                    (desc_el.text or "") if desc_el is not None else "",
+                    *("".join(el.itertext()) for el in root.iter(f"{SVG}text")),
+                ])
+                uk_hits = british.findall(all_text)
+                check(not uk_hits, f"{name}: found British spelling in SVG text: {uk_hits}")
+                width = float(root.get("width") or "1200")
+                for el in root.iter(f"{SVG}text"):
+                    if el.get("x") is None or el.get("text-anchor") in ("middle", "end"):
+                        continue
+                    x = float(el.get("x"))
+                    size = float(el.get("font-size") or "12")
+                    content = "".join(el.itertext())
+                    # 0.56em matches evidence.py's width model; 0.62em on 12px footers covers wide Linux serif fallbacks.
+                    factor = 0.62 if size <= 12 else 0.56
+                    check(x + factor * size * len(content) <= width - 40,
+                          f"{name}: text line risks overflowing {width:g}px canvas: {content!r}")
 
         # No label may cover a data point, in any of the charts.
         for name in (chart for chart in CHARTS if chart != "routing-table.svg"):
@@ -702,9 +740,11 @@ def page_alt_text_problems() -> list[str]:
         return ["ROUTING.md does not show docs/assets/routing-table.svg"]
     alt = found.group(1)
     problems = []
+    if "`" in alt:
+        problems.append("the routing-table alt text should not contain raw backticks")
     with (REPO_ROOT / "docs" / "routing" / "recommendations.csv").open(newline="", encoding="utf-8") as handle:
         for row in csv.DictReader(handle):
-            want = f"{row['model']} (`{row['model_id']}`) at {row['effort']}"
+            want = f"{row['model']} ({row['model_id']}) at {row['effort']}"
             if want not in alt:
                 problems.append(f"the routing-table alt text does not name {want} for {row['role']}")
             if row["reviewed"] not in alt:

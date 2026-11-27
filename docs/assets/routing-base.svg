@@ -1,10 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 802" width="1200" height="802" role="img">
-<title>What each model gains as you raise its effort</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 802" width="1200" height="802" role="img" aria-labelledby="routing-base-title routing-base-desc">
+<title id="routing-base-title">What each model gains as you raise its effort</title>
+<desc id="routing-base-desc">Combined quality against relative cost per task across 5 benchmark suites for 8 models from 4 providers, data read 2026-11-25. Each line joins a model's effort settings from lowest to highest, and a ring marks each model's best-value effort.</desc>
 <rect width="1200" height="802" fill="#F6F7FA"/>
 <rect x=".5" y=".5" width="1199" height="801" fill="none" stroke="#47577A" stroke-opacity=".32"/>
 <path d="M14 26V14H26M1174 14H1186V26M14 776V788H26M1174 788H1186V776" fill="none" stroke="#47577A" stroke-opacity=".5"/>
 <text x="40.0" y="52.0" font-size="30" fill="#042458" font-family="Didot,'Bodoni MT',Georgia,serif">What each model gains as you raise its effort</text>
-<text x="40.0" y="78.0" font-family="Baskerville,Georgia,serif" font-size="15" fill="#0050CC" font-weight="600">5 benchmark suites on one scale. Colour names the provider, shape names the effort, and each line is labelled with its model.</text>
+<text x="40.0" y="78.0" font-family="Baskerville,Georgia,serif" font-size="15" fill="#0050CC" font-weight="600">5 benchmark suites on one scale. Color names the provider, shape names the effort, and each line is labeled with its model.</text>
 <text x="40.0" y="108.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#47577A" font-style="italic">Effort</text>
 <circle class="key" data-effort="low" data-x="86.0" data-y="104.0" cx="86.0" cy="104.0" r="4.4" fill="#042458" stroke="#F6F7FA" stroke-width="1.6" stroke-linejoin="round"/>
 <text x="97.0" y="108.0" font-family="Baskerville,Georgia,serif" font-size="12" fill="#042458" class="legend">Low</text>

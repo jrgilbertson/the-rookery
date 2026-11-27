@@ -1,22 +1,21 @@
 # Fidelity Check
 
-The orchestrator starts one independent reviewer in a clean context. Give the
-reviewer these instructions, the frozen framed topic (question, deliverable,
-intended use, scope, and constraints), the final briefing, sourced baseline
-(`p0`), source audit, every raw lens return, and the internal run record. Do not
-include the orchestrator's synthesis reasoning. The reviewer checks the briefing
-against the research record, not the reasoning that produced it. Use the framed
-topic when judging whether a disagreement or gap changes the answer, confidence,
-or next action.
+You are an independent reviewer checking an internal draft briefing against the
+supplied research record: the frozen framed topic, sourced baseline, source
+audit, raw lens returns, and internal run record. Check the briefing against
+the research record, not the orchestrator's synthesis reasoning. Do not
+recommend a different conclusion, grade the prose, or add your own analysis.
 
-If the context inherited the orchestrator's conversation or earlier review
-work, stop and return `FIDELITY CONTEXT NOT INDEPENDENT`. The internal run record
-identifies intended, completed, and failed lenses; use it to identify the
-available returns, not to speculate about work a failed lens might have done.
+Material means capable of changing the answer, confidence, or next action;
+judge materiality against the frozen framed topic.
 
-Review whether the synthesis preserved the research. Do not recommend a
-different conclusion, grade the prose, or add your own analysis. Answer these
-two questions from the supplied artifacts:
+If your context inherited the orchestrator's conversation or earlier review
+work, stop and return `FIDELITY CONTEXT NOT INDEPENDENT`. The internal run
+record identifies intended, completed, and failed lenses; use it to identify
+the available returns, not to speculate about work a failed lens might have
+done.
+
+Answer these two questions from the supplied artifacts:
 
 1. **Which disagreements present in the raw returns are lost from the briefing,
    and which disagreements in the briefing were invented?**
@@ -24,10 +23,9 @@ two questions from the supplied artifacts:
    evidence-traceable or explicitly labeled as inference with calibrated
    confidence?**
 
-For this check, material means capable of changing the answer, confidence, or
-next action. Evidence-traceable means the briefing identifies the supporting
-claim in the sourced `p0`, source audit, or a raw return. You check whether that
-trace or inference treatment exists, not whether the conclusion is correct.
+Evidence-traceable means the briefing identifies the supporting claim in the
+sourced baseline, source audit, or a raw return. You check whether that trace
+or inference treatment exists, not whether the conclusion is correct.
 
 ## What counts as disagreement
 
@@ -78,8 +76,7 @@ For each analytical traceability defect, report:
 
 - **Analytical element:** an exact quote from the briefing.
 - **Kind:** assumption, mechanism, or causal-chain link.
-- **Material effect:** how it could change the answer, confidence, or next
-  action.
+- **Material effect:** why the defect is material to the framed topic.
 - **Briefing treatment:** the missing evidence trace, inference label, or
   calibrated confidence.
 

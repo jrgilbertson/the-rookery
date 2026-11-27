@@ -1,10 +1,10 @@
 ---
 name: storm-research
-description: "Use only for requests whose deliverable is a full research briefing, a STORM-style investigation, or an evidence review across multiple independent perspectives. The work compares competing evidence, maps contradictions and blind spots, and supports decisions, investments, negotiations, long-form writing, presentations, or learning a new domain."
+description: "Produce a full research briefing, STORM-style investigation, or multi-perspective evidence review that compares competing evidence and maps contradictions and blind spots. Use only when that full deliverable is requested. Not for quick answers or single-source lookups."
 license: MIT
 ---
 
-# Storm Research
+# STORM Research
 
 Produce a grounded research briefing by establishing baseline facts, finding
 perspectives suggested by the sources, asking independent lens-specific questions,
@@ -42,7 +42,7 @@ Retrieve missing context when possible. Ask only when ambiguity would change
 the research direction. Freeze this framed-topic block before dispatch and use
 it verbatim for every lens.
 
-### 2. Establish baseline facts (`p0`)
+### 2. Establish baseline facts
 
 Fetch current sources when the topic depends on current facts, vendor behavior,
 law, finance, health, APIs, prices, benchmarks, or news. Prefer primary sources
@@ -69,11 +69,11 @@ work an **unverified perspective simulation**, and keep factual confidence low.
 
 ### 3. Scan sources and lock the lens set
 
-Inspect up to five sources most likely to reveal a missing perspective that
-could change the answer, confidence, or next action. Prefer three to five when
-access allows. If fewer than three inspectable sources exist, scan what is
-available, record the shortfall as degradation, and do not invent scan
-evidence. Use the five canonical lenses unless the user narrows the set:
+Inspect up to five sources most likely to reveal a missing material
+perspective. Prefer three to five when access allows. If fewer than three
+inspectable sources exist, scan what is available, record the shortfall as
+degradation, and do not invent scan evidence. Use the five canonical lenses
+unless the user narrows the set:
 
 | Lens | Contribution | Failure mode it catches |
 | --- | --- | --- |
@@ -85,9 +85,8 @@ evidence. Use the five canonical lenses unless the user narrows the set:
 
 Add a topic-specific lens, such as a regulator, customer, clinician, operator,
 technical architect, adversary, ethicist, educator, community, or geopolitical
-perspective, only when omitting it could change the answer, confidence, or next
-action. Topic-specific lenses add to the non-narrowed canonical set; they do
-not replace it.
+perspective, only when omitting it would be material. Topic-specific lenses add
+to the non-narrowed canonical set; they do not replace it.
 
 Lock the intended lens set in an internal run record. The canonical lenses left
 after user narrowing and every user-required lens are required. A topic-specific
@@ -114,7 +113,7 @@ Give every executor exactly four seed parts:
 1. the common lens charter content;
 2. the identical frozen framed topic from step 1;
 3. that executor's lens and no other lens;
-4. the identical sourced `p0` baseline from step 2.
+4. the identical sourced baseline from step 2.
 
 Required system policy and tool instructions may remain outside the task seed,
 but no inherited task conversation or sibling work may enter the context. Do
@@ -167,14 +166,22 @@ Create a source audit internally for every task:
 | --- | --- | --- | --- | --- | --- |
 | `<claim>` | `<source or none found>` | Primary/secondary/tertiary/none | `<risk>` | `<needed source>` | High/Medium/Low |
 
+Map each lens return's per-finding confidence to High/Medium/Low for the
+briefing and source audit:
+
+- primary-source grounded → High only if the mechanism is also sourced, else
+  Medium
+- secondary-source grounded → Medium
+- unverified → Low
+
 Audit promotional, institutional, ideological, geographic, and political bias.
 Several sources with the same incentives do not count as independent
-confirmation. After p0 and raw returns, complete a row for every material claim
-already in that record. An unsupported claim still gets a complete row: Best
-source `none found`, Source type `none`, Missing counter-source names the
-evidence needed, and Confidence `Low` (treat the claim as unverified). Final
-completeness for every material user-facing claim is reached only after the
-post-draft reconciliation in step 8.
+confirmation. After the baseline and raw returns, complete a row for every
+material claim already in that record. An unsupported claim still gets a
+complete row: Best source `none found`, Source type `none`, Missing
+counter-source names the evidence needed, and Confidence `Low` (treat the claim
+as unverified). Final completeness for every material user-facing claim is
+reached only after the post-draft reconciliation in step 8.
 
 In a normal full briefing, carry claim support as numbered notes and surface
 source risk in the Reliability check. Include the full audit table in the
@@ -195,56 +202,78 @@ research limits as step 8 describes.
 
 Build material claims from sourced facts, explicit assumptions, constraints,
 and supported mechanisms. Include relevant system relationships and downstream
-effects where they change the answer, confidence, or next action. Integrate
-this reasoning into the reader's natural sections rather than adding mandatory
-first-principles or systems-thinking sections.
+effects where they are material. Integrate this reasoning into the reader's
+natural sections rather than adding mandatory first-principles or
+systems-thinking sections.
 
-### 8. Emit the briefing
+### 8. Draft and reconcile the briefing
 
-Use the structure and voice selected in step 7. For short or custom outputs, preserve
-compact citations and compress presentation without dropping a material
-tension, finding or uncertainty, confidence limit, degradation, open question
-that would change the answer most, or reliability finding.
+Produce an internal draft using the structure and voice selected in step 7, and
+withhold reader-facing output until step 9 completes. For short or custom
+outputs, preserve compact citations and compress presentation without dropping
+a material tension, finding or uncertainty, confidence limit, degradation, open
+question that would change the answer most, or reliability finding.
 
 Keep the internal run record out of a normal reader-facing deliverable. On a
 full briefing, put material research limitations in the Overview so they frame
-how the rest is read; include claim-specific limits beside the affected claim. On short or custom forms, put them next to the affected
-claim or in the lead when they should frame the whole read. Provide the full
-record when the user requests an audit, trace, or execution details.
+how the rest is read; include claim-specific limits beside the affected claim.
+On short or custom forms, put them next to the affected claim or in the lead
+when they should frame the whole read. Provide the full record when the user
+requests an audit, trace, or execution details.
 
-Before fidelity review, reconcile the Source Audit against the draft. Add or
-update a complete row for every material claim introduced or changed during
-analysis and synthesis, including unsupported claims.
+Before starting step 9, reconcile the Source Audit against the internal draft.
+Add or update a complete row for every material claim introduced or changed
+during analysis and synthesis, including unsupported claims.
 
 ### 9. Review curation fidelity
 
 Read [references/fidelity-check.md](references/fidelity-check.md) and start one
-independent reviewer in a clean context. Give it every artifact listed in that
-file—including the frozen framed topic—but not the orchestrator's synthesis
-reasoning. Apply only the check defined there.
+independent reviewer in a clean context. Give the reviewer:
 
-The report is binding. For every finding, restore a lost disagreement in the
-reader-facing briefing (Key tensions or an explicit set-aside in the body), and
-update the internal contradiction map or Source Audit as bookkeeping; remove or
-correct invented tension; for an analytical finding, add the missing evidence
-trace or explicit inference label and calibrated confidence. A finding may not
-be accepted while the briefing remains unchanged. Rerun the same fidelity check
-on each revised briefing in a new clean reviewer context until it reports clean,
-or until three recheck rounds complete without a clean result. If clean recheck
-is unavailable, or the recheck budget is exhausted without `FIDELITY CLEAN`,
-disclose reduced verification, lower confidence, and record that state
-internally. Update the fidelity history and overall state after every attempt.
-When no clean independent reviewer is available for the initial check, state
-that the check did not run and lower confidence.
+- the instructions in `references/fidelity-check.md`;
+- the frozen framed topic (question, deliverable, intended use, scope, and
+  constraints);
+- the internal draft briefing;
+- the sourced baseline;
+- the reconciled Source Audit;
+- every raw lens return;
+- the internal run record.
+
+Exclude the orchestrator's synthesis reasoning. Apply only the check defined in
+`references/fidelity-check.md`.
+
+The report is binding. A finding may not be accepted while the draft remains
+unchanged. For every finding:
+
+- **Lost disagreement:** restore it in the draft briefing (under Key tensions
+  or as an explicit set-aside in the body), and update the internal
+  contradiction map or Source Audit as bookkeeping.
+- **Invented tension:** remove or correct it in the draft briefing.
+- **Analytical traceability:** add the missing evidence trace, or label the
+  step as inference with calibrated confidence.
+
+Rerun the same fidelity check on each revised draft in a new clean reviewer
+context until it reports `FIDELITY CLEAN`, or until three recheck rounds
+complete without a clean result. If clean recheck is unavailable, or the
+recheck budget is exhausted without `FIDELITY CLEAN`, disclose reduced
+verification, lower confidence, and record that state internally. Update the
+fidelity history and overall state after every attempt. When no clean
+independent reviewer is available for the initial check, state that the check
+did not run and lower confidence.
+
+Emit the reader-facing briefing only after this review completes (with
+`FIDELITY CLEAN`, or with any reduced-verification disclosure applied to the
+draft).
 
 ## Completion check
 
-- `p0` is sourced, and the perspective scan considered additional lenses (or
-  recorded a shortfall when fewer than three sources were inspectable).
+- The baseline is sourced, and the perspective scan considered additional
+  lenses (or recorded a shortfall when fewer than three sources were
+  inspectable).
 - The intended set reflects user narrowing. Every completed lens either used a
   verified-clean identical four-part seed except for its own lens, or the run
-  is labeled single-context synthesis with lowered
-  confidence and a named upgrade signal.
+  is labeled single-context synthesis with lowered confidence and a named
+  upgrade signal.
 - Raw returns are retained, and failed lenses remain visible in the internal
   run record.
 - Each lens-specific contribution is evidence-backed or states that it adds
@@ -265,9 +294,10 @@ that the check did not run and lower confidence.
 - The briefing integrates those findings where they help the reader and does
   not add mandatory analytical sections or unsupported dynamics.
 - Long-form work has an outline before prose.
-- The fidelity report changed the briefing when it found a defect and each
-  revision was rechecked until clean, or reduced verification is disclosed as
-  degradation with lower confidence.
+- The fidelity report changed the draft when it found a defect, each revision
+  was rechecked until clean (or reduced verification is disclosed as
+  degradation with lower confidence), and the reader-facing briefing was
+  emitted only after step 9 completed.
 - The internal run record states lens, isolation, source-access, fidelity, and
   overall status without claiming capabilities that did not run. Normal output
   omits that telemetry and discloses material degradation concisely.

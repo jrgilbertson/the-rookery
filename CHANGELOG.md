@@ -201,6 +201,12 @@ looked" surface. GitHub Releases mirror its entries.
   merges are listed apart from unapproved ones, without the orange seal.
   The round's data gains `bucket`, `checks`, `conflict`, `holdViolation`,
   and `merged.autoMerged`; a round without them still renders.
+- Each `reviewing-prs` review card opens with a plain-language summary of
+  the pull request: the problem that existed, what the change does about
+  it, and the tradeoffs it made. It sits above the sentence about the hold
+  line, so a card can be understood before its scores are. The round's data
+  gains `summary` on each pull request, which step 3 of the skill writes
+  from the raw diff; a round without it draws the card as before.
 - `reviewing-prs` classifies a trusted-owner pull request with finished
   checks and no hold as in flight, and counts a `Fleet: hold` receipt as
   held.

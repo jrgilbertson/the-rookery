@@ -52,6 +52,7 @@ length given; the page is read in one sitting across many pull requests.
   "checks": "pass", "conflict": false,
   "size": {"additions": 19, "deletions": 4, "files": 3},
   "scores": {"impact": 2, "confidence": 2, "verify": 2, "undo": 3},
+  "summary": "A downgrade in the middle of a billing month made the invoice step fail. This pull request charges nothing in that case. It also rounds credits down and charges up, which can add a cent. The author fixed the sum in place and added no refund path.",
   "driver": "Changes rounding in billing without saying so. A charge that is wrong stays made after a revert.",
   "sensitiveKind": "money",
   "audience": "customer",
@@ -92,6 +93,13 @@ length given; the page is read in one sitting across many pull requests.
 - `scores`: integers from 1 to 3, from step 3. Let the page compute the order
   and products. A missing score holds the pull request and sorts it to the top
   of the held group; its V × U shows `?` unless both factors are present.
+- `summary`: three to five plain sentences, from the raw diff, that someone
+  outside the codebase could follow. Say what problem existed, what the pull
+  request changes to solve it, and the main tradeoffs it made: what it chose
+  over an alternative, put off, or accepted as a limit. Use everyday words in
+  place of identifiers, and leave out scores and hold tests, which `driver`
+  covers. The block opens with it, above the sentence about the hold line.
+  The page draws nothing in its place when the field is missing or empty.
 - `driver`: one or two sentences saying what drives the score, written for
   the overview.
 - `sensitiveKind`: each sensitive kind from the first hold test in

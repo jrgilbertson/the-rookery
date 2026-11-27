@@ -433,7 +433,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   const brokenFirst = (a, b) => b.broken - a.broken || byProduct(a, b);
   const GROUPS = [
     { key: "hold", name: "Held for review", none: "None held for review.",
-      note: "it carries review:held, or verification effort × undo cost is 3 or more, or the change touches a sensitive kind" },
+      note: "its owner holds it with review:held or a Fleet: hold receipt, or verification effort × undo cost is 3 or more, or the change touches a sensitive kind" },
     { key: "under", name: "Under the hold line", none: "None under the hold line.",
       note: "verification effort × undo cost is 2 or less, and no sensitive kind" },
     { key: "bots", name: "Dependency bots", note: "opened by a dependency bot; failing and conflicting ones first" },
@@ -651,11 +651,12 @@ main { padding: 40px 0 80px; min-width: 0; }
   filterEmpty.hidden = true;
   const showAll = el("button", "flt", "Show all");
   showAll.type = "button";
-  showAll.addEventListener("click", () => {
+  const clearFilter = () => {
     filter.tab = "all";
     filter.broken = brokenToggle.checked = false;
     applyFilter();
-  });
+  };
+  showAll.addEventListener("click", clearFilter);
   add(page, add(filterEmpty, el("span", "empty", "No pull requests match this filter."), showAll));
 
   const across = list(round.across).filter((note) => note && str(note.text));
@@ -893,7 +894,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     if (!item.complete) return ["Held because a score is missing.", item.product === null ? "" : "V × U is " + item.product + ".",
       kinds ? "It touches a sensitive kind: " + kinds + "." : ""].filter(Boolean).join(" ");
-    if (!item.hold && item.group === "hold") return "Held for review because it carries review:held, though V × U is " + item.product + " and it touches no sensitive kind.";
+    if (!item.hold && item.group === "hold") return "Held for review by a review:held label or a Fleet: hold receipt, though V × U is " + item.product + " and it touches no sensitive kind.";
     if (!item.hold) return "Under the hold line, V × U " + item.product + ".";
     if (item.product < 3) return "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
     if (kinds) return "Over the hold line, V × U " + item.product + ", and it touches a sensitive kind: " + kinds + ".";
@@ -1133,9 +1134,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     mergedList("Merged without you", mergedWithout, "reason", "None merged without you.", true),
     autoMerged.length ? mergedList("Auto-merged as routine", autoMerged, "reason", "", false) : null);
   add(mergedBox, el("h2", "", "Merged recently"), el("p", "meta", str(merged.window) || "The window was not stated."), mergedDrawer);
-  // A jump that did not come from a link on this page, such as a typed address, finds the drawer closed and nothing to scroll to.
+  // A jump that did not come from a link on this page, such as a typed address or Back, finds the drawer closed and nothing to scroll to.
+  // The same goes for Back to a card the filter has since hidden: the filter gives way to the address.
   const arrive = () => {
-    const target = reveal(window.location.hash.slice(1));
+    const id = window.location.hash.slice(1);
+    const card = ordered.find((item) => item.id === id && item.node.hidden);
+    if (card) clearFilter();
+    const target = card ? card.node : reveal(id);
     if (target) target.scrollIntoView({ block: "start" });
   };
   window.addEventListener("hashchange", arrive);

@@ -190,6 +190,7 @@ const run = async () => {
     if (what === "broken") { const boxNode = walk(fixed.page).find((n) => n.id === "filter-broken"); boxNode.checked = a; await boxNode.fire("change"); }
     if (what === "jump") await walk(one(fixed.page, "notices")).filter((n) => n.tagName === "a")[a].fire("click");
     if (what === "span") article(a).rect = { top: 0, bottom: 500 };
+    if (what === "hash") { window.location.hash = "#" + a; for (const handler of window.listeners?.hashchange ?? []) handler({}); }
     if (what === "key") {
       const target = c === "toggle" ? walk(fixed.page).find((n) => n.id === "filter-broken") : c ? one(article(c), "notes") : null;
       for (const handler of document.listeners?.keydown ?? []) handler({ key: a, target, repeat: Boolean(b), preventDefault() {} });
@@ -440,6 +441,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
         ["tab", "ready"],                               # 23
         ["broken", True],                               # 24 two broken cards, eight ranks apart
         ["key", "k"],                                   # 25
+        ["hash", "pr-1"],                               # 26 Back to a card the filter hides
     ]
     steps = render(page, scratch, actions)
     if steps is None:
@@ -469,7 +471,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
     check(missing.get("vu") == "?", f"a missing factor keeps the ? badge: {missing.get('vu')}")
     check(next((b["driver"] for b in first["blocks"] if b["title"].endswith("Score missing")), "").startswith("Held because a score is missing."),
           "a missing score keeps its placement line")
-    check("it carries review:held" in next((b["driver"] for b in first["blocks"] if b["title"].endswith("Held by its label alone")), ""),
+    check("by a review:held label or a Fleet: hold receipt" in next((b["driver"] for b in first["blocks"] if b["title"].endswith("Held by its label alone")), ""),
           "a pull request held by its label alone must say so")
     drivers = {b["title"].lstrip("0123456789"): b["driver"] for b in first["blocks"]}
     check(drivers["Fleet change 0"].startswith("Meets a hold test: V × U 9."), f"an in-flight card must not claim a place on the hold line: {drivers['Fleet change 0']}")
@@ -570,6 +572,8 @@ def check_large_round(original: dict, scratch: Path) -> None:
     check(f"acme/ledger-app#904 @ {904:040x} | merge | " in steps[13]["box"]["value"], f"m must merge the visible card on the reading line: {steps[13]['box']['value']!r}")
     check(steps[13]["bar"]["copy"] == "Copy Verdicts (2)", "a key-set Verdict must count")
     check(len(shown(steps[14])) == 31, "the All tab must bring every pull request back")
+    check(len(shown(steps[26])) == 31 and steps[26]["scrolled"] == "pr-1" and steps[26]["filters"]["broken"] == {"checked": False},
+          f"an address that names a hidden card must clear the filter and go to it: {len(shown(steps[26]))}, {steps[26]['scrolled']}")
     check(steps[19]["box"]["value"] == steps[18]["box"]["value"], "a key typed into a note must set no Verdict")
     check(f"#703 @ {703:040x} | not applicable | " in steps[20]["box"]["value"], f"keys must still work with focus on the broken-only checkbox: {steps[20]['box']['value']!r}")
     check(steps[21]["scrolled"] == "pr-25" and steps[22]["scrolled"] == "pr-21",

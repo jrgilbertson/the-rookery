@@ -70,7 +70,8 @@ length given; the page is read in one sitting across many pull requests.
   `bot`. The page draws four groups in this order: Held for review, Under the
   hold line, Dependency bots, and In-flight fleet pull requests. `bot` and
   `in-flight` choose their own groups. `held` puts the pull request in Held
-  for review whatever it scores. `unclassified`, or no `bucket`, lands in Held
+  for review whatever it scores, whether a `review:held` label or a
+  `Fleet: hold` receipt put it in that bucket. `unclassified`, or no `bucket`, lands in Held
   for review when it meets a hold test and under the hold line when it does
   not.
 - `status`: checks and conflict state, plus the base branch when it is not

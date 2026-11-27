@@ -69,6 +69,15 @@ review comments with `ce-resolve-pr-feedback`, and stack with `gh-stack`.
 Tracker edits go through `managing-issues`. Do not restate how those skills
 work. A brief carries only what they cannot know.
 
+**Keep the Captain's own worktree clean.** The Captain is a player-coach who
+may author code, config, or revert pull requests, but must never edit
+repository files, commit, push, or open a pull request from the Captain's own
+worktree. That persistent checkout stays clean for coordination only (reading
+the repo and running read-only, `git fetch`, or merge CLI operations). Make
+any direct Captain change (such as `.agents/managing-issues.json` or a revert
+pull request) in a separate dedicated worktree, or dispatch an Executor in its
+own worktree, and remove that worktree only after GitHub confirms `MERGED`.
+
 ## State
 
 The Captain keeps a small state folder on the machine it runs on, at
@@ -297,17 +306,19 @@ merges at in `state.md`.
   head. Merge one pull request at a time. Then post a `Fleet: auto-merge`
   receipt, and add `review:auto-merged` once GitHub confirms the merge.
 - **Captain-authored.** A pull request whose `Author:` role is `repo-captain`
-  is never routine. It is held and merges only on a verdict.
+  is never routine. Author it in a separate worktree (never the Captain's),
+  hold it, and merge only on a verdict.
 - **Changes requested.** A pull request whose latest verdict is `request
   changes` is never routine, whatever its diff scores. It stays held until a
   later merge verdict.
 - **Pre-authorized.** A held change that a charter pre-authorization covers
   merges like a routine one, with a receipt naming the pre-authorization.
 - **Held.** Everything else gets `review:held` and a `Fleet: hold` receipt.
-  While it waits for a verdict, the Captain may rebase it to keep it
-  mergeable, but never while it sits in a merge queue.
-- **Worktrees.** Delete a pull request's worktree only after GitHub confirms
-  `MERGED`, so held work and rework always have their checkout.
+  While it waits for a verdict, the Captain may rebase it in its kept worktree
+  to keep it mergeable, never on the Captain's worktree or in a merge queue.
+- **Worktrees.** Delete a pull request's worktree, including any separate
+  worktree the Captain created, only after GitHub confirms `MERGED`, so held
+  work and rework always have their checkout.
 - **Bot findings after a merge** go in the catch-up. They become issues only
   when the operator says so.
 
@@ -397,7 +408,8 @@ one within your own authority first:
   verdict the Captain carried out. A merge that `state.md` recorded before it
   ran still counts as authorized: post its missing receipt instead. Labels
   never count as authority. Stop merging in that repository and open a revert
-  pull request, held like anything the Captain wrote.
+  pull request from a separate worktree (or via an Executor), held like
+  anything the Captain wrote.
 
 Post an alert in chat, marked as an alert, and through the host's
 notification capability when one exists. Record it as an open decision. Never

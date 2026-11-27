@@ -32,10 +32,10 @@ ran with the previous revision as its Baseline.
 
 | Case | Checks passed | Baseline | Output tokens | Seconds |
 | --- | --- | --- | ---: | ---: |
-| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/case.yaml) | 5/8, 3 unmeasured | post-only: 8/8 | 15,272 | 182 |
-| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/case.yaml) | 8/9 | post-only: 6/6, 3 unmeasured | 18,092 | 215 |
-| [risk-overview-and-situations](../../cases/risk-overview-and-situations/case.yaml) | 2/4, 2 unmeasured | post-only: 4/4 | 12,810 | 146 |
-| [verdict-at-reviewed-head](../../cases/verdict-at-reviewed-head/case.yaml) | 4/4 | `abd0e525`: 2/4 | 12,276 / 11,945 | 148 / 149 |
+| [conflicts-impact-digest-html](../../cases/conflicts-impact-digest-html/README.md) | 5/8, 3 unmeasured | post-only: 8/8 | 15,272 | 182 |
+| [owner-routing-and-scrubbing](../../cases/owner-routing-and-scrubbing/README.md) | 8/9 | post-only: 6/6, 3 unmeasured | 18,092 | 215 |
+| [risk-overview-and-situations](../../cases/risk-overview-and-situations/README.md) | 2/4, 2 unmeasured | post-only: 4/4 | 12,810 | 146 |
+| [verdict-at-reviewed-head](../../cases/verdict-at-reviewed-head/README.md) | 4/4 | `abd0e525`: 2/4 | 12,276 / 11,945 | 148 / 149 |
 
 The five runs used 70,395 output tokens, 2,929,159 cache-read tokens, and
 183,688 cache-write tokens over 840 seconds. Cost is unknown: the runs used a

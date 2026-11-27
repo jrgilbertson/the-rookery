@@ -316,6 +316,12 @@ def check_template(text: str) -> None:
     check(summary_rule is not None and re.search(r"max-width: \d+ch;", summary_rule.group(0)) is not None
           and "color: var(--ink);" in summary_rule.group(0) and "#" not in summary_rule.group(0),
           "the summary paragraph must set a measure in ch and take the main ink from the page's own variables")
+    check(summary_rule is not None and "font-size" not in summary_rule.group(0), "the summary is body text, so it sets no size of its own")
+    # On a narrow screen a cell's ::before is its column label, so a flagged cell draws its seal with ::after, ordered in front of the word.
+    narrow = text.split("@media (max-width: 560px)", 1)[-1].split("@media (max-width: 320px)", 1)[0]
+    check(re.search(r"\.sit td\.no::before \{[^}]*order: -2;[^}]*width: auto; height: auto;[^}]*background: none;", narrow) is not None
+          and re.search(r"\.sit td\.no::after \{ content: \"\"; order: -1;[^}]*border-radius: 50%; background: var\(--signal\);", narrow) is not None,
+          "on a narrow screen a flagged Described? cell must show its label in full and keep its orange seal before the word")
     check("box-shadow" not in text, "the template casts a shadow, which working pages forbid")
     check(text.count("aria-live") == 1, f"the page must have exactly one live region: {text.count('aria-live')}")
     check(0 <= text.find('<a class="skip" href="#page">') < text.find('class="rail"'), "the skip link to #page must come before the rail")

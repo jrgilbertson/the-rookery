@@ -223,6 +223,16 @@ try {
     'utf8',
   );
   assert.match(pr561Diff, /^-\s+if \(amountCents <= 0\) \{/m, 'pr-561 diff must show the reverted credit-note guard');
+
+  const pr580 = JSON.parse(
+    readFileSync(join(fixtureScratch, 'held-pr-keeps-wake-and-calm-alert', 'github', 'pulls', 'pr-580.json'), 'utf8'),
+  );
+  assert.match(pr580.comments[0].body, /^Fleet: auto-merge\nHead: [0-9a-f]{7}\nScores: V=1 U=1\nDetail: /m, 'pr-580 must carry a four-line Fleet: auto-merge receipt');
+
+  const pr591 = JSON.parse(
+    readFileSync(join(fixtureScratch, 'restart-split-brain-and-boundaries', 'github', 'pulls', 'pr-591.json'), 'utf8'),
+  );
+  assert.match(pr591.comments[0].body, /^Fleet: hold · Head: [0-9a-f]{7} · V=2 U=1 · /, 'pr-591 must retain a legacy single-line Fleet: hold receipt for dual-format coverage');
 } finally {
   rmSync(fixtureScratch, { recursive: true, force: true });
 }

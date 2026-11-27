@@ -16,10 +16,11 @@ Open pull requests in the snapshot:
 Merged pull requests in the snapshot (operator asks for everything since
 November 13, 2026):
 
-- `acme/ledger-app#419` (Nov 19): merged after a `Fleet: verdict-delta` at a
-  different head than its `Verdict: merge` comment.
+- `acme/ledger-app#419` (Nov 19): merged after a four-line
+  `Fleet: verdict-delta` receipt at a different head than its `Verdict: merge`
+  comment.
 - `acme/ledger-app#417` (Nov 20): no verdict, carries `review:auto-merged` and
-  a `Fleet: auto-merge` receipt (`V=1 U=1`).
+  a legacy single-line `Fleet: auto-merge` receipt (`V=1 U=1`).
 - `acme/ledger-app#418` (Nov 19) and `#416` (Nov 18): no verdict, no label, no
   receipt.
 - `acme/ledger-app#420` (Nov 19): merged at the exact head the operator marked

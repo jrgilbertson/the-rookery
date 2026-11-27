@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[3]
 REQUIRED_SUITES = (
     "evals/_template/check-fixtures.mjs",
     "evals/active-learning/check-fixtures.mjs",
+    "evals/managing-issues/check-fixtures.mjs",
 )
 
 

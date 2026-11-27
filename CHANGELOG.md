@@ -138,6 +138,13 @@ looked" surface. GitHub Releases mirror its entries.
   no-skill Baseline (removing the eval dependency on `coordinating-work`),
   retiring `evals/repo-captain/stand-ins/` and
   `tests/repo-captain/fixtures/run-standin-checks.py`.
+- `evals/managing-issues/` now uses the canonical Claude-only Promptfoo Skill
+  Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
+  `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Codex or
+  Bubblewrap arm, in-config auto-memory disabling, per-run timeout, isolated
+  temporary `HOME`, committed `package-lock.json` installed with `npm ci`, and
+  top-level `checks.mjs` and `check-fixtures.mjs` exercised by
+  `tests/evals/fixtures/run-eval-checks.py`).
 - `repo-captain` now defaults UI/UX briefs (from the Captain or a Domain or
   Design Lead) to `impeccable` (`impeccable context`, `craft-floor.md`, and
   `DESIGN.md`) alongside any applicable platform or framework skills, and adds

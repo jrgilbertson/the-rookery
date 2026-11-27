@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T22:47:37Z",
+  "generatedAt": "2026-11-27T04:03:32Z",
   "title": "Design System: The Rookery",
   "extensions": {
     "colorMeta": {
@@ -101,10 +101,447 @@
           "oklch(83% 0.02 70)",
           "oklch(95% 0.02 70)"
         ]
+      },
+      "night-paper": {
+        "role": "neutral",
+        "displayName": "Night Paper",
+        "tonalRamp": [
+          "oklch(15% 0.01 268)",
+          "oklch(25% 0.01 268)",
+          "oklch(35% 0.01 268)",
+          "oklch(45% 0.01 268)",
+          "oklch(58% 0.01 268)",
+          "oklch(70% 0.01 268)",
+          "oklch(83% 0.01 268)",
+          "oklch(95% 0.01 268)"
+        ]
+      },
+      "night-sheet": {
+        "role": "neutral",
+        "displayName": "Night Sheet",
+        "tonalRamp": [
+          "oklch(15% 0.01 267)",
+          "oklch(25% 0.01 267)",
+          "oklch(35% 0.01 267)",
+          "oklch(45% 0.01 267)",
+          "oklch(58% 0.01 267)",
+          "oklch(70% 0.01 267)",
+          "oklch(83% 0.01 267)",
+          "oklch(95% 0.01 267)"
+        ]
+      },
+      "night-chalk-ink": {
+        "role": "neutral",
+        "displayName": "Night Chalk Ink",
+        "tonalRamp": [
+          "oklch(15% 0.007 269)",
+          "oklch(25% 0.007 269)",
+          "oklch(35% 0.007 269)",
+          "oklch(45% 0.007 269)",
+          "oklch(58% 0.007 269)",
+          "oklch(70% 0.007 269)",
+          "oklch(83% 0.007 269)",
+          "oklch(95% 0.007 269)"
+        ]
+      },
+      "night-graphite": {
+        "role": "neutral",
+        "displayName": "Night Graphite",
+        "tonalRamp": [
+          "oklch(15% 0.03 266)",
+          "oklch(25% 0.03 266)",
+          "oklch(35% 0.03 266)",
+          "oklch(45% 0.03 266)",
+          "oklch(58% 0.03 266)",
+          "oklch(70% 0.03 266)",
+          "oklch(83% 0.03 266)",
+          "oklch(95% 0.03 266)"
+        ]
+      },
+      "night-cobalt": {
+        "role": "primary",
+        "displayName": "Night Cobalt",
+        "tonalRamp": [
+          "oklch(15% 0.10 267)",
+          "oklch(25% 0.10 267)",
+          "oklch(35% 0.10 267)",
+          "oklch(45% 0.10 267)",
+          "oklch(58% 0.10 267)",
+          "oklch(70% 0.10 267)",
+          "oklch(83% 0.10 267)",
+          "oklch(95% 0.10 267)"
+        ]
+      },
+      "night-signal": {
+        "role": "secondary",
+        "displayName": "Night Signal",
+        "tonalRamp": [
+          "oklch(15% 0.12 47)",
+          "oklch(25% 0.12 47)",
+          "oklch(35% 0.12 47)",
+          "oklch(45% 0.12 47)",
+          "oklch(58% 0.12 47)",
+          "oklch(70% 0.12 47)",
+          "oklch(83% 0.12 47)",
+          "oklch(95% 0.12 47)"
+        ]
+      },
+      "night-dispatch": {
+        "role": "neutral",
+        "displayName": "Night Dispatch",
+        "tonalRamp": [
+          "oklch(15% 0.01 78)",
+          "oklch(25% 0.01 78)",
+          "oklch(35% 0.01 78)",
+          "oklch(45% 0.01 78)",
+          "oklch(58% 0.01 78)",
+          "oklch(70% 0.01 78)",
+          "oklch(83% 0.01 78)",
+          "oklch(95% 0.01 78)"
+        ]
+      },
+      "night-emphasis": {
+        "role": "neutral",
+        "displayName": "Night Emphasis",
+        "tonalRamp": [
+          "oklch(15% 0.05 264)",
+          "oklch(25% 0.05 264)",
+          "oklch(35% 0.05 264)",
+          "oklch(45% 0.05 264)",
+          "oklch(58% 0.05 264)",
+          "oklch(70% 0.05 264)",
+          "oklch(83% 0.05 264)",
+          "oklch(95% 0.05 264)"
+        ]
+      },
+      "white-sheet": {
+        "role": "neutral",
+        "displayName": "White Sheet",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(25% 0 0)",
+          "oklch(35% 0 0)",
+          "oklch(45% 0 0)",
+          "oklch(58% 0 0)",
+          "oklch(70% 0 0)",
+          "oklch(83% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "signal-ink": {
+        "role": "secondary",
+        "displayName": "Signal Ink",
+        "tonalRamp": [
+          "oklch(15% 0.13 43)",
+          "oklch(25% 0.13 43)",
+          "oklch(35% 0.13 43)",
+          "oklch(45% 0.13 43)",
+          "oklch(58% 0.13 43)",
+          "oklch(70% 0.13 43)",
+          "oklch(83% 0.13 43)",
+          "oklch(95% 0.13 43)"
+        ]
+      },
+      "control-border": {
+        "role": "neutral",
+        "displayName": "Control Border",
+        "tonalRamp": [
+          "oklch(15% 0.04 266)",
+          "oklch(25% 0.04 266)",
+          "oklch(35% 0.04 266)",
+          "oklch(45% 0.04 266)",
+          "oklch(58% 0.04 266)",
+          "oklch(70% 0.04 266)",
+          "oklch(83% 0.04 266)",
+          "oklch(95% 0.04 266)"
+        ]
+      },
+      "add": {
+        "role": "tertiary",
+        "displayName": "Diff Added",
+        "tonalRamp": [
+          "oklch(15% 0.09 159)",
+          "oklch(25% 0.09 159)",
+          "oklch(35% 0.09 159)",
+          "oklch(45% 0.09 159)",
+          "oklch(58% 0.09 159)",
+          "oklch(70% 0.09 159)",
+          "oklch(83% 0.09 159)",
+          "oklch(95% 0.09 159)"
+        ]
+      },
+      "add-wash": {
+        "role": "tertiary",
+        "displayName": "Diff Added Wash",
+        "tonalRamp": [
+          "oklch(15% 0.01 162)",
+          "oklch(25% 0.01 162)",
+          "oklch(35% 0.01 162)",
+          "oklch(45% 0.01 162)",
+          "oklch(58% 0.01 162)",
+          "oklch(70% 0.01 162)",
+          "oklch(83% 0.01 162)",
+          "oklch(95% 0.01 162)"
+        ]
+      },
+      "del": {
+        "role": "tertiary",
+        "displayName": "Diff Removed",
+        "tonalRamp": [
+          "oklch(15% 0.14 30)",
+          "oklch(25% 0.14 30)",
+          "oklch(35% 0.14 30)",
+          "oklch(45% 0.14 30)",
+          "oklch(58% 0.14 30)",
+          "oklch(70% 0.14 30)",
+          "oklch(83% 0.14 30)",
+          "oklch(95% 0.14 30)"
+        ]
+      },
+      "del-wash": {
+        "role": "tertiary",
+        "displayName": "Diff Removed Wash",
+        "tonalRamp": [
+          "oklch(15% 0.02 32)",
+          "oklch(25% 0.02 32)",
+          "oklch(35% 0.02 32)",
+          "oklch(45% 0.02 32)",
+          "oklch(58% 0.02 32)",
+          "oklch(70% 0.02 32)",
+          "oklch(83% 0.02 32)",
+          "oklch(95% 0.02 32)"
+        ]
+      },
+      "night-mist": {
+        "role": "neutral",
+        "displayName": "Night Mist",
+        "tonalRamp": [
+          "oklch(15% 0.02 264)",
+          "oklch(25% 0.02 264)",
+          "oklch(35% 0.02 264)",
+          "oklch(45% 0.02 264)",
+          "oklch(58% 0.02 264)",
+          "oklch(70% 0.02 264)",
+          "oklch(83% 0.02 264)",
+          "oklch(95% 0.02 264)"
+        ]
+      },
+      "night-signal-ink": {
+        "role": "secondary",
+        "displayName": "Night Signal Ink",
+        "tonalRamp": [
+          "oklch(15% 0.10 48)",
+          "oklch(25% 0.10 48)",
+          "oklch(35% 0.10 48)",
+          "oklch(45% 0.10 48)",
+          "oklch(58% 0.10 48)",
+          "oklch(70% 0.10 48)",
+          "oklch(83% 0.10 48)",
+          "oklch(95% 0.10 48)"
+        ]
+      },
+      "night-control-border": {
+        "role": "neutral",
+        "displayName": "Night Control Border",
+        "tonalRamp": [
+          "oklch(15% 0.02 264)",
+          "oklch(25% 0.02 264)",
+          "oklch(35% 0.02 264)",
+          "oklch(45% 0.02 264)",
+          "oklch(58% 0.02 264)",
+          "oklch(70% 0.02 264)",
+          "oklch(83% 0.02 264)",
+          "oklch(95% 0.02 264)"
+        ]
+      },
+      "night-add": {
+        "role": "tertiary",
+        "displayName": "Night Diff Added",
+        "tonalRamp": [
+          "oklch(15% 0.07 161)",
+          "oklch(25% 0.07 161)",
+          "oklch(35% 0.07 161)",
+          "oklch(45% 0.07 161)",
+          "oklch(58% 0.07 161)",
+          "oklch(70% 0.07 161)",
+          "oklch(83% 0.07 161)",
+          "oklch(95% 0.07 161)"
+        ]
+      },
+      "night-add-wash": {
+        "role": "tertiary",
+        "displayName": "Night Diff Added Wash",
+        "tonalRamp": [
+          "oklch(15% 0.02 163)",
+          "oklch(25% 0.02 163)",
+          "oklch(35% 0.02 163)",
+          "oklch(45% 0.02 163)",
+          "oklch(58% 0.02 163)",
+          "oklch(70% 0.02 163)",
+          "oklch(83% 0.02 163)",
+          "oklch(95% 0.02 163)"
+        ]
+      },
+      "night-del": {
+        "role": "tertiary",
+        "displayName": "Night Diff Removed",
+        "tonalRamp": [
+          "oklch(15% 0.09 30)",
+          "oklch(25% 0.09 30)",
+          "oklch(35% 0.09 30)",
+          "oklch(45% 0.09 30)",
+          "oklch(58% 0.09 30)",
+          "oklch(70% 0.09 30)",
+          "oklch(83% 0.09 30)",
+          "oklch(95% 0.09 30)"
+        ]
+      },
+      "night-del-wash": {
+        "role": "tertiary",
+        "displayName": "Night Diff Removed Wash",
+        "tonalRamp": [
+          "oklch(15% 0.03 29)",
+          "oklch(25% 0.03 29)",
+          "oklch(35% 0.03 29)",
+          "oklch(45% 0.03 29)",
+          "oklch(58% 0.03 29)",
+          "oklch(70% 0.03 29)",
+          "oklch(83% 0.03 29)",
+          "oklch(95% 0.03 29)"
+        ]
       }
-    }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Didot for banner titles and a working page's headline and numerals, at 1rem or larger only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Baskerville Semibold for subtitles, diagram labels, and card titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Baskerville for a working page's body text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Compact system sans for section labels and chips, never smaller than 0.7rem."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Compact system sans for buttons, filters, fields, and metadata."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "System monospace for code diffs and key caps."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "chevron-turn",
+        "value": "transform 0.15s ease",
+        "purpose": "Turns a disclosure chevron when its card or drawer opens; off under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "narrow",
+        "value": "980px"
+      }
+    ]
   },
-  "components": [],
+  "components": [
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A white sheet that carries one item to decide: rank, title, metadata, and the controls that record the decision.",
+      "html": "<article class=\"ds-card\"><h2><span class=\"ds-rank\">1</span>Add the frontier chart</h2><p>One item to decide, on a white sheet held by a hairline.</p></article>",
+      "css": ".ds-card { background: #FFFFFF; color: #042458; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; padding: 22px 24px 24px; font: 1rem/1.5 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-card h2 { margin: 0; display: flex; align-items: center; gap: 12px; font: 600 1.2rem/1.3 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #47577A; color: #47577A; font: 400 1rem/1 Didot, 'Bodoni 72', 'Bodoni MT', Georgia, serif; } .ds-card p { margin: 10px 0 0; }"
+    },
+    {
+      "name": "Active Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "The one card keyboard shortcuts act on, marked by a 2px Route Cobalt border in place of the hairline.",
+      "html": "<article class=\"ds-card ds-card-active\"><h2><span class=\"ds-rank\">2</span>Refresh the routing data</h2><p>Cobalt shows where the reader is on the route.</p></article>",
+      "css": ".ds-card { background: #FFFFFF; color: #042458; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; padding: 22px 24px 24px; font: 1rem/1.5 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-card h2 { margin: 0; display: flex; align-items: center; gap: 12px; font: 600 1.2rem/1.3 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #47577A; color: #47577A; font: 400 1rem/1 Didot, 'Bodoni 72', 'Bodoni MT', Georgia, serif; } .ds-card p { margin: 10px 0 0; } .ds-card-active { border: 2px solid #0050CC; padding: 21px 23px 23px; }"
+    },
+    {
+      "name": "Collapsible Routine Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "A routine card that starts collapsed; title, rank, and metadata stay visible outside the toggle.",
+      "html": "<article class=\"ds-card\"><h2><span class=\"ds-rank\">7</span>Bump a dependency</h2><details class=\"ds-collapse\"><summary>Show the change</summary><p>Under the hold line, with no hold and no violation.</p></details></article>",
+      "css": ".ds-card { background: #FFFFFF; color: #042458; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; padding: 22px 24px 24px; font: 1rem/1.5 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-card h2 { margin: 0; display: flex; align-items: center; gap: 12px; font: 600 1.2rem/1.3 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #47577A; color: #47577A; font: 400 1rem/1 Didot, 'Bodoni 72', 'Bodoni MT', Georgia, serif; } .ds-card p { margin: 10px 0 0; } .ds-collapse { margin-top: 10px; } .ds-collapse summary { display: inline-flex; align-items: center; gap: 10px; min-height: 36px; padding: 6px 12px; cursor: pointer; list-style: none; background: #FFFFFF; border: 1px solid #7C87A0; border-radius: 2px; font: 600 0.82rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-collapse summary::-webkit-details-marker { display: none; } .ds-collapse summary::before { content: \"\"; flex: none; width: 7px; height: 7px; margin: 0 3px; border-right: 1.5px solid #47577A; border-bottom: 1.5px solid #47577A; transform: rotate(-45deg); transition: transform 0.15s ease; } .ds-collapse[open] summary::before { transform: rotate(45deg); } .ds-collapse summary:hover { border-color: #47577A; } .ds-collapse summary:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; } @media (prefers-reduced-motion: reduce) { .ds-collapse summary::before { transition: none; } }"
+    },
+    {
+      "name": "Control Button",
+      "kind": "button",
+      "refersTo": "control",
+      "description": "A button or filter on a working page, edged in Control Border so its edge reaches 3:1 against the paper.",
+      "html": "<button class=\"ds-control\">Night paper</button>",
+      "css": ".ds-control { min-height: 36px; padding: 6px 12px; background: #FFFFFF; color: #042458; border: 1px solid #7C87A0; border-radius: 2px; font: 0.82rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; } .ds-control:hover { border-color: #47577A; } .ds-control:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; }"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "button",
+      "refersTo": "control-chosen",
+      "description": "Records one choice; the chosen option is a Raven Navy fill with Chalk text.",
+      "html": "<div class=\"ds-seg\" role=\"group\" aria-label=\"Verdict\"><button aria-pressed=\"true\">Merge</button><button aria-pressed=\"false\">Change</button><button aria-pressed=\"false\">Defer</button></div>",
+      "css": ".ds-seg { display: inline-flex; background: #FFFFFF; border: 1px solid #7C87A0; border-radius: 2px; } .ds-seg button { min-height: 36px; padding: 6px 13px; border: 0; border-right: 1px solid #7C87A0; background: none; color: #042458; font: 0.82rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; } .ds-seg button:last-child { border-right: 0; } .ds-seg button:hover { background: #E3E9F7; } .ds-seg button[aria-pressed=\"true\"] { background: #042458; color: #F6F7FA; font-weight: 650; } .ds-seg button:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "A one-line note field with the same height and edge as the other controls.",
+      "html": "<input class=\"ds-field\" type=\"text\" aria-label=\"Note\" placeholder=\"Add a note\">",
+      "css": ".ds-field { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; background: #FFFFFF; color: #042458; caret-color: #0050CC; border: 1px solid #7C87A0; border-radius: 2px; font: 0.82rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-field::placeholder { color: #47577A; } .ds-field:hover { border-color: #47577A; } .ds-field:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; }"
+    },
+    {
+      "name": "Chip and Seal",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "A metadata chip, and the small Signal Orange seal that marks what needs the operator, with its meaning in Signal Ink.",
+      "html": "<span class=\"ds-chip\">3 files</span> <span class=\"ds-kind\">Changes behavior it did not describe</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 7px; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; color: #47577A; font: 650 0.72rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-kind { display: inline-flex; align-items: center; gap: 7px; color: #963E12; font: 650 0.78rem/1.4 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-kind::before { content: \"\"; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #DC6C36; }"
+    },
+    {
+      "name": "Factor Pills",
+      "kind": "chip",
+      "refersTo": "factor-pill",
+      "description": "An item's leverage factors as small pills; a factor that scores three takes the Mist Paper highlight.",
+      "html": "<div class=\"ds-factors\"><span class=\"ds-three\">3<small>Impact</small></span><span>2<small>Confidence</small></span><span>1<small>Effort</small></span><span>1<small>Undo</small></span></div>",
+      "css": ".ds-factors { display: inline-flex; gap: 4px; text-align: center; color: #042458; font: 600 0.95rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-factors span { min-width: 76px; padding: 3px 8px 2px; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; } .ds-factors small { display: block; color: #47577A; font-size: 0.7rem; font-weight: 600; } .ds-factors .ds-three { background: #E3E9F7; border-color: #47577A; font-weight: 700; }"
+    },
+    {
+      "name": "Shortcut Help",
+      "kind": "custom",
+      "refersTo": "shortcut-help",
+      "description": "A non-modal panel, opened by the ? button, that lists each shortcut and explains each verdict in one line.",
+      "html": "<button class=\"ds-help-btn\" aria-expanded=\"true\" aria-controls=\"ds-help\" aria-label=\"Keyboard shortcuts\">?</button><div class=\"ds-help\" id=\"ds-help\"><dl><dt><kbd>j</kbd> <kbd>k</kbd></dt><dd>Next and previous card</dd><dt><kbd>m</kbd></dt><dd>Merge: ship the change as it stands</dd><dt><kbd>Esc</kbd></dt><dd>Close this panel</dd></dl></div>",
+      "css": ".ds-help-btn { min-width: 36px; min-height: 36px; background: #FFFFFF; color: #042458; border: 1px solid #7C87A0; border-radius: 2px; font: 600 0.82rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; cursor: pointer; } .ds-help-btn:hover { border-color: #47577A; } .ds-help-btn:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; } .ds-help { margin-top: 8px; max-width: 420px; padding: 16px 20px; background: #FFFFFF; color: #042458; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; font: 0.82rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-help dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; } .ds-help dd { margin: 0; } .ds-help kbd { padding: 1px 5px; background: #F6F7FA; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; font: 0.75rem/1 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }"
+    },
+    {
+      "name": "Dispatch Note",
+      "kind": "custom",
+      "refersTo": "dispatch-note",
+      "description": "A note someone wrote, such as an agent's read or review feedback, on Dispatch Paper.",
+      "html": "<p class=\"ds-note\"><b>Note</b>Ships with the routing refresh; review them together.</p>",
+      "css": ".ds-note { margin: 0; max-width: 80ch; padding: 8px 12px; background: #F0EBE5; color: #042458; border: 1px solid rgb(71 87 122 / 0.16); font: 0.95rem/1.5 Baskerville, 'Libre Baskerville', 'Baskerville Old Face', Georgia, serif; } .ds-note b { margin-right: 8px; color: #47577A; font: 650 0.72rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }"
+    },
+    {
+      "name": "Diff Lines",
+      "kind": "custom",
+      "refersTo": "diff-added",
+      "description": "Added and removed code lines in the green and red readers expect; each pair reaches 7:1.",
+      "html": "<pre class=\"ds-diff\"><span class=\"ds-del\">- limit = 20</span><span class=\"ds-add\">+ limit = 50</span></pre>",
+      "css": ".ds-diff { margin: 0; padding: 10px 12px; background: #FFFFFF; border: 1px solid rgb(71 87 122 / 0.32); border-radius: 2px; white-space: pre-wrap; font: 0.8rem/1.55 ui-monospace, 'SF Mono', Menlo, Consolas, monospace; } .ds-diff span { display: block; padding: 2px 8px; } .ds-add { background: #EAF3EE; color: #0B5D3B; } .ds-del { background: #F7E9E6; color: #8F2A1F; }"
+    }
+  ],
   "narrative": {
     "northStar": "The Returning Field Dispatch",
     "overview": "The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should make the technical system clear while retaining the warmth and memory of a hand-kept field guide.\n\nEvery illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms show the order of work, where observation happens, and how feedback returns. One restrained orange signal marks the intervention, dispatch, or return that matters most. Scenes may change across repository-owned explanatory visuals. Each should show the same connected system, with evidence moving forward and distinct feedback paths improving future work.",
@@ -178,7 +615,6 @@
     "donts": [
       "Don't turn the workflow into a generic equal-card flowchart or consulting-deck diagram.",
       "Don't present Research, Plan, Design, Build, Ship, Maintain, and Learn as one seven-step serial loop; Maintain and Learn are distinct feedback loops with different destinations.",
-      "Don't reuse the unfolded field map as the default composition for unrelated visuals.",
       "Don't pose a raven beside an idea it is not performing; removing the bird should break the explanation.",
       "Don't use broad orange fills, multiple competing accents, glossy gradients, or interface-style shadows.",
       "Don't drift into novelty mascot art or Norse-fantasy ornament that overwhelms the technical mechanism.",

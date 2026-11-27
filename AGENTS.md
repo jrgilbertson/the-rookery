@@ -39,5 +39,6 @@ repository's package, evaluation, and evidence requirements.
 When implementing or debugging, search `docs/solutions/` for relevant prior
 solutions and read matches.
 
-Read [CONCEPTS.md](CONCEPTS.md) for this project's shared vocabulary when
-orienting to the repo or discussing its concepts.
+Read [GLOSSARY.md](GLOSSARY.md) for this project's shared vocabulary when
+orienting to the repo or discussing its concepts. `CONCEPTS.md` at the
+repository root is a compatibility symlink to `GLOSSARY.md` for `ce-compound`.

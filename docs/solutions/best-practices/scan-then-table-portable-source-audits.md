@@ -92,4 +92,4 @@ with evidence for the current day.
 
 - `docs/solutions/best-practices/answer-first-natural-prose-for-owner-facing-skill-readouts.md`
 - `docs/solutions/conventions/keep-the-test-seam-out-of-the-shipped-skill.md`
-- `CONCEPTS.md` Source Access Audit
+- `GLOSSARY.md` Source Access Audit

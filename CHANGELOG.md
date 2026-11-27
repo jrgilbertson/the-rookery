@@ -130,6 +130,11 @@ looked" surface. GitHub Releases mirror its entries.
   judging a UI/UX pull request ready to merge or hold, and interactive
   `impeccable critique` and `/impeccable live` stay with the Captain or a
   Design Lead rather than unattended Executors.
+- Rename `CONCEPTS.md` to `GLOSSARY.md` (with `# Glossary` as the heading) and
+  add a root `CONCEPTS.md -> GLOSSARY.md` compatibility symlink so Compound
+  Engineering's `ce-compound` reads and updates the same file. Repository
+  checks allow only that exact root symlink and continue rejecting symbolic
+  links everywhere else.
 - The `reviewing-prs` review page stays usable on a large round. Open pull
   requests fall into four groups: held for review, under the hold line,
   dependency bots, and in-flight fleet pull requests, which a worker may

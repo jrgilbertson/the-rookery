@@ -20,6 +20,31 @@ import os
 import sys
 from pathlib import Path
 
+# Mirrors scripts/checks/repository.py; lint validates the tree before running it.
+ALLOWED_ROOT_SYMLINKS = {
+    "CONCEPTS.md": "GLOSSARY.md",
+}
+
+
+def allowed_root_symlink(root: Path, candidate: Path, relative: Path) -> bool:
+    if len(relative.parts) != 1:
+        return False
+    expected_target = ALLOWED_ROOT_SYMLINKS.get(relative.name)
+    if expected_target is None:
+        return False
+    try:
+        if os.readlink(candidate) != expected_target:
+            return False
+        target = root / expected_target
+        if target.is_symlink():
+            return False
+        resolved = candidate.resolve(strict=True)
+        resolved.relative_to(root)
+        return resolved == target.resolve(strict=True) and resolved.is_file()
+    except (FileNotFoundError, OSError, ValueError):
+        return False
+
+
 root = Path(sys.argv[1]).resolve(strict=True)
 for raw_path in sys.stdin.buffer.read().split(b"\0"):
     if not raw_path:
@@ -32,11 +57,17 @@ for raw_path in sys.stdin.buffer.read().split(b"\0"):
         print(f"lint: repository path escapes the repository: {os.fsdecode(raw_path)!r}", file=sys.stderr)
         raise SystemExit(1)
     current = root
+    skip_allowed_symlink = False
     for component in relative.parts:
         current /= component
         if current.is_symlink():
+            if current == candidate and allowed_root_symlink(root, candidate, relative):
+                skip_allowed_symlink = True
+                break
             print(f"lint: symbolic link is not allowed: {os.fsdecode(raw_path)!r}", file=sys.stderr)
             raise SystemExit(1)
+    if skip_allowed_symlink:
+        continue
     try:
         resolved = candidate.resolve(strict=True)
         resolved.relative_to(root)

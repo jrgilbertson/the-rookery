@@ -30,7 +30,7 @@ in the release pull request.
   from `main` through the documented public `npx skills add` path. Confirm
   every catalog skill is listed and every helper under a skill's `scripts/`
   directory is still executable in the installed copy. Run the
-  [Install Probe](CONCEPTS.md#install-probe) activation check for each
+  [Install Probe](GLOSSARY.md#install-probe) activation check for each
   supported harness, or record it as Unmeasured for a harness that is not
   available. This is a maintainer step; agents do not install skills locally.
 - Read back the public repository protections, security-reporting path, and

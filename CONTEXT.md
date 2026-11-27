@@ -1,3 +1,3 @@
 # Context
 
-This project's vocabulary lives in [CONCEPTS.md](CONCEPTS.md).
+This project's vocabulary lives in [GLOSSARY.md](GLOSSARY.md).

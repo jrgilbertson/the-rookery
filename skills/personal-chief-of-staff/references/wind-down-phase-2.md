@@ -12,7 +12,7 @@ appears.
 - [Prepare tomorrow](#prepare-tomorrow)
 - [Ask on the evidence frontier](#ask-on-the-evidence-frontier)
 - [Coach](#coach)
-- [Record tomorrow's meaningful commitments](#record-tomorrows-meaningful-commitments)
+- [Record next-day commitments](#record-next-day-commitments)
 - [Complete the existing journal together](#complete-the-existing-journal-together)
 - [Promote only durable signal](#promote-only-durable-signal)
 - [Review, write, and verify](#review-write-and-verify)
@@ -48,7 +48,7 @@ capsule only when a meeting's outcome depends on it.
 
 Preserve fixed commitments. Propose conflict-resolving edits only to events or
 blocks whose flexibility is established; ask when it is unknown. Calendar edits
-remain separate actions, and meaningful commitments need no matching blocks.
+remain separate actions, and next-day commitments need no matching blocks.
 For each material calendar proposal, distinguish retaining a useful existing
 block, a separately proposed change, and an open user decision.
 
@@ -80,7 +80,7 @@ Completion: any answer that changed the plan was applied before coaching.
 ## Coach
 
 After evidence, user reflection, and prepare-tomorrow inputs are available,
-and **before** Meaningful Commitments are finalized, deliver one short coaching
+and **before** Next-Day Commitments are finalized, deliver one short coaching
 judgment. Test whether one relevant rule from the configured strategy or
 learning roles, or one supported current hypothesis, should change tomorrow's
 choice. Apply at most one; do not force a rule or hypothesis to produce
@@ -93,7 +93,7 @@ commitment, or boundary, and invite correction. A supported recommendation to
 keep the plan qualifies when it resolves the live choice. Focus, stop, more,
 and less are optional lenses, not required slots.
 
-When no intervention is supported, say so and continue to Meaningful
+When no intervention is supported, say so and continue to Next-Day
 Commitments without filler advice or a strategy or learning proposal. A
 coaching judgment does not approve any resulting commitment or durable edit.
 
@@ -101,7 +101,7 @@ Completion: before commitments lock, the user has received either one
 evidence-grounded recommendation tied to tomorrow's choice or a concise
 no-coaching-recommendation result, with an invitation to correct the judgment.
 
-## Record tomorrow's meaningful commitments
+## Record next-day commitments
 
 Use the live template's designated forward-commitment section for reviewed
 next-day intent, resolving its stated purpose rather than requiring a fixed
@@ -114,12 +114,12 @@ journal structure requires separate approval.
 Draft in the count and format requested by the live template in the closing-date
 journal. When it specifies no count, use the user's reviewed outcomes and
 capacity without adding a quota. Each commitment states, in natural sentences,
-the shared
-[current basis, outcome, and completion check](review-reasoning.md#make-every-intention-verifiable),
-plus a short user-approved reason tied to strategy, an obligation, or an avoided
-cost. Refine activity labels such as "development" or "meetings" into concrete
-outcomes. Every outcome, finish line, and rationale must trace to the user's
-words or an approved draft; label new candidates as awaiting approval.
+the shared three parts:
+[basis, chosen outcome, and finish line](review-reasoning.md#make-every-intention-verifiable).
+Refine activity labels such as "development" or "meetings" into concrete
+outcomes. Every basis must trace to current evidence or an explicit user
+premise, and every chosen outcome and finish line must trace to the user's words
+or an approved draft; label new candidates as awaiting approval.
 
 Use the day's outcomes, unresolved work, next-day capacity, fixed commitments,
 active tasks, strategy, coaching, and user judgment. Check each bullet for
@@ -127,10 +127,10 @@ material conflict, an invalid premise, or insufficient capacity. When evidence
 invalidates one, show that commitment, the conflicting evidence, and your
 recommendation; leave unaffected bullets unchanged.
 
-For incomplete user wording, identify the missing element and collaborate.
-If the user explicitly approves it unchanged, preserve it verbatim and mark it
+For incomplete user wording, identify the missing part and collaborate. If the
+user explicitly approves it unchanged, preserve it verbatim and leave it marked
 incomplete in the proposal. Do not pad, truncate, invent subjective content, or
-claim that incomplete wording satisfies the three-element condition.
+present incomplete wording as complete.
 
 Commitments record intent; canonical tasks retain task state and calendars
 retain capacity. They require no matching calendar blocks or separate morning
@@ -213,7 +213,7 @@ sourced, and independently reviewable.
 ## Review, write, and verify
 
 Present the Phase 2 review bundle. It carries the journal, any learning or
-strategy action the coaching judgment produced, the meaningful-commitments edit,
+strategy action the coaching judgment produced, the next-day-commitments edit,
 and any other Phase 2 effect.
 
 A reply deciding the Phase 1 bundle resolves those actions and then continues
@@ -230,7 +230,7 @@ Use the shared [bundle](review-reasoning.md#prepare-one-review-bundle) and
 
 For an approved journal action, re-read the target through its configured
 native interface. Re-read the configured template through its own interface
-when the action adds or changes the meaningful-commitments section. Create
+when the action adds or changes the next-day-commitments section. Create
 from the current template or edit the existing journal through the target's
 interface. For an Obsidian-owned journal, follow the
 [Obsidian CLI rules](source-access.md#use-obsidian-only-through-its-cli).

@@ -18,7 +18,7 @@ appears.
 Wind-down runs in two visible phases. This file owns Phase 1: establishing the
 day, running the Daily CRM Scan, gathering broad reflection, and presenting and
 resolving every non-journal correction the day's evidence supports. Phase 2
-plans tomorrow, coaches, records meaningful commitments, and drafts the journal
+plans tomorrow, coaches, records next-day commitments, and drafts the journal
 from the state Phase 1 left behind; load it through `SKILL.md` only after Phase
 1 resolves.
 

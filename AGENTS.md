@@ -3,14 +3,14 @@
 ## Private and generated artifacts
 
 This is a public open-source repository. Its working directory holds only this
-repository's own source, tests, docs, and configuration. Anything generated for
-the user rather than for the repo, along with its supporting files (builders,
-renders, previews, inspection files, dependency links), goes in a per-run
-temporary directory outside the working directory, and final artifacts go only
-to an explicitly approved external or private destination.
+repository's own source, tests, docs, and configuration.
 
-The root `outputs/` and `tmp/` directories stay ignored as a privacy safeguard;
-neither is an approved storage location.
+Put anything generated for the user rather than for the repo, along with its
+supporting files (builders, renders, previews, inspection files, dependency
+links), in a per-run temporary directory outside the working directory. Write
+final artifacts only to an explicitly approved external or private destination;
+the root `outputs/` and `tmp/` directories stay ignored strictly as a privacy
+safeguard, while approved storage lives outside the working directory.
 
 Before staging or committing, inspect all untracked paths and confirm that no
 personal or business artifacts are present.
@@ -22,7 +22,7 @@ in the ignored working paths named in `.gitignore`. They may live for the life
 of a worktree, but the final pull request and default branch must not contain
 or depend on them. Preserve the outcome in its canonical home: code and tests
 for behavior, an ADR for a lasting architectural choice, `docs/solutions/` for
-a reusable learning, or the current root `RELEASING.md` for operating and
+a reusable learning, or [RELEASING.md](RELEASING.md) for operating and
 shipping procedures.
 
 Research is durable only when the repository will maintain it as a current
@@ -33,12 +33,13 @@ copy of the plan is unnecessary.
 
 ## Documented solutions and vocabulary
 
-Before changing a skill package, read [SKILLS.md](SKILLS.md) for this
-repository's package, evaluation, and evidence requirements.
+Before creating, changing, evaluating, or retiring a skill, read
+[SKILLS.md](SKILLS.md) for this repository's package, evaluation, and evidence
+requirements.
 
 When implementing or debugging, search `docs/solutions/` for relevant prior
 solutions and read matches.
 
-Read [GLOSSARY.md](GLOSSARY.md) for this project's shared vocabulary when
-orienting to the repo or discussing its concepts. `CONCEPTS.md` at the
+Read [GLOSSARY.md](GLOSSARY.md) for this project's shared vocabulary during
+domain terminology or architecture discussions. `CONCEPTS.md` at the
 repository root is a compatibility symlink to `GLOSSARY.md` for `ce-compound`.

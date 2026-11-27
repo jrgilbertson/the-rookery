@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # Copy the maintainer's global agent guidance into the published GLOBAL-AGENTS.md.
 # The local file is the source of truth; the repository holds a one-way copy.
+# When changing global guidance, edit the local file and ship the synced copy
+# as its own small PR right away, never inside other work.
 # The maintainer opts in once per clone:
 #   git config rookery.globalAgentsSource ~/.codex/AGENTS.md
 #   scripts/sync-global-agents.sh          copy the local file into the repository
@@ -40,7 +42,11 @@ case "${1:-}" in
     fi
     if ! git show "$published:GLOBAL-AGENTS.md" 2>/dev/null |
       diff -u --label "$published:GLOBAL-AGENTS.md" --label "$source_file" - "$source_file"; then
-      echo "global-agents: $published:GLOBAL-AGENTS.md is stale; run scripts/sync-global-agents.sh and commit" >&2
+      if [[ "$published" == "origin/main" ]]; then
+        echo "global-agents: $published:GLOBAL-AGENTS.md is stale; do not copy global guidance into this branch. Ship the synced copy in its own small PR first." >&2
+      else
+        echo "global-agents: $published:GLOBAL-AGENTS.md is stale; run scripts/sync-global-agents.sh and commit" >&2
+      fi
       exit 1
     fi
     ;;

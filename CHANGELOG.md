@@ -128,6 +128,21 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Harden `repo-captain`, `reviewing-prs`, and their shared review contract:
+  switch `Fleet:` receipts to four plain ASCII lines (`Fleet:`, `Head:`,
+  `Scores:`, `Detail:`) with dual-format reading across legacy single-line
+  receipts, narrow `Owner:` checks to standalone column-0 lines, unify the
+  canonical merge-authority test (including post-verdict `verdict-delta`
+  recency and head pinning), label charter pre-authorized merges
+  `review:auto-merged` (removing `review:held` if present), add host-verified
+  `Owner:` repair for active in-flight briefs, add an unread
+  Problem/Decision/Tradeoffs autonomous judgment-call queue to catch-up (held
+  while unpacking or handing off to `active-learning`), type `Open decisions`
+  (`Decision`, `Human action`, `Alert`) with explicit per-record `state.md`
+  clear conditions, and inspect/deduplicate live wake timers before arming
+  across Antigravity and POSIX detached loops. Updated `GLOSSARY.md`,
+  `WORKFLOWS.md`, and offline eval fixtures in `evals/repo-captain/` and
+  `evals/reviewing-prs/`.
 - Integrate the `repo-captain` (including optional dynamic Domain Leads) and
   `reviewing-prs` Review Round fleet workflow into `WORKFLOWS.md` (`Build` and
   `Ship`) and `GLOSSARY.md` (updating `Merge Approval` for persistent per-repo

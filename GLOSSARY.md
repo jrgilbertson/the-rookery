@@ -318,13 +318,14 @@ A merge verdict clears a hold on that pull request and never changes
 
 Three GitHub labels that show where a pull request stands in review.
 `review:held` marks one waiting for the operator in a
-[Review Round](#review-round). `review:auto-merged` marks a routine one merged
-under [Merge Approval](#merge-approval). `review:human-merged` replaces
-`review:held` once GitHub confirms that a held pull request merged after a
-merge [verdict](#verdict). The labels are for visibility and reporting only.
-A review reads every open pull request that is ready for review and every one
-merged recently, so a missing or stale label never hides one, and no label
-allows a merge.
+[Review Round](#review-round). `review:auto-merged` marks a routine or charter
+pre-authorized one merged under [Merge Approval](#merge-approval).
+`review:human-merged` marks a held pull request merged after a per-PR merge
+[verdict](#verdict). Both post-merge labels replace `review:held` if it was
+present, once GitHub confirms the merge. The labels are for visibility and
+reporting only. A review reads every open pull request that is ready for review
+and every one merged recently, so a missing or stale label never hides one, and
+no label allows a merge.
 
 ## Evaluation
 

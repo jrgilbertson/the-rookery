@@ -98,6 +98,7 @@ class Node {
       if (rest === "[contenteditable]") return "contenteditable" in this.attributes;
       if (rest === ':not([type="checkbox"])') return this.type !== "checkbox";
       if (rest.startsWith(".")) return this.classList.contains(rest.slice(1));
+      if (rest.startsWith("#")) return this.id === rest.slice(1);
       return rest === "";
     });
   }
@@ -226,8 +227,8 @@ const snap = () => {
 };
 const article = (title) => walk(fixed.page).find((n) => n.tagName === "article" && walk(n).find((h) => h.tagName === "h2")?.textContent.endsWith(title));
 const titled = (root, cls, title) => walk(root).find((n) => n.tagName === "a" && one(n, cls)?.textContent === title || (has(n, cls) && n.tagName === "a" && n.textContent === title));
-// A key lands on the notes field of a card, on the broken-only checkbox, on a bare element of a given tag, or on nothing.
-const keyTarget = (where) => !where ? null : where === "toggle" ? walk(fixed.page).find((n) => n.id === "filter-broken")
+// A key lands on the notes field of a card, on the broken-only checkbox, on the help panel, on a bare element of a given tag, or on nothing.
+const keyTarget = (where) => !where ? null : where === "toggle" ? walk(fixed.page).find((n) => n.id === "filter-broken") : where === "help" ? fixed["shortcut-help"]
   : where.startsWith("tag:") ? new Node(where.slice(4)) : one(article(where), "notes");
 const run = async () => {
   const steps = [snap()];
@@ -306,6 +307,7 @@ def check_template(text: str) -> None:
     check(help_panel is not None and all(f"<kbd>{key}</kbd>" in help_panel.group(1) for key in "jknmcdx")
           and all(f"<dt>{word}</dt><dd>" in help_panel.group(1) for word in ("Merge", "Request changes", "Defer", "Not applicable")),
           "the shortcut help must start hidden, list every key, and explain every verdict")
+    check_help_key(text, help_panel.group(1) if help_panel else "")
     check('role="dialog"' not in text and "showModal" not in text and "<dialog" not in text, "the shortcut help must stay non-modal")
     # Every control the page draws takes the Control Border; the hairline is for sheets and dividers.
     for selector in (".ctl", ".flt", ".seg", ".notes", ".card-toggle", ".drawer summary", ".verdicts textarea", ".skip"):
@@ -327,6 +329,48 @@ def check_template(text: str) -> None:
     for rule in re.findall(r"[^{}]*\{[^}]*var\(--display\)[^}]*\}", text):
         size = re.search(r"font: [^;]*? ([0-9.]+)rem", rule)
         check(size is None or float(size.group(1)) >= 1, f"Didot is set under 1rem: {rule.strip()[:60]}")
+
+
+def check_help_key(text: str, panel: str) -> None:
+    """The ? panel also explains the page's own marks: the Described? column, the scores, orange, and the groups."""
+    terms = {term: (cls, mark) for cls, mark, term in re.findall(r'<dt(?: class="([a-z]+)")?>(?:<span class="([a-z-]+)" aria-hidden="true"></span>)?([^<]+)</dt><dd>[^<]+</dd>', panel)}
+    wanted = {
+        "Yes": ("", ""), "No": ("flag", "seal"), "Unclear": ("flag", "seal"), "unchanged": ("quiet", ""),
+        "I · impact": ("", ""), "C · confidence": ("", ""), "V · verify": ("", ""), "U · undo": ("", ""), "V × U": ("", ""), "Leverage": ("", ""),
+        "U = 3": ("", ""), "Hold violation": ("", ""), "Sensitive kind": ("", ""), "Changed after your verdict": ("", ""),
+        "Held for review": ("", "seal"), "Under the hold line": ("", "ring"), "Dependency bots": ("", "ring"), "In flight": ("", "route-dot"),
+    }
+    for term, drawn in wanted.items():
+        check(terms.get(term) == drawn, f"the help must explain {term!r} and draw it as the page does, {drawn}: {terms.get(term)}")
+    for heading in ("The Described? column", "Scores", "Orange marks what needs you", "Groups"):
+        check(re.search(r'<h2 class="sec-title[a-z ]*">(?:<span class="seal" aria-hidden="true"></span>)?' + re.escape(heading) + "</h2>", panel) is not None,
+              f"the help must head a part of its key {heading!r}")
+    check('<h2 class="sec-title flag"><span class="seal" aria-hidden="true"></span>Orange marks' in panel
+          and re.search(r"(?m)^\.help \.flag \{ color: var\(--signal-ink\); \}", text) is not None,
+          "the help must set the words beside its orange seals in Signal Ink")
+    check(len(re.findall(r'class="seal"', panel)) == 4, f"the help keeps orange scarce, one seal for each thing the page seals: {len(re.findall(r'class=.seal.', panel))}")
+    check("3 or more" in panel and "(I × C) ÷ (V × U)" in panel, "the help must state the hold line and the leverage formula")
+    check("a score is missing" in panel and "Every score is present" in panel and "const hold = !complete || product >= 3 || sensitiveKinds.length > 0;" in text,
+          "the help must say a missing score holds a pull request, as the script's hold test does")
+    # The key names what the script draws, so a renamed group, chip, or cell cannot leave the key behind.
+    script = text.split('<script nonce="{{NONCE}}">', 1)[-1]
+    for drawn in ('name: "Held for review"', 'name: "Under the hold line"', 'name: "Dependency bots"', '"In flight"', '"Hold violation: "',
+                  '"Sensitive kind: "', '"Changed after your verdict"', '"Merged without you"', 'unchanged: "unchanged"', '"Unclear"', 'yes: "Yes", no: "No"',
+                  '"Described?"', '"V × U"', '"leverage"', '["impact", true], ["confidence", false], ["verify", true], ["undo", true]', "product >= 3",
+                  '"If it is wrong · a revert does not undo it"'):
+        check(drawn in script, f"the help explains a mark the script no longer draws this way: {drawn}")
+    check('aria-label="Help: keyboard shortcuts, verdicts, and what the marks on this page mean">?</button>' in text
+          and '<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" tabindex="0" hidden>' in text,
+          "the ? button and its region must say the help covers shortcuts, verdicts, and the page's marks, and the region must take focus so the keyboard can scroll it")
+    check(panel.count("<section>") == 3 and panel.count("</section>") == 3 and "<div" not in panel,
+          "the help is three sections, and holds no div that would end the panel early for these checks")
+    check(re.search(r"@media \(min-width: 1200px\) \{\s*\.help \{ display: grid; grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);", text) is not None,
+          "the help must set its three parts side by side on a wide screen")
+    check(re.search(r"(?m)^\.help \{[^}]*max-height: calc\(100vh - var\(--bar-h, 60px\) - 16px\); overflow-y: auto;", text) is not None,
+          "the help must scroll inside itself when it is taller than the window")
+    check(re.search(r"(?m)^\.help dt, \.help dd \{ overflow-wrap: anywhere; \}", text) is not None
+          and ".help .terms { grid-template-columns: minmax(0, min(8.5em, 40%)) minmax(0, 1fr); }" in text,
+          "a key term and its meaning must wrap inside the panel when the reader enlarges the text")
 
 
 def fill(round_data: str, scratch: Path) -> tuple[str, str]:
@@ -597,6 +641,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
     then("c on a button", "key", "c", False, "tag:button")
     then("c on a link", "key", "c", False, "tag:a")
     then("c on a summary", "key", "c", False, "tag:summary")
+    then("c in the help", "key", "c", False, "help")
     then("j on a button", "key", "j", False, "tag:button")
     then("switch off", "press", "shortcuts")
     then("c while off", "key", "c")
@@ -804,7 +849,7 @@ def check_large_round(original: dict, scratch: Path) -> None:
 
     # Where a key lands decides what it may do.
     check(step("j while choosing")["scrolled"] == "pr-13", "no key may act while a list has the focus")
-    for name in ("c in a textarea", "c on a button", "c on a link", "c on a summary"):
+    for name in ("c in a textarea", "c on a button", "c on a link", "c on a summary", "c in the help"):
         check(chosen_at(name) == chosen_at("address opens"), f"a verdict key must do nothing: {name}")
     check(step("j on a button")["scrolled"] == cards[quiet]["id"], "j must still move with the focus on a button")
 
@@ -881,6 +926,28 @@ def check_notice_threshold(original: dict, scratch: Path) -> None:
     check(len((first["merged"] or {}).get("lists", [])) == 2, "an empty auto-merged list must not be drawn")
 
 
+def check_audience_articles(original: dict, scratch: Path) -> None:
+    """The heading takes a or an by the audience's first sound, not its first letter."""
+    expected = {"user": "a user", None: "a user", "operator": "an operator", "unit": "a unit", "utility": "a utility",
+                "underwriter": "an underwriter", "editor": "an editor"}
+    variant = copy.deepcopy(original)
+    variant["prs"] = []
+    for number, audience in enumerate(expected, start=1):
+        pr = copy.deepcopy(original["prs"][0])
+        pr.update(number=number, title=f"Audience {audience}", head=f"{number:040x}", audience=audience)
+        if audience is None:
+            del pr["audience"]
+        variant["prs"].append(pr)
+    page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    steps = render(page, scratch)
+    if steps is None:
+        return
+    shown = {block["title"].lstrip("0123456789"): block["sections"][:1] for block in steps[0]["blocks"]}
+    for audience, phrase in expected.items():
+        check(shown.get(f"Audience {audience}") == [f"What is different for {phrase}"],
+              f"an audience of {audience!r} must read 'What is different for {phrase}': {shown.get(f'Audience {audience}')}")
+
+
 def check_chrome_states(original: dict, scratch: Path) -> None:
     """A page with unreadable data or no pull requests shows no control that would do nothing."""
     round_controls = {"bar-progress", "bar-copy", "shortcuts", "shortcut-help-toggle", "shortcut-help"}
@@ -952,7 +1019,8 @@ def main() -> int:
         check_storage_cleanup(page, Path(scratch))
     for extra in (lambda scratch: check_incomplete_scores(raw, scratch), lambda scratch: check_two_group_round(raw, scratch),
                   lambda scratch: check_large_round(original, scratch), lambda scratch: check_notice_threshold(original, scratch),
-                  lambda scratch: check_chrome_states(original, scratch)):
+                  lambda scratch: check_chrome_states(original, scratch),
+                  lambda scratch: check_audience_articles(original, scratch)):
         with tempfile.TemporaryDirectory() as scratch:
             try:
                 extra(Path(scratch))

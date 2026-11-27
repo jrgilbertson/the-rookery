@@ -85,8 +85,15 @@ pre .ctx { color: var(--ink-soft); }
 .help { position: absolute; top: 100%; right: 28px; width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--bar-h, 60px) - 16px); overflow-y: auto; margin-top: 8px; padding: 16px 18px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; font: 0.82rem/1.5 var(--sans); }
 .help dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; }
 .help dt { font-weight: 650; }
+.help dt, .help dd { overflow-wrap: anywhere; }
 .help kbd { display: inline-block; min-width: 1.9em; text-align: center; font: 0.75rem/1.5 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 0 5px; background: var(--paper); }
 .help-note { margin-top: 10px; color: var(--ink-soft); }
+.help section + section { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
+.help .terms { grid-template-columns: minmax(0, min(8.5em, 40%)) minmax(0, 1fr); }
+.help .flag { color: var(--signal-ink); }
+.help dt.quiet { color: var(--ink-soft); }
+.help .seal, .help .ring, .help .route-dot { width: 8px; height: 8px; margin-right: 7px; }
+.help dt:has(> .seal, > .ring, > .route-dot) { padding-left: 15px; text-indent: -15px; }
 
 .shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
 .rail { display: none; }
@@ -249,6 +256,11 @@ main { padding: 40px 0 80px; min-width: 0; }
 .copy[aria-disabled="true"] { background: none; border-color: var(--control-border); color: var(--ink-soft); font-weight: 400; }
 .verdicts textarea::placeholder { color: var(--ink-soft); font-family: var(--sans); }
 
+@media (min-width: 1200px) {
+  .help { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: min(1120px, calc(100vw - 56px)); padding: 18px 0; }
+  .help section { padding: 0 22px; }
+  .help section + section { margin-top: 0; padding-top: 0; border-top: 0; border-left: 1px solid var(--hairline-soft); }
+}
 @media (min-width: 1320px) {
   .shell { max-width: 1600px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; }
   .rail { display: block; position: sticky; top: var(--bar-h, 58px); align-self: start; max-height: calc(100vh - var(--bar-h, 58px)); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
@@ -320,9 +332,10 @@ main { padding: 40px 0 80px; min-width: 0; }
 <a class="skip" href="#page">Skip to the round</a>
 <header class="bar" id="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><span class="bar-cue" id="bar-cue"></span><button type="button" class="copy" id="bar-copy">Copy verdicts</button>
 <button type="button" class="ctl" id="shortcuts" aria-pressed="true"><span class="long">Keyboard shortcuts</span><span class="short">Keys</span></button>
-<button type="button" class="ctl help-toggle" id="shortcut-help-toggle" aria-expanded="false" aria-controls="shortcut-help" aria-label="Help: keyboard shortcuts and what each verdict means">?</button>
-<div class="help" id="shortcut-help" role="region" aria-label="Keyboard shortcuts and verdicts" hidden>
-<p class="sec-title">Keyboard shortcuts</p>
+<button type="button" class="ctl help-toggle" id="shortcut-help-toggle" aria-expanded="false" aria-controls="shortcut-help" aria-label="Help: keyboard shortcuts, verdicts, and what the marks on this page mean">?</button>
+<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" tabindex="0" hidden>
+<section>
+<h2 class="sec-title">Keyboard shortcuts</h2>
 <dl>
 <dt><kbd>j</kbd></dt><dd>Next pull request</dd>
 <dt><kbd>k</kbd></dt><dd>Previous pull request</dd>
@@ -333,14 +346,50 @@ main { padding: 40px 0 80px; min-width: 0; }
 <dt><kbd>x</kbd></dt><dd>Not applicable</dd>
 <dt><kbd>Esc</kbd></dt><dd>Close this panel</dd>
 </dl>
-<p class="help-note">A verdict key acts on the card with the blue border. It does nothing while you type, while a button or link has focus, or on a collapsed card. The shortcuts switch in the bar turns every key off.</p>
-<p class="sec-title spaced">What each verdict means</p>
+<p class="help-note">A verdict key acts on the card with the blue border. It does nothing while you type, while a button, a link, or this panel has focus, or on a collapsed card. The shortcuts switch in the bar turns every key off.</p>
+<h2 class="sec-title spaced">What each verdict means</h2>
 <dl>
 <dt>Merge</dt><dd>Posts a merge verdict at the head you reviewed.</dd>
 <dt>Request changes</dt><dd>Posts your notes as a request for changes.</dd>
 <dt>Defer</dt><dd>Writes nothing, so the pull request comes back next round.</dd>
 <dt>Not applicable</dt><dd>Not yours to decide: nothing is posted, and a review request to you is removed.</dd>
 </dl>
+</section>
+<section>
+<h2 class="sec-title">The Described? column</h2>
+<dl class="terms">
+<dt>Yes</dt><dd>The title, body, or linked issue mentions this behavior.</dd>
+<dt class="flag"><span class="seal" aria-hidden="true"></span>No</dt><dd>The diff does this and nothing mentions it. Read these rows first.</dd>
+<dt class="flag"><span class="seal" aria-hidden="true"></span>Unclear</dt><dd>The marker could not be read, so the row counts as not described.</dd>
+<dt class="quiet">unchanged</dt><dd>A boundary row: behavior the change leaves as it was.</dd>
+</dl>
+<h2 class="sec-title spaced">Scores</h2>
+<dl class="terms">
+<dt>I · impact</dt><dd>How much better it makes things for users.</dd>
+<dt>C · confidence</dt><dd>How sure we are that it delivers that impact.</dd>
+<dt>V · verify</dt><dd>Verification effort: how hard the result is to confirm.</dd>
+<dt>U · undo</dt><dd>Undo cost: what it takes to undo.</dd>
+<dt>V × U</dt><dd>Verification effort times undo cost. At 3 or more the pull request is held for review. It sets the order within a group.</dd>
+<dt>Leverage</dt><dd>(I × C) ÷ (V × U), shown for reference.</dd>
+</dl>
+<p class="help-note">Each factor scores 1 to 3. A 3 on impact, verify, or undo is shaded.</p>
+</section>
+<section>
+<h2 class="sec-title flag"><span class="seal" aria-hidden="true"></span>Orange marks what needs you</h2>
+<dl class="terms">
+<dt>U = 3</dt><dd>A revert does not undo the change. The If it is wrong panel turns orange.</dd>
+<dt>Hold violation</dt><dd>It meets a hold test, yet it sits in a merge queue or is ready to merge without review:held.</dd>
+<dt>Sensitive kind</dt><dd>It touches a kind of change that is held whatever it scores.</dd>
+<dt>Changed after your verdict</dt><dd>It merged at a head you did not review. Merged without you takes the same mark.</dd>
+</dl>
+<h2 class="sec-title spaced">Groups</h2>
+<dl class="terms">
+<dt><span class="seal" aria-hidden="true"></span>Held for review</dt><dd>Its owner holds it, a score is missing, V × U is 3 or more, or it touches a sensitive kind. The seal shows while any are held.</dd>
+<dt><span class="ring" aria-hidden="true"></span>Under the hold line</dt><dd>Every score is present, V × U is 2 or less, and no sensitive kind. These cards start collapsed.</dd>
+<dt><span class="ring" aria-hidden="true"></span>Dependency bots</dt><dd>Opened by a dependency bot. Failing and conflicting ones come first.</dd>
+<dt><span class="route-dot" aria-hidden="true"></span>In flight</dt><dd>A fleet owner may still be changing it. Decide one only to step in early.</dd>
+</dl>
+</section>
 </div>
 <button type="button" class="ctl" id="theme"></button></header>
 <div class="shell"><nav class="rail" id="rail" aria-label="Pull requests in this round"></nav><main id="page" tabindex="-1"><noscript>This page needs JavaScript turned on to show the round.</noscript></main></div>
@@ -465,6 +514,9 @@ main { padding: 40px 0 80px; min-width: 0; }
   const list = (value) => (Array.isArray(value) ? value : []);
   const records = (value) => list(value).filter((row) => row && typeof row === "object");
   const plural = (count, one, many) => count + " " + (count === 1 ? one : many);
+  // "A" or "an" goes by the first sound, not the first letter: an operator, but a user, a unit, a utility.
+  // A leading u or eu that says "you" takes "a". This reads spelling, so a rare word can still come out wrong.
+  const aOrAn = (noun) => (/^(?:[aio]|e(?!u)|u(?![bcfgkrstvz][aeiou]|ni(?![mnd])))/i.test(noun) ? "an" : "a");
 
   let round;
   try {
@@ -1216,7 +1268,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     const main = el("div", "main-col");
     const changes = el("section");
     const audience = str(pr.audience) || "user";
-    changes.append(el("h3", "sec-title", "What is different for " + (/^[aeiou]/i.test(audience) ? "an " : "a ") + audience));
+    changes.append(el("h3", "sec-title", "What is different for " + aOrAn(audience) + " " + audience));
     let shown = false;
     if (pr.situations && list(pr.situations.rows).length) { changes.append(situations(pr.situations)); shown = true; }
     if (hasScreens(pr.screens)) {
@@ -1495,8 +1547,8 @@ main { padding: 40px 0 80px; min-width: 0; }
       return;
     }
     if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
-    // A letter pressed on a button, link, or disclosure belongs to that control, and a collapsed card shows nothing to decide on.
-    if (target && target.closest("button, a, summary")) return;
+    // A letter pressed on a button, link, or disclosure belongs to that control, one pressed while reading the help decides nothing, and a collapsed card shows nothing to decide on.
+    if (target && target.closest("button, a, summary, #shortcut-help")) return;
     const here = activeCard();
     if (!here || here.collapsed) return;
     event.preventDefault();

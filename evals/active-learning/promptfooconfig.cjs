@@ -17,7 +17,12 @@ const claude = {
   permission_mode: 'dontAsk',
   strict_mcp_config: true,
   exclude_dynamic_sections: true,
+  env: {
+    CLAUDE_CODE_DISABLE_AUTO_MEMORY: '1',
+    CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
+  },
   settings: {
+    autoMemoryEnabled: false,
     syncClaudeAiSkills: false,
     syncClaudeAiPlugins: false,
     permissions: { blockReadsOutsideWorkingDirectories: true },
@@ -25,11 +30,17 @@ const claude = {
 };
 
 const caseId = process.env.ROOKERY_EVAL_CASE;
+if (!caseId || caseId.includes('/') || caseId.includes('\\') || caseId === '.' || caseId === '..') {
+  throw new Error('Set ROOKERY_EVAL_CASE to a case directory name under cases/.');
+}
 const workspace = `./workspaces/${caseId}`;
 
 module.exports = {
   description: 'Active learning Skill Eval',
   sharing: false,
+  evaluateOptions: {
+    timeoutMs: 300000,
+  },
   prompts: ['{{request}}'],
   providers: [
     {

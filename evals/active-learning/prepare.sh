@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Build one run directory for the active-learning Skill Eval: a workspace per
 # case and arm, the skill staged into the with-skill workspaces at a Git
-# revision (default HEAD), and Promptfoo installed. Prints the directory.
+# revision (default HEAD), and Promptfoo installed from package-lock.json via
+# npm ci. Prints the directory.
 set -euo pipefail
 umask 077
 
@@ -10,7 +11,7 @@ repo=$(git -C "$here" rev-parse --show-toplevel)
 revision=$(git -C "$repo" rev-parse --verify "${1:-HEAD}^{commit}")
 
 work=$(mktemp -d "${TMPDIR:-/tmp}/rookery-active-learning.XXXXXXXX")
-mkdir -p "$work/skills"
+mkdir -p "$work/skills" "$work/home" "$work/claude-home"
 git -C "$repo" archive "$revision" skills/active-learning |
   tar -x --strip-components=1 -C "$work/skills"
 for case_path in "$here"/cases/*/; do
@@ -21,7 +22,8 @@ for case_path in "$here"/cases/*/; do
   mkdir -p "$work/workspaces/$case_id/claude-skill/.claude/skills"
   cp -R "$work/skills/active-learning" "$work/workspaces/$case_id/claude-skill/.claude/skills/"
 done
-cp -R "$here/cases" "$here/package.json" "$here/promptfooconfig.cjs" "$here/checks.mjs" "$work/"
+cp -R "$here/cases" "$here/package.json" "$here/package-lock.json" \
+  "$here/promptfooconfig.cjs" "$here/checks.mjs" "$work/"
 printf '%s\n' "$revision" > "$work/skill-revision.txt"
-PROMPTFOO_DISABLE_TELEMETRY=1 npm --prefix "$work" install --no-audit --no-fund >&2
+PROMPTFOO_DISABLE_TELEMETRY=1 npm --prefix "$work" ci --no-audit --no-fund >&2
 printf '%s\n' "$work"

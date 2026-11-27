@@ -15,7 +15,7 @@ skill.
 | [`checking-skill-portability`](skills/checking-skill-portability/SKILL.md) | Validates the package against the standard and finds anything tied to one harness or one machine | Every change, before it ships |
 | `/doctor prompt-audit` (Claude Code) | Reads instruction files, skills, and agents for patterns written for older models, dead references, and contradictions | When a model changes |
 | `/skill-doctor` (Claude Code) | Reports each skill's listing cost and use | When a model changes, or when pruning |
-| [Promptfoo](https://www.promptfoo.dev) | Runs Eval Cases on Claude and Codex, with and without a skill, and checks each result | The runner for Skill Evals; [`evals/managing-issues/`](evals/managing-issues/README.md) shows the setup |
+| [Promptfoo](https://www.promptfoo.dev) | Runs Eval Cases on Claude, with and without a skill, and checks each result | The runner for Skill Evals; [`evals/_template/`](evals/_template/README.md) is the canonical starter |
 
 `/skill-doctor` needs Claude Code's feature flags, which
 `DISABLE_TELEMETRY=1` turns off. Its use counts include skills that were only
@@ -60,8 +60,8 @@ Then:
 5. **Check portability.** Run `checking-skill-portability`, then run one test
    request in Codex and in any other harness or model the skill must serve.
 6. **Keep the Eval Cases.** Move the test requests and their checks to
-   `evals/<skill>/`, outside the package, as a Promptfoo suite laid out like
-   [`evals/managing-issues/`](evals/managing-issues/README.md). They become
+   `evals/<skill>/`, outside the package, copied from the canonical Promptfoo
+   template in [`evals/_template/`](evals/_template/README.md). They become
    the skill's Skill Eval, which runs again when a model changes.
    Drop an Eval Case that passes with and without the skill, because it
    measures nothing. Eval Cases in this public repository must be synthetic
@@ -132,7 +132,48 @@ eval terms.
 
 Each skill's Skill Eval lives in `evals/<skill>/` at the repository root,
 outside the skill package. That directory holds the skill's Eval Cases and the
-Eval Records of their runs. Create it when the skill gets its first Eval Case.
+Eval Records of their runs. Create it from
+[`evals/_template/`](evals/_template/README.md) when the skill gets its first
+Eval Case.
+
+### Canonical Promptfoo setup
+
+All Skill Evals share one Claude-only Promptfoo template in
+[`evals/_template/`](evals/_template/README.md). It runs identically on macOS
+and Linux through `anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
+authenticating through the operator's signed-in Claude Code subscription with
+no API key, no Bubblewrap, and no stored login files.
+
+- **Tool boundaries and isolation:** Each case runs in a plain synthetic
+  workspace with no Git repository and no `Bash` tool. `promptfooconfig.cjs`
+  offers `Write` and `Edit`, allows only read-only tools in
+  `custom_allowed_tools`, sets `permission_mode: 'dontAsk'`,
+  `setting_sources: ['project']`, `strict_mcp_config: true`,
+  `exclude_dynamic_sections: true`, and
+  `permissions.blockReadsOutsideWorkingDirectories: true`. It disables
+  auto-memory inside the config itself (`settings.autoMemoryEnabled: false` and
+  `env.CLAUDE_CODE_DISABLE_AUTO_MEMORY: '1'`) and sets a bounded
+  `evaluateOptions.timeoutMs`.
+- **Reproducible installs and isolated home:** Each suite commits
+  `package-lock.json` and installs with `npm ci` in `prepare.sh`. `run.sh` runs
+  inside an isolated temporary `HOME` and `CLAUDE_CONFIG_DIR` under the run
+  directory while preserving signed-in Claude Code subscription auth.
+- **Single-turn multi-turn cases:** Keep every Eval Case a single-turn
+  Promptfoo run without a custom driver. Mid-conversation cases carry prior
+  turns directly inside `cases/<id>/prompt.md` and stage prior state as plain
+  files in the workspace.
+- **Default grading and optional `llm-rubric`:** By default, suites pair
+  deterministic `file://` JavaScript checks (`checks.mjs`) and Promptfoo's
+  built-in `skill-used` assertion with human-read rubric statements in
+  `cases/<id>/README.md`. Promptfoo's `llm-rubric` is supported as an optional
+  additive layer when automated semantic judging is wanted; author and
+  calibrate any judge prompt with `write-judge-prompt` and
+  `validate-evaluator` without rewriting existing human-read cases.
+- **Offline conformance checks:** Every suite includes an offline
+  `check-fixtures.mjs` that exercises `checks.mjs` write-tool denial and
+  asserts the `promptfooconfig.cjs`, lockfile, and launcher invariants. The
+  repository gate (`lefthook run pre-push --force`) executes every
+  `evals/*/check-fixtures.mjs` automatically with zero model calls.
 
 ### Eval Records
 
@@ -193,11 +234,12 @@ run archive and many paid runs, so it needs approval like any batch run.
 ## Repository checks
 
 Run `lefthook run pre-push --force` before shipping. The gate validates package
-structure and catalog membership, repository text and links, secrets, and
-deterministic tests of shipped helpers. See [TESTING.md](TESTING.md) and
+structure and catalog membership, repository text and links, secrets,
+deterministic tests of shipped helpers, and every Promptfoo suite's offline
+`check-fixtures.mjs` conformance tests. See [TESTING.md](TESTING.md) and
 [tests/README.md](tests/README.md) for the check commands and fixture boundaries.
-The gate never runs Skill Evals, because tests never call a model. Skill Evals
-follow the [Skill Evals](#skill-evals) section instead.
+The gate never runs live Skill Evals, because tests never call a model. Skill
+Evals follow the [Skill Evals](#skill-evals) section instead.
 
 ## Retiring a skill
 

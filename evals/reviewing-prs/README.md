@@ -37,7 +37,7 @@ around 2026-11-20, and the digest case's prompt names the merged window's
 start, so no case depends on today's date.
 
 The four-case set SHA-256 is
-`a631ed1be836458657f8ab7c3ab4d537872d58575a6d6f12b115b77d3cd9e8c7`. From this
+`48460e0f5fb3710917f7b4b0fc89e3a539c3d3a30d2b940b9d449dbb30079127`. From this
 directory, reproduce it with:
 
 ```sh

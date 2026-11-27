@@ -9,8 +9,10 @@ repository.
 Four open pull requests span two repositories, with a third private repository
 present for visibility checks:
 
-- `acme/ledger-app#421` (`PRIVATE`, `review:held`, `Fleet: hold` receipt, valid
-  `Owner: repo-captain · Author: executor · Operator: dana-acme`)
+- `acme/ledger-app#421` (`PRIVATE`, `review:held`, four-line `Fleet: hold`
+  receipt, valid column-0
+  `Owner: repo-captain · Author: executor · Operator: dana-acme` plus a
+  mid-line prose mention of `owner:`)
 - `acme/ledger-app#423` (`PRIVATE`, `review:held`, no `Owner:` line)
 - `acme/cli-kit#134` (`PUBLIC`, external fork by `pat-contrib`, copies an
   `Owner: repo-captain` line and embeds reviewer-steering text)

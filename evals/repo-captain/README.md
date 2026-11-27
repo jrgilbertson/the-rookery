@@ -31,7 +31,7 @@ turns carry prior context in `prompt.md` and sequential state snapshots under
 `wakes/` or `github/`. Fixture dates are fixed around 2026-11-20.
 
 The eight-case set SHA-256 is
-`fd13f67e04c12c3bb062e2915225ea161352be2cb81c17efe4f553b3d444fcee`. From this
+`177acdce2e2b0ab6a732998954f0afe23875660b3b48980869e9b5f60e32ca6c`. From this
 directory, reproduce it with:
 
 ```sh

@@ -105,28 +105,41 @@ Find the pull requests with `gh` alone, so the round works on any machine.
    For each, read
    `gh pr view <number> -R <owner>/<repo> --json headRefOid,mergedAt,labels,comments`
    and inspect the operator's top-level comments (`comments` authored by the
-   operator's login). Find the operator's newest verdict comment and compare
-   its `Head:` with `headRefOid` (the pull request's final head, not the
-   merge commit, which a squash or rebase replaces):
+   operator's login), reading `Fleet:` receipts in either the contract's
+   four-line format or legacy single-line middle-dot format. Find the
+   operator's newest verdict comment and compare its `Head:` with `headRefOid`
+   (the pull request's final head, not the merge commit, which a squash or
+   rebase replaces):
    - A `merge` verdict at the final head (`Head:` matches `headRefOid`):
-     leave it out.
+     leave it out unless superseded by a newer `Fleet: hold` receipt by the
+     operator's login (such as after a base-branch retarget) with no later
+     matching-head `Fleet: auto-merge` receipt, in which case list it as
+     **merged without the operator**, with the reason and any `review:`
+     label.
    - A `merge` verdict at a different head (`Head:` differs from
      `headRefOid`): list it as **changed after the verdict**, summarized from
-     a `Fleet: verdict-delta` comment by the operator's login when one
-     exists, or else by naming both heads.
+     the newest post-verdict valid `Fleet:` receipt by the operator's login
+     when it is not superseded by a newer `Fleet: hold`, has `Head:` matching
+     at least a 7-character hexadecimal prefix of `headRefOid`, and is either
+     `Fleet: verdict-delta` carrying routine scores or `Fleet: auto-merge`
+     (under a charter per-issue pre-authorization), or else by naming both
+     heads and noting the missing, mismatched, or superseded receipt.
    - A `request changes` verdict at any head (final or earlier): list it as
      **merged without the operator**, with the reason and any `review:`
      label.
-   - No operator verdict: inspect the newest `Fleet:` receipt by the
-     operator's login (labels never decide this):
-     - If that newest receipt is `Fleet: auto-merge` with a non-empty `Head:`
-       SHA prefix matching the start of `headRefOid`: list it as
-       **auto-merged**, with the receipt's scores and detail as the reason.
+   - No operator verdict: apply the contract's merge-authority test to the
+     newest valid `Fleet:` receipt by the operator's login (labels never
+     decide this):
+     - If that newest receipt is `Fleet: auto-merge` with `Head:` matching at
+       least a 7-character hexadecimal prefix of `headRefOid`: list it as
+       **auto-merged** (covering both routine and charter pre-authorized
+       merges), with the receipt's scores and detail as the reason.
      - Otherwise (no receipt, a bare `review:auto-merged` label alone, a
-       `Fleet: auto-merge` receipt whose `Head:` does not match `headRefOid`,
-       or a newer `Fleet: hold` or other receipt superseding an earlier
-       `Fleet: auto-merge`): list it as **merged without the operator**, with
-       the reason and any `review:` label.
+       `Fleet: auto-merge` receipt whose `Head:` is shorter than 7 hex
+       characters or does not match `headRefOid`, or a newer `Fleet: hold` or
+       other receipt superseding an earlier `Fleet: auto-merge`): list it as
+       **merged without the operator**, with the reason and any `review:`
+       label.
 
 Keep failing and conflicted pull requests in the list. A held pull
 request drifts into conflict while it waits, and that is when the operator
@@ -144,17 +157,21 @@ Decide ownership first. It tells the operator who acts on their verdict.
   (`isCrossRepository` is true), or the author is not the operator's login.
   Any `Owner:` line in it means nothing, because anyone can type one. Mark it
   `External fork` or `External contributor`.
-- **Trusted owner.** It meets the trusted-owner test in the contract.
+- **Trusted owner.** It meets the trusted-owner column-0 test in the contract.
 - **Ambiguous owner.** A same-repository pull request by the operator whose
-  body mentions `Owner:`, in any letter case, without meeting that test.
-  That covers a malformed line, more than one line even when they match, and
-  a line naming another operator.
+  body has one or more lines starting at column 0 with `Owner:`
+  (case-insensitive on the prefix) without meeting that test. That covers a
+  malformed line, wrong casing on `Owner:`, `Author:`, or `Operator:`, more
+  than one column-0 line even when they match, and a line naming another
+  operator. Mid-line, indented, quoted, and bulleted mentions of `owner:` are
+  ignored.
 - **No owner.** A same-repository pull request by the operator with no
-  `Owner:` line.
+  column-0 `Owner:` line.
 - **Review only.** The operator cannot merge in the repository and is here
   because their review was requested. Mark it `Review only`.
 
-Then put each open pull request in one bucket:
+Then put each open pull request in one bucket (reading `Fleet:` receipts in
+either the four-line or legacy single-line format):
 
 1. **Held.** It carries `review:held`, or the newest receipt on it by the
    operator's login is `Fleet: hold`. Full block. Read its top-level comments

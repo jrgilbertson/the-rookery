@@ -349,7 +349,8 @@ def build_owner_routing_and_scrubbing() -> dict[str, str]:
                         "Fixes proration when a plan changes mid-cycle.\n\n"
                         "- a downgrade no longer produces a negative charge\n"
                         "- a change after the period ends charges nothing\n"
-                        "- an empty period is rejected\n\n"
+                        "- an empty period is rejected\n"
+                        "- the billing owner: field stays unchanged during proration\n\n"
                         "Closes #415\n\n"
                         "Owner: repo-captain · Author: executor · Operator: dana-acme\n"
                     ),
@@ -364,7 +365,12 @@ def build_owner_routing_and_scrubbing() -> dict[str, str]:
                         {
                             "author": OPERATOR,
                             "createdAt": "2026-11-19T16:25:00Z",
-                            "body": "Fleet: hold · Head: a48e7c5 · V=1 U=2 · Reason: money — proration math in app/billing/proration.ts",
+                            "body": (
+                                "Fleet: hold\n"
+                                "Head: a48e7c5\n"
+                                "Scores: V=1 U=2\n"
+                                "Detail: Reason: money — proration math in app/billing/proration.ts"
+                            ),
                         }
                     ],
                     "closingIssues": [415],
@@ -685,7 +691,12 @@ def build_conflicts_impact_digest_html() -> dict[str, str]:
                         {
                             "author": OPERATOR,
                             "createdAt": "2026-11-19T22:08:00Z",
-                            "body": "Fleet: verdict-delta · Head: 961a148 · V=1 U=1 · Approved: 710532d — rebased onto main; re-sorted imports after a conflict in app/routes.ts",
+                            "body": (
+                                "Fleet: verdict-delta\n"
+                                "Head: 961a148\n"
+                                "Scores: V=1 U=1\n"
+                                "Detail: Approved: 710532d — rebased onto main; re-sorted imports after a conflict in app/routes.ts"
+                            ),
                         },
                     ],
                     "diff": (
@@ -775,7 +786,12 @@ def build_conflicts_impact_digest_html() -> dict[str, str]:
                         {
                             "author": OPERATOR,
                             "createdAt": "2026-11-10T08:58:00Z",
-                            "body": "Fleet: auto-merge · Head: 0372336 · V=1 U=1 · Size: +1/-1 in 1 files",
+                            "body": (
+                                "Fleet: auto-merge\n"
+                                "Head: 0372336\n"
+                                "Scores: V=1 U=1\n"
+                                "Detail: Size: +1/-1 in 1 files"
+                            ),
                         }
                     ],
                     "diff": (
@@ -1203,7 +1219,12 @@ def build_verdict_at_reviewed_head() -> dict[str, str]:
                         {
                             "author": OPERATOR,
                             "createdAt": "2026-11-19T15:05:00Z",
-                            "body": "Fleet: hold · Head: 3e46a8e · V=3 U=1 · Reason: new export summary view customers will see",
+                            "body": (
+                                "Fleet: hold\n"
+                                "Head: 3e46a8e\n"
+                                "Scores: V=3 U=1\n"
+                                "Detail: Reason: new export summary view customers will see"
+                            ),
                         }
                     ],
                     "diff": (

@@ -619,7 +619,12 @@ def build_overlap_and_one_migration() -> dict[str, str]:
                 {
                     "author": OPERATOR,
                     "createdAt": "2026-11-19T15:10:00Z",
-                    "body": f"Fleet: hold · Head: {c531[:7]} · V=1 U=3 · Reason: adds stored column invoices.memo",
+                    "body": (
+                        f"Fleet: hold\n"
+                        f"Head: {c531[:7]}\n"
+                        f"Scores: V=1 U=3\n"
+                        f"Detail: Reason: adds stored column invoices.memo"
+                    ),
                 },
                 {
                     "author": OPERATOR,
@@ -657,7 +662,12 @@ def build_overlap_and_one_migration() -> dict[str, str]:
                 {
                     "author": OPERATOR,
                     "createdAt": "2026-11-19T15:20:00Z",
-                    "body": f"Fleet: hold · Head: {c532[:7]} · V=1 U=3 · Reason: adds stored column customers.tax_id",
+                    "body": (
+                        f"Fleet: hold\n"
+                        f"Head: {c532[:7]}\n"
+                        f"Scores: V=1 U=3\n"
+                        f"Detail: Reason: adds stored column customers.tax_id"
+                    ),
                 },
                 {
                     "author": OPERATOR,
@@ -1342,7 +1352,12 @@ def build_rebase_revert_and_merge_queue() -> dict[str, str]:
                 {
                     "author": OPERATOR,
                     "createdAt": "2026-11-19T15:00:00Z",
-                    "body": f"Fleet: hold · Head: {a1[:7]} · V=3 U=1 · Reason: new export summary view customers will see",
+                    "body": (
+                        f"Fleet: hold\n"
+                        f"Head: {a1[:7]}\n"
+                        f"Scores: V=3 U=1\n"
+                        f"Detail: Reason: new export summary view customers will see"
+                    ),
                 },
                 {
                     "author": OPERATOR,
@@ -1389,7 +1404,12 @@ def build_rebase_revert_and_merge_queue() -> dict[str, str]:
                 {
                     "author": OPERATOR,
                     "createdAt": "2026-11-19T15:05:00Z",
-                    "body": f"Fleet: hold · Head: {a2[:7]} · V=1 U=2 · Reason: money: rounding in app/billing/tax.ts",
+                    "body": (
+                        f"Fleet: hold\n"
+                        f"Head: {a2[:7]}\n"
+                        f"Scores: V=1 U=2\n"
+                        f"Detail: Reason: money: rounding in app/billing/tax.ts"
+                    ),
                 },
                 {
                     "author": OPERATOR,
@@ -1950,7 +1970,12 @@ def build_held_pr_keeps_wake_and_calm_alert() -> dict[str, str]:
                 {
                     "author": OPERATOR,
                     "createdAt": "2026-11-20T16:10:30Z",
-                    "body": f"Fleet: auto-merge · Head: {p580[:7]} · V=1 U=1 · routine: pagination bound with a unit test",
+                    "body": (
+                        f"Fleet: auto-merge\n"
+                        f"Head: {p580[:7]}\n"
+                        f"Scores: V=1 U=1\n"
+                        f"Detail: routine: pagination bound with a unit test"
+                    ),
                 }
             ],
             "reviewThreads": [],
@@ -1988,7 +2013,12 @@ def build_held_pr_keeps_wake_and_calm_alert() -> dict[str, str]:
                 {
                     "author": OPERATOR,
                     "createdAt": "2026-11-20T15:00:00Z",
-                    "body": f"Fleet: hold · Head: {p581[:7]} · V=1 U=2 · Reason: money: tax in app/billing/tax.ts",
+                    "body": (
+                        f"Fleet: hold\n"
+                        f"Head: {p581[:7]}\n"
+                        f"Scores: V=1 U=2\n"
+                        f"Detail: Reason: money: tax in app/billing/tax.ts"
+                    ),
                 }
             ],
             "reviewThreads": [],

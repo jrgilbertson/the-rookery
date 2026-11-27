@@ -10,8 +10,9 @@ Every brief carries:
 
 - the leaf, its file list, and its Verification
 - the model picked
-- the ownership line for the pull request body, with `repo-captain` as the
-  `Owner:` role and the worker's own role as `Author:`
+- the ownership line on its own line starting at column 0 in the pull request
+  body, with `repo-captain` as the `Owner:` role and the worker's own role as
+  `Author:`
 - the stacking rule: build on at most one held pull request whose checks
   pass, using `gh-stack`, never on a chain of unreviewed pull requests
 - the bot rule and the scrub rule from `SKILL.md`'s Rules for every step

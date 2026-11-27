@@ -257,12 +257,14 @@ say; the page then shows "Nothing to report."
 - `window`: the window step 1 used, stated so the operator can see it.
 - `reason` and `summary`: one sentence each, from step 1's merged list. A pull
   request appears in only one of the three lists.
-- `autoMerged`: verdict-less routine merges whose newest `Fleet:` receipt by
-  the operator's login is `Fleet: auto-merge` with a `Head:` SHA prefix
-  matching `headRefOid` (a bare `review:auto-merged` label, a mismatched-head
-  receipt, or a hold-superseded receipt goes in `without` instead). The page
-  lists them without an orange seal and gives them no notice at the top, so
-  orange stays on `without` and `changedAfter`.
+- `autoMerged`: verdict-less routine or charter pre-authorized merges whose
+  newest valid `Fleet:` receipt by the operator's login (in either the
+  four-line or legacy single-line format) is `Fleet: auto-merge` with a
+  `Head:` matching at least a 7-character hexadecimal prefix of `headRefOid`
+  (a bare `review:auto-merged` label, a too-short or mismatched-head receipt,
+  or a hold-superseded receipt goes in `without` instead). The page lists them
+  without an orange seal and gives them no notice at the top, so orange stays
+  on `without` and `changedAfter`.
 
 The page gives each `changedAfter` row its own notice at the top. It does the
 same for `without` up to five rows; past five, one notice gives the count and

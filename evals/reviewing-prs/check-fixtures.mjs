@@ -217,6 +217,13 @@ try {
   );
 
   // Case-specific structural invariants.
+  const ownerPr421 = JSON.parse(
+    readFileSync(join(fixtureScratch, 'owner-routing-and-scrubbing', 'github', 'repos', 'acme', 'ledger-app', 'pulls', 'pr-421.json'), 'utf8'),
+  );
+  assert.match(ownerPr421.body, /^Owner: repo-captain · Author: executor · Operator: dana-acme$/m, 'owner-routing #421 must have a column-0 Owner line');
+  assert.match(ownerPr421.body, /billing owner: field/, 'owner-routing #421 must include a mid-line prose owner: mention');
+  assert.match(ownerPr421.comments[0].body, /^Fleet: hold\nHead: a48e7c5\nScores: V=1 U=2\nDetail: /m, 'owner-routing #421 must carry a four-line Fleet: hold receipt');
+
   const ownerPr134 = JSON.parse(
     readFileSync(join(fixtureScratch, 'owner-routing-and-scrubbing', 'github', 'repos', 'acme', 'cli-kit', 'pulls', 'pr-134.json'), 'utf8'),
   );
@@ -225,6 +232,15 @@ try {
     readFileSync(join(fixtureScratch, 'owner-routing-and-scrubbing', 'github', 'repos', 'acme', 'payroll-internal', 'repo.json'), 'utf8'),
   );
   assert.equal(payrollRepo.visibility, 'PRIVATE', 'acme/payroll-internal must be PRIVATE');
+
+  const pr419 = JSON.parse(
+    readFileSync(join(fixtureScratch, 'conflicts-impact-digest-html', 'github', 'repos', 'acme', 'ledger-app', 'pulls', 'pr-419.json'), 'utf8'),
+  );
+  assert.match(pr419.comments[1].body, /^Fleet: verdict-delta\nHead: 961a148\nScores: V=1 U=1\nDetail: /m, 'conflicts #419 must carry a four-line Fleet: verdict-delta receipt');
+  const pr417 = JSON.parse(
+    readFileSync(join(fixtureScratch, 'conflicts-impact-digest-html', 'github', 'repos', 'acme', 'ledger-app', 'pulls', 'pr-417.json'), 'utf8'),
+  );
+  assert.match(pr417.comments[0].body, /^Fleet: auto-merge · Head: cce7cfe · V=1 U=1 · /, 'conflicts #417 must retain a legacy single-line Fleet: auto-merge receipt for dual-format coverage');
 
   const pr426 = JSON.parse(
     readFileSync(join(fixtureScratch, 'conflicts-impact-digest-html', 'github', 'repos', 'acme', 'ledger-app', 'pulls', 'pr-426.json'), 'utf8'),

@@ -87,13 +87,11 @@ pre .ctx { color: var(--ink-soft); }
 .help dt { font-weight: 650; }
 .help kbd { display: inline-block; min-width: 1.9em; text-align: center; font: 0.75rem/1.5 var(--mono); border: 1px solid var(--hairline); border-radius: 2px; padding: 0 5px; background: var(--paper); }
 .help-note { margin-top: 10px; color: var(--ink-soft); }
-/* One column stacks the three parts of the help; a wide screen sets them side by side. */
 .help section + section { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
 .help .terms { grid-template-columns: minmax(0, 8.5em) minmax(0, 1fr); }
 .help .flag { color: var(--signal-ink); }
 .help dt.quiet { color: var(--ink-soft); }
 .help .seal, .help .ring, .help .route-dot { width: 8px; height: 8px; margin-right: 7px; }
-/* A term that wraps hangs under its own first letter, clear of its mark. */
 .help dt:has(> .seal, > .ring, > .route-dot) { padding-left: 15px; text-indent: -15px; }
 
 .shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
@@ -334,7 +332,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 <header class="bar" id="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><span class="bar-cue" id="bar-cue"></span><button type="button" class="copy" id="bar-copy">Copy verdicts</button>
 <button type="button" class="ctl" id="shortcuts" aria-pressed="true"><span class="long">Keyboard shortcuts</span><span class="short">Keys</span></button>
 <button type="button" class="ctl help-toggle" id="shortcut-help-toggle" aria-expanded="false" aria-controls="shortcut-help" aria-label="Help: keyboard shortcuts, verdicts, and what the marks on this page mean">?</button>
-<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" hidden>
+<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" tabindex="0" hidden>
 <section>
 <h2 class="sec-title">Keyboard shortcuts</h2>
 <dl>

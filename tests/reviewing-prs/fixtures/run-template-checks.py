@@ -357,8 +357,8 @@ def check_help_key(text: str, panel: str) -> None:
                   '"If it is wrong · a revert does not undo it"'):
         check(drawn in script, f"the help explains a mark the script no longer draws this way: {drawn}")
     check('aria-label="Help: keyboard shortcuts, verdicts, and what the marks on this page mean">?</button>' in text
-          and '<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" hidden>' in text,
-          "the ? button and its region must say the help covers shortcuts, verdicts, and the page's marks")
+          and '<div class="help" id="shortcut-help" role="region" aria-label="Help: keyboard shortcuts, verdicts, and page marks" tabindex="0" hidden>' in text,
+          "the ? button and its region must say the help covers shortcuts, verdicts, and the page's marks, and the region must take focus so the keyboard can scroll it")
     check(panel.count("<section>") == 3 and panel.count("</section>") == 3 and "<div" not in panel,
           "the help is three sections, and holds no div that would end the panel early for these checks")
     check(re.search(r"@media \(min-width: 1200px\) \{\s*\.help \{ display: grid; grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);", text) is not None,

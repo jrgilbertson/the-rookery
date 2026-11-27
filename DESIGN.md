@@ -285,7 +285,7 @@ These components belong to working pages. A working page is an interactive page 
 - **Disclosure panel.** A `?` button opens `#shortcut-help`, a non-modal panel that lists each keyboard shortcut, explains each verdict in one line, and holds a key to the page's marks. It is a white sheet with a hairline edge and a 2px radius, with no shadow and no scrim, and the page behind it stays usable. Escape closes it and returns focus to the `?` button.
 - **Keys.** Each key sits in a small monospace cap with a 2px radius. The toggle that turns shortcuts on or off is a control, and shows its pressed state the way a segmented control shows its chosen option.
 - **Page key.** The same panel explains the page's own marks: each value of the `Described?` column, the score factors with the hold line and the leverage formula, what orange marks, and the four groups. A term that the page draws with a seal, a ring, or a route dot carries the same mark in the key, and the words beside an orange seal take Signal Ink. The key holds one seal for each thing the page seals, so orange stays scarce.
-- **Layout.** At 1200px and wider the panel sets three parts side by side, divided by a soft hairline: shortcuts and verdicts, then `Described?` and scores, then orange marks and groups. Below that it is one 440px column that scrolls inside itself, so it never grows wider than the screen.
+- **Layout.** At 1200px and wider the panel sets three parts side by side, divided by a soft hairline: shortcuts and verdicts, then `Described?` and scores, then orange marks and groups. Below that it is one 440px column that scrolls inside itself, so it never grows wider than the screen. The panel takes keyboard focus while it is open, so the arrow keys scroll it.
 
 ### Signals
 

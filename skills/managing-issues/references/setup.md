@@ -1,4 +1,4 @@
-# Configure the canonical tracker
+# Configure the Canonical Tracker
 
 Read this reference before the first tracker mutation when the repository has
 no valid `.agents/managing-issues.json`. A missing or invalid config does not
@@ -7,8 +7,8 @@ resolves the canonical provider, target, and metadata mappings.
 
 Load [github.md](github.md) or [linear.md](linear.md) for each provider used,
 before provider discovery or building any metadata effect. Their
-authentication, identity-check, capability, and structured-data rules apply to
-setup too.
+authentication, identity-check, capability, structured-data, and first-use
+setup rules apply to setup too.
 
 Discover available authenticated GitHub and Linear choices only when the
 request does not already select a provider and target, then let the operator
@@ -46,7 +46,7 @@ issue.
 
 The starter templates also carry two optional settings. `assignee.default`
 names one exact identity from the discovered members (a GitHub login or a
-Linear user) and is the only configured default applied to new issues; see
+Linear user ID) and is the only configured default applied to new issues; see
 [prioritization.md](prioritization.md) for the full assignee fallback order.
 A team that wants every new issue to have an owner, including issues from
 scheduled runs, sets `assignee.default` to the person who triages new work.

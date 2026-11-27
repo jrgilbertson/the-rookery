@@ -1,4 +1,4 @@
-# Linear provider path
+# Linear Provider Path
 
 Load this reference for Linear reads, discovery, previews, or effects. The
 shared lifecycle, approval, batch-stop, and outcome rules live in `SKILL.md`.
@@ -83,51 +83,8 @@ the schema requires a number. If the runtime schema differs or omits an exact
 conversion, stop before preview rather than guess. For Orca, use the
 version-matched guide's documented representation. Estimates apply only to
 implementation leaves; readiness uses an exact discovered label identity,
-never workflow status.
-
-During first-use setup, present the native estimate choices and exact existing
-labels beside the Linear starter recommendations, and show the four priority
-mappings as fixed. Recommend a workspace-scoped readiness group named
-`readiness` with kebab-case children `needs-discovery`, `needs-planning`, and
-`ready`. Offer the team's members as default-assignee candidates and store the
-chosen member's stable user ID. The operator chooses every mapping except
-priority. Do not change the team's native priority or estimation scheme.
-
-The four scores are labels in single-select label groups, one group per
-factor. Recommend workspace-scoped groups named `impact`, `confidence`,
-`verification-effort`, and `undo-cost`, each with three children named for the
-factor and the score: `impact-1` to `impact-3`, `confidence-1` to
-`confidence-3`, `verification-effort-1` to `verification-effort-3`, and
-`undo-cost-1` to `undo-cost-3`. Name each child for its factor because
-Linear's GitHub sync mirrors a child under its own name with no group prefix.
-Offer existing single-select groups with three children beside these
-recommendations.
-
-When a chosen general label is absent, offer a flat label create. When a chosen
-readiness or score child is absent, offer the group-then-children recipe: create the
-workspace group if it is absent, then any missing children, then rediscover
-each chosen child. Apply a child, never the parent. Store a unique child name,
-or the label UUID when the name is not unique. Missing group-create must not
-block creating a general label such as `bug`.
-
-Offer any of those creates only if the selected transport exposes an exact
-label-create and label-readback path. For connected MCP this is normally the
-runtime `save_issue_label` and `list_issue_labels` tools; for Orca it must
-come from the loaded guide. The current MCP schema creates a workspace group
-with `isGroup` true, `groupType` `singleSelect`, and no `teamId`, and children
-with `parent` set to the group name and no `teamId`. The current Orca guide
-has no label create, so a session on that transport that still needs one
-stops as the next sentences describe. If the runtime schema differs, follow it. If the
-approved batch still needs a workspace-scoped group or child create the
-selected path cannot express, stop setup without a config write and name the
-missing capability. Do not fall through to Orca.
-
-The current MCP schema can update, retire, and restore a label but cannot
-delete one, and setup never changes an existing label. Preview the exact provider effects, apply
-each approved create once, then rediscover every chosen child by exact stable
-identity before rendering the config. A failed or partial create uses the
-shared first-stop: later effects stay unapplied, config is not written, and
-leftover labels are manual cleanup.
+never workflow status. For first-use label, workspace label-group, and
+default-assignee setup, see [First-use setup](#first-use-setup) below.
 
 For updates and lifecycle changes, read the canonical existing issue, including
 material fields and relationships, before preview, immediately before its
@@ -164,9 +121,10 @@ the batch.
 Read an issue's scores from its labels: a score is present when the issue
 carries exactly one of that factor's three mapped children. No child is an
 absent score, and more than one makes that score unreadable. A label read that failed or was capped makes the scores unreadable.
-Linear rejects a second child from one single-select group, so change a score
-in one update that removes the old child and adds the new one, and show both
-in the preview. Set the scores on a create with the create's own labels.
+Linear rejects a second child from one single-select group, so always apply a
+mapped child label rather than its parent group, change a score in one update
+that removes the old child and adds the new one, and show both in the preview.
+Set the scores on a create with the create's own labels.
 
 A create may set approved node metadata atomically when the selected transport
 supports it. Managing Issues attaches no graph edges at create, though Linear
@@ -207,3 +165,52 @@ lifecycle changes. Select only an exact discovered state whose type represents
 the approved transition. Cancellation targets a canceled state. Completion
 targets a completed state only after `graph-and-completion.md` proves
 completion. Read back the exact state and type.
+
+## First-use setup
+
+Consult this section only when [setup.md](setup.md) maps or creates Linear
+metadata and default-assignee settings.
+
+Present the native estimate choices and exact existing labels beside the Linear
+starter recommendations, and show the four priority mappings as fixed.
+Recommend a workspace-scoped readiness group named `readiness` with kebab-case
+children `needs-discovery`, `needs-planning`, and `ready`. Offer the team's
+members as default-assignee candidates and store the chosen member's stable
+Linear user ID. The operator chooses every mapping except priority. Do not
+change the team's native priority or estimation scheme.
+
+The four scores are labels in single-select label groups, one group per
+factor. Recommend workspace-scoped groups named `impact`, `confidence`,
+`verification-effort`, and `undo-cost`, each with three children named for the
+factor and the score: `impact-1` to `impact-3`, `confidence-1` to
+`confidence-3`, `verification-effort-1` to `verification-effort-3`, and
+`undo-cost-1` to `undo-cost-3`. Name each child for its factor because
+Linear's GitHub sync mirrors a child under its own name with no group prefix.
+Offer existing single-select groups with three children beside these
+recommendations.
+
+When a chosen general label is absent, offer a flat label create. When a chosen
+readiness or score child is absent, offer the group-then-children recipe: create
+the workspace group if it is absent, then any missing children, then rediscover
+each chosen child. Apply a child, never the parent. Store a unique child name,
+or the label UUID when the name is not unique. Missing group-create must not
+block creating a general label such as `bug`.
+
+Offer any of those creates only if the selected transport exposes an exact
+label-create and label-readback path. For connected MCP this is normally the
+runtime `save_issue_label` and `list_issue_labels` tools; for Orca it must
+come from the loaded guide. The current MCP schema creates a workspace group
+with `isGroup` true, `groupType` `singleSelect`, and no `teamId`, and children
+with `parent` set to the group name and no `teamId`. The current Orca guide
+has no label create, so a session on that transport that still needs one
+stops as the next sentences describe. If the runtime schema differs, follow it.
+If the approved batch still needs a workspace-scoped group or child create the
+selected path cannot express, stop setup without a config write and name the
+missing capability. Do not fall through to Orca.
+
+The current MCP schema can update, retire, and restore a label but cannot
+delete one, and setup never changes an existing label. Preview the exact
+provider effects, apply each approved create once, then rediscover every chosen
+child by exact stable identity before rendering the config. A failed or partial
+create uses the shared first-stop: later effects stay unapplied, config is not
+written, and leftover labels are manual cleanup.

@@ -14,24 +14,26 @@ Each proposed action states in plain language:
 - the exact record, file, event, thread, or other target;
 - repository visibility when a repository is involved;
 - the complete proposed content or precise effect;
-- the supporting evidence and why the change matters now.
+- the supporting evidence and why the change matters now;
+- coverage limits, uncertainty, and any dependency on earlier actions; and
+- the completion check (`Done when:` or `Verified when:`).
 
 Approval applies only to that displayed combination. Number actions within the
 current bundle so the user can approve, edit, defer, or skip them independently.
 An edit creates a revised proposal that needs approval; approval of one action
 does not authorize another.
 
-Reply text written in the conversation is not a Gmail draft and creates no
-external change. Creating or updating a Gmail draft is its own proposed
-external action with an acting identity, thread, recipients, and complete
-content. Sending that draft or any message is a separate action requiring
-separate approval and a verified send interface. Make destructive calendar
-changes and production interventions manual unless the user explicitly approves
-a bounded action and the active interface can re-read, apply, and verify it.
-For repository work, show the repository visibility, exact target, and proposed
-content before approval. For any other source, propose only a write verb
-supported by its current interface. Label an unsupported write as manual
-instead of implying it can be applied.
+Reply text written in the conversation is not an external email draft and
+creates no external change. Creating or updating a draft in an email or
+messaging system is its own proposed external action with an acting identity,
+thread, recipients, and complete content. Sending that draft or any message is
+a separate action requiring separate approval and a verified send interface. Make
+destructive calendar changes and production interventions manual unless the
+user explicitly approves a bounded action and the active interface can re-read,
+apply, and verify it. For repository work, show the repository visibility,
+exact target, and proposed content before approval. For any other source,
+propose only a write verb supported by its current interface. Label an
+unsupported write as manual instead of implying it can be applied.
 
 Completion: approval identifies one exact effect, identity, and target without
 relying on conversational inference.
@@ -49,23 +51,24 @@ Immediately before each approved action:
    refused, or returns nothing you can compare is not a completed re-read;
    step 3 applies.
 2. Revalidate the acting identity, destination or recipients, exact target,
-   visibility when relevant, approved content or effect, and closure evidence
-   against the exact approved proposal. For a create, confirm the proposed
-   target's identity and exact effect within that destination, parent, or
-   thread.
-3. If any approved action field, including closure evidence, changed, cannot
-   be distinguished, or became ambiguous, stop and present a revised proposal
-   for new approval. Never redirect an approval to a different account or
-   target. Leave the action unapplied until the revised proposal is approved.
+   visibility when relevant, approved content or effect, dependencies, and
+   completion check (`Done when:` or `Verified when:`) against the exact
+   approved proposal. For a create, confirm the proposed target's identity and
+   exact effect within that destination, parent, or thread.
+3. If any approved action field, including its completion check, changed,
+   cannot be distinguished, or became ambiguous, stop and present a revised
+   proposal for new approval. Never redirect an approval to a different account
+   or target. Leave the action unapplied until the revised proposal is
+   approved.
 4. If readback shows the approved effect already exists, report **already
    satisfied** and do not duplicate it.
 5. Otherwise apply the approved action once through the supported interface.
 6. Read the created or updated target again through that interface.
 
 Report each action's current basis, exact approved effect, and whether its
-approved closure evidence was observed. An immediate mutation result is not
-completion of its outcome: report closure only when observed evidence meets
-the approved closure evidence.
+approved completion check (`Done when:` or `Verified when:`) was observed. An
+immediate mutation result is not completion of its outcome: report closure only
+when observed evidence meets that approved check.
 
 Classify each action independently:
 
@@ -85,9 +88,10 @@ without its stable identity the result stays **Indeterminate**.
 
 Mixed outcomes do not roll back or conceal successful independent actions.
 Report what changed and what remains unapplied. A **Failed**, **Indeterminate**,
-or **Manual** outcome blocks only its own action. An **Indeterminate** action
-stops and asks as classified above while the remaining actions and the rest of
-the mode continue, and the closing recap names every unapplied action.
+or **Manual** outcome blocks only its own action (and any action that depends
+on it). An **Indeterminate** action stops and asks as classified above while
+remaining independent actions and the rest of the mode continue, and the
+closing recap names every unapplied action.
 
 Completion: every action has a classified outcome, each attempted supported
 write has a readback-backed result or an indeterminate stop, and no action was

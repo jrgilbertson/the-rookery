@@ -26,7 +26,7 @@ Relationship effects use the current chief-of-staff bundle and its next action
 numbers. Keep a contact-date change, Person-note prose, dated relationship
 Task, conversation-only proposed communication text, and any other destination
 effect independently approvable. Proposed communication text stays in the
-conversation for review; do not create or edit a Gmail draft or another
+conversation for review; do not create or edit an email draft or any other
 external communication artifact. Do not emit a nested CRM bundle or a
 relationship-specific run ending. No relationship write occurs while
 preparing the bundle.

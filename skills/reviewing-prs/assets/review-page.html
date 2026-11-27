@@ -395,7 +395,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const themeButton = document.getElementById("theme");
   const media = window.matchMedia("(prefers-color-scheme: dark)");
-  if (["light", "dark"].includes(pref("theme"))) root.dataset.theme = pref("theme");
+  const keptTheme = pref("theme");
+  if (keptTheme === "light" || keptTheme === "dark") root.dataset.theme = keptTheme;
   const effectiveTheme = () => root.dataset.theme || (media.matches ? "dark" : "light");
   const labelTheme = () => {
     const next = effectiveTheme() === "dark" ? "light" : "dark";
@@ -452,12 +453,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     return parent;
   };
   const hidden = (text) => el("span", "vh", text);
-  // Seals, rings, and route dots repeat what the words beside them say.
-  const mark = (cls) => {
-    const node = el("span", cls);
+  // Drawn for the eye only: the words beside it, visible or visually hidden, say the same to a screen reader.
+  const unspoken = (node) => {
     node.setAttribute("aria-hidden", "true");
     return node;
   };
+  // Seals, rings, and route dots repeat what the words beside them say.
+  const mark = (cls) => unspoken(el("span", cls));
   const chip = (cls, text) => el("span", cls ? "chip " + cls : "chip", text);
   const str = (value) => (typeof value === "string" ? value.trim() : "");
   const list = (value) => (Array.isArray(value) ? value : []);
@@ -700,9 +702,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     for (const item of items) {
       const row = el("li", "orow");
       item.row = row;
-      const figure = el("div", "vu", item.product ?? "?");
-      figure.append(el("small", "", "V × U"));
-      figure.setAttribute("aria-hidden", "true");
+      const figure = unspoken(add(el("div", "vu", item.product ?? "?"), el("small", "", "V × U")));
       const vu = add(el("div"), figure, hidden(vuWords(item)));
       const name = el("div");
       item.overviewState = el("span", "state");
@@ -1114,8 +1114,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   };
   const FACTOR_WORDS = { impact: "Impact", confidence: "Confidence", verify: "Verification effort", undo: "Undo cost" };
   const pill = (name, shown, spoken, three) => {
-    const face = add(el("span", "", name + " "), el("b", "", shown));
-    face.setAttribute("aria-hidden", "true");
+    const face = unspoken(add(el("span", "", name + " "), el("b", "", shown)));
     return add(el("span", three ? "pill three" : "pill"), face, hidden(spoken));
   };
   const choose = (item, key) => {
@@ -1183,16 +1182,12 @@ main { padding: 40px 0 80px; min-width: 0; }
       item.toggle.append(hidden(" for " + label(pr)));
       item.toggle.setAttribute("aria-controls", verdict.id + " " + body.id);
       item.toggle.addEventListener("click", () => setCollapsed(item, !item.collapsed));
-      item.collapsed = true;
-      for (const part of item.folded) part.hidden = true;
-      item.toggle.setAttribute("aria-expanded", "false");
+      setCollapsed(item, true);
     }
     add(head, title, item.toggle, verdict);
     // The risk the Overview showed stays in view where the verdict is chosen.
     const meta = el("div", "block-meta");
-    const vuFace = el("span", "", "V × U " + (item.product ?? "?"));
-    vuFace.setAttribute("aria-hidden", "true");
-    add(meta, add(chip("vu-chip"), vuFace, hidden(vuWords(item))), item.badge);
+    add(meta, add(chip("vu-chip"), unspoken(el("span", "", "V × U " + (item.product ?? "?"))), hidden(vuWords(item))), item.badge);
     if (item.sensitiveKinds.length) meta.append(add(chip("alert"), mark("seal"), document.createTextNode("Sensitive kind: " + item.sensitiveKinds.join(", "))));
     add(meta, ...readiness(item));
     const facts = el("span", "meta", [label(pr), str(pr.owner) || "No owner", sizeText(pr), str(pr.status)].filter(Boolean).join(" · ") + " · ");
@@ -1478,7 +1473,6 @@ main { padding: 40px 0 80px; min-width: 0; }
   const MOVES = {
     j: (here) => go(visible[Math.min(visible.indexOf(here) + 1, visible.length - 1)]),
     k: (here) => go(visible[Math.max(visible.indexOf(here) - 1, 0)]),
-    // With nothing left to decide, n goes on to the verdicts.
     n: (here) => {
       const next = nextUndecided(here);
       if (next) return go(next);
@@ -1493,7 +1487,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     const verdict = Object.hasOwn(VERDICT_KEYS, event.key) ? VERDICT_KEYS[event.key] : null;
     if (!move && !verdict) return;
     const target = event.target instanceof Element ? event.target : null;
-    // No key acts while the operator is typing or choosing from a list.
     if (target && target.closest('input:not([type="checkbox"]), textarea, select, [contenteditable]')) return;
     if (move) {
       event.preventDefault();

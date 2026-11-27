@@ -440,14 +440,25 @@ def check_guidance_copy(temporary_root: Path) -> None:
     require(sync("--check").returncode == 0,
             "branch that does not edit guidance was judged by its stale HEAD copy")
     source.write_text("newer guidance\n", encoding="utf-8")
-    require(sync("--check").returncode != 0, "stale default-branch guidance was accepted")
+    stale_default = sync("--check")
+    require(stale_default.returncode != 0, "stale default-branch guidance was accepted")
+    require(
+        "do not copy" in stale_default.stderr.lower()
+        and "run scripts/sync-global-agents.sh and commit" not in stale_default.stderr,
+        f"unedited branch failure message did not warn against copying guidance in: {stale_default.stderr}",
+    )
 
     # A branch that edits the copy is judged by what it pushes.
     destination.write_bytes(source.read_bytes())
     git("commit", "-qam", "Edit guidance on branch")
     require(sync("--check").returncode == 0, "branch with fresh edited guidance was rejected")
     source.write_text("newest guidance\n", encoding="utf-8")
-    require(sync("--check").returncode != 0, "branch with stale edited guidance was accepted")
+    stale_edited = sync("--check")
+    require(stale_edited.returncode != 0, "branch with stale edited guidance was accepted")
+    require(
+        "run scripts/sync-global-agents.sh and commit" in stale_edited.stderr,
+        f"edited branch failure message did not tell it to sync and commit: {stale_edited.stderr}",
+    )
     source.write_bytes(subprocess.run(["git", "show", "origin/main:GLOBAL-AGENTS.md"], cwd=repository,
                                       check=True, capture_output=True).stdout)
     require(sync("--check").returncode != 0,

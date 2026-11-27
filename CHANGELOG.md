@@ -134,6 +134,14 @@ looked" surface. GitHub Releases mirror its entries.
 - `reviewing-prs` classifies a trusted-owner pull request with finished
   checks and no hold as in flight, and counts a `Fleet: hold` receipt as
   held.
+- `SKILLS.md` now instructs skill authors to ask for approval for authoring's
+  model test runs when the work starts, or name the approval in the brief, and
+  to stop and ask rather than skip the runs silently when approval is missing.
+- `WORKFLOWS.md` and `scripts/sync-global-agents.sh` state that global-guidance
+  changes ship as their own small PR right away, never inside other work. When
+  `scripts/sync-global-agents.sh --check` fails on a branch that does not edit
+  `GLOBAL-AGENTS.md`, its message now tells that branch not to copy the change
+  in, without changing when the check passes or fails.
 - Improve audit checks the repository's tracker read-only with
   `managing-issues` before saving its report and names each covering open issue
   beside its finding, reporting a coverage gap if the tracker is unreachable or
@@ -718,6 +726,13 @@ looked" surface. GitHub Releases mirror its entries.
 - The review page says so when a note is typed with no Verdict chosen,
   instead of dropping it silently, and no longer scrolls sideways on a
   narrow or zoomed screen.
+- `repo-captain`'s wake timer no longer leaves the Captain looking busy in
+  Orca between wakes. Orca keeps a session `working` while its harness
+  reports unfinished timer work, so operator messages waited for Steer, which
+  could cancel the timer. Antigravity now arms a daemon cron. Claude Code and
+  Codex, whose own timers all count as unfinished work, run a detached loop
+  that types the wake prompt into the Captain's own terminal. The timer is
+  recurring, so each wake checks it is still running instead of re-arming it.
 - The `reviewing-prs` review page no longer shows a V × U of 9 for a pull
   request missing a score. It still holds that pull request at the top of the
   held group, shows the real verification effort × undo cost or `?`, and says

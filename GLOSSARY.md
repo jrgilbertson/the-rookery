@@ -167,13 +167,13 @@ that does most of the work.
 ### Flagship
 
 The model a vendor recommends for its hardest work. It is the starting point
-for ROUTING.md's Team Lead row.
+for ROUTING.md's Captain row.
 
 ### Rationed
 
 A model that a vendor's plan limits more tightly than its others, through a
 cap, a faster draw on the plan's allowance, or billing to credits. A rationed
-model never takes another model's place in the Executor or Team Lead row, even
+model never takes another model's place in the Executor or Captain row, even
 when it scores higher for less.
 
 ### Role Input
@@ -187,17 +187,7 @@ Each one names its source and the date it was read.
 A written departure from the base in a role's recommendation. It says what
 changed from what, which role input justifies it, and what would reverse it.
 
-## Coordinating work
-
-![Three small rooks, the workers, launch paper boats down a channel. Huginn, the Team lead, lets routine boats drift on to the pond, where routine work merges, and pulls a lock gate shut on one flagged boat beside a bell, held for the operator.](docs/assets/coordinating-work.webp)
-
-### Team Lead
-
-The agent session that owns a piece of work and answers for its result. It
-thinks through the hard parts, hands the rest to worker sessions, and is
-accountable for the quality and output of every worker. In a coordinated
-batch it is the session the operator talks to. Orca's guides call it the
-coordinator, and older records call it the Coordinator.
+## Fleet coordination
 
 ### Captain
 
@@ -205,35 +195,27 @@ The one persistent session per repository that plans with the operator,
 dispatches Executors directly or through Domain Leads, and is the only session
 that merges in that repository. It acts only on the operator's recorded words
 and on live facts it rereads at every wake, and it never blocks on the
-operator. Do not call it the Coordinator.
+operator. Do not call it the Coordinator or Team lead.
 
 ### Domain Lead
 
-A session a Captain starts to run one group of related work, such as a Design
-Lead for UI work that shares a design system. It briefs its own Executors,
-never merges, and hands ready and held pull requests up to the Captain. It
-exists only while it has active work.
-
-### Coordinated Batch
-
-One Team lead, its task workers, and its record, working the issues and epics
-the operator handed it. An epic brings the child issues it had when it was
-handed over. The operator adds to the scope by telling the Team lead, which
-records the operator's words, or by approving an issue the Team lead drafted.
-The Team lead dispatches nothing outside that scope. The batch ends when its
-scope is done or the operator ends it.
+An optional session a Captain starts dynamically to run one group of related
+concurrent work, such as a Design Lead for two or more concurrent UI leaves
+sharing a design system or a Domain Lead for three or more concurrent leaves in
+one domain or seam. It briefs its own Executors, never merges, hands ready and
+held pull requests up to the Captain, and retires once it has no active work.
 
 ### Merge Approval
 
-What the operator has approved a Team lead or a Captain to merge without
-asking again. For a Team lead, it starts as the merge bar and the held changes
-shown in the setup proposal for one coordinated batch, applied to that batch's
-scope. For a Captain, it is the approval recorded in its charter for its
-repository's approved scope. Either way, it also includes any held change the
-operator pre-authorized under a stated bar, and any change the operator made,
-in recorded words, to the scope, the merge bar, or the held changes. Only the
-operator's recorded approval creates or changes it. It
-covers merging and nothing else.
+What the operator has approved a [Captain](#captain) to merge without asking
+again. It is recorded in the Captain's charter for its repository's approved
+rolling scope: the work the operator handed over in recorded words, plus any
+routine ready leaves assigned to the operator that the Captain pulls forward
+when approved scope runs dry (unless told to stop). It also includes any
+per-issue held-change pre-authorization the operator recorded under a stated
+bar, and any change the operator made, in recorded words, to the scope, the
+merge bar, or the held changes. Only the operator's recorded approval creates
+or changes it. It covers merging and nothing else.
 
 ### Held Changes
 

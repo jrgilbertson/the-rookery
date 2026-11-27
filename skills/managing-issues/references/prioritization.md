@@ -26,10 +26,8 @@ leverage factors (each 1 to 3).
 
 - On an update, keep each stored score unless the request or evidence new in
   this update changes it, and fill any absent score.
-- Callers with restricted score authority follow Step 3 of `SKILL.md`: a
-  coordinated batch lists missing scores in the preview instead of filling
-  them, and a Captain writes only the score edits its standing instruction
-  permits.
+- A Captain with restricted score authority follows Step 3 of `SKILL.md` and
+  writes only the score edits its standing instruction permits.
 - Score a leaf that still needs discovery or planning on what is known now;
   planning revises the scores later.
 - Store the four scores in the canonical tracker's mapped score fields and

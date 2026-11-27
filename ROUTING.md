@@ -4,9 +4,9 @@ Choose a model and how long it should think based on the work you need done. Use
 
 ## What each role needs
 
-### Team lead
+### Captain
 
-Own the outcome. Decide what needs doing, in what order, and how we'll know it's finished. Think through the hard parts yourself, hand separable work to Executors, and answer for the quality of what they produce. A session with no workers that plans or works a hard problem uses this row too. For a batch that runs unattended, [`coordinating-work`](skills/coordinating-work/SKILL.md) sets up the team lead and its task workers.
+Act as the product, design, and engineering player-coach. Own the outcome: decide what needs doing, in what order, and how we'll know it's finished. Think through the hard parts yourself, hand separable work to Executors or Domain Leads, and answer for the quality of what they produce. A solo session with no workers that plans or works a hard problem uses this row too. For a persistent per-repository fleet in Orca, [`repo-captain`](skills/repo-captain/SKILL.md) runs the Captain and its workers.
 
 ### Executor
 
@@ -24,7 +24,7 @@ Draft or edit prose that people will read, such as documentation, posts, and mes
 
 **Last reviewed: 2026-11-25**
 
-![Recommendations reviewed 2026-11-25. Team lead: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at high.](docs/assets/routing-table.svg)
+![Recommendations reviewed 2026-11-25. Captain: Gemini 4 Neon (`gemini-4-neon`) at high, then Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high. Executor: Claude Opus 5.5 (`claude-opus-5-5`) at high, marked as my judgment, then Gemini 4 Neon (`gemini-4-neon`) at high, marked as my judgment, then GPT-6.2 Sol (`gpt-6.2-sol`) at medium. Design/taste: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then GPT-6.2 Astra (`gpt-6.2-astra`) at high, then Gemini 4 Neon (`gemini-4-neon`) at high. Writing: Claude Fable 5.2 (`claude-fable-5-2`) at medium, then Gemini 4 Neon (`gemini-4-neon`) at high, then GPT-6.2 Astra (`gpt-6.2-astra`) at high.](docs/assets/routing-table.svg)
 
 Each row names one model from each of three providers, best first, with its effort setting, so take the first one you can run. The same picks, with model ids for tools and agents, are in [`recommendations.csv`](docs/routing/recommendations.csv), and the figure is drawn from that file.
 
@@ -65,7 +65,7 @@ This chart widens the view beyond the four providers to every maker the suites s
 | Opus 5.5 | high | 52.6 | 1.26 | 5 of 5 |
 | Grok 4.7 | medium | 46.2 | 1.66 | 3 of 5 |
 
-#### Team lead
+#### Captain
 
 The row starts from each vendor's flagship and goes by quality. Gemini 4 Neon at high gives Google's slot a better sibling: it beats Carbon at high on the suites that tested both, 59.9 to 58.1, for about two thirds of the cost. By quality the row reads Neon (55.2), Fable 5.2 at medium (54.8), then GPT-6.2 Astra at high (53.9). AA-Briefcase, the closest measure of leading work, puts Neon at high (1631) and Fable at medium (1623) within each other's intervals of about 10 points, and Astra at high lower (1570), so it agrees with the order.
 
@@ -124,7 +124,7 @@ Start with the effort setting in the table and change it when the task calls for
 The method runs in four steps, from what is measured to what is judged. A refresh covers every row unless I name specific roles, and it considers every current model from the four providers.
 
 1. **The base.** Five suites from five operators measure quality and cost at several effort settings, across coding and general work. A script puts them on one scale, finds each model's best-value effort, and lists the models in order.
-2. **Role inputs.** Each role also has its own sources. Vendor guidance sets where the Executor and Team lead rows start, related benchmarks check those rows, and preference sources score Design/taste and Writing. I record each with its source and the date I read it.
+2. **Role inputs.** Each role also has its own sources. Vendor guidance sets where the Executor and Captain rows start, related benchmarks check those rows, and preference sources score Design/taste and Writing. I record each with its source and the date I read it.
 3. **The practitioner view.** I scan the last 30 days of public posts for what people who use these models report. A report doesn't change a row by itself. It informs my judgment, and an adjustment that rests on one says so.
 4. **My judgment.** I make the final call. Suites can be gamed or badly built, and my own use is evidence. My judgment can override the measurements. When it does, the cell carries an asterisk (\*), and the reasons say what would change my mind.
 
@@ -136,10 +136,10 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 - **Standardize every source.** Each suite and preference source is put on its own scale over the current charted models it tested: 50 is their average and 10 points is one standard deviation. A setting's score averages the sources that tested that setting, and no source is a reference for the others.
 - **A point of quality is worth up to 20% more cost.** This one figure sets both the best-value effort and the price order. A point is a tenth of a standard deviation among the charted settings.
 - **The best-value effort is the last step worth its extra cost.** First drop any effort that a cheaper effort of the same model beats. Then climb from the cheapest and stop before the first step that costs more than 20% extra for each added point. Each model is listed at its best-value effort unless a rule below names another.
-- **The Executor row starts from each vendor's everyday model, and the Team lead row from its flagship.** Vendors name these in their own guidance. When a vendor's sources disagree, the everyday model is the one its own coding tool runs by default to do the work.
+- **The Executor row starts from each vendor's everyday model, and the Captain row from its flagship.** Vendors name these in their own guidance. When a vendor's sources disagree, the everyday model is the one its own coding tool runs by default to do the work.
 - **A better sibling takes the slot.** If another current model from the same vendor scores higher for less at any effort, compared on the base suites that tested both settings, its cheapest such setting earns the slot. The sibling is listed at that setting or at its own best-value effort, whichever is higher. Comparing only shared suites keeps a model from losing ground for having been tested more widely. A rationed model never takes a slot this way. A vendor rations a model when its plans cap the model's use, count it faster against the allowance, or bill it to credits.
 - **The Executor row follows the price order.** A setting at least as good for no more cost goes first. Otherwise the better-scoring setting goes first only when it costs at most 20% more for each point it adds. Past that, the cheaper one goes first. If every remaining setting is beaten by another, the best-scoring one goes next. The base table uses the same order.
-- **The Team lead row goes by quality.** The higher combined score goes first, and the cheaper setting breaks a tie. A lead's decisions carry the outcome, so cost only sets each model's effort and decides whether a sibling takes a slot.
+- **The Captain row goes by quality.** The higher combined score goes first, and the cheaper setting breaks a tie. A Captain's decisions carry the outcome, so cost only sets each model's effort and decides whether a sibling takes a slot.
 - **Preference rows weigh their sources equally.** Design/taste and Writing each have their own sources, since cost doesn't measure taste, and each operator counts once. Each source is standardized across the current models it lists, taking a model's best score at any effort, and a model's score is the mean over the sources that list it. Each provider's best-scoring model takes its slot, best first, at its best-value effort.
 - **Three providers per row, one model each.** A row takes the first three providers in its order.
 
@@ -152,10 +152,10 @@ Each change to a row is an **adjustment**: one line that says from what, to what
 | [CursorBench](https://cursor.com/cursorbench) | Cursor | The base | Measured | Ambiguous multi-file coding tasks, with a score and cost per task. One of the five base suites; it tests no current OpenAI model. |
 | [AA Index without coding](https://artificialanalysis.ai/methodology/intelligence-benchmarking) | Artificial Analysis | The base | Measured | The AA Intelligence Index without its Coding category: seven evaluations of knowledge work, science, and general reasoning, with cost per task. It leaves out FrontierCode-AA 2.0, which runs FrontierCode's tasks, and Terminal-Bench 4.1, which the Vals Index also contains. One of the five base suites. |
 | [Vals Index](https://www.vals.ai/benchmarks/vals_index) | Vals AI | The base | Measured | A composite of eight evaluations, including legal, tax, and finance work, with cost per test. One of the five base suites, read from its per-effort results and, for models without them, its leaderboard. |
-| Each vendor's model guidance | Anthropic, OpenAI, Google, xAI | Executor and Team lead starting models | Vendor guidance | Which model each vendor recommends for everyday work and for its hardest work, and which it rations. Sets the model each of those rows starts from. |
+| Each vendor's model guidance | Anthropic, OpenAI, Google, xAI | Executor and Captain starting models | Vendor guidance | Which model each vendor recommends for everyday work and for its hardest work, and which it rations. Sets the model each of those rows starts from. |
 | [AA Coding Agent Index](https://artificialanalysis.ai/agents/coding) | Artificial Analysis | Executor check | Measured | Each model in its maker's coding tool, scored on three coding suites with cost and time. Read beside the base when judging the Executor row. |
 | [Vals Terminal-Bench](https://www.vals.ai/benchmarks/terminal-bench-4) | Vals AI | Executor check | Measured | Terminal tasks with every model in one shared harness, with a separate by-effort chart. Read beside the base when judging the Executor row. |
-| [AA-Briefcase](https://artificialanalysis.ai/evaluations/aa-briefcase) | Artificial Analysis | Team lead check | Proxy | Elo on long, multi-step knowledge-work tasks, the closest published match to leading work. Read beside the base when judging the Team lead row. |
+| [AA-Briefcase](https://artificialanalysis.ai/evaluations/aa-briefcase) | Artificial Analysis | Captain check | Proxy | Elo on long, multi-step knowledge-work tasks, the closest published match to leading work. Read beside the base when judging the Captain row. |
 | [Arena WebDev](https://arena.ai/leaderboard/code/webdev) | Arena | Design/taste | Preference | People vote between finished web apps. One of four equal sources for Design/taste. |
 | [Design Arena](https://www.designarena.ai/leaderboard) | Design Arena | Design/taste | Preference | People vote between generated interfaces, read from its overall agentic board. One of four equal sources for Design/taste. |
 | [21st.dev Design System Bench](https://21st.dev/benchmarks/leaderboard) | 21st.dev | Design/taste | Measured | Agents build interfaces in a real repository, scored on how well they use its design system. One of four equal sources for Design/taste. |
@@ -238,9 +238,9 @@ Everything the script needs is in [`docs/routing/`](docs/routing/). `results.csv
 3. **Re-read each vendor's model guidance.** Update `chart.json` with each vendor's everyday model, flagship, and rationed models, and record the sources in `role-inputs.csv`. The script looks for a better sibling only among the models `chart.json` lists, so list any current model that could beat a vendor's everyday model or flagship.
 4. **Check names and effort labels.** If a suite names a model differently, add a row to `models.csv` that points the new name at the model, once the sources confirm they are the same release. Give a new model its own row with its maker. When a new release replaces an older one in its family, set the older one's status to superseded. If an import stops on an effort label, add the label to `efforts.csv`, or leave those rows out when the label has no named equivalent. Then copy the report's `names` section into [Names and effort labels](#names-and-effort-labels).
 5. **Run `changes`** to see what moved since the previous read.
-6. **Run the report.** Its `candidates` section lists the charted models at their best-value efforts in order. Its `rows` section builds the Executor and Team lead rows, and its `preference` section scores the Design/taste and Writing rows.
+6. **Run the report.** Its `candidates` section lists the charted models at their best-value efforts in order. Its `rows` section builds the Executor and Captain rows, and its `preference` section scores the Design/taste and Writing rows.
 7. **Regenerate the charts** and look at each one. Run it again after the rows are final so the recommendations figure matches `recommendations.csv`.
-8. **Write the rows** in `recommendations.csv`. Take the Executor and Team lead rows from the report's `rows` section, and Design/taste and Writing from its `preference` section. Apply any adjustment a role input supports, and write each one as a line. The routing checks fail when a pick names a different model or effort from the report, unless its `judgment` column says `yes`.
+8. **Write the rows** in `recommendations.csv`. Take the Executor and Captain rows from the report's `rows` section, and Design/taste and Writing from its `preference` section. Apply any adjustment a role input supports, and write each one as a line. The routing checks fail when a pick names a different model or effort from the report, unless its `judgment` column says `yes`.
 9. **Scan the last 30 days** for what practitioners report about the settings in the rows. Record what bears on a row in `role-inputs.csv` as a report.
 10. **Apply judgment.** Change any pick I disagree with, set its `judgment` column to `yes`, and write the adjustment with what would change my mind.
 11. **Update the page:** the recommendations figure's alt text, which must name every pick, the base table, each role's evidence tables, the chart alt text, the revisit conditions, and the review date.

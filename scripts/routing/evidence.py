@@ -5,7 +5,7 @@ Commands:
   report --data DIR [--as-of YYYY-MM-DD]
                       Print each suite's figures, the combined score, each model's best-value effort, the
                       charted models at those efforts in order, the Executor and
-                      Team lead rows built from each vendor's own guidance, and
+                      Captain rows built from each vendor's own guidance, and
                       the preference rows, each scored on its sources weighted
                       equally, from the latest read of each suite. --as-of
                       ignores later reads. Every section is tab-separated
@@ -52,7 +52,7 @@ MODEL_COLUMNS = ("name", "model", "maker", "status", "note")
 EFFORT_COLUMNS = ("label", "effort", "sources")
 # The most extra cost, in percent, worth paying for each added point of combined quality.
 BEST_VALUE_STEP_LIMIT = 20.0
-VENDOR_ROLES = (("Executor", "everyday"), ("Team lead", "flagship"))
+VENDOR_ROLES = (("Executor", "everyday"), ("Captain", "flagship"))
 
 
 def escape(text: str) -> str:
@@ -463,12 +463,12 @@ def vendor_rows(data: Data, combined: list[Combined], skipped: list[str] | None 
     """Build the rows that start from each vendor's own guidance, as (role, setting, replaced model).
 
     Each vendor contributes its everyday model to the Executor row and its
-    flagship to the Team lead row, at the model's best-value effort. If another current,
+    flagship to the Captain row, at the model's best-value effort. If another current,
     unrationed model from the same vendor scores higher for less at any
     effort, on the base suites that tested both settings, the cheapest such
     setting earns the slot, and the sibling is listed at that setting or at its
     own best-value effort, whichever is higher. The Executor row
-    follows the 20% price order; the Team lead row goes by combined quality,
+    follows the 20% price order; the Captain row goes by combined quality,
     the cheaper setting first on a tie.
     """
     providers = {entry["model"]: entry["provider"] for entry in data.models if entry["status"] == "current"}

@@ -105,7 +105,6 @@ components:
     width: "240px"
   chip:
     textColor: "{colors.drafting-graphite}"
-    typography: "{typography.label}"
     rounded: "{rounded.card}"
     padding: "1px 7px"
   factor-pill:
@@ -123,7 +122,6 @@ components:
   dispatch-note:
     backgroundColor: "{colors.dispatch-paper}"
     textColor: "{colors.raven-navy}"
-    typography: "{typography.body}"
     padding: "8px 12px"
   seal:
     backgroundColor: "{colors.signal-orange}"

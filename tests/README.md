@@ -28,6 +28,9 @@ The repository-integrity tests also exercise malformed packages and unsafe
 paths. The routing checks run the shipped
 [routing evidence script](../scripts/routing/evidence.py) against synthetic
 benchmark data.
+The [Skill Eval conformance checks](evals/README.md) run every
+`evals/*/check-fixtures.mjs` offline and verify that key Promptfoo template
+invariants fail when deliberately broken.
 
 Repository text checks also require the "Rank by leverage" section in
 `GLOBAL-AGENTS.md` and in the `managing-issues` skill to match the one in

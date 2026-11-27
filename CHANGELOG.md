@@ -13,6 +13,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- A canonical Claude-only Promptfoo Skill Eval starter template under
+  `evals/_template/` (`anthropic:claude-agent-sdk` with
+  `apiKeyRequired: false`, `Write`/`Edit` offered and denied in `dontAsk`
+  mode, no `Bash`, no Git repo, in-config auto-memory disabling, per-run
+  timeout, isolated temporary `HOME`, committed `package-lock.json` installed
+  with `npm ci`, and offline `check-fixtures.mjs`). `SKILLS.md` now documents
+  this consolidated setup and optional additive `llm-rubric` judging,
+  `evals/active-learning/` is hardened to match it, and the repository
+  verification gate (`tests/evals/fixtures/run-eval-checks.py`) automatically
+  runs every `evals/*/check-fixtures.mjs` offline with negative mutation tests.
 - `repo-captain`, a skill that runs one persistent Captain per repository
   in Orca. It plans with the operator, dispatches Executors directly or
   through Domain Leads, serializes overlapping files and database

@@ -15,6 +15,6 @@
   {"query": "update issue 545: raise the undo cost to 3 and tighten the verification section", "should_trigger": false},
   {"query": "create an issue for the flaky invoice export test and make it a sub-issue of the billing epic", "should_trigger": false},
   {"query": "CI is red on #88. fix it and keep an eye on it until it goes green", "should_trigger": false},
-  {"query": "spawn a codex worker in a new worktree to try the parquet approach and report back", "should_trigger": false},
+  {"query": "spawn a worker in a new worktree to try the parquet approach and report back", "should_trigger": false},
   {"query": "address the review comments on PR 212 and resolve the threads when you're done", "should_trigger": false}
 ]

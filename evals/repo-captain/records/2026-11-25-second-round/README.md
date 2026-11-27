@@ -32,10 +32,10 @@ use it.
 
 | Case | `repo-captain` | Baseline | Output tokens, skill / Baseline |
 | --- | --- | --- | ---: |
-| [coupled-plan-versus-uniform-backlog](../../cases/coupled-plan-versus-uniform-backlog/case.yaml) | 4/5 | first round: 2/5, 2 unmeasured | 17,459 / – |
-| [held-pr-keeps-wake-and-calm-alert](../../cases/held-pr-keeps-wake-and-calm-alert/case.yaml) | 3/5, 1 unmeasured | first round: 1/5 | 8,648 / – |
-| [domain-lead-custody-and-self-merge](../../cases/domain-lead-custody-and-self-merge/case.yaml) | 3/4 | 0/4 | 17,171 / 11,060 |
-| [overlap-and-one-migration](../../cases/overlap-and-one-migration/case.yaml) | 3/4 | 0/4, 2 unmeasured | 23,169 / 23,730 |
+| [coupled-plan-versus-uniform-backlog](../../cases/coupled-plan-versus-uniform-backlog/README.md) | 4/5 | first round: 2/5, 2 unmeasured | 17,459 / – |
+| [held-pr-keeps-wake-and-calm-alert](../../cases/held-pr-keeps-wake-and-calm-alert/README.md) | 3/5, 1 unmeasured | first round: 1/5 | 8,648 / – |
+| [domain-lead-custody-and-self-merge](../../cases/domain-lead-custody-and-self-merge/README.md) | 3/4 | 0/4 | 17,171 / 11,060 |
+| [overlap-and-one-migration](../../cases/overlap-and-one-migration/README.md) | 3/4 | 0/4, 2 unmeasured | 23,169 / 23,730 |
 
 The six runs used 101,237 output tokens, 5,757,905 cache-read tokens, and
 346,096 cache-write tokens over 1,389 seconds. The unrecorded attempt used

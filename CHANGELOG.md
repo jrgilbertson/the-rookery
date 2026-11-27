@@ -128,6 +128,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Port `evals/repo-captain/` onto the canonical Claude-only Promptfoo Skill
+  Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
+  `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Git repo,
+  in-config auto-memory disabling, per-run timeout, isolated temporary `HOME`,
+  committed `package-lock.json` installed via `npm ci`, and offline
+  `check-fixtures.mjs`). The eight Eval Cases now build plain synthetic
+  snapshot workspaces through `evals/repo-captain/fixture.py` against a
+  no-skill Baseline (removing the eval dependency on `coordinating-work`),
+  retiring `evals/repo-captain/stand-ins/` and
+  `tests/repo-captain/fixtures/run-standin-checks.py`.
 - `evals/managing-issues/` now uses the canonical Claude-only Promptfoo Skill
   Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
   `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Codex or

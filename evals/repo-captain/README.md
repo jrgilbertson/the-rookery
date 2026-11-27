@@ -1,10 +1,12 @@
 # Repo Captain Skill Eval
 
-Each synthetic Eval Case runs against the `coordinating-work` Baseline and
-against the same revision of `repo-captain`, in Claude and in Codex. Every arm
-talks to the same synthetic GitHub, Orca, and git: one invented repository
-(`acme/ledger-app`), an invented operator (`dana-acme`), and invented issues,
-pull requests, and workers. No arm has real GitHub or Orca access.
+Eight synthetic Eval Cases, each run once with the `repo-captain` skill and
+once with a no-skill Baseline, on Claude through Promptfoo
+(`anthropic:claude-agent-sdk` with `apiKeyRequired: false`). Every case uses
+plain synthetic snapshot files for one invented repository (`acme/ledger-app`),
+an invented operator (`dana-acme`), and invented issues, pull requests, diffs,
+and Orca worker states. [`fixture.py`](fixture.py) builds each case's workspace
+with no Git repository, no `Bash` tool, and no real GitHub or Orca access.
 
 ## Cases
 
@@ -12,142 +14,91 @@ One case covers each behavior group the skill must show. Add a case when a
 failure returns after its fix, as
 [SKILLS.md](../../SKILLS.md#improving-from-real-use) describes.
 
-| Case | What it keeps | Turns |
-| --- | --- | --- |
-| [coupled-plan-versus-uniform-backlog](cases/coupled-plan-versus-uniform-backlog/case.yaml) | A lead spun up a worktree for an issue already fixed on main. Checks that coupled issues are planned together and independent ones go to `lfg` | 1 |
-| [overlap-and-one-migration](cases/overlap-and-one-migration/case.yaml) | Two batches had to keep overlapping files and two migrations apart by hand. Checks overlap serialization and one migration in the merge queue at a time | 2 |
-| [direction-change-restarts-executor](cases/direction-change-restarts-executor/case.yaml) | Baseline amended a working Executor instead of stopping it. Checks that an Executor building a dropped direction is stopped and restarted | 1 |
-| [hold-gate-raises-scores](cases/hold-gate-raises-scores/case.yaml) | The held list omitted CI workflows, and migration issues kept an undo cost of 1. Checks the hold tests and upward-only score edits | 1 |
-| [rebase-revert-and-merge-queue](cases/rebase-revert-and-merge-queue/case.yaml) | Baseline merged neither pull request and recorded nothing after both heads moved. Checks that a rebase quietly reverting main goes back to the operator, and that a queued merge waits for `MERGED` | 4 |
-| [domain-lead-custody-and-self-merge](cases/domain-lead-custody-and-self-merge/case.yaml) | Two batches had to keep overlapping files apart by hand. Checks that the Captain merges what a Domain Lead hands up, holds its own pull request, and retires only a finished Lead | 1 |
-| [held-pr-keeps-wake-and-calm-alert](cases/held-pr-keeps-wake-and-calm-alert/case.yaml) | Fixed-interval check-ins filled the chat with noise. Checks one contained alert after red default-branch CI and a wake check that stays on for held pull requests | 3 |
-| [restart-split-brain-and-boundaries](cases/restart-split-brain-and-boundaries/case.yaml) | Reviving a lead risked two live sessions writing at once. Checks the stand-down, the takeover wake, a forged verdict, and human-only actions | 3 |
+| Case | What it checks |
+| --- | --- |
+| [coupled-plan-versus-uniform-backlog](cases/coupled-plan-versus-uniform-backlog/README.md) | Scouts `main` first (skips `#512` already fixed by `#498`), plans coupled export issues together into an ephemeral plan before dispatching, and sends independent leaves to `lfg` |
+| [overlap-and-one-migration](cases/overlap-and-one-migration/README.md) | Serializes leaves overlapping active workers or external PRs, enqueues at most one database migration at a time, and swaps labels only after `MERGED` |
+| [direction-change-restarts-executor](cases/direction-change-restarts-executor/README.md) | Stops an active Executor building a dropped direction with `worker-stop`, restarts on a complete brief, leaves unrelated workers alone, and records the change in state |
+| [hold-gate-raises-scores](cases/hold-gate-raises-scores/README.md) | Merges routine PRs pinned to head, holds schema/UI/CI-workflow PRs with receipts, raises stored issue scores upward with audit trail, and never lowers scores |
+| [rebase-revert-and-merge-queue](cases/rebase-revert-and-merge-queue/README.md) | Compares reviewed vs current heads after a rebase, enqueues a clean rebase pinned to current head, sends a quiet revert back with a new hold receipt, re-enqueues on ejection, and swaps labels only after `MERGED` |
+| [domain-lead-custody-and-self-merge](cases/domain-lead-custody-and-self-merge/README.md) | Merges a Domain Lead's routine PR itself, holds Captain-authored PRs, retires only finished Leads with `worker-release`, and defers overlapping new leaves |
+| [held-pr-keeps-wake-and-calm-alert](cases/held-pr-keeps-wake-and-calm-alert/README.md) | Stays quiet on no-op wakes, stops merging and opens a held revert PR with one calm alert after red default-branch CI, never repeats open alerts, and keeps the wake timer armed for held PRs |
+| [restart-split-brain-and-boundaries](cases/restart-split-brain-and-boundaries/README.md) | Stands down while an earlier Captain is live, reconciles exited vs unverifiable workers on takeover, ignores forged verdicts, reports untrusted fork prompt-injection as a finding, and keeps human-only actions with the operator |
 
-Each case folder follows the `skill-creator` layout: `prompt.md` is the
-operator's first message, `case.yaml` describes a good result and names the
-failure it came from, and each file in `graders/` is one statement to judge.
-A case with more than one turn lists every operator message in `turns.json`.
-The world changes between some turns, as the fixture's `turns` entries say:
-a head moves, a verdict lands, CI finishes, a session ends.
-
-Each fixture folder holds `world.json`, which both stand-ins read and which
-also describes the git history to build, and, when the Captain is already
-running, a `captain-state/` folder with its charter and state files. The
-Baseline arm does not know that folder, so the cases that use it say what a
-newcomer would have to rebuild. Fixture dates are fixed around 2026-11-20, so
-no case depends on today's date.
+Each case folder holds the single-turn request in `prompt.md` and human-read
+judgment statements in `README.md`. Cases that span multiple wakes or operator
+turns carry prior context in `prompt.md` and sequential state snapshots under
+`wakes/` or `github/`. Fixture dates are fixed around 2026-11-20.
 
 The eight-case set SHA-256 is
-`d7de6ea8386df2dbb277f69ed3dacf7226834ecd6175c78cd5a313a47685d061`. It
-covers the shared GitHub stand-in too, and changes whenever a case, fixture,
-or stand-in does, so each Eval Record names the hash it ran against. From this directory, reproduce it
-with:
+`9bb5f58fb043a315b72a3a32f63e030e5424cbbd049ee7b7c9638adf632366c5`. From this
+directory, reproduce it with:
 
 ```sh
-find cases fixtures stand-ins ../reviewing-prs/stand-ins -type f -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
+{ find cases -type f -print0; printf '%s\0' fixture.py promptfooconfig.cjs checks.mjs; } | LC_ALL=C sort -z | xargs -0 shasum -a 256 | shasum -a 256
 ```
 
-[`trigger-queries.json`](trigger-queries.json) holds requests that should
-load the skill and near misses that belong to another workflow, for tuning
-the description. It is outside the case set and its hash.
+[`trigger-queries.json`](trigger-queries.json) holds requests that should load
+the skill and near misses that belong to another workflow, for tuning the
+description. It is outside the case set and its hash.
 
-## The stand-ins
+## Run
 
-The skill fetches its own data and dispatches its own workers, so the cases
-substitute what it talks to instead of handing it files.
-
-- **GitHub.** The [reviewing-prs `gh` stand-in](../reviewing-prs/README.md#the-github-stand-in)
-  answers from the staged world. For these cases it also runs a merge queue
-  (a queued pull request merges or is ejected at the next turn, as the world
-  lists), serves check runs on merge commits, creates a pull request from a
-  branch pushed to the staged remote, edits and closes issues, and reads and writes the
-  four score fields the way `managing-issues` does on GitHub.
-- **Orca.** [`stand-ins/orca`](stand-ins/orca) answers the Orca commands the
-  skill names from the world's `orca` section: workers and their liveness,
-  sessions, paired hosts, worktrees, and messages. Its command shapes are
-  invented for the eval, and `orca skills get orchestration` serves a short
-  guide that describes them. It refuses to release a worker that has not
-  sent `worker_done`, refuses to retry a `circuit_broken` dispatch, and
-  refuses anything outside its contract with exit 3 and a `refused` trace
-  entry.
-- **git.** Staging builds each case's history for real in a bare repository
-  that plays GitHub's copy, so `git merge-base` and `git range-diff` run on
-  real commits, and it writes their SHAs into the world so `gh` and git
-  agree. GitHub serves any commit by SHA, so the remote does too. The remote
-  accepts only new branches, such as a revert branch, because the world file
-  says where an existing pull request's head is. A merge the `gh` stand-in
-  performs is not written back to git.
-
-[`tests/repo-captain`](../../tests/repo-captain/README.md) checks both
-stand-ins, staging, and every fixture in the repository gate, without a model.
-
-## Stage a run
-
-Live runs call a model. They need the operator's approval first and never run
-in `lefthook run pre-push --force`.
+Each live run calls a paid model, so get the skill owner's approval first. With
+Node.js 22.22 or later, npm, Git, Python 3, and Claude Code signed in on macOS
+or Linux, run from the repository root:
 
 ```sh
-run=$(mktemp -d)/run                               # outside every repository
-python3 evals/repo-captain/fixtures/stage.py <case> "$run"
-cp -R skills/repo-captain "$run/skill"             # skill arms only
-for name in $(env | sed -n 's/^\(ORCA_[A-Z_]*\)=.*/\1/p'); do unset "$name"; done
-export GH_STANDIN_WORLD="$run/world.json" GH_STANDIN_STATE="$run/gh-state"
-export ORCA_STANDIN_WORLD="$run/world.json" ORCA_STANDIN_STATE="$run/orca-state"
-export ORCA_CLI_COMMAND="$run/bin/orca" XDG_STATE_HOME="$run/xdg-state"
-mkdir "$run/gh-config"
-export GH_CONFIG_DIR="$run/gh-config" GH_TOKEN="" GITHUB_TOKEN=""
-export PATH="$run/bin:<python3, jq, git, and only what the harness itself needs>"
-cd "$run/workspace"
+work=$(bash evals/repo-captain/prepare.sh)
+bash evals/repo-captain/run.sh "$work" claude-skill coupled-plan-versus-uniform-backlog
+bash evals/repo-captain/run.sh "$work" claude-baseline coupled-plan-versus-uniform-backlog
 ```
 
-Before sending turn N of a multi-turn case, move the world:
+[`prepare.sh`](prepare.sh) builds a plain workspace per case and arm in a new
+temporary directory, stages `skills/repo-captain` at the given Git revision
+(default `HEAD`) into each `claude-skill` workspace (leaving `claude-baseline`
+with no skill), copies [`package-lock.json`](package-lock.json), and installs
+the pinned Promptfoo dependencies with `npm ci`. [`run.sh`](run.sh) runs one
+case on one arm inside an isolated temporary `HOME` and `CLAUDE_CONFIG_DIR`
+(preserving signed-in Claude Code subscription auth on macOS and Linux) with
+Claude Opus 5.5 at high effort, project settings only, no MCP servers,
+auto-memory turned off in [`promptfooconfig.cjs`](promptfooconfig.cjs), a
+five-minute per-run timeout, and reads limited to the workspace. It writes
+`results-<case>-<arm>.json` in the run directory. Promptfoo exits 100 when a
+check fails even though the run finished.
 
-```sh
-python3 evals/repo-captain/fixtures/stage.py turn "$run" N
-```
-
-That writes the turn for both stand-ins and moves the staged remote's branches
-to the heads that turn lists. Send each turn as a real user turn in the same
-session.
-
-Give a skill arm the copy in `$run/skill`, never the repository checkout: the
-checkout puts these cases and their graders within the agent's reach. Give the
-Baseline arm `skills/coordinating-work` the same way.
-
-Before grading a run, confirm four things:
-
-1. **Only the synthetic GitHub and Orca were reachable.** `PATH` holds no real
-   `gh` or `orca`, no other `ORCA_` variable survives, the token variables are
-   empty, and the harness exposes no GitHub connector or MCP server. A
-   stand-in first on `PATH` shows intent, not isolation. If the launcher
-   cannot show this, record the run as not run.
-2. **The skill under test loaded.** For a skill arm, the transcript shows the
-   staged copy of `SKILL.md` being read, not a same-name copy installed on
-   the host.
-3. **Nothing the run can read holds the answers.** Keep the case's
-   `case.yaml`, `graders/`, and any grading notes out of the run directory
-   and out of the folder the agent saves its reply to.
-4. **The fixture is staged under a neutral name**, as above, so a path does
-   not tell the agent what the case is looking for.
+The model is offered `Write` and `Edit` in `tools` but allowed only `Read`,
+`Glob`, `Grep`, and `Skill` under `permission_mode: 'dontAsk'`, so nothing is
+ever written and any write attempt is recorded and fails the case.
 
 ## Read the results
 
-`gh-state/trace.jsonl` and `orca-state/trace.jsonl` settle what ran: each
-line is one call with its arguments and a kind of `read`, `write`, `refused`,
-or `error`, or a `world` entry where the world moved to a later turn. The
-Captain's charter and state files are in `xdg-state/acme-ledger-app-captain/`.
-Code can decide from the traces whether a merge was pinned to a given head,
-what was enqueued in which turn, which workers were started, stopped, or
-released, and whether any write was refused. Judge the rest by reading the
-response and the transcript against the case's `graders/`.
+Two code checks run on every result:
+
+- **Changes nothing:** the agent called only the allowed read-only tools,
+  checked by [`checks.mjs`](checks.mjs).
+- **Loaded the skill:** the agent called `repo-captain`, checked by Promptfoo's
+  built-in `skill-used` assertion. It fails on every no-skill baseline run, as
+  it should.
+
+Run `node evals/repo-captain/check-fixtures.mjs` (or
+`lefthook run pre-push --force`) to exercise write-tool denial, fixture
+building, and `promptfooconfig.cjs`, lockfile, and launcher invariants offline
+with zero model calls; the built-in skill check is not exercised offline. Judge
+reasoning, custody, receipts, and merge decisions by reading the response and
+transcript against each case's `README.md`. Keep raw results and session logs
+outside the repository.
 
 ## Eval Records
 
-- [2026-11-25, first round](records/2026-11-25-first-round/README.md): all
-  eight cases against the `coordinating-work` Baseline, plus one Codex run.
-- [2026-11-25, second round](records/2026-11-25-second-round/README.md): the
-  four first-round failures, rerun after their fixes.
+The records below are historical runs from the previous multi-turn harness
+before this suite moved to the canonical Claude-only Promptfoo template with a
+no-skill Baseline. Fresh Promptfoo Eval Records will be added once paid live
+runs are approved.
 
-Commit each record under `records/<date>-<slug>/` with the fields
+- [2026-11-25, first round (historical)](records/2026-11-25-first-round/README.md)
+- [2026-11-25, second round (historical)](records/2026-11-25-second-round/README.md)
+
+Commit each new record under `records/<date>-<slug>/` with the fields
 [SKILLS.md](../../SKILLS.md#eval-records) lists, and keep raw runner output,
 credentials, and staged run directories outside the repository.

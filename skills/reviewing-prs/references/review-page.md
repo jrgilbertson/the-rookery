@@ -4,8 +4,9 @@ Read this at the start of step 3: its fields are what step 3 gathers, and
 its last section builds the page in step 4. The page is
 `assets/review-page.html`. It draws everything from one JSON object that you
 write, so this file describes that object and how to fill each part. The
-template orders the pull requests, computes products and leverage, draws
-every panel, and builds the verdict lines. You supply facts and short text.
+template groups and orders the pull requests, computes products and leverage,
+draws every panel, and builds the verdict lines. You supply facts and short
+text.
 
 Write plain text everywhere. The page shows every value as text, so markup,
 Markdown, and HTML entities appear literally. Keep each text field to the
@@ -21,7 +22,7 @@ length given; the page is read in one sitting across many pull requests.
   "across": [{"label": "Read together", "text": "ledger-app #418 and #421 both change how an upgrade is billed. Merge #421 first.", "refs": ["acme/ledger-app#418", "acme/ledger-app#421"]}],
   "prs": [],
   "inProgress": [],
-  "merged": {"window": "", "without": [], "changedAfter": []}
+  "merged": {"window": "", "without": [], "autoMerged": [], "changedAfter": []}
 }
 ```
 
@@ -35,8 +36,8 @@ length given; the page is read in one sitting across many pull requests.
   Label each `Read together`, `Merge order`, or `Repeats`. List in `refs` each
   pull request the note names, as `owner/repo#number`; the page repeats the note
   in those blocks so the operator sees it while deciding.
-- `prs`: one entry per held, unclassified, and dependency-bot pull request.
-  In-progress ones go in `inProgress`.
+- `prs`: one entry per held, unclassified, in-flight, and dependency-bot pull
+  request, in any order. In-progress ones go in `inProgress`.
 
 ## One pull request
 
@@ -46,7 +47,9 @@ length given; the page is read in one sitting across many pull requests.
   "title": "Fix proration on mid-cycle plan changes",
   "head": "<the reviewed head, all 40 characters>",
   "owner": "owned by repo-captain",
+  "bucket": "held",
   "status": "checks pass · no conflict",
+  "checks": "pass", "conflict": false,
   "size": {"additions": 19, "deletions": 4, "files": 3},
   "scores": {"impact": 2, "confidence": 2, "verify": 2, "undo": 3},
   "driver": "Changes rounding in billing without saying so. A charge that is wrong stays made after a revert.",
@@ -63,8 +66,29 @@ length given; the page is read in one sitting across many pull requests.
 - `owner`: the ownership from step 2 as a short phrase: `owned by <role>`,
   `No owner`, `External fork`, `External contributor`, `Ambiguous owner`,
   `Review only`, or the bot's name.
+- `bucket`: the bucket from step 2: `held`, `unclassified`, `in-flight`, or
+  `bot`. The page draws four groups in this order: Held for review, Under the
+  hold line, Dependency bots, and In-flight fleet pull requests. `bot` and
+  `in-flight` choose their own groups. `held` puts the pull request in Held
+  for review whatever it scores, whether a `review:held` label or a
+  `Fleet: hold` receipt put it in that bucket. `unclassified`, or no `bucket`, lands in Held
+  for review when it meets a hold test and under the hold line when it does
+  not.
 - `status`: checks and conflict state, plus the base branch when it is not
   the default branch, and a never-carried-out verdict on a held pull request.
+- `checks` and `conflict`: the same facts for the page to act on. `checks` is
+  `pass`, `fail`, or `pending`; `conflict` is `true` when the pull request
+  conflicts with its base. The overview row and the block show `checks fail`
+  and `conflict`, the `Broken / conflicting only` filter finds them, and
+  failing or conflicting dependency bots sort to the top of their group. Any
+  other word in `checks` is shown as written and counted as failing.
+- `holdViolation`: a short phrase when step 3 flags the pull request for
+  meeting a hold test while it sits in a merge queue or is ready with checks
+  passing and no `review:held`, such as `in the merge queue without
+  review:held`. Omit it otherwise. The page marks it in orange on the row and
+  the block.
+- `size`: lines added and deleted and files changed. The overview row and the
+  block show it.
 - `scores`: integers from 1 to 3, from step 3. Let the page compute the order
   and products. A missing score holds the pull request and sorts it to the top
   of the held group; its V × U shows `?` unless both factors are present.
@@ -75,7 +99,8 @@ length given; the page is read in one sitting across many pull requests.
   such as `CI workflow`, `access and authorization`, or `dependency
   lockfile`, as a string or a list of strings. Omit it when none applies.
   The page holds any pull request that sets this field, whatever its scores,
-  and displays the kind in both the overview and the block.
+  and displays the kind in both the overview and the block. A dependency bot
+  or in-flight pull request keeps its own group and still shows the kind.
 - `audience`: who sees the difference: `customer`, `caller`, `operator`, or
   another single noun. The panel reads "What is different for a <audience>".
 
@@ -207,6 +232,7 @@ say; the page then shows "Nothing to report."
 "merged": {
   "window": "The last 7 days, since 2026-11-17 22:40 PST.",
   "without": [{"repo": "...", "number": 412, "url": "...", "title": "...", "reason": "Merged with no verdict and no label."}],
+  "autoMerged": [{"repo": "...", "number": 415, "url": "...", "title": "...", "reason": "Routine, V=1 U=1."}],
   "changedAfter": [{"repo": "...", "number": 129, "url": "...", "title": "...", "summary": "Two commits after your merge verdict moved the token cache."}]
 }
 ```
@@ -214,7 +240,30 @@ say; the page then shows "Nothing to report."
 - `note`: who is working on it and what it waits on.
 - `window`: the window step 1 used, stated so the operator can see it.
 - `reason` and `summary`: one sentence each, from step 1's merged list. A pull
-  request appears in only one of the two lists.
+  request appears in only one of the three lists.
+- `autoMerged`: routine merges recorded as `review:auto-merged`. The page
+  lists them without an orange seal and gives them no notice at the top, so
+  orange stays on `without` and `changedAfter`.
+
+The page gives each `changedAfter` row its own notice at the top. It does the
+same for `without` up to five rows; past five, one notice gives the count and
+links to the merged section. With more than five merged rows in all, the
+merged lists start collapsed, and any link into them opens them.
+
+## The copied verdict lines
+
+The page builds one line per decided pull request for the operator to copy
+back:
+
+```text
+<owner>/<repo>#<number> @ <reviewed head> | <verdict> | <notes>
+```
+
+The notes are the last field. Split a line on its first two ` | ` only, so a
+`|` the operator typed stays in the notes. The page puts the notes on one
+line and turns each double quote into a single quote, because the posted
+`Notes:` line wraps them in double quotes. A note typed with no verdict chosen
+is left out, and the page says so beside it.
 
 ## Build the page
 

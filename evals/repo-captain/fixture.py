@@ -1356,9 +1356,7 @@ def build_rebase_revert_and_merge_queue() -> dict[str, str]:
     files["github/pulls/pr-560.diff"] = make_diff(m1_files, pr560_changed)
     files["github/pulls/pr-560-reviewed.diff"] = make_diff(m0_files, pr560_changed)
     files["github/pulls/pr-560-range-diff.txt"] = (
-        f"# Comparison of reviewed head {a1[:7]} (base {m0[:7]}) vs current head {b1[:7]} (base {m1[:7]})\n"
         f"1:  {a1[:7]} = 1:  {b1[:7]} Show the export size before it starts\n"
-        "# Identical patch; clean rebase onto main (m1) with zero behavioral delta.\n"
     )
 
     write_json(
@@ -1405,7 +1403,6 @@ def build_rebase_revert_and_merge_queue() -> dict[str, str]:
     files["github/pulls/pr-561.diff"] = make_diff(m1_files, pr561_changed)
     files["github/pulls/pr-561-reviewed.diff"] = make_diff(m0_files, pr561_changed)
     files["github/pulls/pr-561-range-diff.txt"] = (
-        f"# Comparison of reviewed head {a2[:7]} (base {m0[:7]}) vs current head {b2[:7]} (base {m1[:7]})\n"
         f"1:  {a2[:7]} ! 1:  {b2[:7]} Round cents half to even\n"
         "    @@ app/billing/tax.ts\n"
         "     export function taxCents(amountCents: number, ratePercent: number): number {\n"
@@ -1415,7 +1412,6 @@ def build_rebase_revert_and_merge_queue() -> dict[str, str]:
         "    +-  }\n"
         "       return Math.round((amountCents * ratePercent) / 100);\n"
         "     }\n"
-        "# Rebasing onto main (m1, which merged #559) dropped the credit-note tax guard in app/billing/tax.ts.\n"
     )
 
     write_json(

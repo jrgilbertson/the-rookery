@@ -42,7 +42,8 @@
   --chosen: #ECEEF3; --on-chosen: #14161B;
 }
 * { box-sizing: border-box; }
-html { background: var(--paper); scrollbar-color: var(--ink-soft) var(--paper); scroll-padding-top: 72px; }
+[hidden] { display: none !important; }
+html { background: var(--paper); scrollbar-color: var(--ink-soft) var(--paper); scroll-padding-top: calc(var(--bar-h, 60px) + 12px); }
 body { margin: 0; background: var(--paper); font: 16px/1.5 var(--serif); color: var(--ink); font-variant-numeric: lining-nums tabular-nums; }
 ::selection { background: var(--mist); color: var(--ink); }
 h1, h2, h3, p, dl, dd { margin: 0; }
@@ -53,7 +54,7 @@ a { color: var(--route); text-underline-offset: 3px; text-decoration-thickness: 
 button, input, textarea { font: inherit; color: inherit; caret-color: var(--route); }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
-[tabindex="-1"]:focus { outline: none; }
+[tabindex="-1"]:focus:not(:focus-visible) { outline: none; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 pre { margin: 6px 0 0; padding: 10px 12px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.8rem/1.55 var(--mono); }
 pre span { display: block; padding: 2px 8px 2px 2.3em; text-indent: -1.6em; }
@@ -62,23 +63,34 @@ pre .del { color: var(--del); background: var(--del-wash); }
 pre .ctx { color: var(--ink-soft); }
 
 .sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
-.read dt, .bots b, .part small, .bar-note, .bar-progress, .theme, .seg button, .notes, .copy,
-.over-head small, .rail, .keys, .xnote b { font-family: var(--sans); }
+.read dt, .bots b, .part small, .bar-note, .bar-progress, .bar-cue, .theme, .seg button, .notes, .copy,
+.over-head small, .rail, .keys, .xnote b, .chip, .size, .count, .hint, .filters, .drawer summary { font-family: var(--sans); }
 .meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
 .source { margin-top: 6px; }
 .empty { color: var(--ink-soft); font-style: italic; }
 .sec-title { font-size: 0.72rem; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 6px; line-height: 1.4; overflow-wrap: anywhere; text-wrap: balance; }
 .sec-title.spaced { margin-top: 18px; }
 
-.seal, .ring { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.seal, .ring, .route-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .seal { background: var(--signal); }
 .ring { border: 1.5px solid var(--ink-soft); }
+.route-dot { border: 1.5px solid var(--route); }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 7px; border: 1px solid var(--hairline); border-radius: 2px; font-size: 0.72rem; font-weight: 650; line-height: 1.5; color: var(--ink-soft); max-width: 100%; overflow-wrap: anywhere; }
+.chip.bad { border-color: var(--ink); color: var(--ink); }
+.chip.moving { border-color: var(--route); color: var(--route); }
+.chip.alert { color: var(--signal-ink); }
+.chip.vu-chip { border-color: var(--ink-soft); border-radius: 999px; color: var(--ink); }
+.chip .seal { width: 8px; height: 8px; }
+.size { font-size: 0.76rem; color: var(--ink-soft); }
+.count { font-size: 0.82rem; font-weight: 400; color: var(--ink-soft); }
 
 .bar { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; flex-wrap: wrap; gap: 6px 18px; padding: 12px 28px; background: var(--paper); border-bottom: 1px solid var(--hairline); }
 .bar strong { font: 400 1.25rem/1 var(--display); }
-.bar-note { color: var(--ink-soft); font-size: 0.8rem; flex: 1 1 320px; }
-.bar-progress { margin-left: auto; font-size: 0.85rem; font-weight: 600; }
-.theme { border: 1px solid var(--hairline); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 32px; }
+.bar-note { color: var(--ink-soft); font-size: 0.8rem; flex: 1 1 200px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.bar-progress { display: inline-flex; align-items: center; min-height: 36px; margin-left: auto; font-size: 0.85rem; font-weight: 600; }
+.bar-cue { color: var(--ink-soft); font-size: 0.78rem; }
+.short { display: none; }
+.theme { border: 1px solid var(--hairline); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 36px; }
 .theme:hover { border-color: var(--ink-soft); }
 
 .shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
@@ -90,13 +102,24 @@ main { padding: 40px 0 80px; min-width: 0; }
 .notices li { display: flex; align-items: baseline; gap: 10px; padding: 9px 14px; border: 1px solid var(--hairline); background: var(--sheet); font-size: 0.97rem; }
 .notices .seal { transform: translateY(-1px); }
 
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin: 0 0 10px; font-size: 0.82rem; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+.flt { border: 1px solid var(--hairline); background: var(--sheet); border-radius: 2px; padding: 6px 12px; min-height: 36px; }
+.flt:hover { background: var(--mist); }
+.flt[aria-pressed="true"] { background: var(--chosen); border-color: var(--chosen); color: var(--on-chosen); font-weight: 650; }
+.toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; cursor: pointer; }
+.toggle input { width: 18px; height: 18px; margin: 0; accent-color: var(--chosen); }
+.filter-status { color: var(--ink-soft); }
+.filter-empty { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 16px; padding: 12px 20px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; }
 .over { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; margin-bottom: 16px; }
+.over.flight, .block.flight { border-style: dashed; border-color: var(--ink-soft); }
 .over-head { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; padding: 14px 20px 12px; border-bottom: 1px solid var(--hairline); }
 .over-head small { font-size: 0.82rem; color: var(--ink-soft); }
 .over > .empty { padding: 12px 20px; }
 .orows { list-style: none; margin: 0; padding: 0; }
 .orow { display: grid; grid-template-columns: 60px minmax(0, 1.2fr) minmax(0, 1.5fr) 320px; gap: 18px; padding: 14px 20px; border-top: 1px solid var(--hairline-soft); align-items: center; }
 .orow:first-child { border-top: 0; }
+.orow > * { min-width: 0; overflow-wrap: anywhere; }
 .vu { display: grid; place-items: center; align-content: center; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1.55rem/1 var(--display); color: var(--ink-soft); text-align: center; }
 .over.hold .vu { border-color: var(--ink); color: var(--ink); }
 .vu small { display: block; margin-top: 2px; font-size: 0.7rem; font-weight: 600; color: var(--ink-soft); }
@@ -107,6 +130,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 .kind { display: flex; align-items: center; gap: 7px; margin-top: 4px; font: 650 0.78rem/1.4 var(--sans); color: var(--signal-ink); }
 .kind::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); }
 .state:empty { display: none; }
+.ready { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 5px; }
 .orow p { font-size: 0.95rem; }
 .scores { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr); gap: 4px; text-align: center; }
 .scores span { border: 1px solid var(--hairline-soft); border-radius: 2px; padding: 3px 0 2px; font-weight: 600; font-size: 0.95rem; }
@@ -114,13 +138,13 @@ main { padding: 40px 0 80px; min-width: 0; }
 .scores span.three { background: var(--stake); border-color: var(--ink-soft); font-weight: 700; }
 .scores span.three small { color: var(--ink); }
 .scores span.lev { border-color: var(--hairline); }
-.key { margin: -4px 0 18px; color: var(--ink-soft); font-size: 0.8rem; max-width: 90ch; }
+.key { margin: 0 0 12px; color: var(--ink-soft); font-size: 0.8rem; max-width: 90ch; }
 .across { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 30px; font-size: 0.95rem; }
 .across span { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 8px 12px; }
 
 .block { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 22px 24px 24px; margin-bottom: 20px; }
 .block-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
-.block-head h2 { flex: 1 1 320px; display: flex; align-items: center; gap: 12px; }
+.block-head h2 { flex: 1 1 320px; min-width: 0; display: flex; align-items: center; gap: 12px; overflow-wrap: anywhere; }
 .rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1rem/1 var(--display); color: var(--ink-soft); }
 .block.hold .rank { border-color: var(--ink); color: var(--ink); }
 .verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
@@ -131,7 +155,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 .seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 650; }
 .notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
 .notes::placeholder { color: var(--ink-soft); }
-.block-meta { margin: 8px 0 0; }
+.hint { flex-basis: 100%; text-align: right; font-size: 0.76rem; color: var(--ink-soft); }
+.block-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 10px 0 0; }
 .driver { margin-top: 10px; max-width: 80ch; }
 .xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
 .xnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
@@ -199,7 +224,15 @@ main { padding: 40px 0 80px; min-width: 0; }
 .crow + .crow { border-top: 1px solid var(--hairline-soft); }
 .crow .where { display: inline; }
 .crow .seal { margin-right: 8px; }
-.verdicts { background: var(--sheet); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 16px 20px; margin-top: 26px; }
+.drawer { margin-top: 8px; }
+.drawer summary { display: flex; align-items: center; gap: 10px; min-height: 36px; cursor: pointer; list-style: none; font-size: 0.85rem; font-weight: 600; }
+.drawer summary::-webkit-details-marker { display: none; }
+.drawer summary::before { content: ""; flex: none; width: 7px; height: 7px; margin: 0 3px; border-right: 1.5px solid var(--ink-soft); border-bottom: 1.5px solid var(--ink-soft); transform: rotate(-45deg); transition: transform 0.15s ease; }
+.drawer[open] summary::before { transform: rotate(45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .drawer summary::before { transition: none; }
+}
+.verdicts { background: var(--sheet); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 16px 20px; margin: 26px 0 16px; }
 .verdicts textarea { display: block; width: 100%; min-height: 4.5em; margin-top: 10px; padding: 8px 10px; border: 1px solid var(--hairline); border-radius: 2px; background: var(--paper); font: 0.8rem/1.5 var(--mono); resize: vertical; }
 .verdicts-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
 .copy { border: 1px solid var(--chosen); background: var(--chosen); color: var(--on-chosen); border-radius: 2px; padding: 6px 16px; min-height: 36px; font-weight: 650; font-size: 0.85rem; }
@@ -209,15 +242,14 @@ main { padding: 40px 0 80px; min-width: 0; }
 
 @media (min-width: 1180px) {
   .shell { max-width: 1600px; display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; }
-  .rail { display: block; position: sticky; top: 58px; align-self: start; max-height: calc(100vh - 58px); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
-  .rail h2 { font: 650 0.72rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 16px 0 6px; display: flex; align-items: center; gap: 8px; }
-  .rail h2:first-of-type { margin-top: 0; }
-  .rail p { color: var(--ink-soft); margin-bottom: 4px; }
+  .rail { display: block; position: sticky; top: var(--bar-h, 58px); align-self: start; max-height: calc(100vh - var(--bar-h, 58px)); overflow-y: auto; padding: 28px 4px 24px 0; font-size: 0.82rem; }
+  .rail .r-head { font: 650 0.72rem/1.4 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); margin: 16px 0 6px; display: flex; align-items: center; gap: 8px; }
+  .rail .r-head:first-child { margin-top: 0; }
   .rail ol { list-style: none; margin: 0; padding: 0; }
-  .rail a { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; padding: 6px 8px; color: var(--ink); text-decoration: none; border-radius: 2px; }
+  .rail a { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 2px 8px; padding: 5px 7px; border: 1px solid transparent; color: var(--ink); text-decoration: none; border-radius: 2px; }
   .rail a:hover { background: var(--mist); }
-  .rail a[aria-current="true"] { background: var(--mist); box-shadow: inset 0 0 0 1px var(--hairline); }
-  .rail .r-rank { font: 400 0.95rem/1.3 var(--display); color: var(--ink-soft); }
+  .rail a[aria-current="true"] { background: var(--mist); border-color: var(--hairline); }
+  .rail .r-rank { font: 600 0.8rem/1.5 var(--sans); color: var(--ink-soft); }
   .rail .r-title { font: 0.85rem/1.3 var(--serif); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .rail .r-state { grid-column: 2; font-size: 0.72rem; color: var(--ink-soft); }
   .rail .r-state.done { color: var(--ink); font-weight: 650; }
@@ -225,8 +257,9 @@ main { padding: 40px 0 80px; min-width: 0; }
   .rail .r-links a { display: block; color: var(--route); text-decoration: underline; text-underline-offset: 3px; }
 }
 @media (max-width: 980px) {
-  .bar { padding: 10px 16px; gap: 6px 12px; }
+  .bar { padding: 8px 16px; gap: 6px 10px; }
   .bar-note { display: none; }
+  .bar-cue { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .shell { padding: 0 16px; }
   main { padding: 26px 0 60px; }
   h1 { font-size: 2.1rem; }
@@ -234,13 +267,29 @@ main { padding: 40px 0 80px; min-width: 0; }
   .orow { grid-template-columns: 56px minmax(0, 1fr); padding: 12px 14px; }
   .orow > p, .orow > .scores { grid-column: 1 / -1; }
   .cols, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
-  .verdict { margin-left: 0; }
-  .seg button, .notes, .copy, .theme { min-height: 44px; }
+  .verdict { margin-left: 0; width: 100%; }
+  .notes { width: 100%; }
+  .hint { text-align: left; }
+  .seg button, .notes, .copy, .theme, .bar-progress, .flt, .toggle, .drawer summary { min-height: 44px; }
   .read dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
   .read dd + dt { margin-top: 6px; }
 }
+@media (max-width: 720px) {
+  .bar strong, .long { display: none; }
+  .short { display: inline; }
+  .bar .copy, .theme { padding-left: 10px; padding-right: 10px; }
+}
+@media (max-width: 320px) {
+  html { scroll-padding-top: 12px; }
+  .bar { position: static; }
+  .scores { grid-template-columns: repeat(auto-fit, minmax(72px, 1fr)); }
+}
 @media (max-width: 560px) {
-  .sit thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .seg { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); width: 100%; }
+  .seg button { padding: 6px 4px; border-bottom: 1px solid var(--hairline); overflow-wrap: anywhere; }
+  .seg button:nth-child(2n) { border-right: 0; }
+  .seg button:nth-last-child(-n+2) { border-bottom: 0; }
+  .sit thead { display: block; position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .sit tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 12px; padding: 10px; border-bottom: 1px solid var(--hairline-soft); }
   .sit tbody tr:last-child { border-bottom: 0; }
   .sit td { display: block; padding: 0; border: 0; }
@@ -252,7 +301,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 </style>
 </head>
 <body>
-<header class="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><button type="button" class="theme" id="theme"></button></header>
+<header class="bar" id="bar"><strong>Review Round</strong><span class="bar-note" id="bar-note"></span><a class="bar-progress" id="bar-progress" href="#verdicts"></a><span class="bar-cue" id="bar-cue" role="status" aria-live="polite"></span><button type="button" class="copy" id="bar-copy">Copy Verdicts</button><button type="button" class="theme" id="theme"></button></header>
 <div class="shell"><nav class="rail" id="rail" aria-label="Pull requests in this round"></nav><main id="page"><noscript>This page needs JavaScript turned on to show the round.</noscript></main></div>
 <script type="application/json" id="round-data">
 {{ROUND_DATA}}
@@ -269,7 +318,10 @@ main { padding: 40px 0 80px; min-width: 0; }
   const effectiveTheme = () => root.dataset.theme || (media.matches ? "dark" : "light");
   const labelTheme = () => {
     const next = effectiveTheme() === "dark" ? "light" : "dark";
-    themeButton.textContent = next === "dark" ? "Dark mode" : "Light mode";
+    const more = document.createElement("span");
+    more.className = "long";
+    more.textContent = " mode";
+    themeButton.replaceChildren(document.createTextNode(next === "dark" ? "Dark" : "Light"), more);
     themeButton.setAttribute("aria-label", "Switch to " + next + " mode");
   };
   themeButton.addEventListener("click", () => {
@@ -290,6 +342,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     return parent;
   };
   const hidden = (text) => el("span", "vh", text);
+  // Seals, rings, and route dots repeat what the words beside them say.
+  const mark = (cls) => {
+    const node = el("span", cls);
+    node.setAttribute("aria-hidden", "true");
+    return node;
+  };
+  const chip = (cls, text) => el("span", cls ? "chip " + cls : "chip", text);
   const str = (value) => (typeof value === "string" ? value.trim() : "");
   const list = (value) => (Array.isArray(value) ? value : []);
   const records = (value) => list(value).filter((row) => row && typeof row === "object");
@@ -324,9 +383,20 @@ main { padding: 40px 0 80px; min-width: 0; }
     anchor.rel = "noopener noreferrer";
     return anchor;
   };
+  // The merged lists sit in a drawer that starts closed on a large round, so
+  // every link into it opens it before the browser jumps.
+  let mergedBox = null, mergedDrawer = null;
+  const reveal = (id) => {
+    if (!mergedDrawer || mergedDrawer.open) return null;
+    const target = document.getElementById(id);
+    if (!target || !(target === mergedBox || mergedBox.contains(target))) return null;
+    mergedDrawer.open = true;
+    return target;
+  };
   const inPage = (text, id, cls) => {
     const anchor = el("a", cls || "", text);
     anchor.href = "#" + id;
+    anchor.addEventListener("click", () => reveal(id));
     return anchor;
   };
   const imageSource = (address) => {
@@ -345,14 +415,35 @@ main { padding: 40px 0 80px; min-width: 0; }
     const leverage = complete ? (impact * confidence) / product : null;
     // A sensitive kind holds a pull request whatever its score (the first hold test).
     const sensitiveKinds = (typeof pr.sensitiveKind === "string" ? [pr.sensitiveKind] : list(pr.sensitiveKind)).map(str).filter(Boolean);
-    return { pr, index, impact, confidence, verify, undo, complete, product, leverage, sensitiveKinds,
-      hold: !complete || product >= 3 || sensitiveKinds.length > 0 };
+    const hold = !complete || product >= 3 || sensitiveKinds.length > 0;
+    // The round's bucket picks the group for a dependency bot or an in-flight
+    // fleet pull request, and holds one that carries review:held whatever it
+    // scores. Everything else falls to the hold tests.
+    const bucket = str(pr.bucket).toLowerCase();
+    const group = bucket === "bot" ? "bots" : bucket === "in-flight" ? "flight" : hold || bucket === "held" ? "hold" : "under";
+    // An unknown word for the checks fails safe: it is shown and counted as broken.
+    const checks = str(pr.checks).toLowerCase();
+    const failing = Boolean(checks) && checks !== "pass" && checks !== "pending";
+    const conflict = pr.conflict === true || str(pr.conflict).toLowerCase() === "true";
+    return { pr, index, impact, confidence, verify, undo, complete, product, leverage, sensitiveKinds, hold, group, checks, failing, conflict,
+      tab: group === "bots" || group === "flight" ? group : "ready",
+      broken: failing || conflict, violation: str(pr.holdViolation) };
   });
-  const groupName = (hold) => (hold ? "Over the hold line" : "Under the hold line");
   const byProduct = (a, b) => a.complete - b.complete || b.product - a.product || (b.leverage ?? Infinity) - (a.leverage ?? Infinity) || a.index - b.index;
-  const over = prs.filter((item) => item.hold).sort(byProduct);
-  const under = prs.filter((item) => !item.hold).sort(byProduct);
-  const ordered = over.concat(under);
+  const brokenFirst = (a, b) => b.broken - a.broken || byProduct(a, b);
+  const GROUPS = [
+    { key: "hold", name: "Held for review", none: "None held for review.",
+      note: "its owner holds it with review:held or a Fleet: hold receipt, or verification effort × undo cost is 3 or more, or the change touches a sensitive kind" },
+    { key: "under", name: "Under the hold line", none: "None under the hold line.",
+      note: "verification effort × undo cost is 2 or less, and no sensitive kind" },
+    { key: "bots", name: "Dependency bots", note: "opened by a dependency bot; failing and conflicting ones first" },
+    { key: "flight", name: "In-flight fleet pull requests", note: "a fleet owner may still be changing these; decide one only to step in early" },
+  ];
+  for (const group of GROUPS) group.items = prs.filter((item) => item.group === group.key).sort(group.key === "bots" ? brokenFirst : byProduct);
+  // Held and Under are always drawn, so an empty one says so. The other two appear only when used.
+  const drawn = GROUPS.filter((group) => group.items.length || group.none);
+  const held = GROUPS[0].items;
+  const ordered = GROUPS.flatMap((group) => group.items);
   ordered.forEach((item, position) => {
     item.rank = position + 1;
     item.id = "pr-" + item.rank;
@@ -413,58 +504,82 @@ main { padding: 40px 0 80px; min-width: 0; }
   const merged = round.merged && typeof round.merged === "object" ? round.merged : {};
   const mergedWithout = records(merged.without);
   const changedAfter = records(merged.changedAfter);
+  const autoMerged = records(merged.autoMerged);
   mergedWithout.forEach((row, i) => { row.id = "merged-" + (i + 1); });
   changedAfter.forEach((row, i) => { row.id = "changed-" + (i + 1); });
+  autoMerged.forEach((row, i) => { row.id = "auto-" + (i + 1); });
+  // Past this many, the merges without the operator share one notice, and the merged lists start closed.
+  const MANY = 5;
 
   const lede = el("header", "lede");
   const total = ordered.length;
   let headline;
   if (total === 0) headline = "No open pull requests in this round.";
-  else if (over.length === 0) headline = total === 1 ? "The one pull request is under the hold line." : "None of the " + total + " is over the hold line.";
-  else if (over.length === total) headline = total === 1 ? "The one pull request is over the hold line." : "All " + total + " are over the hold line.";
-  else headline = over.length + " of " + total + (over.length === 1 ? " is" : " are") + " over the hold line.";
+  else if (held.length === 0) headline = total === 1 ? "The one pull request is not held for review." : "None of the " + total + " is held for review.";
+  else if (held.length === total) headline = total === 1 ? "The one pull request is held for review." : "All " + total + " are held for review.";
+  else headline = held.length + " of " + total + (held.length === 1 ? " is" : " are") + " held for review.";
   const impactNames = ordered.filter((item) => item.impact === 3).map((item) => label(item.pr));
   const impactText = impactNames.length === 0 ? "None scores 3 on impact."
     : joinNames(impactNames) + (impactNames.length === 1 ? " scores" : " score") + " 3 on impact.";
   const shipped = [];
   if (mergedWithout.length) shipped.push(plural(mergedWithout.length, "pull request", "pull requests") + " merged without you");
   if (changedAfter.length) shipped.push(plural(changedAfter.length, "pull request", "pull requests") + " changed after your Verdict");
+  if (autoMerged.length) shipped.push(plural(autoMerged.length, "routine pull request", "routine pull requests") + " auto-merged");
   const shippedText = shipped.length ? " Recently, " + joinNames(shipped) + "." : "";
-  add(lede, el("h1", "", headline), el("p", "", "Ranked by verification effort times undo cost, highest first. " + impactText + shippedText));
+  add(lede, el("h1", "", headline), el("p", "", "Each group is ranked by verification effort times undo cost, highest first. " + impactText + shippedText));
   const notices = el("ul", "notices");
-  for (const notice of list(round.notices).map(str).filter(Boolean)) {
+  const notice = (...body) => {
     const li = el("li");
-    add(li, el("span", "seal"), el("span", "", notice));
+    add(li, mark("seal"), add(el("span"), ...body));
     notices.append(li);
-  }
-  for (const [rows, what] of [[changedAfter, "changed after your Verdict"], [mergedWithout, "merged without you"]]) {
-    for (const row of rows) {
-      const li = el("li");
-      const text = el("span");
-      add(text, inPage(label(row) + " " + what, row.id), document.createTextNode(": " + (str(row.summary) || str(row.reason) || str(row.title))));
-      add(li, el("span", "seal"), text);
-      notices.append(li);
-    }
+  };
+  for (const text of list(round.notices).map(str).filter(Boolean)) notice(document.createTextNode(text));
+  const rowNotice = (row, what) => notice(inPage(label(row) + " " + what, row.id),
+    document.createTextNode(": " + (str(row.summary) || str(row.reason) || str(row.title))));
+  for (const row of changedAfter) rowNotice(row, "changed after your Verdict");
+  if (mergedWithout.length > MANY) {
+    notice(inPage(mergedWithout.length + " pull requests merged without you", "merged"),
+      document.createTextNode(". Each is listed under Merged recently."));
+  } else {
+    for (const row of mergedWithout) rowNotice(row, "merged without you");
   }
   if (notices.children.length) lede.append(notices);
   page.replaceChildren(lede);
 
   const SCORE_NAMES = [["impact", true], ["confidence", false], ["verify", true], ["undo", true]];
   const VERDICTS = { merge: "Merge", changes: "Request changes", defer: "Defer", na: "Not applicable" };
-  const overviewGroup = (items, hold) => {
-    const section = el("section", hold ? "over hold" : "over");
+  // An orange seal is kept for the held group; the in-flight group takes Route Cobalt, the ink for what is moving.
+  const groupMark = (group) => mark(group.key === "hold" && group.items.length ? "seal" : group.key === "flight" ? "route-dot" : "ring");
+  const sizeText = (pr) => {
+    const size = pr.size || {};
+    return "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " · " + plural(size.files, "file", "files") : "");
+  };
+  // What the operator needs beside the Verdict controls: the same chips on the Overview row and on the card.
+  const readiness = (item) => {
+    const chips = [];
+    if (item.group === "flight") chips.push(chip("moving", "In flight · moving target"));
+    if (item.failing) chips.push(chip("bad", "checks " + item.checks));
+    if (item.conflict) chips.push(chip("bad", "conflict"));
+    if (item.checks === "pending") chips.push(chip("", "checks pending"));
+    if (item.violation) chips.push(add(chip("alert"), mark("seal"), document.createTextNode("Hold violation: " + item.violation)));
+    return chips;
+  };
+  const overviewGroup = (group) => {
+    const items = group.items;
+    const section = el("section", "over " + group.key);
+    group.section = section;
+    group.count = el("span", "count");
     const head = el("div", "over-head");
-    add(head, el("span", hold && items.length ? "seal" : "ring"), el("h2", "", groupName(hold)),
-      el("small", "", hold ? "verification effort × undo cost is 3 or more, or the change touches a sensitive kind"
-        : "verification effort × undo cost is 2 or less, and no sensitive kind"));
+    add(head, groupMark(group), add(el("h2", "", group.name + " "), group.count), el("small", "", group.note));
     section.append(head);
     if (!items.length) {
-      section.append(el("p", "empty", hold ? "None over the hold line." : "None under the hold line."));
+      section.append(el("p", "empty", group.none));
       return section;
     }
     const rows = el("ol", "orows");
     for (const item of items) {
       const row = el("li", "orow");
+      item.row = row;
       const vu = el("div", "vu", item.product ?? "?");
       vu.append(el("small", "", "V × U"));
       vu.setAttribute("aria-label", "Verification effort times undo cost: " + (item.product ?? "unknown"));
@@ -472,7 +587,7 @@ main { padding: 40px 0 80px; min-width: 0; }
       item.overviewState = el("span", "state");
       add(name, inPage(str(item.pr.title) || "Untitled", item.id, "title"), el("span", "where", label(item.pr) + " · " + (str(item.pr.owner) || "No owner")));
       if (item.sensitiveKinds.length) name.append(el("span", "kind", "Sensitive kind: " + item.sensitiveKinds.join(", ")));
-      name.append(item.overviewState);
+      add(name, add(el("div", "ready"), ...readiness(item), el("span", "size", sizeText(item.pr))), item.overviewState);
       const scores = el("div", "scores");
       const spoken = [];
       for (const [key, tint] of SCORE_NAMES) {
@@ -495,8 +610,54 @@ main { padding: 40px 0 80px; min-width: 0; }
     section.append(rows);
     return section;
   };
-  add(page, overviewGroup(over, true), overviewGroup(under, false),
-    el("p", "key", "V × U is verification effort times undo cost, each scored 1 to 3; it sets the order. Leverage, impact times confidence divided by V × U, is shown for reference."));
+  // Bucket tabs are exclusive, so their counts add up to the total; the broken toggle narrows whichever is chosen.
+  const filter = { tab: "all", broken: false };
+  const tabButtons = new Map();
+  const brokenCount = ordered.filter((item) => item.broken).length;
+  const splits = ordered.some((item) => item.tab !== "ready");
+  const brokenToggle = el("input");
+  const filterStatus = el("span", "filter-status");
+  if (splits || brokenCount) {
+    const filters = el("div", "filters");
+    filters.id = "filters";
+    if (splits) {
+      const tabs = el("div", "tabs");
+      tabs.setAttribute("role", "group");
+      tabs.setAttribute("aria-label", "Show pull requests");
+      for (const [key, name] of [["all", "All"], ["ready", "Ready"], ["bots", "Bots"], ["flight", "In-flight"]]) {
+        const button = el("button", "flt", name + " " + ordered.filter((item) => key === "all" || item.tab === key).length);
+        button.type = "button";
+        button.dataset.filter = key;
+        button.addEventListener("click", () => { filter.tab = key; applyFilter(); });
+        tabButtons.set(key, button);
+        tabs.append(button);
+      }
+      filters.append(tabs);
+    }
+    if (brokenCount) {
+      brokenToggle.type = "checkbox";
+      brokenToggle.id = "filter-broken";
+      brokenToggle.addEventListener("change", () => { filter.broken = brokenToggle.checked; applyFilter(); });
+      filters.append(add(el("label", "toggle"), brokenToggle, document.createTextNode("Broken / conflicting only (" + brokenCount + ")")));
+    }
+    filterStatus.id = "filter-status";
+    filterStatus.setAttribute("aria-live", "polite");
+    add(page, add(filters, filterStatus));
+  }
+  if (total) page.append(el("p", "key", "V × U is verification effort times undo cost, each scored 1 to 3; it sets the order within a group. Leverage, impact times confidence divided by V × U, is shown for reference."));
+  for (const group of drawn) page.append(overviewGroup(group));
+  const filterEmpty = el("div", "filter-empty");
+  filterEmpty.id = "filter-empty";
+  filterEmpty.hidden = true;
+  const showAll = el("button", "flt", "Show all");
+  showAll.type = "button";
+  const clearFilter = () => {
+    filter.tab = "all";
+    filter.broken = brokenToggle.checked = false;
+    applyFilter();
+  };
+  showAll.addEventListener("click", clearFilter);
+  add(page, add(filterEmpty, el("span", "empty", "No pull requests match this filter."), showAll));
 
   const across = list(round.across).filter((note) => note && str(note.text));
   if (across.length) {
@@ -725,8 +886,15 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const placementText = (item) => {
     const kinds = item.sensitiveKinds.join(", ");
+    // A dependency bot or in-flight pull request keeps its own group, so its line says which hold test it meets, not where it sits.
+    if (item.group === "bots" || item.group === "flight") {
+      if (!item.complete) return "A score is missing, which meets a hold test.";
+      if (!item.hold) return "Meets no hold test, V × U " + item.product + ".";
+      return "Meets a hold test: " + [item.product >= 3 ? "V × U " + item.product : "", kinds ? "sensitive kind " + kinds : ""].filter(Boolean).join(", ") + ".";
+    }
     if (!item.complete) return ["Held because a score is missing.", item.product === null ? "" : "V × U is " + item.product + ".",
       kinds ? "It touches a sensitive kind: " + kinds + "." : ""].filter(Boolean).join(" ");
+    if (!item.hold && item.group === "hold") return "Held for review by a review:held label or a Fleet: hold receipt, though V × U is " + item.product + " and it touches no sensitive kind.";
     if (!item.hold) return "Under the hold line, V × U " + item.product + ".";
     if (item.product < 3) return "Held for a sensitive kind, " + kinds + ", though V × U is " + item.product + ".";
     if (kinds) return "Over the hold line, V × U " + item.product + ", and it touches a sensitive kind: " + kinds + ".";
@@ -738,21 +906,53 @@ main { padding: 40px 0 80px; min-width: 0; }
   const choices = new Map();
   const verdictBox = el("textarea");
   const progress = document.getElementById("bar-progress");
+  const barCopy = document.getElementById("bar-copy");
+  const barCue = document.getElementById("bar-cue");
+  const copy = el("button", "copy");
+  const status = el("span", "meta");
   const railStates = new Map();
   let lastCopied = "";
+  let visible = ordered;
+  let quotesChanged = false;
+  let flashTimer = 0;
   const nextUndecided = (after) => {
-    const start = after ? ordered.indexOf(after) + 1 : 0;
-    return ordered.slice(start).concat(ordered.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
+    const start = after ? visible.indexOf(after) + 1 : 0;
+    return visible.slice(start).concat(visible.slice(0, start)).find((item) => !choices.get(item).verdict) || null;
   };
+  // Both regions are announced when their text changes, so a keystroke that changes nothing writes nothing.
+  const say = (node, text) => { if (node.textContent !== text) node.textContent = text; };
+  const restingCue = () => {
+    say(barCue, storage ? "Kept in this browser until you copy them" : "This browser keeps nothing: copy before closing");
+    say(status, storage
+      ? "Your choices stay in this browser, so a reload loses nothing. Copy them into the conversation when you are done."
+      : "This browser keeps nothing, so copy your Verdicts before closing the page.");
+  };
+  const labelCopy = () => {
+    clearTimeout(flashTimer);
+    const count = verdictBox.value ? verdictBox.value.split("\n").length : 0;
+    barCopy.textContent = copy.textContent = "Copy Verdicts (" + count + ")";
+  };
+  // A posted Notes line wraps the note in double quotes, so one inside it
+  // would end the line early for whoever parses it. The note is the last
+  // field of a copied line, so a | inside it is safe.
+  const cleanNotes = (value) => value.replace(/\s+/g, " ").replace(/"/g, "'").trim();
   const refreshVerdicts = () => {
     const lines = [];
+    quotesChanged = false;
     for (const item of ordered) {
       const choice = choices.get(item);
+      const typed = choice.notes.value;
+      choice.hint.hidden = Boolean(choice.verdict) || !typed.trim();
+      if (choice.hint.hidden) choice.notes.removeAttribute("aria-describedby");
+      else choice.notes.setAttribute("aria-describedby", choice.hint.id);
       if (!choice.verdict) continue;
-      const notes = choice.notes.value.replace(/\s+/g, " ").trim();
-      lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + VERDICTS[choice.verdict].toLowerCase() + " | " + notes);
+      if (typed.includes('"')) quotesChanged = true;
+      lines.push(fullRef(item.pr) + " @ " + str(item.pr.head) + " | " + VERDICTS[choice.verdict].toLowerCase() + " | " + cleanNotes(typed));
     }
     verdictBox.value = lines.join("\n");
+    labelCopy();
+    // Anything edited since the last copy makes "Copied" untrue.
+    if (verdictBox.value !== lastCopied) restingCue();
   };
   const refreshProgress = () => {
     let decided = 0;
@@ -767,8 +967,11 @@ main { padding: 40px 0 80px; min-width: 0; }
         railState.classList.toggle("done", Boolean(word));
       }
     }
+    // Next follows the filter: the first undecided pull request still showing, or the Verdicts when none is.
     const next = nextUndecided(null);
-    progress.textContent = total ? decided + " of " + total + " decided" + (next ? " · Next undecided ↓" : " · Copy Verdicts ↓") : "";
+    const where = next ? "Next ↓" : "Verdicts ↓";
+    progress.replaceChildren();
+    if (total) add(progress, el("span", "long", decided + " of " + total + " decided · " + where), el("span", "short", decided + "/" + total + " · " + where));
     progress.href = "#" + (next ? next.id : "verdicts");
   };
   const choose = (item, key) => {
@@ -782,7 +985,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 
   const block = (item) => {
     const pr = item.pr;
-    const article = el("article", item.hold ? "block hold" : "block");
+    const article = el("article", "block" + (item.group === "hold" ? " hold" : "") + (item.group === "flight" ? " flight" : ""));
     article.id = item.id;
     const head = el("div", "block-head");
     const title = el("h2");
@@ -798,8 +1001,11 @@ main { padding: 40px 0 80px; min-width: 0; }
     notes.type = "text";
     notes.placeholder = "Notes for the Verdict";
     notes.setAttribute("aria-label", "Notes for " + label(pr));
+    const hint = el("span", "hint", "Pick a verdict to include this note");
+    hint.id = item.id + "-hint";
+    hint.hidden = true;
     const saved = recall(pr);
-    const choice = { verdict: saved && Object.hasOwn(VERDICTS, saved.verdict) ? saved.verdict : null, notes, buttons: [] };
+    const choice = { verdict: saved && Object.hasOwn(VERDICTS, saved.verdict) ? saved.verdict : null, notes, hint, buttons: [] };
     notes.value = saved && typeof saved.notes === "string" ? saved.notes : "";
     choices.set(item, choice);
     for (const [key, text] of Object.entries(VERDICTS)) {
@@ -815,16 +1021,22 @@ main { padding: 40px 0 80px; min-width: 0; }
       remember(pr, choice.verdict, notes.value);
       refreshVerdicts();
     });
-    add(verdict, seg, notes);
+    add(verdict, seg, notes, hint);
     add(head, title, verdict);
-    const size = pr.size || {};
-    const meta = el("p", "meta block-meta");
-    const facts = [label(pr), str(pr.owner) || "No owner",
-      "+" + (size.additions ?? "?") + " −" + (size.deletions ?? "?") + (size.files ? " in " + plural(size.files, "file", "files") : ""),
-      str(pr.status)].filter(Boolean);
-    meta.append(document.createTextNode(facts.join(" · ") + " · "));
-    meta.append(link("Open on GitHub", pr.url));
-    add(article, head, meta);
+    // The risk the Overview showed stays in view where the Verdict is chosen.
+    const meta = el("div", "block-meta");
+    const vu = chip("vu-chip", "V × U " + (item.product ?? "?"));
+    vu.setAttribute("aria-label", "Verification effort times undo cost: " + (item.product ?? "unknown"));
+    add(meta, vu);
+    if (item.sensitiveKinds.length) meta.append(add(chip("alert"), mark("seal"), document.createTextNode("Sensitive kind: " + item.sensitiveKinds.join(", "))));
+    add(meta, ...readiness(item));
+    const facts = el("span", "meta", [label(pr), str(pr.owner) || "No owner", sizeText(pr), str(pr.status)].filter(Boolean).join(" · ") + " · ");
+    facts.append(link("Open on GitHub", pr.url));
+    add(article, head, add(meta, facts));
+    if (item.group === "flight") {
+      article.append(add(el("p", "xnote"), el("b", "", "In flight"),
+        document.createTextNode("A worker may still be updating this pull request, so its head can move after you decide. Leave it for its owner unless you want to step in early.")));
+    }
     article.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
     for (const note of notesFor(pr)) {
       const box = el("p", "xnote");
@@ -895,7 +1107,7 @@ main { padding: 40px 0 80px; min-width: 0; }
       const li = el("li", "crow");
       if (row.id) li.id = row.id;
       const name = el("div");
-      if (sealed) name.append(el("span", "seal"));
+      if (sealed) name.append(mark("seal"));
       add(name, link(str(row.title) || "Untitled", row.url), el("span", "where", " · " + label(row)));
       add(li, name, el("div", str(row[detail]) ? "" : "empty", str(row[detail]) || "Nothing to add."));
       ul.append(li);
@@ -907,36 +1119,63 @@ main { padding: 40px 0 80px; min-width: 0; }
   const progressBox = el("section", "closing");
   progressBox.id = "in-progress";
   add(progressBox, el("h2", "", "Still in progress"), closingList(inProgress, "note", "None in progress.", false));
-  const mergedBox = el("section", "closing");
+  // Only a merge the operator did not decide, or one that changed after they
+  // did, takes the orange seal. A routine auto-merge is listed without one.
+  const mergedList = (title, rows, detail, none, sealed) => add(el("section", "mlist"), el("h3", "", title), closingList(rows, detail, none, sealed));
+  const mergedTotal = changedAfter.length + mergedWithout.length + autoMerged.length;
+  mergedBox = el("section", "closing");
   mergedBox.id = "merged";
-  add(mergedBox, el("h2", "", "Merged recently"),
-    el("p", "meta", str(merged.window) || "The window was not stated."),
-    el("h3", "", "Changed after your Verdict"), closingList(changedAfter, "summary", "None changed after your Verdict.", true),
-    el("h3", "", "Merged without you"), closingList(mergedWithout, "reason", "None merged without you.", true));
-  add(page, mergedBox, progressBox);
+  mergedDrawer = el("details", "drawer");
+  mergedDrawer.open = mergedTotal <= MANY;
+  const mergedCounts = [changedAfter.length + " changed after your Verdict", mergedWithout.length + " merged without you"];
+  if (autoMerged.length) mergedCounts.push(autoMerged.length + " auto-merged as routine");
+  add(mergedDrawer, el("summary", "", plural(mergedTotal, "merged pull request", "merged pull requests") + ": " + mergedCounts.join(", ")),
+    mergedList("Changed after your Verdict", changedAfter, "summary", "None changed after your Verdict.", true),
+    mergedList("Merged without you", mergedWithout, "reason", "None merged without you.", true),
+    autoMerged.length ? mergedList("Auto-merged as routine", autoMerged, "reason", "", false) : null);
+  add(mergedBox, el("h2", "", "Merged recently"), el("p", "meta", str(merged.window) || "The window was not stated."), mergedDrawer);
+  // A jump that did not come from a link on this page, such as a typed address or Back, finds the drawer closed and nothing to scroll to.
+  // The same goes for Back to a card the filter has since hidden: the filter gives way to the address.
+  const arrive = () => {
+    const id = window.location.hash.slice(1);
+    const card = ordered.find((item) => item.id === id && item.node.hidden);
+    if (card) clearFilter();
+    const target = card ? card.node : reveal(id);
+    if (target) target.scrollIntoView({ block: "start" });
+  };
+  window.addEventListener("hashchange", arrive);
 
   const box = el("section", "verdicts");
   box.id = "verdicts";
   const boxHead = el("div", "verdicts-head");
-  const copy = el("button", "copy", "Copy Verdicts");
   copy.type = "button";
-  const status = el("span", "meta", storage
-    ? "Your choices stay in this browser, so a reload loses nothing. Copy them into the conversation when you are done."
-    : "This browser keeps nothing, so copy your Verdicts before closing the page.");
   status.setAttribute("aria-live", "polite");
-  copy.addEventListener("click", async () => {
-    if (!verdictBox.value) { status.textContent = "No Verdicts chosen yet."; return; }
+  // The bar hides its cue on a narrow screen, so the button itself answers for a moment.
+  const answer = (short, cue, long) => {
+    barCue.textContent = cue;
+    status.textContent = long;
+    barCopy.textContent = short;
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(labelCopy, 2000);
+  };
+  const copyVerdicts = async () => {
+    if (!verdictBox.value) { answer("None chosen yet", "No Verdicts chosen yet.", "No Verdicts chosen yet."); return; }
     const text = verdictBox.value;
     try {
       await navigator.clipboard.writeText(text);
       lastCopied = text;
-      status.textContent = "Copied. Paste them into the conversation.";
+      // A Verdict changed while the browser was still copying leaves the resting cue in place.
+      if (verdictBox.value !== text) return;
+      answer("Copied", "Copied. Paste them into the conversation.", "Copied. Paste them into the conversation."
+        + (quotesChanged ? " Double quotes in your notes became single quotes, so each Notes line stays whole." : ""));
     } catch (error) {
       verdictBox.focus();
       verdictBox.select();
-      status.textContent = "Copy did not work here. The text is selected; copy it by hand.";
+      answer("Copy failed", "Copy did not work here.", "Copy did not work here. The text is selected; copy it by hand.");
     }
-  });
+  };
+  copy.addEventListener("click", copyVerdicts);
+  barCopy.addEventListener("click", copyVerdicts);
   verdictBox.readOnly = true;
   verdictBox.setAttribute("aria-label", "Chosen Verdicts, one line per pull request");
   const keys = el("p", "keys");
@@ -945,7 +1184,7 @@ main { padding: 40px 0 80px; min-width: 0; }
   }
   add(boxHead, el("h2", "", "Your Verdicts"), copy, status);
   add(box, boxHead, verdictBox, keys);
-  page.append(box);
+  add(page, box, mergedBox, progressBox);
   window.addEventListener("beforeunload", (event) => {
     if (verdictBox.value && verdictBox.value !== lastCopied) {
       event.preventDefault();
@@ -953,14 +1192,19 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
   });
 
-  const railGroup = (items, hold) => {
+  // The rail comes before the page's h1, so its group names are labels, not headings.
+  const railGroup = (group) => {
     const frag = document.createDocumentFragment();
-    if (!items.length) return frag;
-    const h = el("h2");
-    add(h, el("span", hold ? "seal" : "ring"), document.createTextNode(groupName(hold)));
+    if (!group.items.length) return frag;
+    const h = el("p", "r-head");
+    h.id = "rail-" + group.key;
+    add(h, groupMark(group), document.createTextNode(group.name));
     const ol = el("ol");
-    for (const item of items) {
+    ol.setAttribute("aria-labelledby", h.id);
+    group.railParts = [h, ol];
+    for (const item of group.items) {
       const li = el("li");
+      item.railItem = li;
       const a = inPage("", item.id);
       const state = el("span", "r-state");
       railStates.set(item, state);
@@ -973,14 +1217,15 @@ main { padding: 40px 0 80px; min-width: 0; }
     return frag;
   };
   const railLinks = el("div", "r-links");
-  if (changedAfter.length || mergedWithout.length) railLinks.append(inPage("Merged recently", "merged"));
   railLinks.append(inPage("Your Verdicts", "verdicts"));
-  add(rail, railGroup(over, true), railGroup(under, false), railLinks);
+  if (mergedTotal) railLinks.append(inPage("Merged recently", "merged"));
+  add(rail, ...GROUPS.map(railGroup), railLinks);
 
+  // Keys, the rail's marker, and Next all work on what the filter leaves showing: a hidden block measures as zero.
   const current = () => {
     const line = window.innerHeight * 0.3;
     let found = null;
-    for (const item of ordered) {
+    for (const item of visible) {
       if (item.node.getBoundingClientRect().top <= line) found = item;
     }
     return found;
@@ -993,21 +1238,39 @@ main { padding: 40px 0 80px; min-width: 0; }
     item.node.scrollIntoView({ block: "start" });
     item.heading.focus({ preventScroll: true });
   };
+  let marked = null;
+  const markCurrent = () => {
+    const here = current();
+    if (here === marked) return;
+    if (marked) marked.railLink.setAttribute("aria-current", "false");
+    if (here) here.railLink.setAttribute("aria-current", "true");
+    marked = here;
+  };
   if ("IntersectionObserver" in window) {
-    let marked = null;
-    const watcher = new IntersectionObserver(() => {
-      const here = current();
-      if (here === marked) return;
-      if (marked) marked.railLink.setAttribute("aria-current", "false");
-      if (here) here.railLink.setAttribute("aria-current", "true");
-      marked = here;
-    }, { rootMargin: "0px 0px -70% 0px" });
+    const watcher = new IntersectionObserver(markCurrent, { rootMargin: "0px 0px -70% 0px" });
     for (const item of ordered) watcher.observe(item.node);
+  }
+  function applyFilter() {
+    const filtered = filter.tab !== "all" || filter.broken;
+    visible = ordered.filter((item) => (filter.tab === "all" || item.tab === filter.tab) && (!filter.broken || item.broken));
+    const showing = new Set(visible);
+    for (const item of ordered) item.row.hidden = item.node.hidden = item.railItem.hidden = !showing.has(item);
+    for (const group of drawn) {
+      const shown = group.items.filter((item) => showing.has(item)).length;
+      group.count.textContent = "(" + (filtered ? shown + " of " : "") + group.items.length + ")";
+      group.section.hidden = filtered && shown === 0;
+      for (const part of group.railParts || []) part.hidden = group.section.hidden;
+    }
+    for (const [key, button] of tabButtons) button.setAttribute("aria-pressed", String(key === filter.tab));
+    filterEmpty.hidden = !(filtered && visible.length === 0);
+    filterStatus.textContent = filtered ? "Showing " + visible.length + " of " + total + " pull requests." : "";
+    refreshProgress();
+    markCurrent();
   }
   const decide = (key) => (here) => spansLine(here) && choose(here, key);
   const KEY_ACTIONS = {
-    j: (here) => go(ordered[Math.min(ordered.indexOf(here) + 1, ordered.length - 1)]),
-    k: (here) => go(ordered[Math.max(ordered.indexOf(here) - 1, 0)]),
+    j: (here) => go(visible[Math.min(visible.indexOf(here) + 1, visible.length - 1)]),
+    k: (here) => go(visible[Math.max(visible.indexOf(here) - 1, 0)]),
     n: (here) => go(nextUndecided(here)),
     m: decide("merge"),
     c: decide("changes"),
@@ -1016,15 +1279,24 @@ main { padding: 40px 0 80px; min-width: 0; }
   };
   document.addEventListener("keydown", (event) => {
     const action = KEY_ACTIONS[event.key];
-    if (!action || event.metaKey || event.ctrlKey || event.altKey || !ordered.length) return;
-    if (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable]")) return;
+    if (!action || event.metaKey || event.ctrlKey || event.altKey || !visible.length) return;
+    if (event.target instanceof Element && event.target.closest('input:not([type="checkbox"]), textarea, select, [contenteditable]')) return;
     if (event.repeat && ["m", "c", "d", "x"].includes(event.key)) return;
     event.preventDefault();
     action(current());
   });
 
+  // Anchor jumps and the rail clear the sticky bar at whatever height it wraps to.
+  const bar = document.getElementById("bar");
+  const fitBar = () => root.style.setProperty("--bar-h", bar.offsetHeight + "px");
+  if ("ResizeObserver" in window) new ResizeObserver(fitBar).observe(bar);
+  else window.addEventListener("resize", fitBar);
+
+  restingCue();
   refreshVerdicts();
-  refreshProgress();
+  applyFilter();
+  fitBar();
+  arrive();
 })();
 </script>
 </body>

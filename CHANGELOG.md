@@ -127,9 +127,25 @@ looked" surface. GitHub Releases mirror its entries.
   the pull request body, never commit `.impeccable/` snapshots, and push one
   verified follow-up commit through `ce-babysit-pr` when fixes apply). The
   Captain waits for the recorded audit result for the current head before
-  judging a UI/UX pull request ready to merge or hold, and interactive `impeccable critique` and
-  `/impeccable live` stay with the Captain or a Design Lead rather than
-  unattended Executors.
+  judging a UI/UX pull request ready to merge or hold, and interactive
+  `impeccable critique` and `/impeccable live` stay with the Captain or a
+  Design Lead rather than unattended Executors.
+- The `reviewing-prs` review page stays usable on a large round. Open pull
+  requests fall into four groups: held for review, under the hold line,
+  dependency bots, and in-flight fleet pull requests, which a worker may
+  still be updating. Each overview row shows failing checks, conflicts, a
+  hold violation, and the diff's size, and the same marks sit beside the
+  Verdict controls on each block. Filters narrow the round to one group or
+  to the broken and conflicting pull requests. The sticky bar has a
+  `Copy Verdicts` button with a count. `Your Verdicts` now comes before the
+  merged lists, which collapse on a large round, and more than five merges
+  without the operator share one notice. Routine `review:auto-merged`
+  merges are listed apart from unapproved ones, without the orange seal.
+  The round's data gains `bucket`, `checks`, `conflict`, `holdViolation`,
+  and `merged.autoMerged`; a round without them still renders.
+- `reviewing-prs` classifies a trusted-owner pull request with finished
+  checks and no hold as in flight, and counts a `Fleet: hold` receipt as
+  held.
 - Sessions audit is one job on the primary host instead of a remote job
   followed two hours later by a local consolidation job. When a second host
   is paired, the job starts a read-only worker there right after reading
@@ -725,6 +741,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- A double quote inside a Verdict note no longer ends the posted
+  `Notes: "..."` line early. The review page and step 5 of `reviewing-prs`
+  change inner double quotes to single quotes.
+- `reviewing-prs` settles a question for the operator during the round and
+  keeps it out of the posted `Notes:` line.
+- The review page says so when a note is typed with no Verdict chosen,
+  instead of dropping it silently, and no longer scrolls sideways on a
+  narrow or zoomed screen.
 - `repo-captain`'s wake timer no longer leaves the Captain looking busy in
   Orca between wakes. Orca keeps a session `working` while its harness
   reports unfinished timer work, so operator messages waited for Steer, which

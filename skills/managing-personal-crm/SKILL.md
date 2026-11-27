@@ -1,6 +1,6 @@
 ---
 name: managing-personal-crm
-description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later continues a visible CRM bundle or catch-up by confirming its source inventory or dispositions, correcting or answering its reconstruction, resuming deferred work, or deciding its actions, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
+description: Capture relationship interactions, prep for someone, check overdue contacts, find who can help, clean up Person notes, run embedded checks, or continue CRM bundles or catch-ups (inventory, dispositions, reconstruction, resume, action/cleanup approvals). Not for embedded caller actions, contact lookup, writing, email/meeting/chief-of-staff reviews, or tasks.
 license: MIT
 compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history. Optional public X reads require the installed Grok CLI or a permitted configured read-only X provider.
 ---
@@ -57,18 +57,18 @@ For any remaining request that is not the visible catch-up continuation, choose
 exactly one mode:
 
 - **Direct:** The user asks to capture an interaction, find a relevant person,
-  examine cadence, prepare a one-person close-up, or assess a correction. This
+  examine cadence, prepare a one-person prep brief, or assess a correction. This
   skill owns the review bundle and run ending.
 - **Embedded:** Another workflow supplies current evidence containing a
   relationship interaction, possible follow-up, relevant overdue person, or
-  defensible connection to current work—or requires a day-window relationship
-  scan (wind-down Daily CRM Scan). For a required day-window scan, cover each
-  configured relationship interaction source for that window (adapters load
-  before Messages or X queries), then keep per-conversation history and identity
-  binding narrow. Otherwise judge only the evidence the caller already
-  supplied under the smallest-slice rule. Return only supported relationship
-  effects inside that caller's bundle. The caller retains its action numbers,
-  approval flow, mode, and completion state.
+  defensible connection to current work, or requires a day-window relationship
+  scan (wind-down Daily CRM Scan). For a required day-window scan, follow the
+  day-window coverage rules in [references/source-behavior.md](references/source-behavior.md)
+  (loading the Messages or X adapter before querying those sources). Otherwise
+  judge only the evidence the caller already supplied under the smallest-slice
+  rule. Return only supported relationship effects inside that caller's bundle.
+  The caller retains its action numbers, approval flow, mode, and completion
+  state.
 - **Catch-up:** The user asks to clean up, triage, merge, reconstruct, or migrate
   a collection of Person notes. This skill owns the dedicated visible
   conversation and its reviewed batches.
@@ -88,10 +88,9 @@ Read [references/source-behavior.md](references/source-behavior.md) before any
 source query or identity judgment. Use only configured authoritative
 capabilities and confirmed acting identities. Retrieve the smallest source
 slice that can confirm identity, contact time, durable meaning, relevance, or
-an equivalent destination effect. For a caller-required day-window scan
-(wind-down Daily CRM Scan), cover each configured relationship interaction
-source for that window first, then keep per-conversation history and identity
-binding narrow. Use catch-up breadth only in approved catch-up inventory.
+an equivalent destination effect. Caller-required day-window scans follow the
+day-window rules in [references/source-behavior.md](references/source-behavior.md),
+and catch-up breadth applies only in approved catch-up inventory.
 
 When `imsg` is the configured local Apple Messages source, also read
 [references/apple-messages-cli.md](references/apple-messages-cli.md) before the
@@ -132,9 +131,9 @@ before inspecting Person notes, cadence, contact dates, or durable meaning.
 Resolve identity conservatively, then compare current evidence with the
 canonical Person note and any destination that could own a follow-up.
 
-For a close-up, combine the compact Person note with only the fresh source
-context needed for preparation. Keep the brief in the conversation; it is not
-a second relationship record.
+For a one-person prep brief, combine the compact Person note with only the
+fresh source context needed for preparation. Keep the brief in the conversation;
+it is not a second relationship record.
 
 Completion: the person is safely bound or visibly unresolved, current judgment
 comes from authoritative sources and canonical notes, and no cache, cursor,
@@ -146,7 +145,7 @@ Evaluate these outcomes independently:
 
 1. Advance the contact date only for a substantive direct contact under the
    relationship contract and only after identity and local date are reliable.
-2. Propose Person prose only for relationship-load-bearing meaning under the
+2. Propose Person prose only for durable relationship meaning under the
    contract. Keep raw interaction history in its source.
 3. Route a real follow-up to its canonical destination: dated relationship
    commitments to Tasks; in direct mode, unrelated work to the configured

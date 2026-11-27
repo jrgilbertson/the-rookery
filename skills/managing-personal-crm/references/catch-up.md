@@ -62,8 +62,9 @@ Person note for a first or later stage-one bundle or inspecting or reconstructin
 the current person in stage two. This includes continuation after inventory
 confirmation, prior-bundle dispositions, an interpretation correction, a focused
 answer, or deferred reconstruction. A blocked inventory-only turn need not load
-it. Use its target schema, conditional tier requirements, monotonic last-contact
-rule, durable-meaning boundary, and legacy mappings, including `next_touch`.
+it. Use its target schema, conditional tier requirements, contact dates that
+only move forward, durable-meaning boundary, and optional legacy-migration
+rules.
 
 Stage one performs triage only. Defer rich history reconstruction, durable-meaning
 changes, cadence effects, and all person-level effect preparation until stage

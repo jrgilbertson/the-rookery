@@ -33,21 +33,21 @@ message, email, targeted group exchange, or unanswered outgoing direct
 message. Passive likes, reactions, broadcasts, merely sharing a room, bulk
 announcements, and observing someone else's update do not count.
 
-Advance `date_last_contacted` monotonically. If the canonical date is newer
-than or equal to the observed local date, report **Already satisfied** and do
-not rewrite the note. Multiple sources describing the same interaction support
-one contact observation, not several touches.
+Use contact dates that only move forward for `date_last_contacted`. If the
+canonical date is newer than or equal to the observed local date, report
+**Already satisfied** and do not rewrite the note. Multiple sources describing
+the same interaction support one contact observation, not several touches.
 
 Completion: every contact proposal represents one safely identified direct
 interaction and never moves the canonical date backward.
 
-## Store only relationship-load-bearing meaning
+## Store only durable relationship meaning
 
-Information is relationship-load-bearing when it is likely to change a future
-interaction: a stable preference, meaningful life or work change, commitment,
-sensitivity, shared context, current focus, or fact that improves how the user
-can prepare, help, or avoid harm. Propose the smallest prose or Comment change
-that preserves that meaning.
+Information carries durable relationship meaning when it is likely to change a
+future interaction: a stable preference, meaningful life or work change,
+commitment, sensitivity, shared context, current focus, or fact that improves
+how the user can prepare, help, or avoid harm. Propose the smallest prose or
+Comment change that preserves that meaning.
 
 Small talk, raw transcripts, touch-by-touch history, passive activity, facts
 already present, and short-lived details with no plausible future use stay in
@@ -84,23 +84,24 @@ not enough.
 Completion: cadence produces only justified active exceptions, while strong
 contextual relevance remains available across statuses.
 
-## Read mixed schemas without writing legacy fields
+## Handle older schemas during optional migration
 
-During transition, map numeric tiers `5`, `15`, `50`, `150`, and `500` to their
-labeled equivalents for reads. Keep legacy `sphere`, `next_touch`, tier `0`,
-tier `1500`, and Non-Contact values visible so records are not silently lost,
-but do not write them into a converted or new note.
+This optional note applies only when a vault already contains older Person-note
+schemas. Keep unrecognized legacy fields and classifications visible during
+reads so records are not silently lost, and do not write legacy fields into a
+converted or new note.
 
 Convert a retained note only through person-level reviewed effects. Preserve
 unrelated metadata, aliases, manual prose, links, embeds, and Comments. Before
-removing a populated future `next_touch`, find or propose its equivalent
-canonical Task. Remove the field only after that Task is **Applied** or
-**Already satisfied**, or after the user explicitly rejects the commitment.
+removing a legacy scheduled follow-up field that holds a future commitment,
+find or propose its equivalent canonical Task. Remove the legacy field only
+after that Task is **Applied** or **Already satisfied**, or after the user
+explicitly rejects the commitment.
 
 A partial or indeterminate conversion is not converted. Keep dependent cleanup
 blocked until a reviewed repair and full CLI readback establish the complete
-target contract. Legacy compatibility may be removed only after an
-authoritative CLI query returns zero legacy Person notes.
+target contract. Drop legacy migration handling only after an authoritative CLI
+query returns zero unconverted Person notes.
 
-Completion: legacy and target notes remain discoverable, and every converted
+Completion: older and target notes remain discoverable, and every converted
 note preserves meaning and any unresolved commitment.

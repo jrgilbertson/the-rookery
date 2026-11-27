@@ -6,9 +6,11 @@ effect. Approval binds to one exact visible effect, not to a person or bundle.
 ## Bind each decision
 
 Each numbered effect must show acting identity, authoritative destination,
-exact target or creation location, complete content or effect, evidence and
-reason, and dependencies. The user may approve, edit, defer, or skip each one.
-An edit creates a revised numbered proposal that needs approval.
+exact target or creation location, visibility when relevant, complete content
+or effect, evidence and reason, dependencies, and plain completion wording
+(`Done when:` or `Verified when:`) when helpful. The user may approve, edit,
+defer, or skip each one. An edit creates a revised numbered proposal that needs
+approval.
 
 An unnumbered approval applies only when exactly one visible effect has exactly
 one interpretation. With multiple effects or any ambiguity, write nothing and
@@ -48,7 +50,7 @@ single target must use an operation that produces the complete approved result
 or no result. If the interface cannot do that, split it into separate proposals
 and obtain approval before either write.
 
-The separately approved reversible trash-capability probe below is the explicit
+The separately approved reversible-trash test action below is the explicit
 exception to that atomicity rule. Its documented sequence has observable
 intermediate states, which use the observed-state reporting, dependent cleanup
 skip, and bounded repair rules in **Keep cleanup reversible**.
@@ -89,13 +91,13 @@ A catch-up `merge` or `delete` disposition authorizes no destructive action.
 A later proposal must identify the survivor, duplicate, exact content and link
 effects, and every alias or identity collision.
 
-Before proposing a real cleanup application, present the trash-capability proof
-as its own numbered prerequisite action. Show the configured vault, a unique
-vault-relative probe-note path, the complete disposable content, the exact
-create, read, trash, absence-check, restore, readback, final-trash, and final
-absence-check sequence, and the expected final state. The expected final state
-is that the probe is absent from the active vault and remains recoverable in
-verified Obsidian trash.
+Before proposing a real cleanup application, present the reversible-trash test
+action as its own numbered prerequisite action. Show the configured vault, a
+unique vault-relative probe-note path, the complete disposable content, the
+exact create, read, trash, absence-check, restore, readback, final-trash, and
+final absence-check sequence, and the expected final state. The expected final
+state is that the probe is absent from the active vault and remains recoverable
+in verified Obsidian trash.
 
 After explicit approval, first confirm that the exact probe path is absent.
 Never overwrite an existing note. Use the Obsidian CLI to create and read back
@@ -108,10 +110,10 @@ bounded repair. Until a safe proof path exists, any new cleanup proposal is
 **Manual**. Do not claim that other notes are intact unless the observed state
 proves it.
 
-A real merge or delete action must name the approved probe action as a
-prerequisite. That prerequisite is satisfied only by an **Applied** result, or
-an **Already satisfied** result from an independently approved prior proof that
-still applies to the same configured vault and trash behavior.
+A real merge or delete action must name the approved reversible-trash test
+action as a prerequisite. That prerequisite is satisfied only by an **Applied**
+result, or an **Already satisfied** result from an independently approved prior
+test action that still applies to the same configured vault and trash behavior.
 
 Represent a merge as at least two separately numbered actions with separate
 results. Immediately before either action, review backlinks, aliases, and
@@ -127,7 +129,7 @@ for both merge actions and require its successful readback.
 After those shared prerequisites pass, the first merge action updates one
 survivor and reads it back. The later action moves one duplicate to verified
 Obsidian trash and depends on the successful survivor readback and applicable
-approved trash proof. Preserve separate results and safe partial outcomes only
+approved reversible-trash test action. Preserve separate results and safe partial outcomes only
 for failures after the shared prerequisites pass. For example, if duplicate
 trash fails or is indeterminate after the survivor update succeeds, keep and
 report the survivor update as **Applied** and preserve the duplicate. Never

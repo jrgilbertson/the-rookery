@@ -122,9 +122,9 @@ time without replacing those executions.
 
 I look back at recurring corrections, failed checks, and unnecessary
 coordination to see what should change before the next run.
-The [Sessions audit automations](automations/sessions-audit.md) use `ce-retro` to
+The [Sessions audit automation](automations/sessions-audit.md) uses `ce-retro` to
 review recent AI sessions on each host alongside the repository's skills,
-workflows, guidance, and configuration. They recommend changes to the coding
+workflows, guidance, and configuration. It recommends changes to the coding
 environment based on the session evidence.
 
 Sometimes the useful change is to remove a rule or a redundant check.

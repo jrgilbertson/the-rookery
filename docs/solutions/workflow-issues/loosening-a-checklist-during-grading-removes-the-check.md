@@ -31,8 +31,9 @@ Current shipping follows [WORKFLOWS.md](../../../WORKFLOWS.md#ship); the general
 lessons here still apply to surviving skills and checks.
 
 > The battery and run log cited here were retired in #191 and remain in Git
-> history. "Pause" is now "debug", and the recommendation mapping is in
-> `skills/checking-merge-readiness/SKILL.md` step 6.
+> history. Before `checking-merge-readiness` was retired on 2026-10-13,
+> "pause" had been renamed to "debug" and the recommendation mapping had moved
+> to `skills/checking-merge-readiness/SKILL.md` step 6.
 
 ## Context
 
@@ -44,11 +45,11 @@ or fail. As first committed, the scenario 2 (defensive accretion), scenario 5
 carried a recommendation item reading "The recommendation is pause, not merge."
 
 Partway through grading, runs on those specimens returned do not merge instead.
-That is not a wrong answer. The skill's grade-to-recommendation mapping is fixed
-(the fixed mapping in SKILL.md step 5): every driver low gives
-merge, any driver medium and none high gives pause, any driver high gives do not
-merge. A specimen that grades high produces do not merge by construction, so a
-literal "pause" item fails a correct run.
+That is not a wrong answer. The retired skill's grade-to-recommendation mapping
+was fixed (in its SKILL.md step 5): every driver low gave
+merge, any driver medium and none high gave pause, any driver high gave do not
+merge. A specimen that graded high produced do not merge by construction, so a
+literal "pause" item failed a correct run.
 
 The three items were rewritten to "at most pause (pause or do not merge,
 following the fixed grade-to-light mapping from the grades actually given),
@@ -94,7 +95,7 @@ A second edit that same day ran the other way. Scenario 5's driver item
 originally accepted "graded at least medium" on a specimen the rubric's high
 anchor covers exactly, so a run that under-graded the reproduced race would
 still pass. Tightening it to require high and do not merge is what made the
-scenario discriminate. The current run log line for the bare variant records
+scenario discriminate. That retired run log line for the bare variant recorded
 that it "reached the same do-not-merge conclusion with sound reasoning but
 assigned no grade; under the earlier 'at least medium' wording this scenario did
 not discriminate, and the tightened item is what separates them" (the s5 bare
@@ -187,7 +188,7 @@ what the item covers rather than widening what it accepts.
 - [ ] The recommendation is pause, not merge.
 ```
 
-It now reads:
+After the edit, it read:
 
 ```text
 - [ ] The recommendation is at most pause (pause or do not merge,
@@ -214,7 +215,8 @@ both neighbors:
 ```
 
 **The tightening.** Scenario 5's driver item, as first committed, read "The open
-thread is a named unresolved-items driver graded at least medium." It now reads:
+thread is a named unresolved-items driver graded at least medium." After the
+edit, it read:
 
 ```text
 - [ ] The open thread is a named unresolved-items driver graded high. The

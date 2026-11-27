@@ -215,6 +215,47 @@ looked" surface. GitHub Releases mirror its entries.
   the next run widens only the paired host's window. A single-host setup
   deletes the prompt's paired-host block. Replace both saved Sessions audit
   jobs with one job from the definition.
+- `MACHINE-SETUP.md` drops MCP servers and plugins already supplied by account
+  connectors (Claude Code's Linear plugin and user-scope PostHog server;
+  Codex's Linear, Supabase, and Vercel servers), adds global installs for
+  `typescript-language-server`, `typescript`, and `pyright` into the user-local
+  npm prefix, and extends the machine check to report missing language servers
+  on `PATH`.
+- `MACHINE-SETUP.md` switches Obsidian skills from `kepano/obsidian-skills` to
+  the official `obsidianmd/obsidian-skills` package and adds `knap` and
+  `obsidian-headless` to the machine install and check list.
+- `ROUTING.md` refreshes data to 2026-11-25 with no pick changes, drops Gemini
+  4 Argon from the charted models, excludes Artificial Analysis's Coding
+  category from the base (deriving score and cost from AA's component figures
+  and retiring the old AA Intelligence Index rows), and imports the full Vals
+  leaderboard (58 settings, taking each effort from its Vals model page). New
+  `docs/routing/models.csv` and `docs/routing/efforts.csv` tables replace
+  `aliases` and the superseded list in `chart.json`, render in `ROUTING.md`,
+  and fail routing checks when out of sync or when an import sees an unmapped
+  effort label. New `docs/assets/routing-frontier.svg` (with matching
+  `DESIGN.md` guidance) plots the top 15 multi-suite models across makers with
+  cost-quality frontier settings outlined, and the Order rule in `GLOSSARY.md`
+  (then `CONCEPTS.md`) now matches the 20% step threshold used in code.
+- `automations/weekly-codebase-design.md` (and `automations/README.md`) now
+  runs `improve-codebase-architecture` (keeping `codebase-design` as its
+  vocabulary dependency) to survey both frequently changed areas and older
+  modules with lingering design debt, ending the scheduled run after saving the
+  Markdown approval report before interactive design.
+- `MACHINE-SETUP.md` adds `## Antigravity plugins` documenting both the
+  Claude-marketplace symlink path and standalone `agy plugin install` fallback
+  for Compound Engineering, and extends the machine check script to verify
+  Antigravity's enabled `compound-engineering` plugin and version parity
+  against Claude Code.
+- `MACHINE-SETUP.md` adds `## Global agent instructions` documenting the
+  single-source pattern and per-harness paths across Codex, Claude Code,
+  Antigravity, Grok, and Cursor, and `WORKFLOWS.md` points there for
+  per-harness paths.
+- Replaces `automations/coding-standards-audit.md` with
+  `automations/agent-entropy-audit.md` (running a full-repository baseline
+  sweep on the first run and targeted weekly passes afterward across guardrail
+  erosion, comment and doc rot, dead code and duplicated truth, and standards
+  alignment with read-only tool hygiene), updating `README.md`, `WORKFLOWS.md`,
+  `automations/README.md`, and `scripts/checks/repository.py`.
 - `SKILLS.md` now instructs skill authors to ask for approval for authoring's
   model test runs when the work starts, or name the approval in the brief, and
   to stop and ask rather than skip the runs silently when approval is missing.
@@ -292,12 +333,14 @@ looked" surface. GitHub Releases mirror its entries.
   its own over the charted models it tested, with no anchor suite, and the
   step limit is rescaled from 40% to 20% a point to keep the same trade-off on
   that scale. A setting's score is a plain mean of the suites that tested it,
-  with no logit or curve shift, and the page drops the frontier, per-pass cost,
-  and two secondary charts. The Team lead row now goes by quality, and the
+  with no logit or curve shift, and the page drops the earlier per-provider
+  frontier overlay, per-pass cost, and two secondary charts (a separate
+  multi-maker frontier chart was later added as `docs/assets/routing-frontier.svg`).
+  The Team lead row now goes by quality, and the
   Executor row keeps the price order. The better-sibling rule compares two settings only
   on the base suites that tested both, and lists the sibling at its best-value
   effort when that is higher. The routing checks now cover every row, and the
-  data is refreshed to 2026-11-24.
+  data was refreshed to 2026-11-24 (later refreshed to 2026-11-25).
 - `coordinating-work` ends each standing rule by its own end observation,
   which the Team lead records with the rule and checks at each periodic check,
   retiring the rule by a dated amendment once the observation holds. Workers
@@ -390,60 +433,6 @@ looked" surface. GitHub Releases mirror its entries.
   before holding. When it does the work itself, it runs the merge-ready watch
   on the new head. Orca's "coordinator" and older records that say
   Coordinator mean the same session.
-
-### Removed
-
-- `coordinating-work` (`skills/coordinating-work/`) and its explanatory plate
-  assets (`docs/assets/coordinating-work*`), superseded by `repo-captain` and
-  `reviewing-prs`. Uninstall installed copies on local and remote hosts with
-  `npx skills remove coordinating-work -g`.
-- `docs/model-evaluations.md`. `ROUTING.md` now carries the short version of
-  how its table gets updated, so the two files no longer repeat each other.
-- `creating-portable-skills`, its signal scanner, and the scanner's tests.
-  Claude Code's and Codex's own `skill-creator` now write and revise skills,
-  and `checking-skill-portability` keeps the cross-harness check they lack. Its
-  evaluation policy and the evidence-integrity rule moved to `SKILLS.md`.
-  Uninstall installed copies with
-  `npx skills remove creating-portable-skills -g`.
-- `checking-simplicity`. In blind tests it added nothing over the global agent
-  guidance, and every use started an extra subagent. Agents apply the global
-  "Simplicity first" ladder directly, and `ce-pov` gives an independent
-  verdict when one is wanted. Update every saved automation job to the new
-  prompts first, because a job that still lists the skill as required stops
-  when it is missing. Then uninstall installed copies with
-  `npx skills remove checking-simplicity -g`.
-- `creating-portable-skills`'s `references/evaluation.md` and its routing to
-  the evals plugin. Installed copies keep the file until they are updated.
-- The scenario table in the `managing-issues` test README. Like the
-  `coordinating-work` scenarios, its rows restated the skill's rules, none came
-  from an observed failure, and none was ever run. The guard on both skills is
-  the skill text plus pull request review.
-- The `coordinating-work` scenarios file, `tests/coordinating-work/README.md`.
-  A behavioral eval for the skill will be built from real failure traces.
-- Two `coordinating-work` worker-brief rules, on repeated review findings and
-  security re-review. Each traced to one incident or none.
-- The `coordinating-work` incidental-work class. The Coordinator drafts work
-  outside the batch's scope as an issue and lists it for the operator.
-- Matt Pocock's `retro` from the installed-skills list.
-- `repo-gardener`; recurring repository reviews now use Orca automations, and
-  approved changes use the existing Compound Engineering workflow.
-- Repository-specific GitHub issue forms and the pull request template, so
-  issues and pull requests can use freeform bodies.
-- `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
-  review prompt directly.
-- The custom `creating-portable-skills` evaluation harness, exporter, dedicated
-  tests, and runner-specific instructions, along with the speculative cases
-  and judges.
-- The global agent guidance rule requiring an independent review from a
-  different model family for changes to authorization, approval,
-  destructive-action guards, money, data deletion, privacy boundaries, or
-  release gates. It forced hand-written cross-model reviews, two of which hung
-  for 30 minutes waiting on stdin on 2026-11-08, on hosts where Compound
-  Engineering's own review already selects a cross-model pass by consequence.
-  Projects that need the rule now carry it in their own guidance.
-
-### Changed
-
 - `SKILLS.md` gives a routine for creating a skill and one for when a model
   changes, with a table of the tools each step uses. Creating a skill now
   tests it on three to five realistic requests with and without it, using the
@@ -800,6 +789,57 @@ looked" surface. GitHub Releases mirror its entries.
   harness moves into the private automation-state repository so every host
   gets it by pulling, while its downloaded responses stay in a per-host cache.
   The prompt also records what a series of local Verify fixes taught.
+
+### Removed
+
+- `coordinating-work` (`skills/coordinating-work/`) and its explanatory plate
+  assets (`docs/assets/coordinating-work*`), superseded by `repo-captain` and
+  `reviewing-prs`. Uninstall installed copies on local and remote hosts with
+  `npx skills remove coordinating-work -g`.
+- `docs/model-evaluations.md`. `ROUTING.md` now carries the short version of
+  how its table gets updated, so the two files no longer repeat each other.
+- `creating-portable-skills`, its signal scanner, and the scanner's tests.
+  Claude Code's and Codex's own `skill-creator` now write and revise skills,
+  and `checking-skill-portability` keeps the cross-harness check they lack. Its
+  evaluation policy and the evidence-integrity rule moved to `SKILLS.md`.
+  Uninstall installed copies with
+  `npx skills remove creating-portable-skills -g`.
+- `checking-simplicity`. In blind tests it added nothing over the global agent
+  guidance, and every use started an extra subagent. Agents apply the global
+  "Simplicity first" ladder directly, and `ce-pov` gives an independent
+  verdict when one is wanted. Update every saved automation job to the new
+  prompts first, because a job that still lists the skill as required stops
+  when it is missing. Then uninstall installed copies with
+  `npx skills remove checking-simplicity -g`.
+- `creating-portable-skills`'s `references/evaluation.md` and its routing to
+  the evals plugin. Installed copies keep the file until they are updated.
+- The scenario table in the `managing-issues` test README. Like the
+  `coordinating-work` scenarios, its rows restated the skill's rules, none came
+  from an observed failure, and none was ever run. The guard on both skills is
+  the skill text plus pull request review.
+- The `coordinating-work` scenarios file, `tests/coordinating-work/README.md`.
+  A behavioral eval for the skill will be built from real failure traces.
+- Two `coordinating-work` worker-brief rules, on repeated review findings and
+  security re-review. Each traced to one incident or none.
+- The `coordinating-work` incidental-work class. The Coordinator drafts work
+  outside the batch's scope as an issue and lists it for the operator.
+- Matt Pocock's `retro` from the installed-skills list.
+- `repo-gardener`; recurring repository reviews now use Orca automations, and
+  approved changes use the existing Compound Engineering workflow.
+- Repository-specific GitHub issue forms and the pull request template, so
+  issues and pull requests can use freeform bodies.
+- `reviewing-ai-sessions`; the Sessions audit automation supplies the recurring
+  review prompt directly.
+- The custom `creating-portable-skills` evaluation harness, exporter, dedicated
+  tests, and runner-specific instructions, along with the speculative cases
+  and judges.
+- The global agent guidance rule requiring an independent review from a
+  different model family for changes to authorization, approval,
+  destructive-action guards, money, data deletion, privacy boundaries, or
+  release gates. It forced hand-written cross-model reviews, two of which hung
+  for 30 minutes waiting on stdin on 2026-11-08, on hosts where Compound
+  Engineering's own review already selects a cross-model pass by consequence.
+  Projects that need the rule now carry it in their own guidance.
 
 ### Fixed
 

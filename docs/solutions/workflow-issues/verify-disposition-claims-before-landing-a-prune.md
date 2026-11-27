@@ -22,10 +22,12 @@ related_components:
 
 # Verify disposition claims before landing a prune
 
-The behavioral case directories cited below have been retired. They document
-the evidence for this learning, not runnable current suites. Current evaluation
-follows [SKILLS.md](../../../SKILLS.md#improving-from-real-use); the lesson is to
-check a claimed move or consolidation against the source and its destination.
+The legacy behavioral case directories (`tests/*/cases/`, retired on 2026-10-13)
+and `creating-portable-skills` (retired on 2026-11-18) cited below are
+historical. They document the evidence for this learning, not runnable current
+suites or active skill packages. Current Skill Evals and evaluation rules follow
+[SKILLS.md](../../../SKILLS.md#improving-from-real-use); the lesson is to check
+a claimed move or consolidation against the source and its destination.
 
 ## Context
 
@@ -100,14 +102,14 @@ Three of the six validated gaps:
   drift/pre-write dependency variants into `application-dependencies`, but
   scenario 4 graded only Actions 1 and 3, leaving the dependent Action 2's
   outcome silent. Fixed in `89a0147`:
-  `tests/reviewing-meetings/cases/application-dependencies.md` scenario 4 now
-  grades "Action 2 is **Skipped** (its prerequisite was not applied)".
+  `tests/reviewing-meetings/cases/application-dependencies.md` scenario 4 then
+  graded "Action 2 is **Skipped** (its prerequisite was not applied)".
 - **Missing fold — quarterly relationship-surfacing variant.** `9b76104`
   claimed `Case 20 (quarterly contextual effect): folded-into
   relationship-discovery-boundaries`, but no quarterly scenario existed there.
   Fixed in `89a0147`:
   `tests/personal-chief-of-staff/cases/relationship-discovery-boundaries.md`
-  scenario 6 now covers "Quarterly: a named next-quarter objective and recent
+  scenario 6 then covered "Quarterly: a named next-quarter objective and recent
   evidence make one known expert directly relevant" with its own expectation
   line.
 - **False retirement — native-load provenance.** `875ba4a` recorded the native

@@ -129,6 +129,14 @@ looked" surface. GitHub Releases mirror its entries.
   the next run widens only the paired host's window. A single-host setup
   deletes the prompt's paired-host block. Replace both saved Sessions audit
   jobs with one job from the definition.
+- `SKILLS.md` now instructs skill authors to ask for approval for authoring's
+  model test runs when the work starts, or name the approval in the brief, and
+  to stop and ask rather than skip the runs silently when approval is missing.
+- `WORKFLOWS.md` and `scripts/sync-global-agents.sh` state that global-guidance
+  changes ship as their own small PR right away, never inside other work. When
+  `scripts/sync-global-agents.sh --check` fails on a branch that does not edit
+  `GLOBAL-AGENTS.md`, its message now tells that branch not to copy the change
+  in, without changing when the check passes or fails.
 - Improve audit checks the repository's tracker read-only with
   `managing-issues` before saving its report and names each covering open issue
   beside its finding, reporting a coverage gap if the tracker is unreachable or
@@ -705,6 +713,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- The `reviewing-prs` review page no longer shows a V × U of 9 for a pull
+  request missing a score. It still holds that pull request at the top of the
+  held group, shows the real verification effort × undo cost or `?`, and says
+  the pull request is held because a score is missing.
+- The Verification effort row in `PRIORITIZATION.md`'s factor table again
+  lists a new user-facing view, flow, or concept as an example of a 3, matching
+  the `Rank by leverage` copies, instead of saying it always scores 3.
 - `reviewing-meetings` accepts a Granola-returned meeting URL when its scheme,
   host, and path match the canonical `https://notes.granola.ai/d/{native_id}`
   URL, ignoring any query string or fragment (such as `?utm_source=mcp`), while

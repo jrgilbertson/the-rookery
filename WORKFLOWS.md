@@ -30,7 +30,7 @@ The workflows need three things:
 
 My shared instructions live at `~/.codex/AGENTS.md`. Each harness links to, imports, or syncs that canonical file so every tool follows the same rules; see [Global agent instructions](MACHINE-SETUP.md#global-agent-instructions) for the per-harness paths.
 
-[GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. [`scripts/sync-global-agents.sh`](scripts/sync-global-agents.sh) documents how the copy is kept current.
+[GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy for reference. Agents in this repository do not load it. An agent that changes global guidance edits `~/.codex/AGENTS.md` and ships the synced copy as its own small PR right away, never inside other work. [`scripts/sync-global-agents.sh`](scripts/sync-global-agents.sh) documents how the copy is kept current.
 
 [MACHINE-SETUP.md](MACHINE-SETUP.md) lists the global instructions paths, skills, plugins, and MCP servers I set up on every machine, with install commands and a drift check.
 

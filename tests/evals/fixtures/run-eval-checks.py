@@ -101,6 +101,12 @@ def verify_mutations_fail(suite_dir: Path) -> None:
             "tools: [...readTools, 'Write', 'Edit', 'Bash'],",
         ),
         (
+            "NotebookEdit added to allowed tools",
+            "promptfooconfig.cjs",
+            "const readTools = ['Read', 'Glob', 'Grep', 'Skill'",
+            "const readTools = ['Read', 'Glob', 'Grep', 'Skill', 'NotebookEdit'",
+        ),
+        (
             "timeout disabled",
             "promptfooconfig.cjs",
             "timeoutMs: 300000,",
@@ -132,10 +138,16 @@ def verify_mutations_fail(suite_dir: Path) -> None:
             "install --no-audit --no-fund",
         ),
         (
-            "run.sh exposes real HOME",
+            "run.sh exposes real HOME via run_home",
             "run.sh",
-            'HOME="$run_home"',
-            'HOME="$HOME"',
+            'run_home="$work/home"',
+            'run_home="$HOME"',
+        ),
+        (
+            "run.sh exposes real CLAUDE_CONFIG_DIR via claude_home",
+            "run.sh",
+            'claude_home="$work/claude-home"',
+            'claude_home="$HOME/.claude"',
         ),
     ]
 

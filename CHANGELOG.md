@@ -126,8 +126,8 @@ looked" surface. GitHub Releases mirror its entries.
   record the audit result plus any remaining P2/P3 and subjective tradeoffs in
   the pull request body, never commit `.impeccable/` snapshots, and push one
   verified follow-up commit through `ce-babysit-pr` when fixes apply). The
-  Captain waits for the recorded audit result before judging a UI/UX pull
-  request ready to merge or hold, and interactive `impeccable critique` and
+  Captain waits for the recorded audit result for the current head before
+  judging a UI/UX pull request ready to merge or hold, and interactive `impeccable critique` and
   `/impeccable live` stay with the Captain or a Design Lead rather than
   unattended Executors.
 - Sessions audit is one job on the primary host instead of a remote job

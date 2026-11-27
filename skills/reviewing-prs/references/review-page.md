@@ -155,9 +155,11 @@ and keep each cell under about 40 characters.
 ```
 
 - `image`: a screenshot attached to the pull request for that side, when one
-  shows the reviewed head's version. Use its `https:`
-  address on `github.com` or `*.githubusercontent.com`, or a `data:image/...`
-  address when you downloaded it. Any other address appears as text.
+  shows the reviewed head's version. Use an `https:` address on `github.com`,
+  `user-images.githubusercontent.com`, or
+  `private-user-images.githubusercontent.com`, or a base64
+  `data:image/<type>;base64,...` URI with type `png`, `jpeg`, `gif`, or `webp`
+  when you downloaded it. Any other address or image type appears as text.
 - `items`: a schematic redrawn from the diff when no screenshot exists. Kinds:
   `heading`, `text`, `badge`, `input`, `image` (a placeholder box), `button`
   with `variant` `primary`, `secondary`, or `new`, and `row`, which holds
@@ -165,10 +167,14 @@ and keep each cell under about 40 characters.
   the pull request changed with `"changed": true`. Use `variant: "new"` for a
   button style the design system does not have. Draw only the part of the
   screen the change touches.
+- `sourceNote`: optional short note appended to the source line below the
+  before/after view, such as why a linked screenshot could not be shown.
 - `path`: the steps a user takes through the change, with `changed: true` on
   the step that changed. Leave it out when the change has no path.
 - `components`: what the change keeps (`kept`), drops (`dropped`), adds
   (`added`), or changes (`changed`), named as the codebase names them.
+  An optional `note` overrides the default status caption (`Kept`, `No
+  longer used here`, `New`, or `Changed`) while keeping the `status` styling.
   `swatches` takes hex colors only.
 
 The page labels each side as a screenshot or redrawn, so there is no source
@@ -192,7 +198,9 @@ Record where `situations` and `text` values came from in `source`:
 - `diff`: worked out by reading the diff. This is the usual source.
 
 A part with no `source` is labeled as read from the diff. When values in one
-table come from different sources, use the weakest one.
+table come from different sources, use the weakest one. Any of `situations`,
+`screens`, and `text` may also include an optional `sourceNote` string, which
+the page appends to that part's source line.
 
 ### The side panels
 
@@ -241,7 +249,10 @@ say; the page then shows "Nothing to report."
 - `window`: the window step 1 used, stated so the operator can see it.
 - `reason` and `summary`: one sentence each, from step 1's merged list. A pull
   request appears in only one of the three lists.
-- `autoMerged`: routine merges recorded as `review:auto-merged`. The page
+- `autoMerged`: verdict-less routine merges whose newest `Fleet:` receipt by
+  the operator's login is `Fleet: auto-merge` with a `Head:` SHA prefix
+  matching `headRefOid` (a bare `review:auto-merged` label, a mismatched-head
+  receipt, or a hold-superseded receipt goes in `without` instead). The page
   lists them without an orange seal and gives them no notice at the top, so
   orange stays on `without` and `changedAfter`.
 
@@ -287,5 +298,5 @@ escapes.
 
 Before handing the page over, check `review.html`: no `{{` is left outside
 the data block, the policy's nonce matches the script's, and the data block
-is exactly `data.json` and holds no literal `<`. Pull request text can hold
-`{{`, such as a workflow's `${{ secrets.TOKEN }}`.
+is exactly `data.json` and holds no literal `<`, `>`, or `&`. Pull request
+text can hold `{{`, such as a workflow's `${{ secrets.TOKEN }}`.

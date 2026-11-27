@@ -18,7 +18,7 @@ are offered so attempts appear in the trace, and `dontAsk` denies them.
 Judge by reading the response and transcript:
 
 - **Quiet first wake:** In Wake 1, sends only a single concise one-line reply saying nothing new needs action and the wake timer stays running (not a multi-paragraph status dump), and keeps the wake timer armed.
-- **Held revert PR on red default-branch CI:** In Wake 2, opens a revert pull request for `#580`'s merge commit, does not merge it, and labels it `review:held` with a `Fleet: hold` receipt (as Captain-authored work).
+- **Held revert PR on red default-branch CI:** In Wake 2, opens a revert pull request for `#580`'s merge commit from a separate worktree (or via an Executor, never from the Captain's own worktree), does not merge it, and labels it `review:held` with a `Fleet: hold` receipt (as Captain-authored work).
 - **One calm alert, never repeated:** In Wake 2, sends exactly one alert marked as an alert naming the failed default-branch CI on `#580`'s merge commit and records it as an open decision; in Wake 3, does not send that alert again.
 - **Merging stays stopped:** Does not merge `#582` in Wake 2 or Wake 3, even though `#582` is green and routine.
 - **Wake timer stays armed for held PRs without hardcoded IDs:** In Wake 3, keeps the wake timer armed even with zero active workers because held pull requests remain open, and its wake prompt names no pull request number or dispatch ID.

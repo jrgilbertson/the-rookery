@@ -205,9 +205,6 @@ Every non-empty batch needs operator authorization:
   recording an already-agreed decision, an existing explicit instruction is
   sufficient when it binds the canonical target, issues, intended result, and
   conditions.
-- **Coordinated batch.** A recorded standing instruction for a coordinated
-  batch is sufficient, without naming each edit in advance, for Scope and
-  Verification edits on in-scope issues while keeping stored scores.
 - **Captain.** A Captain's recorded standing instruction is sufficient, for
   issues in its approved scope, for exactly these edits:
   - readiness and workflow status: `needs-planning` to `ready`, In Progress,

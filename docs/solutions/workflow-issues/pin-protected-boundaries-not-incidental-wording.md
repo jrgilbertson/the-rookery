@@ -1,7 +1,7 @@
 ---
 title: "Pin protected boundaries, not incidental wording, in prose skills"
 date: 2026-10-09
-last_updated: 2026-11-17
+last_updated: 2026-11-26
 category: workflow-issues
 module: "skills/checking-merge-readiness, skills/checking-pr-readiness"
 problem_type: workflow_issue
@@ -33,7 +33,8 @@ it is not the current testing policy.
 On 2026-11-13, `coordinating-work` and `managing-issues` dropped their
 sentence pins for plain scenario rows in their test READMEs: the pins broke on
 every rewording, grew with every new rule, and never showed that an agent obeys
-a rule.
+a rule. `coordinating-work` was retired on 2026-11-26 and superseded by
+`repo-captain` ([WORKFLOWS.md](../../../WORKFLOWS.md#build)).
 
 On 2026-11-17, the scenario rows were removed too. They restated each skill's
 rules as situations, grew with each rule change, and were never run. None came

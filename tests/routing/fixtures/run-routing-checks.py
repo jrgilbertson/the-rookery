@@ -111,15 +111,15 @@ def check_report() -> None:
     check(listed == [("Beta", "low"), ("Gamma", "low"), ("Alpha", "medium"), ("Solo", "medium")],
           f"candidates should be ordered by the 20% trade-off at each model's knee: {listed}")
 
-    # Executor rows start from each vendor's everyday model and Team lead rows from its flagship.
+    # Executor rows start from each vendor's everyday model and Captain rows from its flagship.
     # Solo medium is OpenAI's everyday model, but Gamma high scores higher for less, so it takes the slot.
     rows = data.get("rows", [])
     executor = [(row["provider"], row["model"], row["effort"], row["replaces"]) for row in rows if row["role"] == "Executor"]
     check(("OpenAI", "Gamma", "high", "Solo") in executor,
           f"an everyday model beaten by an unrationed sibling should give way to it: {executor}")
     check(("Anthropic", "Alpha", "medium", "") in executor, f"an everyday model nothing beats should keep its slot: {executor}")
-    lead = [(row["provider"], row["model"]) for row in rows if row["role"] == "Team lead"]
-    check(("OpenAI", "Gamma") in lead and ("Anthropic", "Alpha") in lead, f"Team lead should start from each flagship: {lead}")
+    lead = [(row["provider"], row["model"]) for row in rows if row["role"] == "Captain"]
+    check(("OpenAI", "Gamma") in lead and ("Anthropic", "Alpha") in lead, f"Captain should start from each flagship: {lead}")
     # Preference rows weigh their sources equally. Fir puts Alpha 1.22 standard deviations
     # above the mean, Solo at it and Gamma 1.22 below, using Alpha's best effort and ignoring
     # the superseded Beta; Gorse, which skips Solo, puts Gamma one above and Alpha one below.
@@ -196,7 +196,7 @@ def check_report() -> None:
           f"of two siblings that beat the pick, the cheaper should take the slot: {built}")
     check(("Solo", "") in built, f"a sibling that scores higher but costs more should not take the slot: {built}")
     check([model for model, _ in built] == ["Top", "Cheaper", "Solo"], f"the row should follow the price order: {built}")
-    # The Executor row follows the price order, and the Team lead row goes by quality.
+    # The Executor row follows the price order, and the Captain row goes by quality.
     p, pm = vendor("P", "Cheap", ("Cheap",))
     q, qm = vendor("Q", "Best", ("Best",))
     pair = ev.Data([], [], {}, pm + qm, {"P": p, "Q": q})
@@ -205,7 +205,7 @@ def check_report() -> None:
     for role, pick, _ in ev.vendor_rows(pair, both):
         by_role.setdefault(role, []).append(pick.model)
     check(by_role.get("Executor") == ["Cheap", "Best"], f"Executor should put the cheaper setting first when a point costs 180% more: {by_role}")
-    check(by_role.get("Team lead") == ["Best", "Cheap"], f"Team lead should put the better-scoring setting first whatever it costs: {by_role}")
+    check(by_role.get("Captain") == ["Best", "Cheap"], f"Captain should put the better-scoring setting first whatever it costs: {by_role}")
     # A sibling is compared on the suites that tested both settings. Sib beats Pick on S1, the
     # only suite they share, but S2 tested only Sib and drags its combined score below Pick's.
     import math
@@ -715,7 +715,7 @@ def page_alt_text_problems() -> list[str]:
 def recommendation_drift(data_dir: Path) -> list[str]:
     """Each pick must be the setting the method computes for its provider.
 
-    The Executor and Team lead rows come from the report's rows section and the
+    The Executor and Captain rows come from the report's rows section and the
     preference rows from its preference section. Role inputs may reorder a row,
     so only the model and effort are compared. A pick marked as judgment may
     name another setting.
@@ -726,7 +726,7 @@ def recommendation_drift(data_dir: Path) -> list[str]:
     report = sections(result.stdout)
     computed = {(row["role"], row["provider"]): row for row in report["rows"]}
     computed.update({(row["role"], row["provider"]): row for row in report.get("preference", []) if row["choice"]})
-    scored = {row["role"] for row in report.get("preference", [])} | {"Executor", "Team lead"}
+    scored = {row["role"] for row in report.get("preference", [])} | {"Executor", "Captain"}
     problems = []
     with (data_dir / "recommendations.csv").open(newline="", encoding="utf-8") as handle:
         for row in csv.DictReader(handle):

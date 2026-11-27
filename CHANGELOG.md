@@ -128,6 +128,17 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Integrate the `repo-captain` (including optional dynamic Domain Leads) and
+  `reviewing-prs` Review Round fleet workflow into `WORKFLOWS.md` (`Build` and
+  `Ship`) and `GLOSSARY.md` (updating `Merge Approval` for persistent per-repo
+  Captain and rolling scope, and retiring `Team Lead` and `Coordinated Batch`).
+- Rename the `Team lead` routing role to `Captain` (the product, design, and
+  engineering player-coach, still covering solo planning and hard work as well
+  as `repo-captain`) across `ROUTING.md`, `docs/routing/recommendations.csv`,
+  `docs/routing/role-inputs.csv`, `scripts/routing/evidence.py`, regenerated
+  `docs/assets/routing-table.svg`, `GLOSSARY.md`, and
+  `automations/sessions-audit.md`, and remove retired `Coordinated batch`
+  clauses from `managing-issues`.
 - Port `evals/repo-captain/` onto the canonical Claude-only Promptfoo Skill
   Eval template (`anthropic:claude-agent-sdk` with `apiKeyRequired: false`,
   `Write`/`Edit` offered and denied in `dontAsk` mode, no `Bash`, no Git repo,
@@ -367,6 +378,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `coordinating-work` (`skills/coordinating-work/`) and its explanatory plate
+  assets (`docs/assets/coordinating-work*`), superseded by `repo-captain` and
+  `reviewing-prs`. Uninstall installed copies on local and remote hosts with
+  `npx skills remove coordinating-work -g`.
 - `docs/model-evaluations.md`. `ROUTING.md` now carries the short version of
   how its table gets updated, so the two files no longer repeat each other.
 - `creating-portable-skills`, its signal scanner, and the scanner's tests.

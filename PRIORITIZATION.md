@@ -21,8 +21,8 @@ ways for AI development:
 - Undo cost is added. It covers what the change could break and what it takes
   to undo it. The easier a change is to undo, the more freely I can let an
   agent do it on its own. My
-  [`coordinating-work`](skills/coordinating-work/SKILL.md) skill works on the
-  same idea: an agent merges routine pull requests without me and holds
+  [`repo-captain`](skills/repo-captain/SKILL.md) skill works on the
+  same idea: a Captain merges routine pull requests without me and holds
   sensitive ones for my approval.
 
 ## The four factors

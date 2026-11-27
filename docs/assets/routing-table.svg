@@ -9,7 +9,7 @@
 <text x="542.7" y="136.0" font-family="Baskerville,Georgia,serif" font-size="13" fill="#47577A" font-style="italic">Second choice</text>
 <text x="859.3" y="136.0" font-family="Baskerville,Georgia,serif" font-size="13" fill="#47577A" font-style="italic">Third choice</text>
 <line x1="40" x2="1160" y1="150.0" y2="150.0" stroke="#47577A" stroke-opacity=".3"/>
-<text x="40.0" y="203.0" font-size="20" fill="#042458" font-family="Didot,'Bodoni MT',Georgia,serif">Team lead</text>
+<text x="40.0" y="203.0" font-size="20" fill="#042458" font-family="Didot,'Bodoni MT',Georgia,serif">Captain</text>
 <rect x="210.0" y="168.0" width="4" height="56.0" rx="2" fill="#2F6FDB"/>
 <text x="226.0" y="190.0" font-family="Baskerville,Georgia,serif" font-size="18" fill="#042458" font-weight="600">Gemini 4 Neon</text>
 <text x="226.0" y="217.0" font-family="Baskerville,Georgia,serif" font-size="14" fill="#47577A">High effort · Google</text>

@@ -38,7 +38,7 @@ whole machine instead of per project.
 Run `npx skills update` to get the latest changes to your installed skills.
 
 `main` is the rolling catalog and the normal install source. Semantic-version
-[Release Snapshots](CONCEPTS.md#release-snapshot) are immutable historical
+[Release Snapshots](GLOSSARY.md#release-snapshot) are immutable historical
 checkpoints with release notes; they are not install pins.
 
 See [Machine setup](MACHINE-SETUP.md) for the full list of skills, plugins,

@@ -127,7 +127,7 @@ Tests never call a model; evals always do. The repository gate runs only
 tests, so it never spends money on a model. A Skill Eval calls a model on
 every Eval Case, so it runs when a skill is created or revised and when a
 model changes, never on every pull request. The Rookery ships no AI feature,
-so it has no Product Evals. [CONCEPTS.md](CONCEPTS.md#evaluation) defines the
+so it has no Product Evals. [GLOSSARY.md](GLOSSARY.md#evaluation) defines the
 eval terms.
 
 Each skill's Skill Eval lives in `evals/<skill>/` at the repository root,

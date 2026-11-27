@@ -83,6 +83,6 @@ The local-path scan reads the working tree directly, so it exercises the same di
 
 - PR jrgilbertson/the-rookery#4 (merged 2026-07-17; the branch whose install-probe gate surfaced this)
 - `tests/creating-portable-skills/results.md` (Git history; last present at cc66ee8) — the recorded gate evidence and caveat
-- [CONCEPTS.md "Install Probe"](../../../CONCEPTS.md#install-probe) and
+- [GLOSSARY.md "Install Probe"](../../../GLOSSARY.md#install-probe) and
   [RELEASING.md](../../../RELEASING.md) — the current owners of the install
   probe procedure

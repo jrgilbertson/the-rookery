@@ -5,7 +5,7 @@ date: 2026-11-24
 
 # ADR 001: verdicts are trusted by convention, not authenticated
 
-A [verdict](../../CONCEPTS.md#verdict) is a comment on a pull request, and
+A [verdict](../../GLOSSARY.md#verdict) is a comment on a pull request, and
 the `Owner:` line that says which session merges it is text in the pull
 request body. Both come from the same GitHub login as every agent, so neither
 proves who wrote it. We accept them as guards against accidents and do not

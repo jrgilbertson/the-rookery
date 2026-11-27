@@ -1,9 +1,9 @@
 ---
 title: "Keep project glossaries concrete and contract-driven"
 date: 2026-08-17
-last_updated: 2026-09-04
+last_updated: 2026-11-26
 category: conventions
-module: "CONCEPTS.md glossary"
+module: "GLOSSARY.md glossary"
 problem_type: convention
 component: documentation
 severity: medium
@@ -23,12 +23,12 @@ The glossary guidance still applies.
 
 ## Context
 
-`CONCEPTS.md` had accumulated ordinary workflow steps, internal metaphors, and
+`GLOSSARY.md` had accumulated ordinary workflow steps, internal metaphors, and
 capitalized prose alongside the smaller set of terms that carry shared
 contracts. The result was harder to scan and encouraged dependent documents to
 repeat project-specific labels instead of explaining the work plainly.
 
-The glossary's [admission rule](../../../CONCEPTS.md#concepts) prefers an
+The glossary's [admission rule](../../../GLOSSARY.md#glossary) prefers an
 established industry term or plain description. Add a project term only when
 it describes a precise contract used in more than one place or names persisted
 compatibility data. Ordinary workflow phrases do not become concepts merely by
@@ -80,7 +80,7 @@ improves comprehension without breaking interoperability.
 
 ## When to Apply
 
-- Adding or revising a `CONCEPTS.md` entry.
+- Adding or revising a `GLOSSARY.md` entry.
 - Renaming a workflow, readiness, research, installation, or maintenance term.
 - Simplifying a skill that uses capitalized labels for ordinary actions.
 - Editing persisted records, JSON fields, markers, or receipt vocabulary.
@@ -90,7 +90,7 @@ improves comprehension without breaking interoperability.
 ## Examples
 
 Keep terms with stable shared meaning.
-[Installation Parity](../../../CONCEPTS.md#installation-parity) names the
+[Installation Parity](../../../GLOSSARY.md#installation-parity) names the
 repository's visitor-equivalent installation invariant.
 The former `Repository Maintenance Run` entry named one unattended pass of
 `repo-gardener`; it was removed with that skill.
@@ -100,8 +100,8 @@ Remove or demote names that merely label steps. In this cleanup, `Global Pass`,
 owning skills now say directly that they review the whole change, check whether
 review is complete, and run pre-PR review checks. Likewise, `Repository Memory
 Current` and `Personal Learning Current` became the more familiar
-[Repository Learning Loop](../../../CONCEPTS.md#repository-learning-loop) and
-[Personal Learning Loop](../../../CONCEPTS.md#personal-learning-loop).
+[Repository Learning Loop](../../../GLOSSARY.md#repository-learning-loop) and
+[Personal Learning Loop](../../../GLOSSARY.md#personal-learning-loop).
 
 ## Related
 

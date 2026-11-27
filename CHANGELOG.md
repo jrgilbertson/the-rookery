@@ -118,6 +118,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Rename `CONCEPTS.md` to `GLOSSARY.md` (with `# Glossary` as the heading) and
+  add a root `CONCEPTS.md -> GLOSSARY.md` compatibility symlink so Compound
+  Engineering's `ce-compound` reads and updates the same file. Repository
+  checks allow only that exact root symlink and continue rejecting symbolic
+  links everywhere else.
 - Sessions audit is one job on the primary host instead of a remote job
   followed two hours later by a local consolidation job. When a second host
   is paired, the job starts a read-only worker there right after reading

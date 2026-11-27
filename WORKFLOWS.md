@@ -6,7 +6,14 @@
 
 My workflow has five main jobs: Research, Plan, Design, Build, and Ship. Maintain turns recurring problems into tests, rules, and documented lessons. Learn turns experience into linked notes and new research questions. Both feed back into the work.
 
-Each section explains what I do, which tools I use, and when I'm ready to move on. The Rookery skills install separately. I use them alongside Compound Engineering, Impeccable, and Orca. I also use [scheduled automations](automations/README.md) to review the work at regular intervals.
+Each section explains what I do, which tools I use, and when I'm ready to move on. The tools come from four main sources:
+
+- **The Rookery** (installed from this repository): `storm-research`, `managing-issues`, `repo-captain`, `reviewing-prs`, `checking-skill-portability`, `active-learning`, `personal-chief-of-staff`, `reviewing-meetings`, `managing-personal-crm`, and the [scheduled automations](automations/README.md).
+- **[Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin)** (`ce-*` and `lfg`): `ce-ideate`, `ce-pov`, `ce-brainstorm`, `ce-plan`, `ce-debug`, `ce-work`, `lfg`, `ce-simplify-code`, `ce-code-review`, `ce-test-browser`, `ce-dogfood`, `ce-noslop`, `ce-commit-push-pr`, `ce-babysit-pr`, `ce-compound`, `ce-retro`, and `ce-optimize`.
+- **[Impeccable](https://github.com/pbakaus/impeccable)** (`impeccable *`): design briefs, interface audits and critiques, component extraction, and `DESIGN.md` documentation.
+- **[Orca](https://github.com/stablyai/orca)**: the agentic IDE that runs parallel worktrees, multi-harness agents, and scheduled automations.
+
+Other skills named below (`grilling`, `writing-for-agents`, `last30days`, `humanize` / `ai-check`, `atomic-note`, and Modern Web Guidance) install separately from their own repositories; see [Machine setup](MACHINE-SETUP.md).
 
 | Job | Goal | Key tools | Move on when |
 |---|---|---|---|
@@ -18,7 +25,7 @@ Each section explains what I do, which tools I use, and when I'm ready to move o
 | [Maintain](#maintain) | Keep the repo useful and prevent repeated mistakes | Orca automations, `ce-compound`, `impeccable extract` | The lesson is saved in the strongest form that can enforce it |
 | [Learn](#learn) | Connect new knowledge to existing notes and name the gaps | `active-learning`, `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Notes are linked and unanswered questions are named |
 
-Before starting work, I choose the available tools, who owns the result, and which models and effort fit the task. [Model and effort guidance](ROUTING.md) covers leading, execution, design, and writing. The sections below explain where I start.
+Before starting work, I choose the available tools, who owns the result, and which model and reasoning effort (how much thinking budget a model spends before answering, such as low, medium, or high) fit the task. [Model and effort guidance](ROUTING.md) covers leading, execution, design, and writing. The sections below explain where I start.
 
 ## Foundations
 
@@ -79,7 +86,7 @@ Agents that were not in the planning session review the plan against the current
 - `ce-debug`. Finds the cause of a bug before proposing a fix. Use it when the work starts with broken or unexpected behavior.
 - `ce-pov`. Answers a focused planning question using the project's evidence. Use it when one decision blocks the plan and more research would add little.
 
-Planning has no separate simplicity check. Every agent follows the "Simplicity first" ladder in my [global agent guidance](GLOBAL-AGENTS.md#simplicity-first) while it plans and builds, and answers “can this be simpler?” in the same session. When I want an independent verdict on whether something can be simpler, I ask `ce-pov`.
+Every agent follows the "Simplicity first" ladder in my [global agent guidance](GLOBAL-AGENTS.md#simplicity-first) while it plans and builds, and asks "can this be simpler?" in the same session. When I want an independent verdict on whether something can be simpler, I ask `ce-pov`.
 
 Sometimes the remaining questions depend on one another. I consider a focused grilling session when a decision is costly to reverse, affects a large part of the system, determines later answers, or would otherwise leave the agent guessing how to judge completion. For example, who owns authentication may determine how long sessions last and who can access data. Settle that first. Unrelated open questions stay in `ce-brainstorm`; clear requirements and ordinary, reversible decisions go to `ce-plan`.
 
@@ -138,7 +145,7 @@ the problem solved.
 
 Several worktrees can run in parallel. A worktree is a separate working copy of the repository. Each agent builds on its own branch without overwriting another agent's work.
 
-A harness is the tool running the agent, such as Claude Code, Codex, Hermes, or Grok. In Orca, each worktree can use the one that suits its task.
+A harness is the tool running the agent, such as Claude Code, Codex, Antigravity, Cursor, or Gemini CLI. In Orca, each worktree can use the one that suits its task.
 
 I choose models based on how I'll judge the result. For work I can check objectively, I compare the expected cost of getting a passing result, not just the price of one attempt. For look and feel, I use the cheapest model whose result stays close enough to the best. Work that needs both must pass the objective checks first; preference then decides among the passing results.
 
@@ -182,9 +189,9 @@ The shipping steps run in this order:
 6. `ce-commit-push-pr`. Commits, pushes, and opens the PR after the project's publishing requirements pass for the commit being sent.
 7. `ce-babysit-pr`. Handles CI failures and review feedback until its chosen monitoring mode reaches its documented stopping point.
 
-I can also ask the agent to explain the change or a concept it introduced. Compound Engineering handles publication and monitoring without a separate local readiness check. Interactive publication normally hands off to babysit. For an orchestrated ordinary `mode:pipeline` publication, the caller must start babysit explicitly. Publishing a stack can hand off stack-aware monitoring; the caller keeps that watcher rather than starting another.
+I can also ask the agent to explain the change or a concept it introduced. Compound Engineering handles publication and monitoring without a separate local readiness check. Interactive publication hands off to `ce-babysit-pr` automatically. In unattended pipeline runs, the caller starts `ce-babysit-pr` explicitly. Publishing a stacked PR series can hand off stack-aware monitoring, and the caller keeps that watcher rather than starting a second one.
 
-A successful bounded pipeline run and an interactive report that the PR looks ready to merge describe only what they checked. Neither means the PR was merged. I merge ordinary PRs myself, unless a [`repo-captain`](skills/repo-captain/SKILL.md) Captain has my [merge approval](GLOSSARY.md#merge-approval). The Captain is the only session that merges in its repository. It judges each ready PR from its raw diff against the default branch under the shared [review contract](skills/repo-captain/references/review-contract.md), reading policy from the default branch only. It merges routine PRs within approved scope once checks pass, review threads are resolved, and the PR body shows evidence beside each Verification item, pinning the merge to the judged head (`--match-head-commit`), posting a `Fleet: auto-merge` receipt, and adding `review:auto-merged` after GitHub confirms the merge. Anything that meets either [held changes](GLOSSARY.md#held-changes) test (a sensitive kind, or V × U ≥ 3), anything Captain-authored, or anything with an unresolved `request changes` verdict gets `review:held` and a `Fleet: hold` receipt and waits for my verdict, unless pre-authorized for that specific issue in the charter. On merge-queue repositories, the Captain enqueues instead of merging directly; it keeps each PR's worktree until GitHub confirms `MERGED`. For a confirmed managed stack, an explicit `posture:stack-land` grant lets babysit use the native stack route and confirm it landed. Afterward, I write the changelog and release notes from the merged PRs.
+A successful bounded pipeline run and an interactive report that the PR looks ready to merge describe only what they checked. Neither means the PR was merged. I merge ordinary PRs myself, unless a [`repo-captain`](skills/repo-captain/SKILL.md) Captain has my [merge approval](GLOSSARY.md#merge-approval). The Captain is the only session that merges in its repository. It judges each ready PR from its raw diff against the default branch under the shared [review contract](skills/repo-captain/references/review-contract.md), reading policy from the default branch only. It merges routine PRs within approved scope once checks pass, review threads are resolved, and the PR body shows evidence beside each Verification item, pinning the merge to the judged head (`--match-head-commit`), posting a `Fleet: auto-merge` receipt, and adding `review:auto-merged` after GitHub confirms the merge. Anything that meets either [held changes](GLOSSARY.md#held-changes) test (a sensitive kind, or V × U ≥ 3), anything Captain-authored, or anything with an unresolved `request changes` verdict gets `review:held` and a `Fleet: hold` receipt and waits for my verdict, unless pre-authorized for that specific issue in the charter. On merge-queue repositories, the Captain enqueues instead of merging directly; it keeps each PR's worktree until GitHub confirms `MERGED`. For a confirmed managed PR stack, explicit land approval lets `ce-babysit-pr` merge and sync each layer through the stack tool and confirm it landed. Afterward, I write the changelog and release notes from the merged PRs.
 
 [Held changes](GLOSSARY.md#held-changes) follow those two tests, and [PR review labels](GLOSSARY.md#pr-review-labels) (`review:held`, `review:auto-merged`, `review:human-merged`) report where a PR stands without gating a merge.
 
@@ -261,7 +268,7 @@ I choose the tool based on what I need to do:
 - [`reviewing-meetings`](skills/reviewing-meetings/SKILL.md). Turns completed meetings into draft notes and follow-up actions based on the meeting source. Run it after a meeting or when catching up. Each follow-up waits for approval before anything is written.
 - [`managing-personal-crm`](skills/managing-personal-crm/SKILL.md). Keeps relationship information in one note per person. Messages and other raw interactions stay in their original apps. Use it to prepare for a conversation, record an interaction, reconnect with someone overdue, or find who could help with current work.
 
-I usually capture lessons from software work before opening the PR. The approval menu can show an interactive overview of the change with a quiz. If that reveals a topic worth keeping, I use the [`atomic-note`](https://github.com/jrgilbertson/networked-thinking-skills) skill from Networked Thinking to write a note and link it to related topics. Questions the note leaves open become further reading, follow-up issues, or a new research question.
+I usually capture lessons from software work before opening the PR. When a change reveals a topic worth keeping, I use the [`atomic-note`](https://github.com/jrgilbertson/networked-thinking-skills) skill from Networked Thinking to write a note and link it to related topics. Questions the note leaves open become further reading, follow-up issues, or a new research question.
 
 [Networked Thinking](https://networkedthinking.ai) is the system behind those notes. Each atomic note holds one idea and connects to related notes rather than being filed into folders. I wrote the book and the site, and the notes in this loop follow that method.
 

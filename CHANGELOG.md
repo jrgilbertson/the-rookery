@@ -118,6 +118,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `SKILLS.md` now instructs skill authors to ask for approval for authoring's
+  model test runs when the work starts, or name the approval in the brief, and
+  to stop and ask rather than skip the runs silently when approval is missing.
 - `WORKFLOWS.md` and `scripts/sync-global-agents.sh` state that global-guidance
   changes ship as their own small PR right away, never inside other work. When
   `scripts/sync-global-agents.sh --check` fails on a branch that does not edit

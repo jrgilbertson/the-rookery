@@ -394,7 +394,11 @@ After they confirm, handle the pull requests one at a time:
      post nothing, and tell the operator.
    - **Already posted.** For `merge` or `request changes`, the operator's
      newest verdict comment at the reviewed head has the same verdict and
-     notes as the comment you prepared. Post nothing and report that.
+     notes as the comment you prepared. Do not post the comment again, and
+     report that. When the head has not moved and `reviewRequests` still
+     names the operator's login, answer the request as item 4 says, since
+     an earlier run may have posted the comment and stopped before the
+     review.
    - **Only the head moved,** for example because its owner rebased it. Still
      post the verdict with the reviewed head in its `Head:` line, and tell the
      operator the head moved. The owner judges the change since the reviewed

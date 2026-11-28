@@ -83,6 +83,15 @@ length given; the page is read in one sitting across many pull requests.
   and `conflict`, the `Broken / conflicting only` filter finds them, and
   failing or conflicting dependency bots sort to the top of their group. Any
   other word in `checks` is shown as written and counted as failing.
+- `postedVerdict`: the verdict step 2 found already posted at this `head`, as
+  `{"verdict": "request changes", "notes": "Rename the flag first."}`.
+  `verdict` is `merge` or `request changes`, and `notes` is the text between
+  the quotes of the comment's `Notes:` line, left out when that is empty.
+  Omit the field when no verdict is posted at this head. The card then says
+  `Already posted: Request changes`, and the page drops a choice the browser
+  saved with that verdict and those notes, so the copied lines never repeat
+  it. A saved choice with another verdict or other notes is kept, and so is
+  whatever the operator chooses on the card afterward.
 - `holdViolation`: a short phrase when step 3 flags the pull request for
   meeting a hold test while it sits in a merge queue or is ready with checks
   passing and no `review:held`, such as `in the merge queue without
@@ -285,6 +294,12 @@ The notes are the last field. Split a line on its first two ` | ` only, so a
 line and turns each double quote into a single quote, because the posted
 `Notes:` line wraps them in double quotes. A note typed with no verdict chosen
 is left out, and the page says so beside it.
+
+The browser keeps each choice under the pull request and its reviewed head for
+30 days. `Clear saved`, beside the copy button, empties the choices and notes
+kept for this round's pull requests and leaves other rounds alone. The same
+button then reads `Undo clear` and brings them back, until the operator's next
+edit.
 
 ## Build the page
 

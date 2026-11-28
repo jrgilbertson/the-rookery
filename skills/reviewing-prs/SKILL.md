@@ -194,6 +194,11 @@ either the four-line or legacy single-line format):
    group. A person's pull request that looks like a dependency bump stays in
    bucket 2.
 
+For every pull request that gets a full block, look through its top-level
+comments by the operator's login for a verdict whose `Head:` is the reviewed
+head. Keep the newest one's verdict and notes for the page's `postedVerdict`,
+so the page does not offer the same verdict again.
+
 Before recording a verdict on a pull request that has no block, build and show
 its block from the diff first.
 
@@ -300,7 +305,9 @@ fleet pull requests. It gives every pull request the same block, filters by
 group or to the broken and conflicting ones, and builds the verdict text the
 operator copies back. It keeps the operator's choices and notes in that browser's local
 storage, tied to each reviewed head, so a reload loses nothing; tell the
-operator so when a note may hold something private.
+operator so when a note may hold something private. It drops a saved choice
+that equals the pull request's `postedVerdict`, and its `Clear saved` button
+empties what the browser holds for this round.
 
 Keep the reply short: the path, one line per pull request in the page's order
 with what drives its score, and a request for verdicts. If no browser can
@@ -378,13 +385,16 @@ GitHub until they do.
 After they confirm, handle the pull requests one at a time:
 
 1. **Reread** `headRefOid`, `baseRefName`, `state`, `body`,
-   `isCrossRepository`, and `reviewRequests` with `gh pr view`, then take the
-   first case that fits:
+   `isCrossRepository`, `reviewRequests`, and `comments` with `gh pr view`,
+   then take the first case that fits:
    - **No longer open.** Post nothing and report that.
    - **Base or ownership changed.** Its base branch is not the one it was
      reviewed at, or its ownership from step 2 has changed, such as an
      `Owner:` line added since the page was built. Stop on this pull request,
      post nothing, and tell the operator.
+   - **Already posted.** For `merge` or `request changes`, the operator's
+     newest verdict comment at the reviewed head has the same verdict and
+     notes as the comment you prepared. Post nothing and report that.
    - **Only the head moved,** for example because its owner rebased it. Still
      post the verdict with the reviewed head in its `Head:` line, and tell the
      operator the head moved. The owner judges the change since the reviewed
@@ -414,8 +424,18 @@ After they confirm, handle the pull requests one at a time:
 and who acts next, the review request answered or left, whether the head had
 moved since review, or skipped because the base moved, the ownership
 changed, or it closed. State plainly anything that was not
-done. Then delete the round's temporary directory unless the operator wants
-to keep the page.
+done.
 
-Posting is done when every confirmed verdict has a reported outcome and the
-round's temporary directory is gone or kept at the operator's word.
+**Keep the round while it is unfinished.** A pull request with a block on the
+page is undecided when the operator gave it no verdict this round, `defer` and
+`not applicable` included, and it has no posted verdict at its reviewed head.
+While any is undecided, keep the round's temporary directory. Add
+`postedVerdict` in `round.json` to each pull request you just posted on,
+rebuild the page with the same commands, and give the operator its path with
+a request to reload it, so they can decide the rest later without a new
+round. Delete the directory once none is undecided, or when the operator says
+they are finished with the round.
+
+Posting is done when every confirmed verdict has a reported outcome, and the
+round's temporary directory is gone or kept for the pull requests still
+undecided.

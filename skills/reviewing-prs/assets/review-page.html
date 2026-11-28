@@ -22,6 +22,8 @@
   --serif: Baskerville, "Libre Baskerville", "Baskerville Old Face", Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* The one reading width for prose. It is in rem because a width in ch follows each block's own font, and stacked blocks would end at different edges. */
+  --measure: 30rem;
 }
 :root[data-theme="light"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
@@ -98,8 +100,8 @@ pre .ctx { color: var(--ink-soft); }
 .shell { max-width: 1320px; margin: 0 auto; padding: 0 28px; }
 .rail { display: none; }
 main { padding: 40px 0 80px; min-width: 0; }
-.lede { max-width: 72ch; margin-bottom: 30px; }
-.lede p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; max-width: 66ch; }
+.lede { max-width: var(--measure); margin-bottom: 30px; }
+.lede p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; }
 .notices { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
 .notices li { display: flex; align-items: baseline; gap: 10px; padding: 9px 14px; border: 1px solid var(--hairline); background: var(--sheet); font-size: 0.97rem; }
 .notices .seal { transform: translateY(-1px); }
@@ -140,28 +142,29 @@ main { padding: 40px 0 80px; min-width: 0; }
 .scores span.three { background: var(--stake); border-color: var(--ink-soft); font-weight: 700; }
 .scores span.three small { color: var(--ink); }
 .scores span.lev { border-color: var(--hairline); }
-.key { margin: 0 0 12px; color: var(--ink-soft); font-size: 0.8rem; max-width: 90ch; }
+.key { margin: 0 0 12px; color: var(--ink-soft); font-size: 0.8rem; max-width: var(--measure); }
 .across { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 30px; font-size: 0.95rem; }
-.across span { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 8px 12px; }
+.across span { background: var(--dispatch); border: 1px solid var(--hairline-soft); padding: 8px 12px; max-width: var(--measure); }
 
 /* The edge width is a variable so the active card's heavier border moves nothing. */
 .block { --edge: 1px; background: var(--sheet); border: var(--edge) solid var(--hairline); border-radius: 2px; padding: calc(23px - var(--edge)) calc(25px - var(--edge)) calc(25px - var(--edge)); margin-bottom: 20px; }
 .block.active { --edge: 2px; border-style: solid; border-color: var(--route); }
-.frame { max-width: 72ch; }
+.frame { max-width: var(--measure); }
 .frame p { margin-top: 12px; color: var(--ink-soft); font-size: 1.05rem; }
 .block-head { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
 .block-head h2 { flex: 1 1 320px; min-width: 0; display: flex; align-items: center; gap: 12px; overflow-wrap: anywhere; }
 .rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1rem/1 var(--display); color: var(--ink-soft); }
 .block.hold .rank { border-color: var(--ink); color: var(--ink); }
-.verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
-.seg { display: inline-flex; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); }
+/* The verdict container draws no box, so its buttons sit beside the title and its notes and hint each take a row of the card head. It stays one part for a collapsed card to hide. */
+.verdict { display: contents; }
+.seg { display: inline-flex; margin-left: auto; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); }
 .seg button { border: 0; background: none; padding: 6px 13px; min-height: 36px; font-size: 0.82rem; border-right: 1px solid var(--control-border); }
 .seg button:last-child { border-right: 0; }
 .seg button:hover { background: var(--mist); }
 .seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 650; }
-.notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
+.notes { flex: 1 1 100%; width: 100%; min-height: 5em; padding: 10px 12px; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); font-size: 0.9rem; line-height: 1.5; resize: vertical; }
 .notes::placeholder { color: var(--ink-soft); }
-.hint { flex-basis: 100%; text-align: right; font-size: 0.76rem; color: var(--ink-soft); }
+.hint { flex-basis: 100%; font-size: 0.76rem; color: var(--ink-soft); }
 .block-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 10px 0 0; }
 .card-toggle { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--control-border); background: var(--sheet); border-radius: 2px; padding: 6px 12px; min-height: 36px; font-size: 0.82rem; }
 .card-toggle:hover { background: var(--mist); }
@@ -171,16 +174,17 @@ main { padding: 40px 0 80px; min-width: 0; }
 .pill.three { background: var(--stake); border-color: var(--ink-soft); color: var(--ink); }
 .pill.three b { font-weight: 700; }
 .summary { margin-top: 16px; }
-.summary p { max-width: 68ch; color: var(--ink); overflow-wrap: anywhere; }
+.summary p { max-width: var(--measure); color: var(--ink); overflow-wrap: anywhere; }
 .summary + .driver, .summary + .sysnote { margin-top: 12px; }
-.driver { margin-top: 10px; max-width: 80ch; }
-.xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: 80ch; font-size: 0.95rem; }
-.sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: 80ch; font-size: 0.95rem; }
+.driver { margin-top: 10px; max-width: var(--measure); }
+.xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: var(--measure); font-size: 0.95rem; }
+.sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: var(--measure); font-size: 0.95rem; }
 .xnote b, .sysnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
 .cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
 .main-col, .side-col { display: grid; gap: 18px; min-width: 0; }
 .panel { padding-top: 10px; border-top: 1px solid var(--hairline-soft); font-size: 0.95rem; }
-.panel p { max-width: 70ch; }
+.panel p { max-width: var(--measure); }
+.main-col p { max-width: var(--measure); }
 .panel.risk .sec-title { display: flex; align-items: center; gap: 8px; color: var(--signal-ink); }
 .panel.risk .sec-title::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--signal); }
 .frame-table { border: 1px solid var(--hairline); }
@@ -231,7 +235,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 .bots { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
 .bots b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
 .rest-line { color: var(--ink-soft); font-size: 0.9rem; }
-.legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; }
+.legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; max-width: var(--measure); }
 
 .closing { background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; padding: 18px 22px; margin-bottom: 16px; }
 .closing h2 { margin-bottom: 4px; }
@@ -296,9 +300,9 @@ main { padding: 40px 0 80px; min-width: 0; }
   .orow { grid-template-columns: 56px minmax(0, 1fr); padding: 12px 14px; }
   .orow > p, .orow > .scores { grid-column: 1 / -1; }
   .cols, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
-  .verdict { margin-left: 0; width: 100%; }
-  .notes { width: 100%; }
-  .hint { text-align: left; }
+  .seg { margin-left: 0; }
+  /* A field under 16px makes a phone zoom the page when it takes focus. */
+  .notes { font-size: 1rem; }
   .seg button, .notes, .copy, .ctl, .bar-progress, .flt, .toggle, .drawer summary, .card-toggle { min-height: 44px; }
   .help-toggle { min-width: 44px; }
   .read dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
@@ -1199,8 +1203,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     const seg = el("div", "seg");
     seg.setAttribute("role", "group");
     seg.setAttribute("aria-label", "Verdict for " + label(pr));
-    const notes = el("input", "notes");
-    notes.type = "text";
+    const notes = el("textarea", "notes");
+    notes.rows = 3;
     notes.placeholder = "Notes for the verdict";
     notes.setAttribute("aria-label", "Notes for " + label(pr));
     const hint = el("span", "hint", "Pick a verdict to include this note");

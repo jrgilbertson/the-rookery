@@ -74,7 +74,7 @@ spacing:
   lg: "16px"
   xl: "24px"
   gutter: "28px"
-  measure: "36rem"
+  measure: "30rem"
 components:
   card:
     backgroundColor: "{colors.white-sheet}"
@@ -267,7 +267,7 @@ These components belong to working pages. A working page is an interactive page 
 ### Papers and type
 
 - **Papers.** Chalk Paper is the ground, and each section sits on a white sheet held by a Drafting Graphite hairline. Dispatch Paper carries notes someone wrote, such as an agent's read, a note across items, or review feedback. Data that needs attention does not use Dispatch Paper.
-- **Reading measure.** Prose takes one width, `--measure` (36rem): the lede, the key under the filters, a card's summary, the sentence about the hold line, notes on Dispatch Paper, panel paragraphs, and a table's legend. Blocks stacked in one column therefore end at the same edge. The measure is set in rem, not ch, because a width in ch follows each block's own font and gives two type sizes two widths. Tables, code diffs, screenshots, the two-column grid, and controls are not capped; a paragraph in a column narrower than the measure ends at its column.
+- **Reading measure.** Prose takes one width, `--measure` (30rem, about 75 characters of body text): the lede, the key under the filters, a card's summary, the sentence about the hold line, notes on Dispatch Paper, panel paragraphs, and a table's legend. Blocks stacked in one column therefore end at the same edge. The measure is set in rem, not ch, because a width in ch follows each block's own font and gives two type sizes two widths. Tables, code diffs, screenshots, the two-column grid, and controls are not capped; a paragraph in a column narrower than the measure ends at its column.
 - **Type.** Didot sets the page headline and numerals at 1rem or larger only, because its hairlines thin out at small sizes and on Night Paper. Baskerville sets body text and titles. A compact system sans sets labels, buttons, and metadata, never smaller than 0.7rem (11px). A working page loads no web fonts, so the Georgia fallback for both serifs is intended.
 
 ### Controls

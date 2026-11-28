@@ -317,9 +317,20 @@ def check_template(text: str) -> None:
     ):
         check(kept in text, f"the template lost {why}")
     summary_rule = re.search(r"(?m)^\.summary p \{[^}]*\}", text)
-    check(summary_rule is not None and re.search(r"max-width: \d+ch;", summary_rule.group(0)) is not None
+    check(summary_rule is not None and "max-width: var(--measure);" in summary_rule.group(0)
           and "color: var(--ink);" in summary_rule.group(0) and "#" not in summary_rule.group(0),
-          "the summary paragraph must set a measure in ch and take the main ink from the page's own variables")
+          "the summary paragraph must take the shared reading measure and the main ink from the page's own variables")
+    # One reading measure, set in rem so blocks of different type sizes end at the same edge. A width in ch follows each block's own font.
+    check(len(re.findall(r"--measure: [0-9.]+rem;", text)) == 1 and text.count("--measure:") == 1,
+          "the page must declare one reading measure, --measure, in rem")
+    for selector in (".lede", ".frame", ".key", ".summary p", ".driver", ".xnote", ".sysnote", ".panel p", ".main-col p", ".across span", ".legend"):
+        rule = re.search(r"(?m)^" + re.escape(selector) + r" \{[^}]*\}", text)
+        check(rule is not None and "max-width: var(--measure);" in rule.group(0), f"{selector} must take the shared reading measure")
+    drifted = re.findall(r"([^{}\n]*)\{[^}]*max-width: [0-9.]+ch", text)
+    check(not drifted, f"a prose width set in ch drifts from the shared measure: {[rule.strip() for rule in drifted]}")
+    for selector in (".notes", ".verdicts textarea", ".cols", "pre", ".sit", ".frame-table"):
+        rule = re.search(r"(?m)^" + re.escape(selector) + r" \{[^}]*\}", text)
+        check(rule is not None and "--measure" not in rule.group(0), f"{selector} holds structured content, so the reading measure must not cap it")
     check(summary_rule is not None and "font-size" not in summary_rule.group(0), "the summary is body text, so it sets no size of its own")
     # On a narrow screen a cell's ::before is its column label, so a flagged cell draws its seal with ::after, ordered in front of the word.
     narrow = text.split("@media (max-width: 560px)", 1)[-1].split("@media (max-width: 320px)", 1)[0]

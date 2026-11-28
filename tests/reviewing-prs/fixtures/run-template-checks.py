@@ -13,7 +13,8 @@ hold line, in what order, and whether a sensitive kind is named. A large round
 built here then checks the four groups, the bounded notices, the merged
 drawer, the filters, the copy controls, the verdict notes, the keyboard
 shortcuts and their switch, the active card, the collapsed routine cards, the
-card body's two columns, a code excerpt's explanation, what the browser keeps, a verdict already posted, and the Clear saved control.
+card body's two columns, a code excerpt's explanation, what the browser keeps,
+a verdict already posted, and the Clear saved control.
 Smaller rounds check a page with unreadable data, one with no pull requests,
 and one with no dependency bot. It cannot tell whether the page looks right;
 that takes a browser.

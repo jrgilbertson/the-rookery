@@ -18,9 +18,10 @@ Every brief carries:
 - the bot rule and the scrub rule from `SKILL.md`'s Rules for every step
 - the instruction to show evidence beside each Verification item in the pull
   request body
-- the instruction to tear down local service and database stacks, keep the
-  worktree, and send `worker_done` once the pull request is held or merged,
-  and never to push to a held pull request
+- the instruction to keep local service and database stacks running through
+  `ce-babysit-pr` (until initial review and CI settle, rather than tearing
+  them down before `gh pr create`), tear them down right before sending
+  `worker_done`, keep the worktree, and never push to a held pull request
 
 ## UI/UX briefs
 

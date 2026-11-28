@@ -248,8 +248,8 @@ independent leaves goes straight to `lfg`, one leaf per Executor.
 with the files of every active brief and the diff of every open pull request
 from a branch in this repository, whoever opened it. A fork's pull request
 reserves nothing, since the Captain never acts on forks. Serialize any leaf
-that overlaps. A file that only accumulates entries, such as `CHANGELOG.md`,
-never reserves, since those merge cleanly. A leaf stacked on a held pull
+that overlaps. Separate fragment files such as `changelog.d/*.md` never
+collide, and append-only files never reserve. A leaf stacked on a held pull
 request does not conflict with that pull request's own files.
 
 **One migration at a time.** At most one pull request that adds a database

@@ -27,6 +27,9 @@ benchmark data.
 The [Skill Eval conformance checks](evals/README.md) run every
 `evals/*/check-fixtures.mjs` offline and verify that key Promptfoo template
 invariants fail when deliberately broken.
+The changelog checks validate live [`changelog.d/`](../changelog.d/README.md)
+fragments and exercise [`scripts/changelog-rollup.py`](../scripts/changelog-rollup.py)
+against synthetic fragments in disposable directories.
 
 Repository text checks also require the "Rank by leverage" section in
 `GLOBAL-AGENTS.md` and in the `managing-issues` skill to match the one in

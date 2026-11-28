@@ -25,6 +25,7 @@ SYNC = ROOT / "scripts/sync-global-agents.sh"
 INSTALLER = ROOT / "scripts/checks/install-verification-tools.sh"
 
 FIXTURE_RUNNERS = (
+    "tests/changelog/fixtures/run-changelog-checks.py",
     "tests/evals/fixtures/run-eval-checks.py",
     "tests/managing-issues/fixtures/run-config-checks.py",
     "tests/personal-chief-of-staff/fixtures/run-sample-checks.py",

@@ -6,7 +6,11 @@ rolling install source; a release records one validated historical state.
 ## Prepare the candidate
 
 - Use one release branch and identify its exact commit and tree.
-- Update public documentation and move the finished changelog entry from
+- Roll pending [`changelog.d/`](changelog.d/README.md) fragments into
+  [`CHANGELOG.md`](CHANGELOG.md) with
+  [`scripts/changelog-rollup.py`](scripts/changelog-rollup.py)
+  (`python3 scripts/changelog-rollup.py`, or `--release <version>`), update
+  public documentation, and move the finished changelog entry from
   `Unreleased` to the target version.
 - From a clean checkout at the exact candidate commit, run the complete
   Lefthook check group documented in [tests/README.md](tests/README.md).

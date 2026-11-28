@@ -153,15 +153,16 @@ main { padding: 40px 0 80px; min-width: 0; }
 .block-head h2 { flex: 1 1 320px; min-width: 0; display: flex; align-items: center; gap: 12px; overflow-wrap: anywhere; }
 .rank { display: inline-grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-soft); font: 400 1rem/1 var(--display); color: var(--ink-soft); }
 .block.hold .rank { border-color: var(--ink); color: var(--ink); }
-.verdict { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-left: auto; }
-.seg { display: inline-flex; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); }
+/* The verdict container draws no box, so its buttons sit beside the title and its notes and hint each take a row of the card head. It stays one part for a collapsed card to hide. */
+.verdict { display: contents; }
+.seg { display: inline-flex; margin-left: auto; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); }
 .seg button { border: 0; background: none; padding: 6px 13px; min-height: 36px; font-size: 0.82rem; border-right: 1px solid var(--control-border); }
 .seg button:last-child { border-right: 0; }
 .seg button:hover { background: var(--mist); }
 .seg button[aria-pressed="true"] { background: var(--chosen); color: var(--on-chosen); font-weight: 650; }
-.notes { width: 240px; max-width: 100%; min-height: 36px; padding: 6px 10px; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); font-size: 0.82rem; }
+.notes { flex: 1 1 100%; width: 100%; min-height: 5em; padding: 10px 12px; border: 1px solid var(--control-border); border-radius: 2px; background: var(--sheet); font-size: 0.9rem; line-height: 1.5; resize: vertical; }
 .notes::placeholder { color: var(--ink-soft); }
-.hint { flex-basis: 100%; text-align: right; font-size: 0.76rem; color: var(--ink-soft); }
+.hint { flex-basis: 100%; font-size: 0.76rem; color: var(--ink-soft); }
 .block-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 10px 0 0; }
 .card-toggle { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--control-border); background: var(--sheet); border-radius: 2px; padding: 6px 12px; min-height: 36px; font-size: 0.82rem; }
 .card-toggle:hover { background: var(--mist); }
@@ -296,9 +297,9 @@ main { padding: 40px 0 80px; min-width: 0; }
   .orow { grid-template-columns: 56px minmax(0, 1fr); padding: 12px 14px; }
   .orow > p, .orow > .scores { grid-column: 1 / -1; }
   .cols, .screens, .beforeafter, .crow { grid-template-columns: minmax(0, 1fr); }
-  .verdict { margin-left: 0; width: 100%; }
-  .notes { width: 100%; }
-  .hint { text-align: left; }
+  .seg { margin-left: 0; }
+  /* A field under 16px makes a phone zoom the page when it takes focus. */
+  .notes { font-size: 1rem; }
   .seg button, .notes, .copy, .ctl, .bar-progress, .flt, .toggle, .drawer summary, .card-toggle { min-height: 44px; }
   .help-toggle { min-width: 44px; }
   .read dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
@@ -1199,8 +1200,8 @@ main { padding: 40px 0 80px; min-width: 0; }
     const seg = el("div", "seg");
     seg.setAttribute("role", "group");
     seg.setAttribute("aria-label", "Verdict for " + label(pr));
-    const notes = el("input", "notes");
-    notes.type = "text";
+    const notes = el("textarea", "notes");
+    notes.rows = 3;
     notes.placeholder = "Notes for the verdict";
     notes.setAttribute("aria-label", "Notes for " + label(pr));
     const hint = el("span", "hint", "Pick a verdict to include this note");

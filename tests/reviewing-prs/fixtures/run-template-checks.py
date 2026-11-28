@@ -198,6 +198,10 @@ const snap = () => {
       factors: within(a, "pill").map((p) => ({ three: has(p, "three"), shown: seen(p), label: one(p, "vh")?.textContent ?? null })),
       hint: one(a, "hint") ? { text: one(a, "hint").textContent, hidden: one(a, "hint").hidden } : null,
       seg: one(a, "seg")?.attributes ?? {}, notes: { ...(one(a, "notes")?.attributes ?? {}) },
+      // The notes field as built: its element, its rows, what it holds, and whether it and its hint sit inside the part a collapsed card hides.
+      field: one(a, "notes") ? { tag: one(a, "notes").tagName, rows: one(a, "notes").rows ?? null, type: one(a, "notes").type ?? null,
+        placeholder: one(a, "notes").placeholder ?? null, value: one(a, "notes").value,
+        folded: within(one(a, "verdict") || new Node("x"), "notes").length === 1 && within(one(a, "verdict") || new Node("x"), "hint").length === 1 } : null,
       github: walk(a).filter((n) => n.tagName === "a" && n.textContent === "Open on GitHub").map((n) => ({ href: n.href, rel: n.rel }))[0] ?? null,
     })),
     merged: merged && {
@@ -335,6 +339,22 @@ def check_template(text: str) -> None:
     for selector in (".ctl", ".flt", ".seg", ".notes", ".card-toggle", ".drawer summary", ".verdicts textarea", ".skip"):
         rule = re.search(r"(?m)^" + re.escape(selector) + r" \{[^}]*\}", text)
         check(rule is not None and "solid var(--control-border)" in rule.group(0), f"{selector} must be edged in the Control Border")
+    # The notes field is a multi-line box on its own row across the card, inside the one part a collapsed card hides.
+    notes_rule = re.search(r"(?m)^\.notes \{[^}]*\}", text)
+    notes_css = notes_rule.group(0) if notes_rule else ""
+    tall = re.search(r"min-height: ([0-9.]+)em;", notes_css)
+    check("flex: 1 1 100%;" in notes_css and "width: 100%;" in notes_css and "240px" not in notes_css,
+          "the notes field must take a full row across the card, not a fixed 240px beside the verdict buttons")
+    check("resize: vertical;" in notes_css, "the notes field must resize vertically only")
+    check(tall is not None and float(tall.group(1)) >= 4.5 and re.search(r"line-height: 1\.[4-6];|/1\.[4-6] ", notes_css) is not None,
+          "the notes field must stand at least three lines tall and set a line height for sentences")
+    check(re.search(r"(?m)^\.verdict \{[^}]*display: contents;", text) is not None,
+          "the verdict container must lay its buttons, notes, and hint out as rows of the card head while staying one part to hide")
+    hint_rule = re.search(r"(?m)^\.hint \{[^}]*\}", text)
+    check(hint_rule is not None and "flex-basis: 100%;" in hint_rule.group(0) and "text-align: right" not in text,
+          "the note hint must take its own row, left-aligned under the notes field")
+    check(re.search(r"(?m)^  \.seg button, \.notes, [^{]*\{ min-height: 44px; \}", text) is not None,
+          "the notes field must stay at least 44px tall on a narrow screen")
     check(text.count("--paper:") == 1 and text.count("#14161B") == 1, "Night Paper must be stated once, not once per way of asking for it")
     check(0 <= text.find("@media (max-width: 560px)") < text.find("@media (max-width: 320px)"), "the 560px rules must come before the 320px ones they are narrowed by")
     check(not re.search(r"\.vu-chip \{[^}]*999px", text), "the V x U chip takes the 2px corner, not a pill")
@@ -984,6 +1004,49 @@ def check_large_round(original: dict, scratch: Path) -> None:
     check(len(first["rail"]["lists"]) == 4 and all(l["labelled"] for l in first["rail"]["lists"]), "each rail list must be labelled by its group name")
 
 
+def check_notes_field(original: dict, scratch: Path) -> None:
+    """The notes field is a multi-line textarea that swallows shortcut keys, keeps its line breaks, and still copies as one line."""
+    page, _ = fill(json.dumps(large_round(original), indent=2, ensure_ascii=False) + "\n", scratch)
+    held, quiet = "Risky change 1", "Routine change 6"
+    typed = "m c r d x n j k ?"
+    note = "Rename the flag first.\n\nThen add a test\tfor the \"empty\" batch.\n"
+    actions = [["rect", held, 60, 200], ["focus", held]] + [["key", key, False, held] for key in typed.split()] + [
+        ["key", "c"],            # the same card with focus nowhere: the key acts, so the guard is what stopped the others
+        ["notes", held, note],
+    ]
+    steps = render(page, scratch, actions)
+    if steps is None:
+        return
+    card = lambda step, title=held: next(b for b in step["blocks"] if b["title"].endswith(title))  # noqa: E731
+    fields = [b["field"] for b in steps[0]["blocks"]]
+    check(all(f and f["tag"] == "textarea" and f["rows"] == 3 and f["type"] is None for f in fields),
+          f"every card's notes field must be a three-row textarea, not an input: {fields[0]}")
+    check(all(f and f["placeholder"] == "Notes for the verdict" and f["folded"] for f in fields),
+          "the notes field must keep its placeholder and sit with its hint inside the verdict container")
+    check(card(steps[0], quiet)["controlsHidden"] is True and card(steps[0], quiet)["field"]["folded"],
+          "a collapsed routine card must hide its notes field together with its verdict buttons")
+    before = steps[2]
+    for offset, key in enumerate(typed.split(), start=3):
+        after = steps[offset]
+        check((after["box"]["value"], after["scrolled"], after["focus"], after["bar"]["help"]["hidden"], card(after)["active"])
+              == (before["box"]["value"], before["scrolled"], before["focus"], before["bar"]["help"]["hidden"], True),
+              f"typing {key!r} in the notes field must not fire a page shortcut")
+    acted = steps[len(typed.split()) + 3]
+    check(acted["box"]["value"].endswith(" | request changes | "), f"the same key outside the field must act on that card: {acted['box']['value']!r}")
+    last = steps[-1]
+    stored = [json.loads(value) for key, value in last["storage"].items() if key.startswith("reviewing-prs:")]
+    check([entry["notes"] for entry in stored] == [note], f"a multi-line note must be stored with its line breaks: {stored}")
+    check(card(last)["field"]["value"] == note, "the notes field must hold the line breaks that were typed")
+    lines = last["box"]["value"].split("\n")
+    check(len(lines) == 1 and lines[0].endswith(" | request changes | Rename the flag first. Then add a test for the 'empty' batch."),
+          f"a multi-line note must copy as one line, its breaks and tabs made single spaces: {lines}")
+    again = render(page, scratch, [], last["storage"])
+    if again is None:
+        return
+    check(card(again[0])["field"]["value"] == note and again[0]["box"]["value"] == last["box"]["value"],
+          "a reload must restore the multi-line note in the field and the same single verdict line")
+
+
 def check_notice_threshold(original: dict, scratch: Path) -> None:
     variant = large_round(original, without=5, auto_merged=0)
     page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
@@ -1091,7 +1154,8 @@ def main() -> int:
         check_rendered(page, Path(scratch), original)
         check_storage_cleanup(page, Path(scratch))
     for extra in (lambda scratch: check_incomplete_scores(raw, scratch), lambda scratch: check_two_group_round(raw, scratch),
-                  lambda scratch: check_large_round(original, scratch), lambda scratch: check_notice_threshold(original, scratch),
+                  lambda scratch: check_large_round(original, scratch), lambda scratch: check_notes_field(original, scratch),
+                  lambda scratch: check_notice_threshold(original, scratch),
                   lambda scratch: check_chrome_states(original, scratch), lambda scratch: check_summaries(original, scratch),
                   lambda scratch: check_audience_articles(original, scratch)):
         with tempfile.TemporaryDirectory() as scratch:

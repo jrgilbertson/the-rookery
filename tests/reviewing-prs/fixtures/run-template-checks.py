@@ -12,8 +12,8 @@ browser's DOM, and checks where each pull request lands: which side of the
 hold line, in what order, and whether a sensitive kind is named. A large round
 built here then checks the four groups, the bounded notices, the merged
 drawer, the filters, the copy controls, the verdict notes, the keyboard
-shortcuts and their switch, the active card, the collapsed routine cards, what
-the browser keeps, a verdict already posted, and the Clear saved control.
+shortcuts and their switch, the active card, the collapsed routine cards, the
+card body's two columns, a code excerpt's explanation, what the browser keeps, a verdict already posted, and the Clear saved control.
 Smaller rounds check a page with unreadable data, one with no pull requests,
 and one with no dependency bot. It cannot tell whether the page looks right;
 that takes a browser.
@@ -145,6 +145,19 @@ const one = (root, cls) => within(root, cls)[0] || null;
 const seen = (n) => n.isText ? n.textContent : has(n, "vh") ? "" : n._text !== null ? n._text : n.children.map(seen).join("");
 const chips = (root) => within(root, "chip").filter((n) => !n.hidden).map(seen);
 const hiddenIds = () => Object.keys(fixed).filter((id) => fixed[id].hidden);
+// The card body holds only the two-column grid, and the main column opens with the lead prose: the summary, the
+// in-flight notice, and the hold-line sentence. leadOf is that wrapper, or null when anything else comes first on the way down.
+const leadOf = (a) => {
+  const cols = one(a, "block-body")?.children[0], main = cols?.children[0], lead = main?.children[0];
+  return cols && has(cols, "cols") && has(main || {}, "main-col") && has(lead || {}, "card-lead") ? lead : null;
+};
+const classes = (n) => (n?.children ?? []).filter((c) => !c.isText).map((c) => c.className || c.tagName);
+// The code section as drawn: each part's tag and class, its text, and whether that text built any element.
+const codeOf = (a) => {
+  const section = within(a, "code").find((n) => n.tagName === "section");
+  return section ? section.children.map((n) => ({ tag: n.tagName, cls: n.className, text: n.tagName === "pre" ? null : n.textContent,
+    builtElements: n.tagName === "pre" ? null : walk(n).length - 1 })) : null;
+};
 // The summary as drawn: its label, its text, where it sits in the card body, and whether its text built any element.
 const summaryOf = (a) => {
   const section = one(a, "summary");
@@ -152,7 +165,7 @@ const summaryOf = (a) => {
   const paragraph = section.children.find((n) => n.tagName === "p");
   return { tag: section.tagName, parts: section.children.map((n) => n.tagName), label: section.children[0]?.textContent ?? null,
     labelClass: section.children[0]?.className ?? null, text: paragraph?.textContent ?? null,
-    builtElements: paragraph ? walk(paragraph).length - 1 : null, first: one(a, "block-body")?.children[0] === section };
+    builtElements: paragraph ? walk(paragraph).length - 1 : null, first: leadOf(a)?.children[0] === section };
 };
 const snap = () => {
   const all = walk(fixed.page);
@@ -191,7 +204,8 @@ const snap = () => {
       feedback: walk(a).filter((n) => n.tagName === "p" && n.children[0]?.tagName === "b" && n.children[0].textContent === "Review feedback").map((n) => n.className),
       // The summary's own label is read with the summary, so sections stays the list of the card's data sections.
       sections: within(a, "sec-title").filter((n) => !has(n.parentNode || {}, "summary")).map((n) => n.textContent),
-      summary: summaryOf(a), bodyStart: one(a, "block-body")?.children[0]?.className ?? null,
+      summary: summaryOf(a), bodyStart: leadOf(a)?.children[0]?.className ?? null, code: codeOf(a),
+      shape: { body: classes(one(a, "block-body")), cols: classes(one(a, "cols")), lead: classes(leadOf(a)), main: classes(one(a, "main-col")), side: classes(one(a, "side-col")) },
       vuChip: { attributes: { ...(one(a, "vu-chip")?.attributes ?? {}) }, label: one(one(a, "vu-chip") || new Node("x"), "vh")?.textContent ?? null },
       active: has(a, "active"), collapsed: one(a, "block-body")?.hidden ?? null, controlsHidden: one(a, "verdict")?.hidden ?? null,
       toggle: one(a, "card-toggle") ? { ...one(a, "card-toggle").attributes } : null,
@@ -344,6 +358,15 @@ def check_template(text: str) -> None:
         rule = re.search(r"(?m)^" + re.escape(selector) + r" \{[^}]*\}", text)
         check(rule is not None and "--measure" not in rule.group(0), f"{selector} holds structured content, so the reading measure must not cap it")
     check(summary_rule is not None and "font-size" not in summary_rule.group(0), "the summary is body text, so it sets no size of its own")
+    # A code excerpt's explanation is prose about code: the main ink from the page's variables, and a long identifier wraps.
+    why_rule = re.search(r"(?m)^\.code-why \{[^}]*\}", text)
+    check(why_rule is not None and "color: var(--ink);" in why_rule.group(0) and "overflow-wrap: anywhere;" in why_rule.group(0)
+          and "#" not in why_rule.group(0), "a code excerpt's explanation must take the main ink from the page's variables and wrap a long identifier")
+    check(re.search(r"(?m)^\.code pre \+ \.sec-title \{[^}]*margin-top: [1-9]", text) is not None,
+          "a second excerpt's label must sit clear of the diff above it")
+    # The lead prose starts level with the side column whichever part comes first, so its first child takes no top margin.
+    check(re.search(r"(?m)^\.card-lead > :first-child \{[^}]*margin-top: 0;", text) is not None,
+          "the first part of a card's lead prose must take no top margin, so the two columns start level")
     # On a narrow screen a cell's ::before is its column label, so a flagged cell draws its seal with ::after, ordered in front of the word.
     narrow = text.split("@media (max-width: 560px)", 1)[-1].split("@media (max-width: 320px)", 1)[0]
     check(re.search(r"\.sit td\.no::before \{[^}]*order: -2;[^}]*width: auto; height: auto;[^}]*background: none;", narrow) is not None
@@ -608,7 +631,7 @@ def check_summaries(original: dict, scratch: Path) -> None:
             continue
         check(shown["tag"] == "section" and shown["parts"] == ["h3", "p"] and shown["label"] == "In plain words" and shown["labelClass"] == "sec-title",
               f"#{number}'s summary must be a section holding the In plain words label and one paragraph: {shown}")
-        check(shown["first"], f"#{number}'s summary must be the first thing in the card body, before the hold-line sentence")
+        check(shown["first"], f"#{number}'s summary must lead the card body, before the hold-line sentence")
         check(shown["builtElements"] == 0, f"#{number}'s summary must reach the page as text and build no element: {shown}")
         check(blocks[number]["sections"][:1] != ["In plain words"] and blocks[number]["driver"], f"#{number}'s card lost its hold-line sentence or its first data section")
     check((blocks.get(806, {}).get("summary") or {}).get("text") == "Padded on both sides.", f"a summary is trimmed before it is drawn: {blocks.get(806, {}).get('summary')}")
@@ -624,6 +647,76 @@ def check_summaries(original: dict, scratch: Path) -> None:
               f"{blocks.get(number, {}).get('summary')}, {blocks.get(number, {}).get('bodyStart')}")
     check(blocks.get(890, {}).get("summary") is None and blocks.get(890, {}).get("bodyStart") == "sysnote",
           f"an in-flight card with no summary must still start with its notice: {blocks.get(890, {}).get('bodyStart')}")
+
+
+def check_code_explanations(original: dict, scratch: Path) -> None:
+    """The card body is the two-column grid from its first line, and a code excerpt says in plain words why it is there."""
+    hostile = "Look here </script><img src=x onerror=alert(1)> & <b>why</b> it matters."
+    variant = copy.deepcopy(original)
+    base = next(pr for pr in original["prs"] if pr["number"] == 409)
+    lines = ["- old", "+ new"]
+    cases = {
+        850: [{"title": "Plain", "file": "a.ts", "why": "This is the line that rounds the price. It rounds down now, so some customers pay less.", "lines": lines}],
+        851: [{"title": "Hostile", "file": "b.ts", "why": hostile, "lines": lines}],
+        852: [{"title": "Padded", "file": "c.ts", "why": "  Trimmed.  ", "lines": lines}, {"title": "Blank", "file": "d.ts", "why": "   ", "lines": lines},
+              {"title": "Absent", "file": "e.ts", "lines": lines}, {"title": "Number", "file": "f.ts", "why": 7, "lines": lines}],
+        853: [],
+    }
+    for number, code in cases.items():
+        pr = copy.deepcopy(base)
+        pr.update(number=number, title=f"Excerpts {number}", head=f"{number:040x}", url=f"https://github.com/acme/ledger-app/pull/{number}", code=code)
+        variant["prs"].append(pr)
+    page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    steps = render(page, scratch)
+    if steps is None:
+        return
+    blocks = {next((pr["number"] for pr in variant["prs"] if b["title"].endswith(pr["title"])), None): b for b in steps[0]["blocks"]}
+
+    order = ["summary", "sysnote", "driver"]
+    for number, block in blocks.items():
+        shape = block["shape"]
+        check(shape["body"] == ["cols"] and shape["cols"] == ["main-col", "side-col"] and shape["main"][:1] == ["card-lead"],
+              f"#{number}'s card body must hold only the two columns, and its main column must open with the lead prose: {shape}")
+        lead = shape["lead"]
+        check("driver" in lead and set(lead) <= set(order) and lead == sorted(lead, key=order.index),
+              f"#{number}'s lead prose must run summary, in-flight notice, then hold-line sentence: {lead}")
+        # What people and the agent wrote sits together in the side column: notes across the round, the agent's read, the panels, then review feedback.
+        side = [cls.split()[0] for cls in shape["side"]]
+        notes = len(block["xnotes"])
+        check(side[:notes] == ["xnote"] * notes and side[notes:notes + 1] == ["read"] and "xnote" not in shape["main"] + side[notes:],
+              f"#{number}'s notes across the round must open the side column, above the agent's read: {side}")
+        check(side[-1:] == ["feedback"] if block["feedback"] else "feedback" not in side,
+              f"#{number}'s review feedback must close the side column: {side}")
+        check("feedback" not in shape["main"], f"#{number}'s review feedback must not sit in the main column: {shape['main']}")
+    check(any(b["xnotes"] for b in blocks.values()) and any(b["feedback"] for b in blocks.values()),
+          "the round must hold a card with a note across the round and one with review feedback")
+    check(any(b["summary"] for b in blocks.values()) and any(b["summary"] is None for b in blocks.values()),
+          "the round must hold cards with and without a summary")
+
+    def parts(number: int) -> list:
+        return [(part["tag"], part["cls"]) for part in blocks[number]["code"] or []]
+
+    def text(number: int, index: int) -> str | None:
+        drawn = blocks[number]["code"] or []
+        return drawn[index]["text"] if index < len(drawn) else None
+
+    label, why, diff = ("h3", "sec-title"), ("p", "code-why"), ("pre", "")
+    check(parts(850) == [label, why, diff], f"an excerpt with an explanation draws its label, the explanation, then the diff: {parts(850)}")
+    check(text(850, 0) == "Plain · a.ts" and text(850, 1) == cases[850][0]["why"], f"an explanation must be drawn exactly as written: {text(850, 1)}")
+    check(parts(851) == [label, why, diff] and text(851, 1) == hostile and blocks[851]["code"][1]["builtElements"] == 0,
+          f"an explanation holding markup must reach the page as text and build no element: {blocks[851]['code']}")
+    check(parts(852) == [label, why, diff] + [label, diff] * 3 and text(852, 1) == "Trimmed.",
+          f"an explanation is trimmed, and an excerpt whose explanation is blank, absent, or not text draws its label then its diff with nothing between: {parts(852)}")
+    check(parts(853) == [label, ("p", "empty")], f"a card with no excerpt draws no explanation: {parts(853)}")
+
+    written = [excerpt for pr in original["prs"] for excerpt in pr.get("code", [])]
+    check(sum("why" in excerpt for excerpt in written) >= 3 and any("why" not in excerpt for excerpt in written),
+          "the sample must carry excerpts with an explanation and keep one without, as an older payload has")
+    check(any(len(pr.get("code", [])) >= 2 for pr in original["prs"]), "the sample must keep a pull request with two excerpts")
+    for pr in original["prs"]:
+        drawn = [part["text"] for part in blocks[pr["number"]]["code"] or [] if part["cls"] == "code-why"]
+        check(drawn == [excerpt["why"] for excerpt in pr.get("code", []) if "why" in excerpt],
+              f"#{pr['number']}'s card must draw each sample explanation exactly as written: {drawn}")
 
 
 def check_two_group_round(raw: str, scratch: Path) -> None:
@@ -1354,6 +1447,7 @@ def main() -> int:
                   lambda scratch: check_large_round(original, scratch), lambda scratch: check_notes_field(original, scratch),
                   lambda scratch: check_notice_threshold(original, scratch), lambda scratch: check_posted_verdicts(original, scratch),
                   lambda scratch: check_chrome_states(original, scratch), lambda scratch: check_summaries(original, scratch),
+                  lambda scratch: check_code_explanations(original, scratch),
                   lambda scratch: check_audience_articles(original, scratch)):
         with tempfile.TemporaryDirectory() as scratch:
             try:

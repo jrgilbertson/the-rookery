@@ -52,7 +52,7 @@ pre .del { color: var(--del); background: var(--del-wash); }
 pre .ctx { color: var(--ink-soft); }
 
 .sec-title, .meta, .source, .where, .legend, .cap, .key, .state, .scores small, .vu small,
-.read dt, .bots b, .part small, .bar-note, .bar-progress, .bar-cue, .ctl, .seg button, .notes, .copy,
+.read dt, .feedback b, .part small, .bar-note, .bar-progress, .bar-cue, .ctl, .seg button, .notes, .copy,
 .over-head small, .rail, .xnote b, .sysnote b, .chip, .size, .count, .hint, .filters, .drawer summary, .card-toggle { font-family: var(--sans); }
 .meta, .source { color: var(--ink-soft); font-size: 0.82rem; }
 .source { margin-top: 6px; }
@@ -232,8 +232,8 @@ main { padding: 40px 0 80px; min-width: 0; }
 .read dl { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 10px; }
 .read dt { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); padding-top: 3px; }
 .read dd.judgment { font-weight: 600; }
-.bots { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
-.bots b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
+.feedback { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.feedback b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
 .rest-line { color: var(--ink-soft); font-size: 0.9rem; }
 .legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; max-width: var(--measure); }
 
@@ -1306,9 +1306,9 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     main.append(codeBox);
     if (str(pr.feedback)) {
-      const bots = el("p", "bots");
-      add(bots, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
-      main.append(bots);
+      const feedback = el("p", "feedback");
+      add(feedback, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
+      main.append(feedback);
     }
     if (str(pr.rest)) main.append(el("p", "rest-line", "Rest of the diff: " + str(pr.rest)));
 

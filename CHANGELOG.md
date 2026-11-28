@@ -873,6 +873,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- The Dependency bots group in the `reviewing-prs` review page's Overview
+  matches the other groups again. It shared the `bots` class with a card's
+  Review feedback box, so it took that box's fill, padding, border, and
+  smaller text. The box now uses its own `feedback` class and looks the same.
 - A double quote inside a Verdict note no longer ends the posted
   `Notes: "..."` line early. The review page and step 5 of `reviewing-prs`
   change inner double quotes to single quotes.

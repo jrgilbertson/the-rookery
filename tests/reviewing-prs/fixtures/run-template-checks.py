@@ -184,6 +184,8 @@ const snap = () => {
       driver: one(a, "driver")?.textContent ?? "",
       chips: chips(one(a, "block-meta") || new Node("x")), xnotes: within(a, "xnote").map((n) => n.textContent),
       sysnotes: within(a, "sysnote").map((n) => n.textContent),
+      // The review-feedback callout is found by its label, so the check reads whatever class the page gave it.
+      feedback: walk(a).filter((n) => n.tagName === "p" && n.children[0]?.tagName === "b" && n.children[0].textContent === "Review feedback").map((n) => n.className),
       // The summary's own label is read with the summary, so sections stays the list of the card's data sections.
       sections: within(a, "sec-title").filter((n) => !has(n.parentNode || {}, "summary")).map((n) => n.textContent),
       summary: summaryOf(a), bodyStart: one(a, "block-body")?.children[0]?.className ?? null,
@@ -366,6 +368,17 @@ def check_template(text: str) -> None:
           "the note hint must take its own row, left-aligned under the notes field")
     check(re.search(r"(?m)^  \.seg button, \.notes, [^{]*\{ min-height: 44px; \}", text) is not None,
           "the notes field must stay at least 44px tall on a narrow screen")
+    # An Overview group's key is also a class on its section, so a rule on that class alone would restyle the whole group.
+    css = text.split("<style>", 1)[-1].split("</style>", 1)[0]
+    alone = re.findall(r"(?<![\w.-])\.(?:hold|under|bots|flight)(?![\w-])[^,{]*", css)
+    check(not alone, f"a rule selects an Overview group's key on its own, so it would style that whole group: {alone}")
+    feedback_rule = re.search(r"(?m)^\.feedback \{[^}]*\}", text)
+    check(feedback_rule is not None and all(kept in feedback_rule.group(0) for kept in (
+        "padding: 9px 14px;", "background: var(--dispatch);", "border: 1px solid var(--hairline-soft);", "font-size: 0.95rem;")),
+          "a card's review-feedback callout must keep its Dispatch Paper fill, hairline border, 9px 14px padding, and 0.95rem text")
+    check(re.search(r"(?m)^\.feedback b \{[^}]*font-weight: 650;", text) is not None
+          and re.search(r"\.feedback b,[^{]*\{ font-family: var\(--sans\); \}", text) is not None,
+          "the review-feedback label must stay bold and sans")
     check(text.count("--paper:") == 1 and text.count("#14161B") == 1, "Night Paper must be stated once, not once per way of asking for it")
     check(0 <= text.find("@media (max-width: 560px)") < text.find("@media (max-width: 320px)"), "the 560px rules must come before the 320px ones they are narrowed by")
     check(not re.search(r"\.vu-chip \{[^}]*999px", text), "the V x U chip takes the 2px corner, not a pill")
@@ -507,6 +520,12 @@ def check_rendered(page: str, scratch: Path, original: dict) -> None:
     check("Over the hold line, V × U 6, and it touches a sensitive kind: money." in blocks.get(421, {}).get("driver", ""),
           f"#421's block does not name its sensitive kind: {blocks.get(421, {}).get('driver')}")
     check(blocks.get(134, {}).get("driver", "").startswith("Under the hold line, V × U 1."), "#134's block is not under the hold line")
+    # Each pull request with feedback draws one callout, under a class no Overview group's section carries.
+    callouts = {n: b["feedback"] for n, b in blocks.items() if b["feedback"]}
+    check(callouts == {pr["number"]: ["feedback"] for pr in original["prs"] if pr.get("feedback")} and len(callouts) == 3,
+          f"each pull request with review feedback must draw one callout with the feedback class, and no other card may: {callouts}")
+    shared = {c for g in rendered["groups"] for c in g["cls"].split()} & {c for classes in callouts.values() for c in " ".join(classes).split()}
+    check(not shared, f"the review-feedback callout shares a class with an Overview group, so its box styles the group too: {sorted(shared)}")
     first = next(pr for pr in original["prs"] if pr["number"] == 418)
     check(chosen["box"]["value"] == f"{first.get('repo')}#{first.get('number')} @ {first.get('head')} | not applicable | ",
           f"choosing Not applicable must build its verdict line: {chosen['box']['value']!r}")

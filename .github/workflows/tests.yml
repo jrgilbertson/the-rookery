@@ -20,9 +20,24 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Cache pinned verification tools
+        id: cache-tools
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/rookery-tools
+          key: ${{ runner.os }}-${{ runner.arch }}-rookery-tools-${{ hashFiles('scripts/checks/install-verification-tools.sh') }}
+
       - name: Install pinned verification tools
+        if: steps.cache-tools.outputs.cache-hit != 'true'
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: bash scripts/checks/install-verification-tools.sh
+
+      - name: Add cached verification tools to PATH
+        if: steps.cache-tools.outputs.cache-hit == 'true'
+        shell: bash
+        run: echo "$RUNNER_TEMP/rookery-tools" >> "$GITHUB_PATH"
 
       - name: Validate Lefthook configuration
         run: lefthook validate

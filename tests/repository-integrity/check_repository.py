@@ -3,11 +3,16 @@
 
 from __future__ import annotations
 
+import gzip
+import io
+import json
 import os
 import shlex
 import shutil
+import stat
 import subprocess
 import sys
+import tarfile
 import tempfile
 from pathlib import Path
 
@@ -17,6 +22,7 @@ CHECKER = ROOT / "scripts/checks/repository.py"
 LINT = ROOT / "scripts/checks/lint.sh"
 FIXTURES = ROOT / "scripts/checks/fixtures.sh"
 SYNC = ROOT / "scripts/sync-global-agents.sh"
+INSTALLER = ROOT / "scripts/checks/install-verification-tools.sh"
 
 FIXTURE_RUNNERS = (
     "tests/evals/fixtures/run-eval-checks.py",
@@ -588,10 +594,229 @@ def check_guidance_copy(temporary_root: Path) -> None:
             f"guidance check without a merge base did not ask for history: {unrelated.stderr}")
 
 
+def check_install_verification_tools(temporary_root: Path) -> None:
+    installer_root = temporary_root / "installer-check"
+    fixtures = installer_root / "fixtures"
+    stub_bin = installer_root / "stub-bin"
+    fixtures.mkdir(parents=True)
+    stub_bin.mkdir()
+
+    def write_executable_archive(archive_path: Path, mode: str, member_name: str, tool_name: str) -> None:
+        payload = f"#!/bin/sh\necho {tool_name}\n".encode("utf-8")
+        with tarfile.open(archive_path, mode) as archive:
+            info = tarfile.TarInfo(member_name)
+            info.size = len(payload)
+            info.mode = 0o755
+            archive.addfile(info, io.BytesIO(payload))
+
+    with gzip.open(fixtures / "lefthook_2.1.10_Linux_x86_64.gz", "wb") as handle:
+        handle.write(b"#!/bin/sh\necho lefthook\n")
+    write_executable_archive(
+        fixtures / "actionlint_1.7.12_linux_amd64.tar.gz", "w:gz", "actionlint", "actionlint"
+    )
+    write_executable_archive(
+        fixtures / "shellcheck-v0.11.0.linux.x86_64.tar.xz",
+        "w:xz",
+        "shellcheck-v0.11.0/shellcheck",
+        "shellcheck",
+    )
+    write_executable_archive(
+        fixtures / "gitleaks_8.30.1_linux_x64.tar.gz", "w:gz", "gitleaks", "gitleaks"
+    )
+
+    gh_stub = stub_bin / "gh"
+    gh_stub.write_text(
+        f"#!{sys.executable}\n"
+        "import json, os, shutil, sys\n"
+        "from pathlib import Path\n"
+        "args = sys.argv[1:]\n"
+        "with Path(os.environ['STUB_LOG']).open('a', encoding='utf-8') as log:\n"
+        "    log.write(json.dumps({\n"
+        "        'tool': 'gh',\n"
+        "        'argv': args,\n"
+        "        'gh_token': os.environ.get('GH_TOKEN', ''),\n"
+        "        'gh_host': os.environ.get('GH_HOST', ''),\n"
+        "    }) + '\\n')\n"
+        "fail_once = os.environ.get('STUB_FAIL_ONCE_FILE', '')\n"
+        "if fail_once and Path(fail_once).exists():\n"
+        "    Path(fail_once).unlink()\n"
+        "    raise SystemExit(1)\n"
+        "pattern = args[args.index('--pattern') + 1]\n"
+        "output = args[args.index('--output') + 1]\n"
+        "shutil.copyfile(Path(os.environ['STUB_FIXTURES']) / pattern, output)\n",
+        encoding="utf-8",
+    )
+    gh_stub.chmod(0o755)
+
+    curl_stub = stub_bin / "curl"
+    curl_stub.write_text(
+        f"#!{sys.executable}\n"
+        "import json, os, shutil, sys\n"
+        "from pathlib import Path\n"
+        "args = sys.argv[1:]\n"
+        "with Path(os.environ['STUB_LOG']).open('a', encoding='utf-8') as log:\n"
+        "    log.write(json.dumps({'tool': 'curl', 'argv': args}) + '\\n')\n"
+        "output = args[args.index('-o') + 1]\n"
+        "asset = args[-1].rsplit('/', 1)[-1]\n"
+        "shutil.copyfile(Path(os.environ['STUB_FIXTURES']) / asset, output)\n",
+        encoding="utf-8",
+    )
+    curl_stub.chmod(0o755)
+
+    sha_stub = stub_bin / "sha256sum"
+    sha_stub.write_text(
+        f"#!{sys.executable}\n"
+        "import os, sys\n"
+        "from pathlib import Path\n"
+        "lines = [line.strip() for line in sys.stdin if line.strip()]\n"
+        "with Path(os.environ['STUB_SHA_LOG']).open('a', encoding='utf-8') as log:\n"
+        "    for line in lines:\n"
+        "        log.write(line + '\\n')\n"
+        "if os.environ.get('STUB_FAIL_SHA') == '1':\n"
+        "    raise SystemExit(1)\n"
+        "for line in lines:\n"
+        "    _, target = line.split(None, 1)\n"
+        "    if not Path(target).is_file() or Path(target).stat().st_size == 0:\n"
+        "        raise SystemExit(1)\n",
+        encoding="utf-8",
+    )
+    sha_stub.chmod(0o755)
+
+    sleep_stub = stub_bin / "sleep"
+    sleep_stub.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    sleep_stub.chmod(0o755)
+
+    def run_installer(name: str, extra_env: dict[str, str | None]):
+        case_dir = installer_root / name
+        runner_temp = case_dir / "runner-temp"
+        runner_temp.mkdir(parents=True)
+        github_path = case_dir / "github-path"
+        github_path.write_text("", encoding="utf-8")
+        stub_log = case_dir / "calls.jsonl"
+        sha_log = case_dir / "sha.log"
+        env = dict(os.environ)
+        env.pop("GITHUB_TOKEN", None)
+        env.pop("GH_TOKEN", None)
+        env.pop("GH_HOST", None)
+        env.update(
+            {
+                "PATH": str(stub_bin) + os.pathsep + os.environ["PATH"],
+                "RUNNER_TEMP": str(runner_temp),
+                "GITHUB_PATH": str(github_path),
+                "STUB_FIXTURES": str(fixtures),
+                "STUB_LOG": str(stub_log),
+                "STUB_SHA_LOG": str(sha_log),
+            }
+        )
+        for key, value in extra_env.items():
+            if value is None:
+                env.pop(key, None)
+            else:
+                env[key] = value
+        result = subprocess.run(
+            ["bash", str(INSTALLER)],
+            cwd=ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=15,
+        )
+        calls = (
+            [json.loads(line) for line in stub_log.read_text(encoding="utf-8").splitlines() if line]
+            if stub_log.exists()
+            else []
+        )
+        sha_lines = (
+            [line for line in sha_log.read_text(encoding="utf-8").splitlines() if line]
+            if sha_log.exists()
+            else []
+        )
+        return result, runner_temp, github_path, calls, sha_lines
+
+    def require_tools_installed(runner_temp: Path, github_path: Path) -> None:
+        tool_dir = runner_temp / "rookery-tools"
+        for tool_name in ("lefthook", "actionlint", "shellcheck", "gitleaks"):
+            binary = tool_dir / tool_name
+            require(binary.is_file(), f"installer did not place {tool_name} in {tool_dir}")
+            require(bool(binary.stat().st_mode & stat.S_IXUSR), f"{tool_name} is not executable")
+        require(
+            str(tool_dir) in github_path.read_text(encoding="utf-8").splitlines(),
+            f"installer did not append {tool_dir} to GITHUB_PATH",
+        )
+
+    # 1. Authenticated CI path: GITHUB_TOKEN set + gh available.
+    token = "fixture-ci-token"
+    auth_result, auth_temp, auth_path, auth_calls, auth_sha = run_installer(
+        "authenticated", {"GITHUB_TOKEN": token}
+    )
+    require(auth_result.returncode == 0, f"authenticated install failed: {auth_result.stderr}")
+    require_tools_installed(auth_temp, auth_path)
+    require(len(auth_sha) == 4, f"expected 4 sha256sum checks, got {len(auth_sha)}")
+    require(
+        len(auth_calls) == 4 and all(call["tool"] == "gh" for call in auth_calls),
+        f"authenticated install did not use gh for all 4 tools: {auth_calls}",
+    )
+    for call in auth_calls:
+        require(call["gh_token"] == token, f"gh did not receive GITHUB_TOKEN via GH_TOKEN: {call}")
+        require(call["gh_host"] == "github.com", f"gh was not scoped to github.com: {call}")
+        repo_arg = call["argv"][call["argv"].index("--repo") + 1]
+        require(repo_arg.startswith("github.com/"), f"gh --repo was not host-scoped: {repo_arg}")
+        require(
+            all(token not in arg for arg in call["argv"]),
+            f"GITHUB_TOKEN leaked into gh argv: {call['argv']}",
+        )
+
+    # 2. Unauthenticated standalone fallback: GITHUB_TOKEN unset.
+    unauth_result, unauth_temp, unauth_path, unauth_calls, unauth_sha = run_installer(
+        "unauthenticated", {"GITHUB_TOKEN": None}
+    )
+    require(unauth_result.returncode == 0, f"unauthenticated install failed: {unauth_result.stderr}")
+    require_tools_installed(unauth_temp, unauth_path)
+    require(len(unauth_sha) == 4, f"expected 4 sha256sum checks on fallback, got {len(unauth_sha)}")
+    require(
+        len(unauth_calls) == 4 and all(call["tool"] == "curl" for call in unauth_calls),
+        f"unauthenticated install did not fall back to curl: {unauth_calls}",
+    )
+    for call in unauth_calls:
+        require(
+            call["argv"][-1].startswith("https://github.com/"),
+            f"unexpected curl download URL: {call['argv'][-1]}",
+        )
+        require(
+            all("authorization" not in arg.lower() for arg in call["argv"]),
+            f"unauthenticated curl sent an Authorization header: {call['argv']}",
+        )
+
+    # 3. Retry recovery on transient gh failure.
+    fail_marker = installer_root / "fail-once"
+    fail_marker.write_text("fail\n", encoding="utf-8")
+    retry_result, retry_temp, retry_path, retry_calls, _ = run_installer(
+        "retry", {"GITHUB_TOKEN": token, "STUB_FAIL_ONCE_FILE": str(fail_marker)}
+    )
+    require(retry_result.returncode == 0, f"retry install failed: {retry_result.stderr}")
+    require_tools_installed(retry_temp, retry_path)
+    require(
+        len(retry_calls) == 5 and all(call["tool"] == "gh" for call in retry_calls),
+        f"expected 5 gh calls with one transient retry, got {len(retry_calls)}",
+    )
+
+    # 4. Checksum mismatch fails closed without updating GITHUB_PATH.
+    bad_sha_result, _, bad_sha_path, _, _ = run_installer(
+        "bad-sha", {"GITHUB_TOKEN": token, "STUB_FAIL_SHA": "1"}
+    )
+    require(bad_sha_result.returncode != 0, "installer accepted a failing sha256sum check")
+    require(
+        bad_sha_path.read_text(encoding="utf-8") == "",
+        "installer updated GITHUB_PATH despite sha256sum failure",
+    )
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:
         temporary_root = Path(temporary)
         check_guidance_copy(temporary_root)
+        check_install_verification_tools(temporary_root)
         repository = temporary_root / "repository"
         checker = repository / "scripts/checks/repository.py"
         checker.parent.mkdir(parents=True)

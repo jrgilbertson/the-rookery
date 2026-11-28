@@ -362,7 +362,7 @@ def check_template(text: str) -> None:
     check(re.search(r"(?m)^\.verdict \{[^}]*display: contents;", text) is not None,
           "the verdict container must lay its buttons, notes, and hint out as rows of the card head while staying one part to hide")
     hint_rule = re.search(r"(?m)^\.hint \{[^}]*\}", text)
-    check(hint_rule is not None and "flex-basis: 100%;" in hint_rule.group(0) and "text-align: right" not in text,
+    check(hint_rule is not None and "flex-basis: 100%;" in hint_rule.group(0) and "text-align" not in hint_rule.group(0),
           "the note hint must take its own row, left-aligned under the notes field")
     check(re.search(r"(?m)^  \.seg button, \.notes, [^{]*\{ min-height: 44px; \}", text) is not None,
           "the notes field must stay at least 44px tall on a narrow screen")

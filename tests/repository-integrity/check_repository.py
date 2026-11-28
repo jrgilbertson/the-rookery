@@ -19,6 +19,7 @@ FIXTURES = ROOT / "scripts/checks/fixtures.sh"
 SYNC = ROOT / "scripts/sync-global-agents.sh"
 
 FIXTURE_RUNNERS = (
+    "tests/changelog/fixtures/run-changelog-checks.py",
     "tests/evals/fixtures/run-eval-checks.py",
     "tests/managing-issues/fixtures/run-config-checks.py",
     "tests/personal-chief-of-staff/fixtures/run-sample-checks.py",

@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 at the repository level. One version describes the whole collection.
 
 Because installs pull from `main`, this file is the "what changed since you last
-looked" surface. GitHub Releases mirror its entries.
+looked" surface. GitHub Releases mirror its entries. Pull requests add fragments
+under [`changelog.d/`](changelog.d/README.md) instead of editing this file
+directly; [`scripts/changelog-rollup.py`](scripts/changelog-rollup.py) rolls
+them up here before a release.
 
 ## [Unreleased]
 

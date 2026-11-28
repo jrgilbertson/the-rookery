@@ -167,9 +167,12 @@ Run these steps in order every time:
    that routine pull-forward will be on once approved unless they say to stop.
    Dispatch nothing and merge nothing until both are recorded.
 4. **Reconcile state with live facts.** Prune any settled `state.md` entries
-   whose clear conditions above are met. Check `orca orchestration worker-list`
-   before retrying an interrupted `worker-start`, so you never spawn a duplicate
-   worker when the first start succeeded. For each active in-flight brief:
+   whose clear conditions above are met. Before retrying an interrupted
+   `worker-start`, check `orca orchestration worker-list` for a worker matching
+   the intended `taskId` or `workspace` (worktree name or path). If a matching
+   worker exists or the start cannot be matched cleanly, do not retry; adopt
+   the existing worker or surface the unresolved start in the catch-up. For
+   each active in-flight brief:
    - retry a worker that `exited` with no pull request from its stored brief
      with `--retry-of`, and never route around a `circuit_broken` chain;
    - leave a worker that exited with a pull request to [Merging](#merging);
@@ -300,17 +303,18 @@ public repositories, and write via `gh pr edit --body-file`.
 A pull request is ready when every check on its head has passed, optional
 review bots aside, GitHub reports it mergeable, and no review thread on it is
 unresolved. Check `orca orchestration worker-list` before merging or holding a
-pull request that has an active Executor, and wait for `worker_done` unless the
-worker reads `exited` or `unverifiable`. A pull request for an interactive
-UI/UX web page is ready only once its body records the post-`lfg`
-`impeccable audit` result for the current head (keeping transient
-`.impeccable/` audit and critique snapshots out of git while allowing
-intentionally tracked `.impeccable/design.json`), so the Captain never merges
-or holds it while the audit and any follow-up commit are still running. Static
-diagram or image plates do not require `impeccable audit`; verify them via
-before-and-after renders instead. Judge each ready pull request from its raw
-diff against the default branch, by the contract's scores and hold tests, with
-policy read from the default branch.
+pull request that has an active Executor: wait for `worker_done` unless the
+worker reads `exited`. If it reads `unverifiable`, keep the pull request
+unmerged and unheld and include it in the catch-up until `worker_done` arrives
+or exit is confirmed. A pull request for an interactive UI/UX web page is ready
+only once its body records the post-`lfg` `impeccable audit` result for the
+current head (keeping transient `.impeccable/` audit and critique snapshots out
+of git while allowing intentionally tracked `.impeccable/design.json`), so the
+Captain never merges or holds it while the audit and any follow-up commit are
+still running. Static diagram or image plates do not require `impeccable audit`;
+verify them via before-and-after renders instead. Judge each ready pull request
+from its raw diff against the default branch, by the contract's scores and hold
+tests, with policy read from the default branch.
 Before any merge, record the pull request and the head it merges at in
 `state.md`. Post every `Fleet:` receipt in the contract's exact four plain
 ASCII lines (`Fleet:`, `Head:`, `Scores:`, `Detail:`).

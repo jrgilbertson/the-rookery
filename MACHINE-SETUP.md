@@ -94,11 +94,14 @@ npm install -g --prefix ~/.local typescript-language-server typescript pyright
 
 ## Codex plugins
 
+PostHog's `posthog@posthog` plugin (`PostHog/ai-plugin`) is left out on purpose.
+It bundles a local shell hook whose content hash drifts whenever Codex refreshes
+its plugin cache, stalling headless Codex workers on startup for hook review.
+Codex connects to PostHog directly through the HTTP MCP server below instead.
+
 ```bash
 codex plugin marketplace add EveryInc/compound-engineering-plugin
-codex plugin marketplace add PostHog/ai-plugin
 codex plugin add compound-engineering@compound-engineering-plugin
-codex plugin add posthog@posthog
 ```
 
 ## Antigravity plugins
@@ -149,17 +152,43 @@ claude mcp add --scope user --transport stdio gemini-docs -- uvx --from git+http
 
 Linear, Supabase, and Vercel are left out on purpose because Codex gets them
 from the apps linked to the ChatGPT account, which follow the account to Codex
-desktop and the CLI. PostHog is also omitted here because the
-`posthog@posthog` plugin above already registers its MCP server.
+desktop and the CLI.
 
 ```bash
 codex mcp add ai-elements --url https://registry.ai-sdk.dev/api/mcp
 codex mcp add gemini-docs -- uvx --from git+https://github.com/philschmid/gemini-api-docs-mcp gemini-docs-mcp
 codex mcp add livekit-docs --url https://docs.livekit.io/mcp
+codex mcp add posthog --url https://mcp.posthog.com/mcp
 codex mcp add shadcn -- npx shadcn@latest mcp
 codex mcp add lennysdata --url https://mcp.lennysdata.com/mcp
 codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp
 codex mcp add playwright -- npx @playwright/mcp@latest
+```
+
+`codex mcp add` has no `--header` flag, so after adding `posthog` (and signing
+in via OAuth), add the static consumer header under `[mcp_servers.posthog]` in
+`~/.codex/config.toml` so `learn posthog:instrument-product-analytics` works for
+[automations/analytics-gap-audit.md](automations/analytics-gap-audit.md):
+
+```toml
+[mcp_servers.posthog]
+url = "https://mcp.posthog.com/mcp"
+http_headers = { "x-posthog-mcp-consumer" = "plugin-learn" }
+```
+
+## Antigravity MCP servers
+
+Antigravity has no `claude.ai` connectors or ChatGPT linked apps, so Linear and
+PostHog are registered directly with `agy mcp add`. The `x-posthog-mcp-consumer`
+header keeps `learn posthog:instrument-product-analytics` working for
+[automations/analytics-gap-audit.md](automations/analytics-gap-audit.md), giving
+Claude Code (connector), Codex (HTTP MCP), and Antigravity (HTTP MCP) consistent
+PostHog access across machines. Extra Antigravity MCP servers from local
+configuration are allowed by the check below, just like Codex MCP servers.
+
+```bash
+agy mcp add linear https://mcp.linear.app/mcp
+agy mcp add --header "x-posthog-mcp-consumer: plugin-learn" posthog https://mcp.posthog.com/mcp
 ```
 
 ## GitHub CLI
@@ -189,19 +218,20 @@ machine matches this manifest:
 - Every listed Claude Code user plugin is enabled, with no extra enabled Claude Code user plugins (built-in `@builtin` plugins are ignored).
 - Every listed Codex plugin and Antigravity's `compound-engineering` plugin are enabled, and Antigravity's `compound-engineering` version matches Claude Code's installed version.
 - `typescript-language-server` and `pyright-langserver` are on `PATH`.
-- Every listed Claude Code and Codex MCP server is registered (compared by name, without starting servers).
+- Every listed Claude Code, Codex, and Antigravity MCP server is registered (and enabled in Codex and Antigravity), compared by name without starting servers.
 - Every listed `gh` extension (such as `github/gh-stack`) is installed.
 
 What the script leaves out:
 
 - Global agent instructions and shell environment variables (such as `GH_PROMPT_DISABLED`) are not checked.
-- Extra Codex plugins, Codex MCP servers, Antigravity plugins, and `gh` extensions are allowed because they can come from the harness or local configuration.
+- Extra Codex plugins, Codex MCP servers, Antigravity plugins, Antigravity MCP servers, and `gh` extensions are allowed because they can come from the harness or local configuration.
 
 ```bash
 python3 - <<'PYTHON'
 import json
 import os
 from pathlib import Path
+import shlex
 import shutil
 import subprocess
 
@@ -209,7 +239,22 @@ home = Path.home()
 lines = Path("MACHINE-SETUP.md").read_text().splitlines()
 
 def documented(prefix):
-    return [line.removeprefix(prefix).split() for line in lines if line.startswith(prefix)]
+    return [shlex.split(line.removeprefix(prefix)) for line in lines if line.startswith(prefix)]
+
+def agy_mcp_name(args):
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg == "--":
+            return args[i + 1] if i + 1 < len(args) else None
+        if arg in {"-H", "--header", "-e", "--env", "-t", "--type"}:
+            i += 2
+            continue
+        if arg.startswith("-"):
+            i += 1
+            continue
+        return arg
+    return None
 
 def config_json(path):
     try:
@@ -231,6 +276,7 @@ xdg_state_home = os.environ.get("XDG_STATE_HOME")
 skill_lock_dir = Path(xdg_state_home) / "skills" if xdg_state_home else home / ".agents"
 skill_lock = config_json(skill_lock_dir / ".skill-lock.json")
 claude_config = config_json(home / ".claude.json")
+agy_mcp_config = config_json(home / ".gemini/config/mcp_config.json")
 claude_plugins = cli_json("claude", "plugin", "list", "--json")
 codex_plugins = cli_json("codex", "plugin", "list", "--json")["installed"]
 agy_plugins = cli_json("agy", "plugin", "list", "--json")
@@ -284,11 +330,25 @@ if claude_ce and agy_ce:
             f"({agy_version or 'unknown'}) != Claude Code ({claude_version or 'unknown'})"
         )
 
+agy_mcp_servers = agy_mcp_config.get("mcpServers")
+agy_enabled_servers = (
+    {
+        name
+        for name, server in agy_mcp_servers.items()
+        if not (isinstance(server, dict) and server.get("disabled"))
+    }
+    if isinstance(agy_mcp_servers, dict)
+    else set()
+)
+
 report("Claude Code MCP server",
        {args[1] for args in documented("claude mcp add --scope user --transport ")},
        set(claude_config.get("mcpServers", {})))
 report("Codex MCP server", {args[0] for args in documented("codex mcp add ")},
        {server["name"] for server in codex_servers if server["enabled"]})
+report("Antigravity MCP server",
+       {name for args in documented("agy mcp add ") if (name := agy_mcp_name(args))},
+       agy_enabled_servers)
 report("gh extension",
        {args[0] for args in documented("gh extension install ")},
        gh_extensions)

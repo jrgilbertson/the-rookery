@@ -72,6 +72,7 @@ HOME_PATH_EXAMPLES = {
     "automations/weekly-codebase-design.md": {"~" + "/.local/state/automation-runs"},
     "MACHINE-SETUP.md": {
         "~" + "/.codex/AGENTS.md",
+        "~" + "/.codex/config.toml",
         "~" + "/.claude/CLAUDE.md",
         "~" + "/.claude/plugins/marketplaces/compound-engineering-plugin",
         "~" + "/.gemini/config/AGENTS.md",

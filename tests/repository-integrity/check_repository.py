@@ -106,6 +106,7 @@ def check_home_paths(repository: Path) -> None:
     workflow.unlink()
 
     machine_setup = repository / "MACHINE-SETUP.md"
+    codex_config_path = "~" + "/.codex/config.toml"
     claude_marketplace_path = "~" + "/.claude/plugins/marketplaces/compound-engineering-plugin"
     antigravity_path = "~" + "/.gemini/config/AGENTS.md"
     antigravity_plugins_dir = "~" + "/.gemini/config/plugins"
@@ -114,6 +115,7 @@ def check_home_paths(repository: Path) -> None:
     cursor_path = "~" + "/.cursor/rules/global-agents.mdc"
     machine_setup_paths = (
         approved,
+        codex_config_path,
         claude_path,
         claude_marketplace_path,
         antigravity_path,
@@ -136,6 +138,7 @@ def check_home_paths(repository: Path) -> None:
         home_relative,
         f"@{home_relative}",
         approved + ".private",
+        "~" + "/.codex/other.toml",
         "~" + "/.cursor/rules/other.mdc",
         "~" + "/.gemini/config/plugins/other-plugin",
         "~" + "/.claude/plugins/marketplaces/other-plugin",
@@ -151,6 +154,7 @@ def check_home_paths(repository: Path) -> None:
 
     outside = repository / "outside-setup.md"
     for scoped_path in (
+        codex_config_path,
         claude_marketplace_path,
         antigravity_path,
         antigravity_plugins_dir,

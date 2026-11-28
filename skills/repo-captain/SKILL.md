@@ -21,13 +21,13 @@ all run the same wake routine. The Captain never blocks on the operator, so
 work keeps moving while the operator is away.
 
 Read [references/review-contract.md](references/review-contract.md) before the
-first wake. It holds the labels, ownership line, receipt, and verdict formats,
-the trust and merge-authority rules, the scoring rules, the hold tests, and
-the rule for a pull request that changed after its verdict. The
-`reviewing-prs` skill ships the same file, and both skills must read it the
+first wake and after compaction. It holds the labels, ownership line, receipt,
+and verdict formats, the trust and merge-authority rules, the scoring rules,
+the hold tests, and the rule for a pull request that changed after its verdict.
+The `reviewing-prs` skill ships the same file, and both skills must read it the
 same way. Load the version-matched Orca guide with
-`orca skills get orchestration` before the first dispatch, and follow it for
-every Orca command this skill names.
+`orca skills get orchestration` before the first dispatch and after compaction,
+and follow it for every Orca command this skill names.
 
 ## Rules for every step
 
@@ -144,7 +144,9 @@ per repository on one machine with its state local. To move a Captain to
 another machine, the operator copies the folder.
 
 Mark the Captain's own worktree once, so other sessions can find it:
-`orca worktree set --comment "repo-captain <owner>/<repo>"`.
+`orca worktree set --worktree active --comment "repo-captain <owner>/<repo>"`.
+On first setup, verify `review:held`, `review:auto-merged`, and
+`review:human-merged` exist on the repository and create any missing ones.
 
 ## Every wake
 
@@ -165,7 +167,9 @@ Run these steps in order every time:
    that routine pull-forward will be on once approved unless they say to stop.
    Dispatch nothing and merge nothing until both are recorded.
 4. **Reconcile state with live facts.** Prune any settled `state.md` entries
-   whose clear conditions above are met. For each active in-flight brief:
+   whose clear conditions above are met. Check `orca orchestration worker-list`
+   before retrying an interrupted `worker-start`, so you never spawn a duplicate
+   worker when the first start succeeded. For each active in-flight brief:
    - retry a worker that `exited` with no pull request from its stored brief
      with `--retry-of`, and never route around a `circuit_broken` chain;
    - leave a worker that exited with a pull request to [Merging](#merging);
@@ -295,15 +299,18 @@ public repositories, and write via `gh pr edit --body-file`.
 
 A pull request is ready when every check on its head has passed, optional
 review bots aside, GitHub reports it mergeable, and no review thread on it is
-unresolved. A pull request for an interactive UI/UX web page is ready only
-once its body records the post-`lfg` `impeccable audit` result for the current
-head (keeping transient `.impeccable/` audit and critique snapshots out of
-git while allowing intentionally tracked `.impeccable/design.json`), so the
-Captain never merges or holds it while the audit and any follow-up commit are
-still running. Static diagram or image plates do not require
-`impeccable audit`; verify them via before-and-after renders instead. Judge
-each ready pull request from its raw diff against the default branch, by the
-contract's scores and hold tests, with policy read from the default branch.
+unresolved. Check `orca orchestration worker-list` before merging or holding a
+pull request that has an active Executor, and wait for `worker_done` unless the
+worker reads `exited` or `unverifiable`. A pull request for an interactive
+UI/UX web page is ready only once its body records the post-`lfg`
+`impeccable audit` result for the current head (keeping transient
+`.impeccable/` audit and critique snapshots out of git while allowing
+intentionally tracked `.impeccable/design.json`), so the Captain never merges
+or holds it while the audit and any follow-up commit are still running. Static
+diagram or image plates do not require `impeccable audit`; verify them via
+before-and-after renders instead. Judge each ready pull request from its raw
+diff against the default branch, by the contract's scores and hold tests, with
+policy read from the default branch.
 Before any merge, record the pull request and the head it merges at in
 `state.md`. Post every `Fleet:` receipt in the contract's exact four plain
 ASCII lines (`Fleet:`, `Head:`, `Scores:`, `Detail:`).

@@ -873,6 +873,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `repo-captain` now passes `--worktree active` to `orca worktree set`,
+  checks for and creates missing `review:held`, `review:auto-merged`, and
+  `review:human-merged` repository labels on first setup, rereads
+  `references/review-contract.md` and `orca skills get orchestration` after
+  compaction, checks `orca orchestration worker-list` before retrying an
+  interrupted `worker-start` or merging/holding a pull request with an active
+  Executor, and instructs workers to keep local service and database stacks
+  running through `ce-babysit-pr` and tear them down right before sending
+  `worker_done`.
 - The Dependency bots group in the `reviewing-prs` review page's Overview
   matches the other groups again. It shared the `bots` class with a card's
   Review feedback box, so it took that box's fill, padding, border, and

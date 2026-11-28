@@ -281,7 +281,8 @@ For each pull request, establish:
   issue and policy files read.
 - **A plain summary.** Last, write the block's `summary` from everything
   above: the problem, the change, and its tradeoffs, as the reference
-  describes.
+  describes. Give each `code` excerpt a `why` in the same plain words: what
+  the lines are and why you pulled them out.
 
 Show which hold test a pull request meets. Flag as a finding any open pull
 request in `prs` that meets a hold test yet sits in a merge queue or is ready

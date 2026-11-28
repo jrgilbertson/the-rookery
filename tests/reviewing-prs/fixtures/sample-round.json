@@ -81,6 +81,7 @@
         {
           "title": "The code behind the two undescribed rows",
           "file": "app/billing/proration.ts",
+          "why": "This is the sum that works out what a customer is credited and charged when they switch plans mid-month. It used to round both numbers the normal way. Now the credit always rounds down and the charge always rounds up, so a customer can pay a cent more, and the description does not say so.",
           "lines": [
             "- const credit = Math.round((oldPriceCents * remaining) / daysInPeriod);",
             "- const charge = Math.round((newPriceCents * remaining) / daysInPeriod);",
@@ -133,6 +134,7 @@
         {
           "title": "The code behind it",
           "file": "db/migrate/20261120_add_currency_exponent.rb",
+          "why": "This adds a new column to the table that holds every subscription, then takes away its starting value. The pull request is described as a rename, and a rename does not need a new column. Anything that saves a subscription without filling the column in will fail, and undoing the change leaves the column behind.",
           "lines": [
             "+ add_column :subscriptions, :currency_exponent, :integer, null: false, default: 2",
             "+ change_column_default :subscriptions, :currency_exponent, from: 2, to: nil"
@@ -199,6 +201,7 @@
         {
           "title": "The code behind the two undescribed rows",
           "file": "src/http/client.ts",
+          "why": "These are the two lines that change what a command does when something goes wrong. The first used to try a second time and now gives up at once. The second makes the tool stop with a different number, which any script that checks for the old number will miss.",
           "lines": [
             "- return withRetry(() => send(request), { attempts: 2 });",
             "+ return send(request);",
@@ -465,6 +468,7 @@
         {
           "title": "The code behind the undescribed row",
           "file": "app/views/billing/PlanCard.tsx",
+          "why": "This is the sum that works out the amount the plan card shows today. The card does its own arithmetic here instead of asking the billing code, so the card and the invoice can show different amounts.",
           "lines": [
             "+ const today = Math.round(((plan.price - current.price) * remaining) / days);",
             "+ return <Amount cents={today} />;"

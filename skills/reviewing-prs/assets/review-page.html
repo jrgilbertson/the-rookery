@@ -176,18 +176,22 @@ main { padding: 40px 0 80px; min-width: 0; }
 .pill b { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
 .pill.three { background: var(--stake); border-color: var(--ink-soft); color: var(--ink); }
 .pill.three b { font-weight: 700; }
-.summary { margin-top: 16px; }
+/* The lead prose opens the main column, so the side column starts beside it. Whichever part comes first takes no top margin, and the two columns start level. */
+.card-lead > :first-child { margin-top: 0; }
 .summary p { max-width: var(--measure); color: var(--ink); overflow-wrap: anywhere; }
 .summary + .driver, .summary + .sysnote { margin-top: 12px; }
 .driver { margin-top: 10px; max-width: var(--measure); }
-.xnote { margin-top: 10px; padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: var(--measure); font-size: 0.95rem; }
+.xnote { padding: 8px 12px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: var(--measure); font-size: 0.95rem; }
 .sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: var(--measure); font-size: 0.95rem; }
 .xnote b, .sysnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
-.cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
-.main-col, .side-col { display: grid; gap: 18px; min-width: 0; }
+.cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
+/* Both columns hold text strangers wrote. A track that can shrink and a word that can break keep a long token inside its column. */
+.main-col, .side-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; min-width: 0; overflow-wrap: break-word; }
 .panel { padding-top: 10px; border-top: 1px solid var(--hairline-soft); font-size: 0.95rem; }
 .panel p { max-width: var(--measure); }
 .main-col p { max-width: var(--measure); }
+.code-why { margin: 0 0 8px; font-size: 0.95rem; color: var(--ink); overflow-wrap: anywhere; }
+.code pre + .sec-title { margin-top: 18px; }
 .panel.risk .sec-title { display: flex; align-items: center; gap: 8px; color: var(--signal-ink); }
 .panel.risk .sec-title::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--signal); }
 .frame-table { border: 1px solid var(--hairline); }
@@ -235,7 +239,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 .read dl { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 10px; }
 .read dt { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); padding-top: 3px; }
 .read dd.judgment { font-weight: 600; }
-.feedback { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.feedback { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: var(--measure); font-size: 0.95rem; }
 .feedback b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
 .rest-line { color: var(--ink-soft); font-size: 0.9rem; }
 .legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; max-width: var(--measure); }
@@ -1323,23 +1327,28 @@ main { padding: 40px 0 80px; min-width: 0; }
     const leverage = item.leverage === null ? null : item.leverage.toFixed(2);
     factors.append(pill("leverage", leverage ?? "?", "Leverage " + (leverage ?? "unknown") + ".", false));
     add(article, head, add(meta, facts), factors, body);
-    // The plain summary opens the body, so the reader knows what the pull request is for before the page explains its scores.
+    // The body is the two columns from its first line. The main column says what the pull request changes; the side column
+    // holds what people and the agent wrote about it, so the two start level and neither leaves a half-empty row above the other.
+    const cols = el("div", "cols");
+    const main = el("div", "main-col");
+    const side = el("div", "side-col");
+    const lead = el("div", "card-lead");
+    // The plain summary comes first, so the reader knows what the pull request is for before the page explains its scores.
     const summary = str(pr.summary);
-    if (summary) body.append(add(el("section", "summary"), el("h3", "sec-title", "In plain words"), el("p", "", summary)));
+    if (summary) lead.append(add(el("section", "summary"), el("h3", "sec-title", "In plain words"), el("p", "", summary)));
     // Dispatch Paper is for words someone wrote; the page's own notice about a moving target is plain.
     if (item.group === "flight") {
-      body.append(add(el("p", "sysnote"), el("b", "", "In flight"),
+      lead.append(add(el("p", "sysnote"), el("b", "", "In flight"),
         document.createTextNode("A worker may still be updating this pull request, so its head can move after you decide. Leave it for its owner unless you want to step in early.")));
     }
-    body.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
+    lead.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
+    main.append(lead);
     for (const note of notesFor(pr)) {
       const box = el("p", "xnote");
       add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
-      body.append(box);
+      side.append(box);
     }
 
-    const cols = el("div", "cols");
-    const main = el("div", "main-col");
     const changes = el("section");
     const audience = str(pr.audience) || "user";
     changes.append(el("h3", "sec-title", "What is different for " + aOrAn(audience) + " " + audience));
@@ -1354,10 +1363,13 @@ main { padding: 40px 0 80px; min-width: 0; }
     if (!shown) changes.append(el("p", "empty", "Nothing reported."));
     main.append(changes);
     const code = list(pr.code).filter((c) => c && list(c.lines).length);
-    const codeBox = el("section");
+    const codeBox = el("section", "code");
     if (!code.length) add(codeBox, el("h3", "sec-title", "The code behind it"), el("p", "empty", "Nothing singled out."));
     for (const c of code) {
       codeBox.append(el("h3", "sec-title", [str(c.title) || "The code behind it", str(c.file)].filter(Boolean).join(" · ")));
+      // An older payload has no explanation, and then the diff follows its label.
+      const why = str(c.why);
+      if (why) codeBox.append(el("p", "code-why", why));
       const pre = el("pre");
       for (const line of list(c.lines)) {
         const text = String(line);
@@ -1366,14 +1378,8 @@ main { padding: 40px 0 80px; min-width: 0; }
       codeBox.append(pre);
     }
     main.append(codeBox);
-    if (str(pr.feedback)) {
-      const feedback = el("p", "feedback");
-      add(feedback, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
-      main.append(feedback);
-    }
     if (str(pr.rest)) main.append(el("p", "rest-line", "Rest of the diff: " + str(pr.rest)));
 
-    const side = el("div", "side-col");
     const read = el("section", "read");
     const r = pr.read || {};
     const dl = el("dl");
@@ -1385,6 +1391,11 @@ main { padding: 40px 0 80px; min-width: 0; }
     add(side, read,
       panel(item.undo === 3 ? "If it is wrong · a revert does not undo it" : "If it is wrong", pr.ifWrong, item.undo === 3),
       panel("What proves it", pr.proof), panel("Asked for?", pr.asked));
+    if (str(pr.feedback)) {
+      const feedback = el("p", "feedback");
+      add(feedback, el("b", "", "Review feedback"), document.createTextNode(str(pr.feedback)));
+      side.append(feedback);
+    }
     add(cols, main, side);
     body.append(cols);
     return article;

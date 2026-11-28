@@ -626,7 +626,7 @@ def check_install_verification_tools(temporary_root: Path) -> None:
 
     gh_stub = stub_bin / "gh"
     gh_stub.write_text(
-        f"#!{sys.executable}\n"
+        "#!/usr/bin/env python3\n"
         "import json, os, shutil, sys\n"
         "from pathlib import Path\n"
         "args = sys.argv[1:]\n"
@@ -650,7 +650,7 @@ def check_install_verification_tools(temporary_root: Path) -> None:
 
     curl_stub = stub_bin / "curl"
     curl_stub.write_text(
-        f"#!{sys.executable}\n"
+        "#!/usr/bin/env python3\n"
         "import json, os, shutil, sys\n"
         "from pathlib import Path\n"
         "args = sys.argv[1:]\n"
@@ -665,7 +665,7 @@ def check_install_verification_tools(temporary_root: Path) -> None:
 
     sha_stub = stub_bin / "sha256sum"
     sha_stub.write_text(
-        f"#!{sys.executable}\n"
+        "#!/usr/bin/env python3\n"
         "import os, sys\n"
         "from pathlib import Path\n"
         "lines = [line.strip() for line in sys.stdin if line.strip()]\n"

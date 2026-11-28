@@ -185,11 +185,11 @@ main { padding: 40px 0 80px; min-width: 0; }
 .sysnote { margin-top: 10px; padding: 8px 12px; border: 1px dashed var(--ink-soft); max-width: var(--measure); font-size: 0.95rem; }
 .xnote b, .sysnote b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 8px; }
 .cols { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 28px; align-items: start; margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--hairline-soft); }
-.main-col, .side-col { display: grid; gap: 18px; min-width: 0; }
+/* Both columns hold text strangers wrote. A track that can shrink and a word that can break keep a long token inside its column. */
+.main-col, .side-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; min-width: 0; overflow-wrap: break-word; }
 .panel { padding-top: 10px; border-top: 1px solid var(--hairline-soft); font-size: 0.95rem; }
 .panel p { max-width: var(--measure); }
 .main-col p { max-width: var(--measure); }
-/* An excerpt's explanation is prose the reader needs before the diff, so it takes the main ink. A second excerpt's label sits clear of the diff above it. */
 .code-why { margin: 0 0 8px; font-size: 0.95rem; color: var(--ink); overflow-wrap: anywhere; }
 .code pre + .sec-title { margin-top: 18px; }
 .panel.risk .sec-title { display: flex; align-items: center; gap: 8px; color: var(--signal-ink); }
@@ -239,7 +239,7 @@ main { padding: 40px 0 80px; min-width: 0; }
 .read dl { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 6px 10px; }
 .read dt { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); padding-top: 3px; }
 .read dd.judgment { font-weight: 600; }
-.feedback { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); font-size: 0.95rem; }
+.feedback { padding: 9px 14px; background: var(--dispatch); border: 1px solid var(--hairline-soft); max-width: var(--measure); font-size: 0.95rem; }
 .feedback b { font-size: 0.72rem; font-weight: 650; color: var(--ink-soft); margin-right: 10px; }
 .rest-line { color: var(--ink-soft); font-size: 0.9rem; }
 .legend { margin-top: 4px; color: var(--ink-soft); font-size: 0.76rem; max-width: var(--measure); }
@@ -1343,7 +1343,6 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     lead.append(el("p", "driver", [placementText(item), str(pr.driver)].filter(Boolean).join(" ")));
     main.append(lead);
-    // Notes across the round open the side column, above the agent's read.
     for (const note of notesFor(pr)) {
       const box = el("p", "xnote");
       add(box, el("b", "", str(note.label) || "Across the round"), document.createTextNode(str(note.text)));
@@ -1368,7 +1367,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     if (!code.length) add(codeBox, el("h3", "sec-title", "The code behind it"), el("p", "empty", "Nothing singled out."));
     for (const c of code) {
       codeBox.append(el("h3", "sec-title", [str(c.title) || "The code behind it", str(c.file)].filter(Boolean).join(" · ")));
-      // Why this excerpt was pulled out, in plain words. An older payload has none, and then the diff follows its label.
+      // An older payload has no explanation, and then the diff follows its label.
       const why = str(c.why);
       if (why) codeBox.append(el("p", "code-why", why));
       const pre = el("pre");

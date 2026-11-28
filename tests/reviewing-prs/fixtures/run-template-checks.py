@@ -350,7 +350,7 @@ def check_template(text: str) -> None:
     # One reading measure, set in rem so blocks of different type sizes end at the same edge. A width in ch follows each block's own font.
     check(len(re.findall(r"--measure: [0-9.]+rem;", text)) == 1 and text.count("--measure:") == 1,
           "the page must declare one reading measure, --measure, in rem")
-    for selector in (".lede", ".frame", ".key", ".summary p", ".driver", ".xnote", ".sysnote", ".panel p", ".main-col p", ".across span", ".legend"):
+    for selector in (".lede", ".frame", ".key", ".summary p", ".driver", ".xnote", ".sysnote", ".panel p", ".main-col p", ".feedback", ".across span", ".legend"):
         rule = re.search(r"(?m)^" + re.escape(selector) + r" \{[^}]*\}", text)
         check(rule is not None and "max-width: var(--measure);" in rule.group(0), f"{selector} must take the shared reading measure")
     drifted = re.findall(r"([^{}\n]*)\{[^}]*max-width: [0-9.]+ch", text)
@@ -365,6 +365,11 @@ def check_template(text: str) -> None:
           and "#" not in why_rule.group(0), "a code excerpt's explanation must take the main ink from the page's variables and wrap a long identifier")
     check(re.search(r"(?m)^\.code pre \+ \.sec-title \{[^}]*margin-top: [1-9]", text) is not None,
           "a second excerpt's label must sit clear of the diff above it")
+    # Both columns hold text strangers wrote, so a long unbroken token wraps inside its column and never widens the page.
+    columns_rule = re.search(r"(?m)^\.main-col, \.side-col \{[^}]*\}", text)
+    check(columns_rule is not None and "overflow-wrap: break-word;" in columns_rule.group(0) and "min-width: 0;" in columns_rule.group(0)
+          and "grid-template-columns: minmax(0, 1fr);" in columns_rule.group(0),
+          "the card's two columns must wrap a long unbroken token and be free to shrink")
     # The lead prose starts level with the side column whichever part comes first, so its first child takes no top margin.
     check(re.search(r"(?m)^\.card-lead > :first-child \{[^}]*margin-top: 0;", text) is not None,
           "the first part of a card's lead prose must take no top margin, so the two columns start level")

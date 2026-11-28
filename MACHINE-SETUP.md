@@ -162,23 +162,40 @@ codex mcp add openaiDeveloperDocs --url https://developers.openai.com/mcp
 codex mcp add playwright -- npx @playwright/mcp@latest
 ```
 
+## GitHub CLI
+
+Install the `gh-stack` extension used for stacked pull requests:
+
+```bash
+gh extension install github/gh-stack
+```
+
+Set `GH_PROMPT_DISABLED=1` in non-interactive and agent shell environments (for
+example, in your shell profile or service environment) so `gh` fails fast
+instead of hanging on interactive prompts:
+
+```bash
+export GH_PROMPT_DISABLED=1
+```
+
 ## Check a machine against this list
 
-Run this from the repository root with Python 3.9 or later and all three
-harness CLIs (`claude`, `codex`, and `agy`). It prints nothing when the machine
-matches this manifest:
+Run this from the repository root with Python 3.9 or later, all three harness
+CLIs (`claude`, `codex`, and `agy`), and `gh`. It prints nothing when the
+machine matches this manifest:
 
 - Every listed skill is in the skills CLI lock, with no unlisted skills managed by the skills CLI.
 - `SKILL.md` exists in the Codex, Claude Code, and Antigravity global skill directories for each listed locked skill and for Impeccable.
-- Every listed Claude Code user plugin is enabled, with no extra enabled Claude Code user plugins.
+- Every listed Claude Code user plugin is enabled, with no extra enabled Claude Code user plugins (built-in `@builtin` plugins are ignored).
 - Every listed Codex plugin and Antigravity's `compound-engineering` plugin are enabled, and Antigravity's `compound-engineering` version matches Claude Code's installed version.
 - `typescript-language-server` and `pyright-langserver` are on `PATH`.
 - Every listed Claude Code and Codex MCP server is registered (compared by name, without starting servers).
+- Every listed `gh` extension (such as `github/gh-stack`) is installed.
 
 What the script leaves out:
 
-- Global agent instructions above are not checked.
-- Extra Codex plugins, Codex MCP servers, and Antigravity plugins are allowed because they can come from the harness or local configuration.
+- Global agent instructions and shell environment variables (such as `GH_PROMPT_DISABLED`) are not checked.
+- Extra Codex plugins, Codex MCP servers, Antigravity plugins, and `gh` extensions are allowed because they can come from the harness or local configuration.
 
 ```bash
 python3 - <<'PYTHON'
@@ -218,6 +235,11 @@ claude_plugins = cli_json("claude", "plugin", "list", "--json")
 codex_plugins = cli_json("codex", "plugin", "list", "--json")["installed"]
 agy_plugins = cli_json("agy", "plugin", "list", "--json")
 codex_servers = cli_json("codex", "mcp", "list", "--json")
+gh_extensions = {
+    parts[1]
+    for line in subprocess.check_output(["gh", "extension", "list"], text=True).splitlines()
+    if len(parts := line.split("\t")) >= 2 and parts[1]
+}
 
 expected_skills = {name for args in documented("npx skills add ")
                    for name in args[args.index("--skill") + 1:]}
@@ -231,7 +253,11 @@ for harness, skill_dir in (("Codex", ".agents/skills"), ("Claude Code", ".claude
     report(f"{harness} skill", skills_to_check, present)
 
 claude_user_plugins = {
-    p["id"]: p for p in claude_plugins if p["scope"] == "user" and p["enabled"]
+    p["id"]: p
+    for p in claude_plugins
+    if p["scope"] == "user"
+    and p["enabled"]
+    and not p["id"].endswith("@builtin")
 }
 agy_enabled_plugins = {
     p["name"]: p for p in agy_plugins if p.get("enabled")
@@ -263,6 +289,9 @@ report("Claude Code MCP server",
        set(claude_config.get("mcpServers", {})))
 report("Codex MCP server", {args[0] for args in documented("codex mcp add ")},
        {server["name"] for server in codex_servers if server["enabled"]})
+report("gh extension",
+       {args[0] for args in documented("gh extension install ")},
+       gh_extensions)
 PYTHON
 ```
 
@@ -290,3 +319,34 @@ automation's worker runs as the same user as the sync service, so an agent
 steered by a planted instruction could change the mode back. The worker
 reports the mode it finds, and Obsidian Sync's version history can restore
 changed or deleted notes.
+
+### Linux headless Chromium (AppArmor)
+
+Unattended `impeccable audit` runs on interactive web UI leaves (and other
+Playwright browser checks) launch Playwright's bundled headless Chromium. On
+Ubuntu 24.04 and later Linux hosts where AppArmor restricts unprivileged user
+namespaces (`kernel.apparmor_restrict_unprivileged_userns=1`), Chromium's
+sandbox fails at startup unless an AppArmor profile grants `userns` to the
+Playwright Chromium binaries.
+
+Create `/etc/apparmor.d/playwright-chromium` with a portable user-cache glob:
+
+```text
+# Allow Playwright's bundled Chromium to use unprivileged user namespaces on Ubuntu 24.04+
+abi <abi/4.0>,
+include <tunables/global>
+
+profile playwright-chromium /home/*/.cache/ms-playwright/**/chrome* flags=(unconfined) {
+  userns,
+}
+```
+
+Load the profile with:
+
+```bash
+sudo apparmor_parser -r /etc/apparmor.d/playwright-chromium
+```
+
+If Playwright browsers live under a custom `PLAYWRIGHT_BROWSERS_PATH` outside
+the default user cache directory, adjust the binary path glob in the profile to
+match that location.

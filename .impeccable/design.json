@@ -499,7 +499,7 @@
       "refersTo": "text-field",
       "description": "A multi-line note field across its card, three lines tall, with the same edge as the other controls; it resizes vertically.",
       "html": "<textarea class=\"ds-field\" rows=\"3\" aria-label=\"Note\" placeholder=\"Add a note\"></textarea>",
-      "css": ".ds-field { display: block; width: 100%; min-height: 5em; padding: 10px 12px; background: #FFFFFF; color: #042458; caret-color: #0050CC; border: 1px solid #7C87A0; border-radius: 2px; resize: vertical; font: 0.9rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-field::placeholder { color: #47577A; } .ds-field:hover { border-color: #47577A; } .ds-field:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; }"
+      "css": ".ds-field { display: block; box-sizing: border-box; width: 100%; min-height: 5em; padding: 10px 12px; background: #FFFFFF; color: #042458; caret-color: #0050CC; border: 1px solid #7C87A0; border-radius: 2px; resize: vertical; font: 0.9rem/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; } .ds-field::placeholder { color: #47577A; } .ds-field:hover { border-color: #47577A; } .ds-field:focus-visible { outline: 2px solid #0050CC; outline-offset: 2px; }"
     },
     {
       "name": "Chip and Seal",

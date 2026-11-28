@@ -237,9 +237,16 @@ say; the page then shows "Nothing to report."
 
 - `code`: the lines behind each `described: "no"` situation and each
   departure the read names, as a list of excerpts, each
-  `{"title": "...", "file": "...", "lines": ["- old", "+ new"]}`. Every entry
-  in `lines` is one diff line starting with `+`, `-`, or a space. Keep each
-  excerpt to the smallest hunk that shows the cause, at most about 12 lines.
+  `{"title": "...", "file": "...", "why": "...", "lines": ["- old", "+ new"]}`.
+  Every entry in `lines` is one diff line starting with `+`, `-`, or a space.
+  Keep each excerpt to the smallest hunk that shows the cause, at most about
+  12 lines.
+- `code[].why`: up to three plain sentences, as you would explain it to
+  someone who does not read code. Say what the reader is looking at, then why
+  you pulled these lines out: what they change for a user or caller and why
+  that matters to the decision. Use everyday words in place of identifiers.
+  Write one for every excerpt. The page shows it between the excerpt's title
+  and its lines, and draws nothing there when the field is missing or empty.
 - `read.judgment`: two or three sentences summarizing your step 3 findings on
   coding standards, design system, agent-written code, existing patterns, and
   any steering text quoted from the pull request.

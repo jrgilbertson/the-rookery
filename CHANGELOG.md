@@ -222,6 +222,15 @@ looked" surface. GitHub Releases mirror its entries.
   line, so a card can be understood before its scores are. The round's data
   gains `summary` on each pull request, which step 3 of the skill writes
   from the raw diff; a round without it draws the card as before.
+- The verdict notes on each `reviewing-prs` review card are a multi-line
+  field on its own row across the card, in place of a 240px single-line
+  input beside the verdict buttons. It shows three lines and resizes
+  vertically. A note still copies as one line: its line breaks become
+  single spaces in `Your verdicts`.
+- Prose on the `reviewing-prs` review page takes one reading measure, so a
+  card's summary, the sentence about the hold line, and the notes under
+  them end at the same edge. Six different widths sat on those blocks
+  before.
 - `reviewing-prs` classifies a trusted-owner pull request with finished
   checks and no hold as in flight, and counts a `Fleet: hold` receipt as
   held.

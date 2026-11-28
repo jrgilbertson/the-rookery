@@ -74,6 +74,7 @@ spacing:
   lg: "16px"
   xl: "24px"
   gutter: "28px"
+  measure: "36rem"
 components:
   card:
     backgroundColor: "{colors.white-sheet}"
@@ -100,9 +101,9 @@ components:
     textColor: "{colors.raven-navy}"
     typography: "{typography.control}"
     rounded: "{rounded.card}"
-    padding: "6px 10px"
-    height: "36px"
-    width: "240px"
+    padding: "10px 12px"
+    height: "5em"
+    width: "100%"
   chip:
     textColor: "{colors.drafting-graphite}"
     rounded: "{rounded.card}"
@@ -266,6 +267,7 @@ These components belong to working pages. A working page is an interactive page 
 ### Papers and type
 
 - **Papers.** Chalk Paper is the ground, and each section sits on a white sheet held by a Drafting Graphite hairline. Dispatch Paper carries notes someone wrote, such as an agent's read, a note across items, or review feedback. Data that needs attention does not use Dispatch Paper.
+- **Reading measure.** Prose takes one width, `--measure` (36rem): the lede, the key under the filters, a card's summary, the sentence about the hold line, notes on Dispatch Paper, panel paragraphs, and a table's legend. Blocks stacked in one column therefore end at the same edge. The measure is set in rem, not ch, because a width in ch follows each block's own font and gives two type sizes two widths. Tables, code diffs, screenshots, the two-column grid, and controls are not capped; a paragraph in a column narrower than the measure ends at its column.
 - **Type.** Didot sets the page headline and numerals at 1rem or larger only, because its hairlines thin out at small sizes and on Night Paper. Baskerville sets body text and titles. A compact system sans sets labels, buttons, and metadata, never smaller than 0.7rem (11px). A working page loads no web fonts, so the Georgia fallback for both serifs is intended.
 
 ### Controls
@@ -276,7 +278,8 @@ These components belong to working pages. A working page is an interactive page 
 ### Cards
 
 - **Card.** A card is a white sheet with a hairline edge, a 2px radius, and no shadow. It carries one item to decide: a rank in a circle, a Baskerville title, metadata chips, and the controls that record the decision.
-- **Summary.** A card that carries a plain-language summary opens its body with it, above the sentence that explains the hold line. It is Baskerville body text in the main ink on the card's own sheet, held to a 68-character measure under a sans label. It takes no box and no Dispatch Paper, so the notes on a card stay distinct from it. A card without a summary draws nothing in its place.
+- **Summary.** A card that carries a plain-language summary opens its body with it, above the sentence that explains the hold line. It is Baskerville body text in the main ink on the card's own sheet, held to the reading measure under a sans label. It takes no box and no Dispatch Paper, so the notes on a card stay distinct from it. A card without a summary draws nothing in its place.
+- **Verdict notes.** The notes field is a multi-line text field on its own row across the card, under the title and the segmented control. It shows three lines, resizes vertically only, and sits on the card's own sheet with the Control Border, while the read-only verdicts box takes Chalk Paper, so the field you type in is the white one. Its text is the sans at 0.9rem, and 1rem on narrow screens so a phone does not zoom when it takes focus. The hint that a note needs a verdict sits left-aligned under the field. A collapsed card hides the field with the segmented control.
 - **Active card.** The page has one active card at a time, the card its keyboard shortcuts act on. `<main>` marks it with a 2px Route Cobalt border in place of the hairline, and the rail marks the same card as current. Cobalt shows where the reader is on the route; it does not mean the card needs attention.
 - **Collapsible routine cards.** A routine card starts collapsed: one under the hold line or from a dependency bot, with no hold and no violation. Its title, rank, metadata, and recalled-verdict badge stay visible outside the toggle. A card that is held or carries a violation never starts collapsed, and any link or shortcut that goes to a collapsed card opens it. The toggle is a control with a small Drafting Graphite chevron that turns when the card opens, without animation when the reader asks for reduced motion.
 - **Factor pills.** `.card-factors` shows an item's leverage factors as a row of small pills: a 2px radius, a hairline edge, and a sans figure. Each pill carries a visually hidden label that names its factor. A factor that scores three takes the `.three` highlight, a Mist Paper fill with a Drafting Graphite edge and a bolder figure, so the fill never carries the meaning alone.

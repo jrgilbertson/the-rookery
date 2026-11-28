@@ -11,7 +11,10 @@ Node against a minimal stand-in for the DOM and checks where each pull request
 lands: which side of the hold line, in what order, and whether a sensitive
 kind is named. It checks that each card opens its body with the pull
 request's summary as text, hostile markup included, and draws nothing for a
-pull request without one. It also clicks Not applicable on the first block and
+pull request without one. It seeds the browser's storage and checks that a
+saved choice equal to a pull request's `postedVerdict` is dropped while any
+other is recalled, and that `Clear saved` empties this round's choices and
+brings them back. It also clicks Not applicable on the first block and
 checks the Verdict line the page builds. It needs `node` on `PATH`, and it cannot tell whether the page
 looks right.
 

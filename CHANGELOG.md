@@ -230,6 +230,19 @@ them up here before a release.
   input beside the verdict buttons. It shows three lines and resizes
   vertically. A note still copies as one line: its line breaks become
   single spaces in `Your verdicts`.
+- A `reviewing-prs` round keeps its temporary directory while any pull
+  request on the page is still undecided, so the operator can decide the
+  rest later without the round being gathered and read again. Step 5
+  deletes it once none is undecided or the operator says they are finished.
+  It also skips a verdict already posted at the reviewed head with the same
+  notes.
+- The `reviewing-prs` review page no longer offers a verdict that was
+  already posted. A pull request in the round data may carry
+  `postedVerdict`; the page drops a saved choice that equals it and marks
+  the card `Already posted`. A saved choice that differs is kept, and round
+  data without the field behaves as before. The verdicts box gains a
+  `Clear saved` control that empties this round's saved choices and notes
+  and reads `Undo clear` until the next edit.
 - Prose on the `reviewing-prs` review page takes one reading measure, so a
   card's summary, the sentence about the hold line, and the notes under
   them end at the same edge. Six different widths sat on those blocks

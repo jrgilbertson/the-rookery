@@ -9,13 +9,14 @@ sample round the way the skill prescribes and checks the result as text.
 
 It then runs the page's own script in Node against a minimal stand-in for the
 browser's DOM, and checks where each pull request lands: which side of the
-hold line, in what order, and whether a sensitive kind is named. A large
-round built here then checks the four groups, the bounded notices, the merged
+hold line, in what order, and whether a sensitive kind is named. A large round
+built here then checks the four groups, the bounded notices, the merged
 drawer, the filters, the copy controls, the verdict notes, the keyboard
 shortcuts and their switch, the active card, the collapsed routine cards, what
-the browser keeps, a verdict already posted, and the Clear saved control. Smaller rounds check a page with unreadable data, one
-with no pull requests, and one with no dependency bot. It cannot tell whether
-the page looks right; that takes a browser.
+the browser keeps, a verdict already posted, and the Clear saved control.
+Smaller rounds check a page with unreadable data, one with no pull requests,
+and one with no dependency bot. It cannot tell whether the page looks right;
+that takes a browser.
 """
 
 from __future__ import annotations
@@ -116,7 +117,7 @@ for (const [id, tag] of [["page", "main"], ["rail", "nav"], ["theme", "button"],
   ["shortcut-help", "div"], ["announcer", "div"]]) fixed[id] = Object.assign(new Node(tag), { id });
 // The template ships the help panel closed.
 fixed["shortcut-help"].hidden = true;
-const store = new Map(Object.entries(seeded));
+const store = new Map(Object.entries(seeded ?? {}));
 const localStorage = { getItem: (k) => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)), removeItem: (k) => store.delete(k),
   key: (i) => [...store.keys()][i] ?? null, get length() { return store.size; } };
 const heard = (target) => (type, handler) => { ((target.listeners ||= {})[type] ||= []).push(handler); };
@@ -128,7 +129,8 @@ const document = {
   querySelector: () => null,
 };
 document.addEventListener = heard(document);
-const window = { matchMedia: () => ({ matches: false, addEventListener() {} }), localStorage, innerHeight: 800, location: { hash: "" },
+// A seed of null stands for a browser that refuses storage: reading window.localStorage throws.
+const window = { matchMedia: () => ({ matches: false, addEventListener() {} }), get localStorage() { if (seeded === null) throw new Error("denied"); return localStorage; }, innerHeight: 800, location: { hash: "" },
   requestAnimationFrame: (callback) => callback() };
 window.addEventListener = heard(window);
 let clipboard = null, scrolled = null, focusedNode = null, clipboardFails = false;
@@ -478,14 +480,14 @@ def check_filled(page: str, data: str, original: dict) -> None:
         failures.append(f"the data block does not parse: {error}")
 
 
-def render(page: str, scratch: Path, actions: list | None = None, stored: dict | None = None) -> list | None:
+def render(page: str, scratch: Path, actions: list | None = None, stored: dict | None = None, storage: bool = True) -> list | None:
     node = shutil.which("node")
     if node is None:
         failures.append("node is required to run the page's script")
         return None
     (scratch / "render.js").write_text(RENDER)
     (scratch / "page.html").write_text(page)
-    result = subprocess.run([node, str(scratch / "render.js"), str(scratch / "page.html"), json.dumps(actions or []), json.dumps(stored or {})],
+    result = subprocess.run([node, str(scratch / "render.js"), str(scratch / "page.html"), json.dumps(actions or []), json.dumps((stored or {}) if storage else None)],
                             capture_output=True, text=True, check=False)
     if result.returncode != 0:
         failures.append(f"the page's script failed to run: {result.stderr.strip()[:400]}")
@@ -1221,6 +1223,13 @@ def check_posted_verdicts(original: dict, scratch: Path) -> None:
     check(idle[1]["announced"].startswith("Nothing saved to clear.") and idle[1]["box"]["status"].startswith("Nothing saved to clear.")
           and idle[1]["storage"] == idle[0]["storage"] and idle[1]["box"]["clear"]["text"] == "Clear saved",
           f"Clear saved with nothing saved must say so and change nothing: {idle[1]['announced']!r}")
+
+    # A browser that refuses storage saves nothing, so the control is not offered.
+    bare = render(page, scratch, [["verdict", "Risky change 1", "merge"]], storage=False)
+    if bare is None:
+        return
+    check(bare[1]["box"]["clear"]["hidden"] is True and bare[1]["box"]["value"] == line(101, "merge") and "keeps nothing" in bare[0]["box"]["status"],
+          f"with no browser storage the page must still take verdicts and must not offer Clear saved: {bare[1]['box']['clear']}")
 
     # A payload from before postedVerdict recalls everything, as it always has.
     for pr in variant["prs"]:

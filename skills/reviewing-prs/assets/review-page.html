@@ -1218,19 +1218,21 @@ main { padding: 40px 0 80px; min-width: 0; }
     clear.setAttribute("aria-disabled", String(!cleared && ![...choices.values()].some(holds)));
   };
   const clearSaved = () => {
-    const back = cleared;
-    const kept = ordered.map((item) => [item, choices.get(item)]).filter(([, choice]) => holds(choice))
-      .map(([item, choice]) => [item, choice.verdict, choice.notes.value]);
+    const count = (rows) => plural(rows.length, "pull request", "pull requests");
     let said = "Nothing saved to clear.";
-    if (back) {
-      for (const [item, verdict, notes] of back) setChoice(item, verdict, notes);
-      said = "Brought back the verdicts and notes for " + plural(back.length, "pull request", "pull requests") + ".";
-    } else if (kept.length) {
-      // Every card is reset, so an entry the page could not read leaves the browser too.
-      for (const item of ordered) setChoice(item, null, "");
-      said = "Cleared the saved verdicts and notes for " + plural(kept.length, "pull request", "pull requests") + ". Undo clear brings them back until your next edit.";
+    if (cleared) {
+      for (const [item, verdict, notes] of cleared) setChoice(item, verdict, notes);
+      said = "Brought back the verdicts and notes for " + count(cleared) + ".";
+      cleared = null;
+    } else {
+      const kept = ordered.filter((item) => holds(choices.get(item))).map((item) => [item, choices.get(item).verdict, choices.get(item).notes.value]);
+      if (kept.length) {
+        // Every card is reset, so an entry the page could not read leaves the browser too.
+        for (const item of ordered) setChoice(item, null, "");
+        said = "Cleared the saved verdicts and notes for " + count(kept) + ". Undo clear brings them back until your next edit.";
+        cleared = kept;
+      }
     }
-    cleared = back || !kept.length ? null : kept;
     refreshVerdicts();
     refreshProgress();
     status.textContent = said;

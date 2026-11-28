@@ -83,6 +83,9 @@ pre .ctx { color: var(--ink-soft); }
 .ctl { border: 1px solid var(--control-border); background: var(--sheet); color: var(--ink); border-radius: 2px; padding: 5px 12px; font-size: 0.8rem; min-height: 36px; }
 .ctl:hover { background: var(--mist); }
 .ctl[aria-pressed="true"] { background: var(--chosen); border-color: var(--chosen); color: var(--on-chosen); font-weight: 650; }
+/* A control with nothing to act on stays focusable and says why when pressed. */
+.ctl[aria-disabled="true"] { color: var(--ink-soft); }
+.ctl[aria-disabled="true"]:hover { background: var(--sheet); }
 .help-toggle { min-width: 36px; padding-left: 0; padding-right: 0; font-weight: 650; }
 .help { position: absolute; top: 100%; right: 28px; width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - var(--bar-h, 60px) - 16px); overflow-y: auto; margin-top: 8px; padding: 16px 18px; background: var(--sheet); border: 1px solid var(--hairline); border-radius: 2px; font: 0.82rem/1.5 var(--sans); }
 .help dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; margin: 0; }
@@ -1124,6 +1127,14 @@ main { padding: 40px 0 80px; min-width: 0; }
   // would end the line early for whoever parses it. The note is the last
   // field of a copied line, so a | inside it is safe.
   const cleanNotes = (value) => value.replace(/\s+/g, " ").replace(/"/g, "'").trim();
+  // The round may name the verdict the operator already posted at this head. Only
+  // these two verdicts are ever posted; anything else in the field is ignored.
+  const POSTED = { merge: "merge", "request changes": "changes" };
+  const postedFor = (pr) => {
+    const posted = pr.postedVerdict;
+    const word = posted && typeof posted === "object" ? str(posted.verdict).toLowerCase() : "";
+    return Object.hasOwn(POSTED, word) ? { verdict: POSTED[word], notes: cleanNotes(str(posted.notes)) } : null;
+  };
   const refreshVerdicts = () => {
     const lines = [];
     quotesChanged = false;
@@ -1139,8 +1150,10 @@ main { padding: 40px 0 80px; min-width: 0; }
     }
     verdictBox.value = lines.join("\n");
     labelCopy();
-    // Anything edited since the last copy makes "Copied" untrue.
-    if (verdictBox.value !== lastCopied) restingCue();
+    labelClear();
+    // Anything edited since the last copy makes "Copied" untrue, and any edit ends what Clear saved last said.
+    if (told || verdictBox.value !== lastCopied) restingCue();
+    told = false;
   };
   const refreshProgress = () => {
     let decided = 0;
@@ -1179,13 +1192,50 @@ main { padding: 40px 0 80px; min-width: 0; }
     const face = unspoken(add(el("span", "", name + " "), el("b", "", shown)));
     return add(el("span", three ? "pill three" : "pill"), face, hidden(spoken));
   };
+  const setChoice = (item, verdict, notes) => {
+    const choice = choices.get(item);
+    choice.verdict = verdict;
+    choice.notes.value = notes;
+    for (const button of choice.buttons) button.setAttribute("aria-pressed", String(button.dataset.verdict === verdict));
+    remember(item.pr, verdict, notes);
+  };
   const choose = (item, key) => {
     const choice = choices.get(item);
-    choice.verdict = choice.verdict === key ? null : key;
-    for (const button of choice.buttons) button.setAttribute("aria-pressed", String(button.dataset.verdict === choice.verdict));
-    remember(item.pr, choice.verdict, choice.notes.value);
+    cleared = null;
+    setChoice(item, choice.verdict === key ? null : key, choice.notes.value);
     refreshVerdicts();
     refreshProgress();
+  };
+  // Clear saved empties this round's choices here and in the browser. One press
+  // brings them back, until the operator's next edit makes the page theirs again.
+  const clear = el("button", "ctl");
+  let cleared = null;
+  let told = false;
+  const holds = (choice) => Boolean(choice.verdict || choice.notes.value);
+  const labelClear = () => {
+    clear.textContent = cleared ? "Undo clear" : "Clear saved";
+    clear.setAttribute("aria-label", cleared ? "Undo clear: bring back the verdicts and notes" : "Clear saved verdicts and notes for this round");
+    clear.setAttribute("aria-disabled", String(!cleared && ![...choices.values()].some(holds)));
+  };
+  const clearSaved = () => {
+    const back = cleared;
+    const kept = ordered.map((item) => [item, choices.get(item)]).filter(([, choice]) => holds(choice))
+      .map(([item, choice]) => [item, choice.verdict, choice.notes.value]);
+    let said = "Nothing saved to clear.";
+    if (back) {
+      for (const [item, verdict, notes] of back) setChoice(item, verdict, notes);
+      said = "Brought back the verdicts and notes for " + plural(back.length, "pull request", "pull requests") + ".";
+    } else if (kept.length) {
+      // Every card is reset, so an entry the page could not read leaves the browser too.
+      for (const item of ordered) setChoice(item, null, "");
+      said = "Cleared the saved verdicts and notes for " + plural(kept.length, "pull request", "pull requests") + ". Undo clear brings them back until your next edit.";
+    }
+    cleared = back || !kept.length ? null : kept;
+    refreshVerdicts();
+    refreshProgress();
+    status.textContent = said;
+    announce(said);
+    told = true;
   };
 
   const block = (item) => {
@@ -1210,7 +1260,14 @@ main { padding: 40px 0 80px; min-width: 0; }
     const hint = el("span", "hint", "Pick a verdict to include this note");
     hint.id = item.id + "-hint";
     hint.hidden = true;
-    const saved = recall(pr);
+    let saved = recall(pr);
+    // A saved choice equal to the posted verdict has done its work: it is dropped,
+    // so the page never offers the same verdict for posting twice.
+    const posted = postedFor(pr);
+    if (saved && posted && saved.verdict === posted.verdict && cleanNotes(str(saved.notes)) === posted.notes) {
+      remember(pr, null, "");
+      saved = null;
+    }
     const choice = { verdict: saved && Object.hasOwn(VERDICTS, saved.verdict) ? saved.verdict : null, notes, hint, buttons: [] };
     notes.value = saved && typeof saved.notes === "string" ? saved.notes : "";
     choices.set(item, choice);
@@ -1224,6 +1281,7 @@ main { padding: 40px 0 80px; min-width: 0; }
       seg.append(button);
     }
     notes.addEventListener("input", () => {
+      cleared = null;
       remember(pr, choice.verdict, notes.value);
       refreshVerdicts();
     });
@@ -1250,6 +1308,7 @@ main { padding: 40px 0 80px; min-width: 0; }
     // The risk the Overview showed stays in view where the verdict is chosen.
     const meta = el("div", "block-meta");
     add(meta, add(chip("vu-chip"), unspoken(el("span", "", "V × U " + (item.product ?? "?"))), hidden(vuWords(item))), item.badge);
+    if (posted) meta.append(chip("", "Already posted: " + VERDICTS[posted.verdict]));
     if (item.sensitiveKinds.length) meta.append(add(chip("alert"), mark("seal"), document.createTextNode("Sensitive kind: " + item.sensitiveKinds.join(", "))));
     add(meta, ...readiness(item));
     const facts = el("span", "meta", [label(pr), str(pr.owner) || "No owner", sizeText(pr), str(pr.status)].filter(Boolean).join(" · ") + " · ");
@@ -1414,7 +1473,12 @@ main { padding: 40px 0 80px; min-width: 0; }
   verdictBox.placeholder = "No verdicts chosen yet. Pick one on a card and its line appears here.";
   const boxHeading = el("h2", "", "Your verdicts");
   boxHeading.tabIndex = -1;
-  add(boxHead, boxHeading, copy, status);
+  clear.type = "button";
+  clear.id = "clear-saved";
+  // Nothing is saved where the browser offers no storage, so there is nothing to clear.
+  clear.hidden = !storage;
+  clear.addEventListener("click", clearSaved);
+  add(boxHead, boxHeading, copy, clear, status);
   add(box, boxHead, verdictBox);
   // A round with no pull requests has nothing to decide, so it shows no verdicts box and no round controls.
   if (total) page.append(box);

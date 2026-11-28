@@ -12,8 +12,8 @@ browser's DOM, and checks where each pull request lands: which side of the
 hold line, in what order, and whether a sensitive kind is named. A large
 round built here then checks the four groups, the bounded notices, the merged
 drawer, the filters, the copy controls, the verdict notes, the keyboard
-shortcuts and their switch, the active card, the collapsed routine cards, and
-what the browser keeps. Smaller rounds check a page with unreadable data, one
+shortcuts and their switch, the active card, the collapsed routine cards, what
+the browser keeps, a verdict already posted, and the Clear saved control. Smaller rounds check a page with unreadable data, one
 with no pull requests, and one with no dependency bot. It cannot tell whether
 the page looks right; that takes a browser.
 """
@@ -158,6 +158,7 @@ const snap = () => {
   const drawer = all.find((n) => n.tagName === "details");
   const verdicts = all.find((n) => n.id === "verdicts");
   const empty = all.find((n) => n.id === "filter-empty");
+  const clear = all.find((n) => n.id === "clear-saved");
   const marks = all.concat(walk(fixed.rail)).filter((n) => has(n, "seal") || has(n, "ring") || has(n, "route-dot"));
   return {
     order: fixed.page.children.filter((n) => !n.isText).map((n) => n.id || n.className || n.tagName),
@@ -193,6 +194,7 @@ const snap = () => {
       active: has(a, "active"), collapsed: one(a, "block-body")?.hidden ?? null, controlsHidden: one(a, "verdict")?.hidden ?? null,
       toggle: one(a, "card-toggle") ? { ...one(a, "card-toggle").attributes } : null,
       badge: { text: one(a, "verdict-badge")?.textContent ?? null, hidden: one(a, "verdict-badge")?.hidden ?? null },
+      pressed: walk(a).filter((n) => n.tagName === "button" && n.dataset.verdict && n.attributes["aria-pressed"] === "true").map((n) => n.dataset.verdict),
       // The parts a collapsed card must keep in view sit outside the two parts its toggle hides.
       keptOutside: ["rank", "block-meta", "card-factors", "verdict-badge"].every((cls) => one(a, cls)
         && !within(one(a, "block-body"), cls).length && !within(one(a, "verdict"), cls).length)
@@ -224,7 +226,12 @@ const snap = () => {
     box: !verdicts ? null : { copy: one(verdicts, "copy")?.textContent ?? null, value: walk(verdicts).find((n) => n.tagName === "textarea")?.value ?? null,
       copyDisabled: one(verdicts, "copy")?.attributes["aria-disabled"] ?? null, placeholder: walk(verdicts).find((n) => n.tagName === "textarea")?.placeholder ?? null,
       label: walk(verdicts).find((n) => n.tagName === "textarea")?.attributes["aria-label"] ?? null,
-      status: one(verdicts, "copy-status")?.textContent ?? null },
+      status: one(verdicts, "copy-status")?.textContent ?? null,
+      // The Clear saved control as built, and where it sits among the parts of the verdicts head.
+      clear: !clear ? null : { text: seen(clear), tag: clear.tagName, type: clear.type ?? null, cls: clear.className, hidden: clear.hidden,
+        disabled: clear.attributes["aria-disabled"] ?? null, label: clear.attributes["aria-label"] ?? null,
+        after: clear.parentNode.children[clear.parentNode.children.indexOf(clear) - 1]?.className ?? null,
+        before: clear.parentNode.children[clear.parentNode.children.indexOf(clear) + 1]?.className ?? null } },
     announced: fixed.announcer.textContent, focus: focusedNode ? focusedNode.id || focusedNode.tagName : null,
     theme: document.documentElement.dataset.theme ?? null, storage: Object.fromEntries(store),
     live: all.concat(walk(fixed.rail), Object.values(fixed)).filter((n) => n.attributes["aria-live"]).length,
@@ -265,6 +272,7 @@ const run = async () => {
     if (what === "rail") await titled(fixed.rail, "r-title", a).fire("click");
     if (what === "overview") await titled(fixed.page, "title", a).fire("click");
     if (what === "press") await fixed[a].fire("click");
+    if (what === "clear") await walk(fixed.page).find((n) => n.id === "clear-saved")?.fire("click");
     if (what === "clipboard") clipboardFails = a === "fail";
     if (what === "hash") { window.location.hash = "#" + a; for (const handler of window.listeners?.hashchange ?? []) handler({}); }
     if (what === "key") {
@@ -385,6 +393,8 @@ def check_template(text: str) -> None:
     check(re.search(r"(?m)^  \.rail a \{[^}]*min-height: 36px", text) is not None, "a rail link must be at least 36px tall")
     check(re.search(r"(?m)^\.ctl \{[^}]*min-height: 36px", text) is not None
           and re.search(r"\.ctl, [^{]*\{ min-height: 44px; \}", text) is not None, "bar controls must be 36px tall, and 44px on a narrow screen")
+    check(re.search(r"(?m)^\.ctl\[aria-disabled=\"true\"\] \{[^}]*color: var\(--ink-soft\);", text) is not None,
+          "a control with nothing to act on must read as unavailable in the soft ink, which still reaches 4.5:1 on both papers")
     shouted = re.findall(r"[a-z,:] Verdicts?\b", text)
     check(not shouted, f"the interface writes verdict in lower case inside a sentence: {shouted[:3]}")
     check(not re.search(r"\[tabindex=\"-1\"\]:focus\s*\{\s*outline:\s*none", text),
@@ -1077,6 +1087,154 @@ def check_notes_field(original: dict, scratch: Path) -> None:
           "a reload must restore the multi-line note in the field and the same single verdict line")
 
 
+def check_posted_verdicts(original: dict, scratch: Path) -> None:
+    """A saved choice equal to the verdict already posted is dropped, any other is recalled, and Clear saved empties this round's choices and undoes."""
+    variant = large_round(original)
+    now = 1_900_000_000_000  # far enough ahead that every seeded entry is fresh whenever this runs
+    posted_notes = "Rename the flag first. Then say 'done'."
+    posted = {
+        101: {"verdict": "request changes", "notes": posted_notes},   # the saved choice equals it
+        102: {"verdict": "merge"},                                    # saved with other notes
+        103: {"verdict": "merge", "notes": ""},                       # saved with another verdict
+        104: "merge",                                                 # not an object
+        105: {"verdict": "defer"},                                    # a verdict that is never posted
+        106: {"verdict": "merge"},                                    # nothing saved
+        506: {"verdict": "Merge", "notes": ""},                       # a collapsed routine card whose saved choice equals it
+        109: 42,
+    }
+    for pr in variant["prs"]:
+        if pr["number"] in posted:
+            pr["postedVerdict"] = posted[pr["number"]]
+    key = lambda number: f"reviewing-prs:acme/ledger-app#{number}@{number:040x}"  # noqa: E731
+    entry = lambda verdict, notes="": json.dumps({"verdict": verdict, "notes": notes, "saved": now})  # noqa: E731
+    seeded = {
+        key(101): entry("changes", 'Rename the flag first.\n\nThen say\t"done".'),
+        key(102): entry("merge", "Ship it."),
+        key(103): entry("changes"),
+        key(104): entry("merge"),
+        key(105): entry("defer"),
+        key(506): entry("merge"),
+        key(107): entry("merge", "No posted verdict here."),
+        key(109): entry("na"),
+        "reviewing-prs:acme/other#9@abc": entry("merge", "Another round."),
+        "reviewing-prs-prefs:theme": "dark",
+    }
+    kept_elsewhere = {"reviewing-prs:acme/other#9@abc", "reviewing-prs-prefs:theme"}
+    line = lambda number, verdict, notes="": f"acme/ledger-app#{number} @ {number:040x} | {verdict} | {notes}"  # noqa: E731
+    page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    actions = [
+        ["verdict", "Risky change 1", "changes"],          # 1 the posted verdict, chosen again
+        ["notes", "Risky change 1", posted_notes],         # 2 with the posted notes
+        ["clear"],                                         # 3
+        ["clear"],                                         # 4 undo
+        ["clear"],                                         # 5
+        ["verdict", "Risky change 6", "merge"],            # 6 an edit ends the undo
+        ["clear"],                                         # 7
+        ["notes", "Risky change 8", "A note alone."],      # 8 a note with no verdict ends it too
+        ["clear"],                                         # 9 the last saved choice
+    ]
+    steps = render(page, scratch, actions, seeded)
+    if steps is None:
+        return
+    first = steps[0]
+    card = lambda step, title: next(b for b in step["blocks"] if b["title"].endswith(title))  # noqa: E731
+    chosen = lambda step: {b["title"].lstrip("0123456789"): b["pressed"] for b in step["blocks"] if b["pressed"]}  # noqa: E731
+    typed = lambda step: {b["title"].lstrip("0123456789"): b["field"]["value"] for b in step["blocks"] if b["field"]["value"]}  # noqa: E731
+    mark = lambda step, title: [c for c in card(step, title)["chips"] if c.startswith("Already posted")]  # noqa: E731
+
+    # A saved choice equal to the posted verdict is not offered again, and leaves the browser.
+    for title, number in (("Risky change 1", 101), ("Routine change 6", 506)):
+        shown = card(first, title)
+        check(shown["pressed"] == [] and shown["field"]["value"] == "" and shown["hint"]["hidden"] is True,
+              f"#{number}'s saved choice equals its posted verdict, so no verdict may be pressed and no note filled in: {shown['pressed']}, {shown['field']['value']!r}")
+        check(key(number) not in first["storage"], f"#{number}'s saved choice equals its posted verdict, so the browser must drop it")
+        check(f"#{number} @" not in first["box"]["value"], f"#{number}'s posted verdict must not be copied again: {first['box']['value']!r}")
+    check(card(first, "Routine change 6")["collapsed"] is True and card(first, "Routine change 6")["badge"]["hidden"] is True,
+          "a collapsed card whose saved choice was posted must show no recalled-verdict badge")
+    # The card says it was posted, in words and without orange, whether or not anything was saved.
+    for title, word in (("Risky change 1", "Request changes"), ("Risky change 2", "Merge"), ("Risky change 3", "Merge"),
+                        ("Risky change 6", "Merge"), ("Routine change 6", "Merge")):
+        check(mark(first, title) == [f"Already posted: {word}"], f"{title} carries a posted verdict, so its card must say so: {card(first, title)['chips']}")
+    check(card(first, "Routine change 6")["keptOutside"], "the posted mark must stay in view on a collapsed card")
+    # A saved choice that differs from the posted verdict, in notes or in verdict, is the operator's newer word.
+    check(card(first, "Risky change 2")["pressed"] == ["merge"] and card(first, "Risky change 2")["field"]["value"] == "Ship it.",
+          f"a saved choice whose notes differ from the posted ones must be recalled: {card(first, 'Risky change 2')['pressed']}")
+    check(card(first, "Risky change 3")["pressed"] == ["changes"], f"a saved choice whose verdict differs from the posted one must be recalled: {card(first, 'Risky change 3')['pressed']}")
+    # A postedVerdict the page cannot read hides nothing and marks nothing.
+    for title, pressed in (("Risky change 4", ["merge"]), ("Risky change 5", ["defer"]), ("Risky change 9", ["na"])):
+        check(card(first, title)["pressed"] == pressed and mark(first, title) == [],
+              f"{title}'s postedVerdict is not a posted verdict, so its saved choice must be recalled and no mark drawn: {card(first, title)['pressed']}, {mark(first, title)}")
+    check(card(first, "Risky change 7")["pressed"] == ["merge"] and mark(first, "Risky change 7") == [], "a card with no postedVerdict recalls as before")
+    recalled = [line(102, "merge", "Ship it."), line(103, "request changes"), line(104, "merge"), line(105, "defer"),
+                line(107, "merge", "No posted verdict here."), line(109, "not applicable")]
+    check(sorted(first["box"]["value"].split("\n")) == sorted(recalled), f"only the choices not yet posted may be copied: {first['box']['value']!r}")
+    check("6 of 31 decided" in first["bar"]["progress"], f"a dropped choice must not count as decided: {first['bar']['progress']!r}")
+
+    # Choosing on a posted card still exports, even the posted verdict with the posted notes.
+    check(line(101, "request changes") in steps[1]["box"]["value"].split("\n"), f"a verdict chosen on a posted card must be copied: {steps[1]['box']['value']!r}")
+    check(line(101, "request changes", posted_notes) in steps[2]["box"]["value"].split("\n") and key(101) in steps[2]["storage"],
+          f"a verdict and note entered on a posted card must be copied and kept: {steps[2]['box']['value']!r}")
+
+    # The control: a plain button between the Copy button and its status line.
+    control = first["box"]["clear"]
+    check(control is not None and (control["tag"], control["type"], control["cls"], control["hidden"]) == ("button", "button", "ctl", False),
+          f"the verdicts box must hold a Clear saved button drawn as a plain control: {control}")
+    if control is None:
+        return
+    check(control["text"] == "Clear saved" and control["disabled"] == "false" and control["label"].startswith("Clear saved"),
+          f"with choices saved the control must read Clear saved, be available, and carry a label that starts with its visible words: {control}")
+    check(control["after"] == "copy" and (control["before"] or "").endswith("copy-status"),
+          f"Clear saved must sit after the Copy button and before the status line: {control['after']}, {control['before']}")
+    before, cleared, undone = steps[2], steps[3], steps[4]
+    round_keys = lambda step: {k for k in step["storage"] if k not in kept_elsewhere}  # noqa: E731
+    check(round_keys(cleared) == set() and kept_elsewhere <= set(cleared["storage"]),
+          f"Clear saved must remove this round's saved choices and leave other rounds and preferences alone: {sorted(cleared['storage'])}")
+    check(chosen(cleared) == {} and typed(cleared) == {} and cleared["box"]["value"] == "" and cleared["bar"]["copy"] == "Copy verdicts (0)"
+          and "0 of 31 decided" in cleared["bar"]["progress"],
+          f"Clear saved must unpress every verdict, empty every note, and empty the copied lines: {chosen(cleared)}, {typed(cleared)}, {cleared['box']['value']!r}")
+    check(all(b["badge"]["hidden"] for b in cleared["blocks"]) and all(b["hint"]["hidden"] for b in cleared["blocks"]),
+          "after Clear saved no card may show a verdict badge or a note hint")
+    check(cleared["announced"].startswith("Cleared the saved verdicts and notes for 7 pull requests.") and cleared["box"]["status"] == cleared["announced"].strip(),
+          f"Clear saved must say what it did, aloud and in the status line: {cleared['announced']!r}, {cleared['box']['status']!r}")
+    check((cleared["box"]["clear"]["text"], cleared["box"]["clear"]["disabled"]) == ("Undo clear", "false") and cleared["box"]["clear"]["label"].startswith("Undo clear"),
+          f"after a clear the control must offer the undo, and stay available with nothing saved: {cleared['box']['clear']}")
+    check(undone["box"]["value"] == before["box"]["value"] and chosen(undone) == chosen(before) and typed(undone) == typed(before)
+          and round_keys(undone) == round_keys(before),
+          f"Undo clear must bring back every verdict, note, saved entry, and copied line: {undone['box']['value']!r}")
+    check(undone["box"]["clear"]["text"] == "Clear saved" and undone["announced"].startswith("Brought back the verdicts and notes for 7 pull requests."),
+          f"after the undo the control must read Clear saved again and say what came back: {undone['box']['clear']}, {undone['announced']!r}")
+    # An edit ends the undo: a verdict, or a note alone.
+    for name, step, value in (("a verdict", steps[6], line(106, "merge")), ("a note alone", steps[8], "")):
+        check((step["box"]["clear"]["text"], step["box"]["clear"]["disabled"]) == ("Clear saved", "false") and step["box"]["value"] == value
+              and "Cleared" not in step["box"]["status"],
+              f"{name} entered after a clear must end the undo and the cleared message: {step['box']['clear']}, {step['box']['status']!r}")
+    check(steps[9]["box"]["clear"]["text"] == "Undo clear" and steps[9]["announced"].startswith("Cleared the saved verdicts and notes for 1 pull request."),
+          f"clearing the last saved choice must still offer the undo and count one pull request: {steps[9]['box']['clear']}, {steps[9]['announced']!r}")
+    check(all(s["live"] == 0 for s in steps), "Clear saved must speak through the page's one announcer")
+
+    # With nothing saved the control stays focusable and says why it does nothing.
+    idle = render(page, scratch, [["clear"]], {"reviewing-prs:acme/other#9@abc": entry("merge")})
+    if idle is None:
+        return
+    check((idle[0]["box"]["clear"]["text"], idle[0]["box"]["clear"]["disabled"]) == ("Clear saved", "true"),
+          f"with nothing saved the control must read as unavailable: {idle[0]['box']['clear']}")
+    check(idle[1]["announced"].startswith("Nothing saved to clear.") and idle[1]["box"]["status"].startswith("Nothing saved to clear.")
+          and idle[1]["storage"] == idle[0]["storage"] and idle[1]["box"]["clear"]["text"] == "Clear saved",
+          f"Clear saved with nothing saved must say so and change nothing: {idle[1]['announced']!r}")
+
+    # A payload from before postedVerdict recalls everything, as it always has.
+    for pr in variant["prs"]:
+        pr.pop("postedVerdict", None)
+    older, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
+    again = render(older, scratch, [], seeded)
+    if again is None:
+        return
+    check(card(again[0], "Risky change 1")["pressed"] == ["changes"] and card(again[0], "Routine change 6")["badge"] == {"text": "Your verdict: Merge", "hidden": False}
+          and round_keys(again[0]) == set(seeded) - kept_elsewhere and len(again[0]["box"]["value"].split("\n")) == 8,
+          f"a round with no postedVerdict must recall every saved choice: {again[0]['box']['value']!r}")
+    check(not any(c.startswith("Already posted") for b in again[0]["blocks"] for c in b["chips"]), "a round with no postedVerdict draws no posted mark")
+
+
 def check_notice_threshold(original: dict, scratch: Path) -> None:
     variant = large_round(original, without=5, auto_merged=0)
     page, _ = fill(json.dumps(variant, indent=2, ensure_ascii=False) + "\n", scratch)
@@ -1185,7 +1343,7 @@ def main() -> int:
         check_storage_cleanup(page, Path(scratch))
     for extra in (lambda scratch: check_incomplete_scores(raw, scratch), lambda scratch: check_two_group_round(raw, scratch),
                   lambda scratch: check_large_round(original, scratch), lambda scratch: check_notes_field(original, scratch),
-                  lambda scratch: check_notice_threshold(original, scratch),
+                  lambda scratch: check_notice_threshold(original, scratch), lambda scratch: check_posted_verdicts(original, scratch),
                   lambda scratch: check_chrome_states(original, scratch), lambda scratch: check_summaries(original, scratch),
                   lambda scratch: check_audience_articles(original, scratch)):
         with tempfile.TemporaryDirectory() as scratch:
